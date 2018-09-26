@@ -24,6 +24,7 @@ BadZipfile = zipfile.BadZipfile
 
 TIMEOUT = 5.0
 
+
 def archive_files(archive_fpath, fpath_list, small=True, allowZip64=False,
                   overwrite=False, verbose=True, common_prefix=False):
     r"""
@@ -283,7 +284,7 @@ def get_prefered_browser(pref_list=[], fallback=True):
 
 
 def download_url(url, filename=None, spoof=False, iri_fallback=True,
-                 verbose=True, new=False, chunk_size=None):
+                 verbose=True, new=True, chunk_size=None):
     r""" downloads a url to a filename.
 
     Args:
@@ -318,19 +319,28 @@ def download_url(url, filename=None, spoof=False, iri_fallback=True,
         msg = fmt_msg % (percent_down, num_mb_down, kb_per_second, total_seconds)
         sys.stdout.write(msg)
         sys.stdout.flush()
+
     if verbose:
         reporthook = functools.partial(reporthook_, start_time=time.time())
     else:
         reporthook = None
+
     if filename is None:
         filename = basename(url)
+
     if verbose:
         print('[utool] Downloading url=%r to filename=%r' % (url, filename))
+
     if new:
         import requests
         #from contextlib import closing
         con = requests.get(url, stream=True, timeout=TIMEOUT)
+
         try:
+            code = con.status_code
+            if code != 200:
+                raise ValueError('URL download failed (HTTP Error %d) for %r' % (code, url, ))
+
             #import math
             content_length = con.headers.get('content-length', None)
             if content_length is None:
@@ -344,49 +354,54 @@ def download_url(url, filename=None, spoof=False, iri_fallback=True,
                 #length = int(math.ceil(content_length / chunk_size))
                 with open(filename, 'wb') as file_:
                     chunk_iter = con.iter_content(chunk_size=chunk_size)
-                    #chunk_iter = ut.ProgIter(chunk_iter, length=length, lbl='downloading', freq=1)
+                    # chunk_iter = ut.ProgIter(chunk_iter, length=length, lbl='downloading', freq=1)
                     for count, chunk in enumerate(chunk_iter):
                         if chunk:
                             if reporthook:
                                 reporthook(count, chunk_size, content_length)
                             file_.write(chunk)
+        except Exception as ex:
+            print(ex)
+            import utool as ut
+            ut.delete(filename)
+            filename = None
         finally:
             con.close()
-        return filename
-    # Weird that we seem to need this here for tests
-    import urllib  # NOQA
-    try:
-        if spoof:
-            # Different agents that can be used for spoofing
-            user_agents = [
-                'Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11',  # NOQA
-                'Opera/9.25 (Windows NT 5.1; U; en)',
-                'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)',  # NOQA
-                'Mozilla/5.0 (compatible; Konqueror/3.5; Linux) KHTML/3.5.5 (like Gecko) (Kubuntu)',
-                'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.0.12) Gecko/20070731 Ubuntu/dapper-security Firefox/1.5.0.12',  # NOQA
-                'Lynx/2.8.5rel.1 libwww-FM/2.14 SSL-MM/1.4.1 GNUTLS/1.2.9'
-            ]
-            class SpoofingOpener(urllib.FancyURLopener, object):
-                version = user_agents[0]
-            spoofing_opener = SpoofingOpener()
-            spoofing_opener.retrieve(url, filename=filename, reporthook=reporthook)
-        else:
-            # no spoofing
-            if six.PY2:
-                urllib.urlretrieve(url, filename=filename, reporthook=reporthook)
-            elif six.PY3:
-                import urllib.request
-                urllib.request.urlretrieve(url, filename=filename, reporthook=reporthook)
+    else:
+        # Weird that we seem to need this here for tests
+        import urllib  # NOQA
+        try:
+            if spoof:
+                # Different agents that can be used for spoofing
+                user_agents = [
+                    'Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11',  # NOQA
+                    'Opera/9.25 (Windows NT 5.1; U; en)',
+                    'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)',  # NOQA
+                    'Mozilla/5.0 (compatible; Konqueror/3.5; Linux) KHTML/3.5.5 (like Gecko) (Kubuntu)',
+                    'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.0.12) Gecko/20070731 Ubuntu/dapper-security Firefox/1.5.0.12',  # NOQA
+                    'Lynx/2.8.5rel.1 libwww-FM/2.14 SSL-MM/1.4.1 GNUTLS/1.2.9'
+                ]
+                class SpoofingOpener(urllib.FancyURLopener, object):
+                    version = user_agents[0]
+                spoofing_opener = SpoofingOpener()
+                spoofing_opener.retrieve(url, filename=filename, reporthook=reporthook)
             else:
-                assert False, 'unknown python'
-    except UnicodeError as ex:
-        import requests
-        # iri error
-        print('Detected iri error: %r' % (ex,))
-        print('Falling back to requests.get (no progress is shown)')
-        resp = requests.get(url, timeout=TIMEOUT)
-        with open(filename, 'wb') as file_:
-            file_.write(resp.content)
+                # no spoofing
+                if six.PY2:
+                    urllib.urlretrieve(url, filename=filename, reporthook=reporthook)
+                elif six.PY3:
+                    import urllib.request
+                    urllib.request.urlretrieve(url, filename=filename, reporthook=reporthook)
+                else:
+                    assert False, 'unknown python'
+        except UnicodeError as ex:
+            import requests
+            # iri error
+            print('Detected iri error: %r' % (ex,))
+            print('Falling back to requests.get (no progress is shown)')
+            resp = requests.get(url, timeout=TIMEOUT)
+            with open(filename, 'wb') as file_:
+                file_.write(resp.content)
     if verbose:
         print('')
         print('[utool] Finished downloading filename=%r' % (filename,))
