@@ -50,7 +50,7 @@ if util_cplat.WIN32:
 
 def generate2(func, args_gen, kw_gen=None, ntasks=None, ordered=True,
               force_serial=False, use_pool=False, chunksize=None, nprocs=None,
-              progkw={}, nTasks=None, verbose=None):
+              progkw={}, futures_threaded=False, nTasks=None, verbose=None):
     r"""
     Interfaces to either multiprocessing or futures.
     Esentially maps ``args_gen`` onto ``func`` using pool.imap.
@@ -264,7 +264,11 @@ def generate2(func, args_gen, kw_gen=None, ntasks=None, ordered=True,
                 pool.join()
         else:
             # Use futures
-            executor = futures.ProcessPoolExecutor(nprocs)
+            if futures_threaded:
+                executor = futures.ThreadPoolExecutor(nprocs)
+            else:
+                executor = futures.ProcessPoolExecutor(nprocs)
+
             try:
                 fs_list = [executor.submit(func, *a, **k)
                            for a, k in zip(args_gen, kw_gen)]
