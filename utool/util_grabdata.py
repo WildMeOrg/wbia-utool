@@ -462,12 +462,12 @@ def experiment_download_multiple_urls(url_list):
         >>> # DISABLE_DOCTEST
         >>> # UNSTABLE_DOCTEST
         >>> url_list = [
-        >>>     'https://lev.cs.rpi.edu/public/installers/ibeis-win32-setup-ymd_hm-2015-08-01_16-28.exe',   # NOQA
-        >>>     'https://lev.cs.rpi.edu/public/models/vgg.caffe.slice_0_30_None.pickle',
-        >>>     'https://lev.cs.rpi.edu/public/models/vgg.caffe.slice_0_30_None.pickle',
-        >>>     'https://lev.cs.rpi.edu/public/models/vgg.caffe.slice_0_30_None.pickle',
-        >>>     'https://lev.cs.rpi.edu/public/models/vgg.caffe.slice_0_30_None.pickle',
-        >>>     'https://lev.cs.rpi.edu/public/models/vgg.caffe.slice_0_30_None.pickle',
+        >>>     'https://cthulhu.dyn.wildme.io/public/installers/ibeis-win32-setup-ymd_hm-2015-08-01_16-28.exe',   # NOQA
+        >>>     'https://cthulhu.dyn.wildme.io/public/models/vgg.caffe.slice_0_30_None.pickle',
+        >>>     'https://cthulhu.dyn.wildme.io/public/models/vgg.caffe.slice_0_30_None.pickle',
+        >>>     'https://cthulhu.dyn.wildme.io/public/models/vgg.caffe.slice_0_30_None.pickle',
+        >>>     'https://cthulhu.dyn.wildme.io/public/models/vgg.caffe.slice_0_30_None.pickle',
+        >>>     'https://cthulhu.dyn.wildme.io/public/models/vgg.caffe.slice_0_30_None.pickle',
         >>>     ]
         >>>     'https://snapshotserengeti.s3.msi.umn.edu/S1/L10/L10_R1/S1_L10_R1_PICT0070.JPG'
         >>>     'https://snapshotserengeti.s3.msi.umn.edu/S1/B04/B04_R1/S1_B04_R1_PICT0001.JPG',
@@ -847,7 +847,7 @@ def grab_file_url(file_url, appname='utool', download_dir=None, delay=None,
         >>> from utool.util_grabdata import *  # NOQA
         >>> import utool as ut  # NOQA
         >>> ut.exec_funckw(ut.grab_file_url, locals())
-        >>> file_url = 'https://lev.cs.rpi.edu/public/models/detect.yolo.12.classes'
+        >>> file_url = 'https://cthulhu.dyn.wildme.io/public/models/detect.yolo.12.classes'
         >>> fname = 'detect.yolo.12.classes'
         >>> check_hash = True
         >>> fpath = ut.grab_file_url(file_url, fname=fname, check_hash=check_hash)
@@ -959,7 +959,7 @@ def grab_zipped_url(zipped_url, ensure=True, appname='utool',
     Examples:
         >>> # DISABLE_DOCTEST
         >>> from utool.util_grabdata import *  # NOQA
-        >>> zipped_url = 'https://lev.cs.rpi.edu/public/data/testdata.zip'
+        >>> zipped_url = 'https://cthulhu.dyn.wildme.io/public/data/testdata.zip'
         >>> zipped_url = 'http://www.spam.com/eggs/data.zip'
 
     """
