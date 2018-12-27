@@ -379,6 +379,7 @@ def start_logging(log_fpath=None, mode='a', appname='default', log_dir=None):
     CommandLine:
         python -m utool.util_logging --test-start_logging:0
         python -m utool.util_logging --test-start_logging:1
+        python -m utool.util_logging --test-start_logging:2
 
     Example0:
         >>> # DISABLE_DOCTEST
@@ -412,6 +413,16 @@ def start_logging(log_fpath=None, mode='a', appname='default', log_dir=None):
         >>> current_log_text = ut.read_from(current_log_fpath)
         >>> assert current_log_text.find('rate') > 0, 'progress was not logged'
         >>> print(current_log_text)
+
+    Example2:
+        >>> # DISABLE_DOCTEST
+        >>> import sys
+        >>> sys.argv.append('--verb-logging')
+        >>> import utool as ut
+        >>> ut.embed()
+        >>> ut.start_logging()
+        >>> ut.util_logging._utool_print()(u'\u0303')
+        >>> ut.util_logging._utool_flush()()
     """
     global __UTOOL_ROOT_LOGGER__
     global __UTOOL_PRINT__
@@ -483,13 +494,19 @@ def start_logging(log_fpath=None, mode='a', appname='default', log_dir=None):
                 """ standard utool print function """
                 #sys.stdout.write('PRINT\n')
                 endline = '\n'
-                try:
-                    msg = ', '.join(map(six.text_type, args))
-                    return  __UTOOL_ROOT_LOGGER__.info(msg + endline)
-                except UnicodeDecodeError:
-                    new_msg = ', '.join(map(meta_util_six.ensure_unicode, args))
-                    #print(new_msg)
-                    return  __UTOOL_ROOT_LOGGER__.info(new_msg + endline)
+                args_ = []
+                for arg in args:
+                    try:
+                        arg = six.text_type(arg)
+                    except UnicodeDecodeError:
+                        arg = meta_util_six.ensure_unicode(arg)
+                    except UnicodeEncodeError:
+                        arg = arg.encode('utf-8').strip()
+                    except:
+                        pass
+                    args_.append(arg)
+                msg = ', '.join(args_)
+                return  __UTOOL_ROOT_LOGGER__.info(msg + endline)
         else:
             def utool_print(*args):
                 """ debugging utool print function """
