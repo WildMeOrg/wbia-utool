@@ -97,12 +97,12 @@ def archive_files(archive_fpath, fpath_list, small=True, allowZip64=False,
             myzip.write(fpath, arcname)
 
 
-def unarchive_file(archive_fpath, force_commonprefix=True):
+def unarchive_file(archive_fpath, force_commonprefix=True, **kwargs):
     print('Unarchive: %r' % archive_fpath)
     if tarfile.is_tarfile(archive_fpath):
-        return untar_file(archive_fpath, force_commonprefix=force_commonprefix)
+        return untar_file(archive_fpath, force_commonprefix=force_commonprefix, **kwargs)
     elif zipfile.is_zipfile(archive_fpath):
-        return unzip_file(archive_fpath, force_commonprefix=force_commonprefix)
+        return unzip_file(archive_fpath, force_commonprefix=force_commonprefix, **kwargs)
     elif archive_fpath.endswith('.gz') and not archive_fpath.endswith('.tar.gz'):
         """
         from utool.util_grabdata import *
