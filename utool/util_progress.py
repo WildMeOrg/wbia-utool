@@ -518,7 +518,7 @@ class ProgressIter(object):
 
         msg_tail = [
             (
-                'rate={rate:4.2f} sec/iter, '
+                'rate={rate:4.2f} iter/sec, '
                 if invert_rate else
                 'rate={rate:4.2f} Hz,'
             ),
@@ -646,6 +646,8 @@ class ProgressIter(object):
             FREQ_EST = 1
 
         USE_RECORD = True
+        USE_RECORD_WINDOWED_AVG = True
+        USE_RECORD_WINDOWED_WEIGHT = 0.9
 
         # use last 64 times to compute a more stable average rate
         measure_between_time = collections.deque([], maxlen=self.est_window)
@@ -671,7 +673,15 @@ class ProgressIter(object):
                 if FREQ_EST == 0:
                     if USE_RECORD:
                         measure_between_time.append(between_count / (float(between_time) + 1E-9))
-                        iters_per_second = sum(measure_between_time) / len(measure_between_time)
+                        if USE_RECORD_WINDOWED_AVG:
+                            iters_per_second = None
+                            for measure_between in measure_between_time:
+                                if iters_per_second is None:
+                                    iters_per_second = measure_between
+                                else:
+                                    iters_per_second = (USE_RECORD_WINDOWED_WEIGHT) * iters_per_second + (1.0 - USE_RECORD_WINDOWED_WEIGHT) * measure_between
+                        else:
+                            iters_per_second = sum(measure_between_time) / len(measure_between_time)
                     else:
                         iters_per_second = between_count / (float(between_time) + 1E-9)
                 elif FREQ_EST == 1:
