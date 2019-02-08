@@ -520,7 +520,7 @@ class ProgressIter(object):
             (
                 'rate={rate:4.2f} iter/sec, '
                 if invert_rate else
-                'rate={rate:4.2f} Hz,'
+                'rate={rate:4.2f} sec/iter, '
             ),
             (
                 ''
@@ -693,7 +693,7 @@ class ProgressIter(object):
                     est_seconds_left = -1
                 else:
                     iters_left = length - self.count
-                    est_seconds_left = iters_left / (iters_per_second + 1E-9)
+                    est_seconds_left = iters_left / (1.0 / iters_per_second + 1E-9)
                 self.est_seconds_left = est_seconds_left
 
                 # /future
