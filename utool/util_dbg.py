@@ -499,7 +499,8 @@ def embed(parent_locals=None, parent_globals=None, exec_lines=None,
     #    config_dict['exec_lines'] = exec_lines
     #IPython.embed(**config_dict)
     print('[util]  Get stack location with: ')
-    print('[util] ut.get_parent_frame(N=8).f_code.co_name')
+    # print('[util] ut.get_parent_frame(N=8).f_code.co_name')
+    print('[util] ut.get_parent_frame(N=11).f_code.co_name')
     print('[util] set EXIT_NOW or qqq to True(ish) to hard exit on unembed')
     #print('set iup to True to draw plottool stuff')
     print('[util] call %pylab qt4 to get plottool stuff working')
