@@ -2883,6 +2883,9 @@ def color_text(text, color):
         highlight_text
         lexer_shortnames = sorted(ut.flatten(ut.take_column(pygments.lexers.LEXERS.values(), 2)))
     """
+    backup_color_mapping = {
+        'fuchsia': 'magenta',
+    }
     import utool as ut
     if color is None or not ENABLE_COLORS:
         return text
@@ -2897,6 +2900,10 @@ def color_text(text, color):
         #     import linguist  # NOQA
         #     pygments.lexers.guess_lexer(text)
         #     return highlight_text(text, color)
+        if color not in pygments.console.codes:
+            color_ = backup_color_mapping.get(color, None)
+            assert color_ is not None, 'Color %r could not be found in pygments' % (color, )
+            color = color_
         ansi_text = pygments.console.colorize(color, text)
         if ut.WIN32:
             import colorama
