@@ -2883,8 +2883,22 @@ def color_text(text, color):
         highlight_text
         lexer_shortnames = sorted(ut.flatten(ut.take_column(pygments.lexers.LEXERS.values(), 2)))
     """
+    # Depricated color codes for Pygments 2.2, changed in 2.4
     backup_color_mapping = {
-        'fuchsia': 'magenta',
+        'darkred'   : 'red',
+        'darkgreen' : 'green',
+        'brown'     : 'yellow',
+        'darkblue'  : 'blue',
+        'purple'    : 'magenta',
+        'teal'      : 'cyan',
+        'lightgray' : 'gray',
+        'darkgray'  : 'brightblack',
+        'red'       : 'brightred',
+        'green'     : 'brightgreen',
+        'yellow'    : 'brightyellow',
+        'blue'      : 'brightblue',
+        'fuchsia'   : 'brightmagenta',
+        'turquoise' : 'brightcyan',
     }
     import utool as ut
     if color is None or not ENABLE_COLORS:
