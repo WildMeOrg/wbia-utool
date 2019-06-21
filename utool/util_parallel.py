@@ -50,7 +50,7 @@ if util_cplat.WIN32:
 
 def generate2(func, args_gen, kw_gen=None, ntasks=None, ordered=True,
               force_serial=False, use_pool=False, chunksize=None, nprocs=None,
-              progkw={}, futures_threaded=False, timeout=60 * 60 * 24, nTasks=None, verbose=None):
+              progkw={}, futures_threaded=False, timeout=3600, nTasks=None, verbose=None):
     r"""
     Interfaces to either multiprocessing or futures.
     Esentially maps ``args_gen`` onto ``func`` using pool.imap.
