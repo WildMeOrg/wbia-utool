@@ -1057,7 +1057,7 @@ def isect(list1, list2):
         df = pd.DataFrame.from_dict(data)
         data_keys = list(grid.keys())
         other_keys = ut.setdiff(df.columns, data_keys)
-        df = df.reindex_axis(data_keys + other_keys, axis=1)
+        df = df.reindex(data_keys + other_keys, axis=1)
         df['abs_change'] = df['ut'] - df['py2']
         df['pct_change'] = df['abs_change'] / df['ut'] * 100
         #print(df.sort('abs_change', ascending=False))
