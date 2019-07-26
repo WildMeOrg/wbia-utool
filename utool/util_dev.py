@@ -3433,7 +3433,7 @@ class PriorityQueue(NiceRepr):
 def pandas_reorder(df, order):
     import utool as ut
     new_order = ut.partial_order(df.columns, order)
-    new_df = df.reindex_axis(new_order, axis=1)
+    new_df = df.reindex(new_order, axis=1)
     return new_df
 
 
