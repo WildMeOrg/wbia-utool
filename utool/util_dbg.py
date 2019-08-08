@@ -71,8 +71,9 @@ def ipython_execstr():
     if '--cmd' in sys.argv or locals().get('in_', '') == 'cmd':
         print('[utool.dbg] Requested IPython shell with --cmd argument.')
         try:
-            __IPYTHON__
-            print('[ipython_execstr] Already in IPython!')
+            shell = get_ipython().__class__.__name__
+            if shell == 'ZMQInteractiveShell':
+                print('[ipython_execstr] Already in IPython!')
         except NameError:
             try:
                 import IPython
@@ -648,13 +649,20 @@ def in_jupyter_notebook():
 
 def inIPython():
     """
-    Tests if running in IPython
+    Tests if running in IPython.
+
+    Reference: https://stackoverflow.com/a/39662359
     """
     try:
-        __IPYTHON__
-        return True
+        shell = get_ipython().__class__.__name__
+        if shell == 'ZMQInteractiveShell':
+            return True   # Jupyter notebook or qtconsole
+        elif shell == 'TerminalInteractiveShell':
+            return False  # Terminal running IPython
+        else:
+            return False  # Other type (?)
     except NameError:
-        return False
+        return False      # Probably standard Python interpreter
 
 
 def haveIPython():

@@ -2,11 +2,14 @@ def ipython_execstr2():
     return textwrap.dedent(r'''
     import sys
     embedded = False
+
+    in_ipython = False
     try:
-        __IPYTHON__
-        in_ipython = True
+        shell = get_ipython().__class__.__name__
+        if shell == 'ZMQInteractiveShell':
+            in_ipython = True
     except NameError:
-        in_ipython = False
+        pass
     try:
         import IPython
         have_ipython = True
