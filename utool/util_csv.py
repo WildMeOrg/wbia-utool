@@ -35,8 +35,8 @@ class CSV(util_dev.NiceRepr):
         return '(shape=%s: cols=%s)' % (self.shape, header_str,)
 
     @classmethod
-    def from_fpath(cls, fpath):
-        self = cls(read_csv(fpath))
+    def from_fpath(cls, fpath, **kwargs):
+        self = cls(read_csv(fpath, **kwargs))
         return self
 
     @property
@@ -148,12 +148,13 @@ def numpy_to_csv(arr, col_lbls=None, header='', col_type=None):
     return make_csv_table(col_list, col_lbls, header, col_type)
 
 
-def read_csv(fpath):
+def read_csv(fpath, binary=True):
     """ reads csv in unicode """
     import csv
     import utool as ut
     #csvfile = open(fpath, 'rb')
-    with open(fpath, 'rb') as csvfile:
+    flags = 'rb' if binary else 'r'
+    with open(fpath, flags) as csvfile:
         row_iter = csv.reader(csvfile, delimiter=str(','), quotechar=str('|'))
         row_list = [ut.lmap(ut.ensure_unicode, row) for row in row_iter]
     return row_list
