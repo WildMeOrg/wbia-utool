@@ -775,7 +775,10 @@ def grab_file_remote_hash(file_url, hash_list, verbose=False):
         try:
             with ut.Timer('checking remote hash', verbose=verbose):
                 resp = requests.get(hash_url, timeout=TIMEOUT)
-                hash_remote = six.text_type(resp.content.strip())
+                if six.PY2:
+                    hash_remote = six.text_type(resp.content.strip())
+                else:
+                    hash_remote = resp.content.strip().decode('ascii')
         except requests.exceptions.ConnectionError:
             hash_remote = ''
 
