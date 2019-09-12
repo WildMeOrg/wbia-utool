@@ -35,6 +35,7 @@ __IN_MAIN_PROCESS__ = multiprocessing.current_process().name == 'MainProcess'
 
 __UTOOL_ROOT_LOGGER__ = None
 __CURRENT_LOG_FPATH__ = None
+__CURRENT_LOGFILE_HANDLER__ = None
 
 # Remeber original python values
 # __PYTHON_STDOUT__ = sys.stdout
@@ -288,9 +289,10 @@ def add_logging_handler(handler, format_='file'):
     # create formatter and add it to the handlers
     #logformat = '%Y-%m-%d %H:%M:%S'
     #logformat = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    timeformat = '%H:%M:%S'
+    # timeformat = '%H:%M:%S'
+    timeformat = '%Y-%m-%d %H:%M:%S'
     if format_ == 'file':
-        logformat = '[%(asctime)s]%(message)s'
+        logformat = '[%(asctime)s] %(message)s'
     elif format_ == 'stdout':
         logformat = '%(message)s'
     else:
@@ -429,6 +431,7 @@ def start_logging(log_fpath=None, mode='a', appname='default', log_dir=None):
     global __UTOOL_WRITE__
     global __UTOOL_FLUSH__
     global __CURRENT_LOG_FPATH__
+    global __CURRENT_LOGFILE_HANDLER__
     if LOGGING_VERBOSE:
         print('[utool] start_logging()')
     # FIXME: The test for doctest may not work
@@ -441,18 +444,19 @@ def start_logging(log_fpath=None, mode='a', appname='default', log_dir=None):
             log_fpath = get_log_fpath(num='next', appname=appname, log_dir=log_dir)
         __CURRENT_LOG_FPATH__ = log_fpath
         # Print what is about to happen
-        if VERBOSE or LOGGING_VERBOSE:
-            startmsg = ('logging to log_fpath=%r' % log_fpath)
-            _utool_print()(startmsg)
+        # if VERBOSE or LOGGING_VERBOSE:
+        startmsg = ('logging to log_fpath=%r' % log_fpath)
+        _utool_print()(startmsg)
         # Create root logger
         __UTOOL_ROOT_LOGGER__ = logging.getLogger('root')
         __UTOOL_ROOT_LOGGER__.setLevel('DEBUG')
         # create file handler which logs even debug messages
         #fh = logging.handlers.WatchedFileHandler(log_fpath)
         logfile_handler = logging.FileHandler(log_fpath, mode=mode)
+        __CURRENT_LOGFILE_HANDLER__ = logfile_handler
         #stdout_handler = logging.StreamHandler(__UTOOL_STDOUT__)
         stdout_handler = CustomStreamHandler(__UTOOL_STDOUT__)
-        stdout_handler.terminator = ''
+        stdout_handler.terminator = '\n'
         # http://stackoverflow.com/questions/7168790/suppress-newline-in-python-logging-module
         #stdout_handler.terminator = ''
         add_logging_handler(logfile_handler, format_='file')
@@ -493,7 +497,8 @@ def start_logging(log_fpath=None, mode='a', appname='default', log_dir=None):
             def utool_print(*args):
                 """ standard utool print function """
                 #sys.stdout.write('PRINT\n')
-                endline = '\n'
+                # endline = '\n'
+                endline = ''
                 args_ = []
                 for arg in args:
                     try:
@@ -512,7 +517,8 @@ def start_logging(log_fpath=None, mode='a', appname='default', log_dir=None):
                 """ debugging utool print function """
                 import utool as ut
                 utool_flush()
-                endline = '\n'
+                # endline = '\n'
+                endline = ''
                 __UTOOL_ROOT_LOGGER__.info('\n\n----------')
                 __UTOOL_ROOT_LOGGER__.info(ut.get_caller_name(range(0, 20)))
                 return  __UTOOL_ROOT_LOGGER__.info(', '.join(map(six.text_type, args)) + endline)
