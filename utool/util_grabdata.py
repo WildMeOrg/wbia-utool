@@ -22,7 +22,7 @@ print, rrr, profile = util_inject.inject2(__name__)
 QUIET = util_arg.QUIET
 BadZipfile = zipfile.BadZipfile
 
-TIMEOUT = 5.0
+TIMEOUT = 10.0
 
 
 def archive_files(archive_fpath, fpath_list, small=True, allowZip64=False,
