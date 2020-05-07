@@ -370,7 +370,7 @@ class CustomStreamHandler(logging.Handler):
             #self.flush()
         except (KeyboardInterrupt, SystemExit):
             raise
-        except:
+        except Exception:
             self.handleError(record)
 
 
@@ -507,7 +507,7 @@ def start_logging(log_fpath=None, mode='a', appname='default', log_dir=None):
                         arg = meta_util_six.ensure_unicode(arg)
                     except UnicodeEncodeError:
                         arg = arg.encode('utf-8').strip()
-                    except:
+                    except Exception:
                         pass
                     args_.append(arg)
                 msg = ', '.join(args_)
