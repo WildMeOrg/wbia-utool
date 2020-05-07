@@ -324,7 +324,7 @@ def dynamic_import(modname, import_tuples, developing=True, ignore_froms=[],
     # Get the module that will be imported into
     try:
         module = sys.modules[modname]
-    except:
+    except Exception:
         module = __import__(modname)
     # List of modules to be imported
     imports = [tup[0] for tup in import_tuples]

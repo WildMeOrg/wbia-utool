@@ -1062,7 +1062,7 @@ def is_defined_by_module(item, module, parent=None):
                 import utool as ut
                 name = ut.get_modname_from_modpath(module.__file__)
                 flag = name in str(item)
-            except:
+            except Exception:
                 flag = False
         else:
             item_modpath = os.path.realpath(dirname(item.__file__))
