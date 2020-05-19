@@ -104,9 +104,10 @@ class BaronWraper(object):
 
     def internal_call_graph(self, with_doctests=False):
         """
-        >>> import plottool as pt
-        >>> pt.qt4ensure()
-        >>> pt.show_nx(G)
+        Ignore:
+            >>> import plottool as pt
+            >>> pt.qt4ensure()
+            >>> pt.show_nx(G)
         """
         import utool as ut
         import networkx as nx
@@ -719,7 +720,7 @@ def get_dev_hints():
         ('invVR_mats2x2', ('ndarray[float32_t, ndim=3]', 'keypoint shape and rotations')),
         ('invV_mats', ('ndarray[float32_t, ndim=3]',  'keypoint shapes (possibly translation)')),
         ('invVR_mats', ('ndarray[float32_t, ndim=3]', 'keypoint shape and rotations (possibly translation)')),
-        ('img\d*', ('ndarray[uint8_t, ndim=2]', 'image data')),
+        # ('img\d*', ('ndarray[uint8_t, ndim=2]', 'image data')),
         ('img_in', ('ndarray[uint8_t, ndim=2]', 'image data')),
         ('arr', ('ndarray', '')),
         ('arr_', ('ndarray', '')),
@@ -760,7 +761,7 @@ def get_dev_hints():
         ('.*_str' , ('str', None)),
         ('.*_?list_?' , ('list', None)),
         ('.*_?dict_?' , ('dict', None)),
-        ('dict_?\d?' , ('dict', None)),
+        # ('dict_?\d?' , ('dict', None)),
         ('.*_tup' , ('tuple', None)),
         ('.*_sublist' , ('list', None)),
         ('fpath[0-9]?' , ('str', 'file path string')),
@@ -2451,7 +2452,10 @@ def get_func_argspec(func):
         return argspec
     if isinstance(func, property):
         func = func.fget
-    argspec = inspect.getargspec(func)
+    try:
+        argspec = inspect.getargspec(func)
+    except Exception:
+        argspec = inspect.getfullargspec(func)
     return argspec
 
 
@@ -2515,6 +2519,8 @@ def get_kwargs(func):
 
 def lookup_attribute_chain(attrname, namespace):
     """
+
+    Ignore:
         >>> attrname = funcname
         >>> namespace = mod.__dict__
 
@@ -3078,7 +3084,7 @@ def infer_function_info(func):
         python -m utool --tf infer_function_info:0
         python -m utool --tf infer_function_info:1 --funcname=ibeis_cnn.models.siam.ignore_hardest_cases
 
-    Example0:
+    Ignore:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_inspect import *  # NOQA
         >>> import utool as ut
@@ -3089,7 +3095,7 @@ def infer_function_info(func):
         >>> result = ut.repr4(funcinfo.__dict__)
         >>> print(result)
 
-    Example1:
+    Ignore:
         >>> # DISABLE_DOCTEST
         >>> # SCRIPT
         >>> from utool.util_inspect import *  # NOQA
