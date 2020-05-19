@@ -413,8 +413,11 @@ def _wip_embed(parent_locals=None, parent_globals=None, exec_lines=None,
     try:
         if remove_pyqt_hook:
             try:
-                import guitool
-                guitool.remove_pyqt_input_hook()
+                try:
+                    import guitool_ibeis as gt
+                except ImportError:
+                    import guitool as gt
+                gt.remove_pyqt_input_hook()
             except (ImportError, ValueError, AttributeError) as ex:
                 #print(ex)
                 printex(ex, iswarning=True)
@@ -483,8 +486,11 @@ def embed(parent_locals=None, parent_globals=None, exec_lines=None,
     try:
         if remove_pyqt_hook:
             try:
-                import guitool
-                guitool.remove_pyqt_input_hook()
+                try:
+                    import guitool_ibeis as gt
+                except ImportError:
+                    import guitool as gt
+                gt.remove_pyqt_input_hook()
             except (ImportError, ValueError, AttributeError) as ex:
                 #print(ex)
                 printex(ex, iswarning=True)
@@ -513,9 +519,6 @@ def embed(parent_locals=None, parent_globals=None, exec_lines=None,
             #vars()['iup'] = False
             # ALL YOU NEED TO DO IS %pylab qt4
             print('re-emebeding')
-            #import plottool as pt
-            #pt.update()
-            #(pt.present())
             for _ in range(100):
                 time.sleep(.01)
 

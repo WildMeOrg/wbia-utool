@@ -46,7 +46,7 @@ def archive_files(archive_fpath, fpath_list, small=True, allowZip64=False,
     CommandLine:
         python -m utool.util_grabdata --test-archive_files
 
-    Example:
+    Ignore:
         >>> # DISABLE_DOCTEST
         >>> # SLOW_DOCTEST
         >>> from utool.util_grabdata import *  # NOQA
@@ -207,7 +207,7 @@ def open_url_in_browser(url, browsername=None, fallback=False):
     CommandLine:
         python -m utool.util_grabdata --test-open_url_in_browser
 
-    Example:
+    Ignore:
         >>> # DISABLE_DOCTEST
         >>> # SCRIPT
         >>> from utool.util_grabdata import *  # NOQA
@@ -301,7 +301,7 @@ def download_url(url, filename=None, spoof=False, iri_fallback=True,
     TODO:
         Delete any partially downloaded files
 
-    Example:
+    Ignore:
         >>> # DISABLE_DOCTEST
         >>> from utool.util_grabdata import *  # NOQA
         >>> url = 'http://www.jrsoftware.org/download.php/ispack.exe'
@@ -468,7 +468,6 @@ def experiment_download_multiple_urls(url_list):
         >>>     'https://wildbookiarepository.azureedge.net/models/vgg.caffe.slice_0_30_None.pickle',
         >>>     'https://wildbookiarepository.azureedge.net/models/vgg.caffe.slice_0_30_None.pickle',
         >>>     'https://wildbookiarepository.azureedge.net/models/vgg.caffe.slice_0_30_None.pickle',
-        >>>     ]
         >>>     'https://snapshotserengeti.s3.msi.umn.edu/S1/L10/L10_R1/S1_L10_R1_PICT0070.JPG'
         >>>     'https://snapshotserengeti.s3.msi.umn.edu/S1/B04/B04_R1/S1_B04_R1_PICT0001.JPG',
         >>>     'https://snapshotserengeti.s3.msi.umn.edu/S1/B04/B04_R1/S1_B04_R1_PICT0002.JPG',
@@ -830,7 +829,7 @@ def grab_file_url(file_url, appname='utool', download_dir=None, delay=None,
         python -m utool.util_grabdata --test-grab_file_url:0
         python -m utool.util_grabdata --test-grab_file_url:1
 
-    Example0:
+    Ignore:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_grabdata import *  # NOQA
         >>> import utool as ut  # NOQA
@@ -845,7 +844,7 @@ def grab_file_url(file_url, appname='utool', download_dir=None, delay=None,
         >>> print(result)
         lena.png
 
-    Example1:
+    Ignore:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_grabdata import *  # NOQA
         >>> import utool as ut  # NOQA

@@ -96,7 +96,7 @@ def write_to(fpath, to_write, aslines=False, verbose=None,
     CommandLine:
         python -m utool.util_io --exec-write_to --show
 
-    Example:
+    Ignore:
         >>> # DISABLE_DOCTEST
         >>> from utool.util_io import *  # NOQA
         >>> import utool as ut
@@ -263,6 +263,7 @@ def load_cPkl(fpath, verbose=None, n=None):
 
 
     Ignore:
+        >>> import utool as ut
         >>> def makedata_simple():
         >>>     data = np.empty((500, 2 ** 20), dtype=np.uint8) + 1
         >>>     return data
@@ -308,14 +309,14 @@ def load_cPkl(fpath, verbose=None, n=None):
         >>> memtrack.report()
 
     Ignore:
+        >>> import utool as ut
         >>> memtrack = ut.MemoryTracker()
         >>> cacher = ut.Cacher('tmp', cache_dir='.', cfgstr='foo')
         >>> data3 = cacher.ensure(makedata_complex)
         >>> memtrack.report()
         >>> data4 = cacher.ensure(makedata_complex)
         >>> memtrack.report()
-
-
+        >>> import utool as ut
         >>> memtrack = ut.MemoryTracker()
         >>> fpath = '/home/joncrall/Desktop/smkcache/inva_PZ_Master1VUUIDS((5616)vxihbjwtggyovrto)_vpgwpcafbjkkpjdf.cPkl'
         >>> print(ut.get_file_nBytes_str(fpath))

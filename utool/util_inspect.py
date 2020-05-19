@@ -104,10 +104,6 @@ class BaronWraper(object):
 
     def internal_call_graph(self, with_doctests=False):
         """
-        Ignore:
-            >>> import plottool as pt
-            >>> pt.qt4ensure()
-            >>> pt.show_nx(G)
         """
         import utool as ut
         import networkx as nx
@@ -173,7 +169,7 @@ def get_internal_call_graph(fpath, with_doctests=False):
         >>> with_doctests = ut.get_argflag('--with_doctests')
         >>> G = get_internal_call_graph(fpath, with_doctests)
         >>> ut.quit_if_noshow()
-        >>> import plottool as pt
+        >>> import plottool_ibeis as pt
         >>> pt.qt4ensure()
         >>> pt.show_nx(G, fontsize=8, as_directed=False)
         >>> z = pt.zoom_factory()
@@ -577,7 +573,7 @@ def help_members(obj, use_other=False):
     CommandLine:
         python -m utool.util_inspect help_members
 
-    Example:
+    Ignore:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_inspect import *  # NOQA
         >>> import utool as ut
@@ -2227,7 +2223,7 @@ def execstr_func_doctest(func, num=0, start_sentinal=None, end_sentinal=None):
 
     func = encoder.learn_threshold2
     num = 0
-    start_sentinal = 'import plottool as pt'
+    start_sentinal = 'import plottool_ibeis as pt'
     end_sentinal = 'pnum_ = pt.make_pnum_nextgen'
     """
     import utool as ut
@@ -2251,7 +2247,7 @@ def exec_func_doctest(func, start_sentinal=None, end_sentinal=None, num=0, globa
 
     func = encoder.learn_threshold2
     num = 0
-    start_sentinal = 'import plottool as pt'
+    start_sentinal = 'import plottool_ibeis as pt'
     end_sentinal = 'pnum_ = pt.make_pnum_nextgen'
     """
     import utool as ut
@@ -2563,7 +2559,6 @@ def recursive_parse_kwargs(root_func, path_=None, verbose=None):
         python -m utool.util_inspect recursive_parse_kwargs:0
         python -m utool.util_inspect recursive_parse_kwargs:0 --verbinspect
         python -m utool.util_inspect recursive_parse_kwargs:1
-        python -m utool.util_inspect recursive_parse_kwargs:2 --mod plottool --func draw_histogram
 
         python -m utool.util_inspect recursive_parse_kwargs:2 --mod vtool --func ScoreNormalizer.visualize
 
@@ -2588,20 +2583,25 @@ def recursive_parse_kwargs(root_func, path_=None, verbose=None):
         ]
 
     Example:
-        >>> # DISABLE_DOCTEST
+        >>> # xdoctest: +REQUIRES(module:ibeis)
         >>> from utool.util_inspect import *  # NOQA
         >>> from ibeis.algo.hots import chip_match
         >>> import utool as ut
-        >>> root_func = chip_match.ChipMatch.show_ranked_matches
-        >>> path_ = None
-        >>> result = ut.repr2(recursive_parse_kwargs(root_func))
-        >>> print(result)
+        >>> recursive_parse_kwargs(chip_match.ChipMatch.show_ranked_matches)
+        >>> recursive_parse_kwargs(chip_match.ChipMatch)
+
+        import ibeis
+        import utool as ut
+        ibs = ibeis.opendb(defaultdb='testdb1')
+        kwkeys1 = ibs.parse_annot_stats_filter_kws()
+        ut.recursive_parse_kwargs(ibs.get_annotconfig_stats, verbose=1)
+        kwkeys2 = list(ut.recursive_parse_kwargs(ibs.get_annotconfig_stats).keys())
 
     Example:
         >>> # DISABLE_DOCTEST
         >>> from utool.util_inspect import *  # NOQA
         >>> import utool as ut
-        >>> modname = ut.get_argval('--mod', type_=str, default='plottool')
+        >>> modname = ut.get_argval('--mod', type_=str, default='plottool_ibeis')
         >>> funcname = ut.get_argval('--func', type_=str, default='draw_histogram')
         >>> mod = ut.import_modname(modname)
         >>> root_func = lookup_attribute_chain(funcname, mod.__dict__)
@@ -2652,7 +2652,7 @@ def recursive_parse_kwargs(root_func, path_=None, verbose=None):
         if attr == 'ut':
             subdict = ut.__dict__
         elif attr == 'pt':
-            import plottool as pt
+            import plottool_ibeis as pt
             subdict = pt.__dict__
         else:
             subdict = None
@@ -2676,7 +2676,10 @@ def recursive_parse_kwargs(root_func, path_=None, verbose=None):
                 except (KeyError, TypeError):
                     # limited support for class lookup
                     if ut.is_method(root_func) and spec.args[0] == attr:
-                        subdict = root_func.im_class.__dict__
+                        if six.PY2:
+                            subdict = root_func.im_class.__dict__
+                        else:
+                            subdict = root_func.__class__.__dict__
                     else:
                         # FIXME TODO lookup_attribute_chain
                         subdict = hack_lookup_mod_attrs(attr)
@@ -2720,14 +2723,14 @@ def recursive_parse_kwargs(root_func, path_=None, verbose=None):
             print('[inspect] Checking spec.keywords=%r' % (spec.keywords,))
         subfunc_name_list = ut.find_funcs_called_with_kwargs(sourcecode, spec.keywords)
         if verbose:
-            print('[inspect] Checking subfunc_name_list=%r' % (subfunc_name_list,))
+            print('[inspect] Checking subfunc_name_list with len {}'.format(len(subfunc_name_list)))
         for subfunc_name in subfunc_name_list:
             try:
                 new_subkw = check_subfunc_name(subfunc_name)
                 if verbose:
                     print('[inspect] * Found %r' % (new_subkw,))
                 kwargs_list.extend(new_subkw)
-            except TypeError:
+            except (TypeError, Exception):
                 print('warning: unable to recursivley parse type of : %r' % (subfunc_name,))
     return kwargs_list
 

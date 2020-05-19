@@ -23,9 +23,8 @@ from utool import util_decor
 try:
     import numpy as np
     HAVE_NUMPY = True
-except ImportError as ex:
+except ImportError:
     HAVE_NUMPY = False
-    pass
 # TODO: remove print_, or grab it dynamically from util_logger
 print, rrr, profile = util_inject.inject2(__name__)
 print_ = util_inject.make_module_write_func(__name__)
@@ -325,7 +324,10 @@ def timeit_grid(stmt_list, setup='', iterations=10000, input_sizes=None,
 
     if show:
         time_grid = np.array(time_grid)
-        import plottool as pt
+        try:
+            import plottool_ibeis as pt
+        except ImportError:
+            import plottool as pt
         color_list = pt.distinct_colors(len(stmt_list))
         for count, (stmt, color) in enumerate(zip(stmt_list, color_list)):
             pt.plot(input_sizes, time_grid.T[count], 'x-', color=color, label=stmt)
@@ -1114,27 +1116,8 @@ class InteractiveIter(object):
         return ans
 
     def wait_for_input(iiter):
-        #try:
-        #    import time
-        #    import guitool
-        #    #from guitool.__PYQT__ import QtGui
-        #except Exception:
         ans = input().strip()
         return ans
-        #else:
-        #    iiter._is_waiting = True
-        #    qapp = guitool.ensure_qtapp()[0]
-        #    qapp.start_keylog()
-        #    guitool.qtapp_loop()
-        #    print('wait for input')
-        #    import utool
-        #    utool.embed()
-        #    while iiter._is_waiting:
-        #        print('waiting')
-        #        #QtWidgets.qApp.processEvents()
-        #        qapp.processEvents()
-        #        time.sleep(.05)
-        #    return ans
 
     def __call__(iiter, iterable=None):
         iiter.iterable = iterable
@@ -2104,7 +2087,10 @@ def is_developer(mycomputers=None):
 
 def iup():
     """ shortcut when pt is not imported """
-    import plottool as pt
+    try:
+        import plottool_ibeis as pt
+    except ImportError:
+        import plottool as pt
     pt.iup()
 
 
@@ -2183,7 +2169,10 @@ def inverable_group_multi_list(item_lists):
     item_lists = (np.array(aid1_list), np.array(aid2_list))
     """
     #unique_list1, inverse1 = np.unique(item1_list, return_index=True, return_inverse=True)
-    import vtool as vt
+    try:
+        import vtool_ibeis as vt
+    except ImportError:
+        import vtool as vt
     import utool as ut
     # Find uniques and groups in each individual list
     unique_lists = []
@@ -2281,7 +2270,6 @@ def search_module(mod, pat, ignore_case=True, recursive=False, _seen=None):
         python -m utool.util_dev --exec-search_module --mod=utool --pat=module
         python -m utool.util_dev --exec-search_module --mod=opengm --pat=cut
         python -m utool.util_dev --exec-search_module --mod=opengm --pat=multi
-        python -m utool.util_dev --exec-search_module --mod=plottool --pat=networkx
         python -m utool.util_dev --exec-search_module --mod=utool --pat=Levenshtein
 
     Example:
@@ -2365,12 +2353,18 @@ def get_submodules_from_dpath(dpath, only_packages=False, recursive=True):
 
 
 def pylab_qt4():
-    import plottool as pt
+    try:
+        import plottool_ibeis as pt
+    except ImportError:
+        import plottool as pt
     pt.ensureqt()
 
 
 def ensureqt():
-    import plottool as pt
+    try:
+        import plottool_ibeis as pt
+    except ImportError:
+        import plottool as pt
     pt.ensureqt()
 
 
@@ -3066,7 +3060,7 @@ def super2(this_class, self):
         this_class (class): class passed into super
         self (instance): instance passed into super
 
-    Example:
+    Ignore:
         >>> # ENABLE_DOCTEST
         >>> # If the parent module is reloaded, the super call may fail
         >>> # super(Foo, self).__init__()

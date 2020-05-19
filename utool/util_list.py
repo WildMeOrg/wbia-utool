@@ -679,7 +679,7 @@ def invertible_flatten2_numpy(unflat_arrs, axis=0):
     CommandLine:
         python -m utool.util_list --test-invertible_flatten2_numpy
 
-    Example:
+    Ignore:
         >>> # ENABLE_DOCTET
         >>> from utool.util_list import *  # NOQA
         >>> unflat_arrs = [np.array([1, 2, 1]), np.array([5, 9]), np.array([4])]
@@ -1293,7 +1293,6 @@ def flag_unique_items(list_):
         import ubelt as ub
         ub.Timerit.DEFAULT_VERBOSE = False
 
-        import plottool as pt
         ut.qtensure()
         exps = [0, .25, .5, .75, 1, 2]
         pnum_ = pt.make_pnum_nextgen(nSubplots=len(exps))
