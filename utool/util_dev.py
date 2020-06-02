@@ -325,7 +325,7 @@ def timeit_grid(stmt_list, setup='', iterations=10000, input_sizes=None,
     if show:
         time_grid = np.array(time_grid)
         try:
-            import plottool_ibeis as pt
+            import ibeis.plottool as pt
         except ImportError:
             import plottool as pt
         color_list = pt.distinct_colors(len(stmt_list))
@@ -2088,7 +2088,7 @@ def is_developer(mycomputers=None):
 def iup():
     """ shortcut when pt is not imported """
     try:
-        import plottool_ibeis as pt
+        import ibeis.plottool as pt
     except ImportError:
         import plottool as pt
     pt.iup()
@@ -2354,7 +2354,7 @@ def get_submodules_from_dpath(dpath, only_packages=False, recursive=True):
 
 def pylab_qt4():
     try:
-        import plottool_ibeis as pt
+        import ibeis.plottool as pt
     except ImportError:
         import plottool as pt
     pt.ensureqt()
@@ -2362,7 +2362,7 @@ def pylab_qt4():
 
 def ensureqt():
     try:
-        import plottool_ibeis as pt
+        import ibeis.plottool as pt
     except ImportError:
         import plottool as pt
     pt.ensureqt()

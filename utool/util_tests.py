@@ -1782,7 +1782,7 @@ def show_was_requested():
     IPython (and presumably want some sort of interaction
     """
     try:
-        import plottool_ibeis as pt
+        import ibeis.plottool as pt
     except ImportError:
         import plottool as pt
     return pt.show_was_requested()
@@ -1803,7 +1803,7 @@ except ImportError:
 
 def qt4ensure():
     try:
-        import plottool_ibeis as pt
+        import ibeis.plottool as pt
     except ImportError:
         import plottool as pt
     pt.qtensure()
@@ -1811,7 +1811,7 @@ def qt4ensure():
 
 def qtensure():
     try:
-        import plottool_ibeis as pt
+        import ibeis.plottool as pt
     except ImportError:
         import plottool as pt
     pt.qtensure()
@@ -1826,7 +1826,7 @@ def quit_if_noshow():
 
 def show_if_requested():
     try:
-        import plottool_ibeis as pt
+        import ibeis.plottool as pt
     except ImportError:
         import plottool as pt
     pt.show_if_requested(N=2)
