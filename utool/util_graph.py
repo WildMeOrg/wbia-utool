@@ -94,7 +94,7 @@ def nx_transitive_reduction(G, mode=1):
         >>> G_tr2 = nx_transitive_reduction(G, mode=1)
         >>> ut.quit_if_noshow()
         >>> try:
-        >>>     import plottool_ibeis as pt
+        >>>     import ibeis.plottool as pt
         >>> except ImportError:
         >>>     import plottool as pt
         >>> G_ = nx.dag.transitive_closure(G)
@@ -1078,8 +1078,8 @@ def nx_from_matrix(weight_matrix, nodes=None, remove_self=True):
 def nx_ensure_agraph_color(graph):
     """ changes colors to hex strings on graph attrs """
     try:
-        from plottool_ibeis import color_funcs
-        import plottool_ibeis as pt
+        from ibeis.plottool import color_funcs
+        import ibeis.plottool as pt
     except ImportError:
         from plottool import color_funcs
         import plottool as pt
@@ -1836,7 +1836,7 @@ def color_nodes(graph, labelattr='label', brightness=.878,
                 outof=None, sat_adjust=None):
     """ Colors edges and nodes by nid """
     try:
-        import plottool_ibeis as pt
+        import ibeis.plottool as pt
     except ImportError:
         import plottool as pt
     import utool as ut

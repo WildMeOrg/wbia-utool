@@ -169,7 +169,7 @@ def get_internal_call_graph(fpath, with_doctests=False):
         >>> with_doctests = ut.get_argflag('--with_doctests')
         >>> G = get_internal_call_graph(fpath, with_doctests)
         >>> ut.quit_if_noshow()
-        >>> import plottool_ibeis as pt
+        >>> import ibeis.plottool as pt
         >>> pt.qt4ensure()
         >>> pt.show_nx(G, fontsize=8, as_directed=False)
         >>> z = pt.zoom_factory()
@@ -2223,7 +2223,7 @@ def execstr_func_doctest(func, num=0, start_sentinal=None, end_sentinal=None):
 
     func = encoder.learn_threshold2
     num = 0
-    start_sentinal = 'import plottool_ibeis as pt'
+    start_sentinal = 'import ibeis.plottool as pt'
     end_sentinal = 'pnum_ = pt.make_pnum_nextgen'
     """
     import utool as ut
@@ -2247,7 +2247,7 @@ def exec_func_doctest(func, start_sentinal=None, end_sentinal=None, num=0, globa
 
     func = encoder.learn_threshold2
     num = 0
-    start_sentinal = 'import plottool_ibeis as pt'
+    start_sentinal = 'import ibeis.plottool as pt'
     end_sentinal = 'pnum_ = pt.make_pnum_nextgen'
     """
     import utool as ut
@@ -2601,7 +2601,7 @@ def recursive_parse_kwargs(root_func, path_=None, verbose=None):
         >>> # DISABLE_DOCTEST
         >>> from utool.util_inspect import *  # NOQA
         >>> import utool as ut
-        >>> modname = ut.get_argval('--mod', type_=str, default='plottool_ibeis')
+        >>> modname = ut.get_argval('--mod', type_=str, default='plottool')
         >>> funcname = ut.get_argval('--func', type_=str, default='draw_histogram')
         >>> mod = ut.import_modname(modname)
         >>> root_func = lookup_attribute_chain(funcname, mod.__dict__)
@@ -2652,7 +2652,7 @@ def recursive_parse_kwargs(root_func, path_=None, verbose=None):
         if attr == 'ut':
             subdict = ut.__dict__
         elif attr == 'pt':
-            import plottool_ibeis as pt
+            import ibeis.plottool as pt
             subdict = pt.__dict__
         else:
             subdict = None
