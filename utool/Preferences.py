@@ -458,7 +458,7 @@ class Pref(PrefNode):
         try:
             #from utool._internal.PreferenceWidget import EditPrefWidget
             try:
-                from guitool_ibeis.PreferenceWidget import EditPrefWidget
+                from wbia.guitool.PreferenceWidget import EditPrefWidget
             except ImportError:
                 from guitool.PreferenceWidget import EditPrefWidget
             editpref_widget = EditPrefWidget(self)
@@ -602,13 +602,13 @@ def test_Preferences():
         >>> # FIXME depends on guitool_ibei
         >>> from utool.Preferences import *  # NOQA
         >>> import utool as ut
-        >>> import guitool_ibeis
-        >>> guitool_ibeis.ensure_qtapp()
+        >>> import wbia.guitool
+        >>> wbia.guitool.ensure_qtapp()
         >>> root = test_Preferences()
         >>> ut.quit_if_noshow()
         >>> widget = root.createQWidget()
         >>> #widget.show()
-        >>> guitool_ibeis.qtapp_loop(widget)
+        >>> wbia.guitool.qtapp_loop(widget)
     """
     root = Pref()
     root.a = Pref()

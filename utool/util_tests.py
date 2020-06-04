@@ -303,7 +303,7 @@ def doctest_funcs(testable_list=None, check_flags=True, module=None,
         tuple: (nPass, nTotal, failed_cmd_list)
 
     CommandLine:
-        python -m ibeis.algo.preproc.preproc_chip --all-examples
+        python -m wbia.algo.preproc.preproc_chip --all-examples
 
     References:
         http://legacy.python.org/dev/peps/pep-0338/
@@ -1168,8 +1168,8 @@ def get_doctest_examples(func_or_class, modpath=None):
     Example2:
         >>> # DISABLE_DOCTEST
         >>> from utool.util_tests import *  # NOQA
-        >>> import ibeis
-        >>> func_or_class = ibeis.control.manual_annot_funcs.add_annots
+        >>> import wbia
+        >>> func_or_class = wbia.control.manual_annot_funcs.add_annots
         >>> tup = get_doctest_examples(func_or_class)
         >>> testsrc_list, testwant_list, testlinenum_list, func_lineno, docstr = tup
         >>> result = str(len(testsrc_list) + len(testwant_list))
@@ -1782,7 +1782,7 @@ def show_was_requested():
     IPython (and presumably want some sort of interaction
     """
     try:
-        import ibeis.plottool as pt
+        import wbia.plottool as pt
     except ImportError:
         import plottool as pt
     return pt.show_was_requested()
@@ -1803,7 +1803,7 @@ except ImportError:
 
 def qt4ensure():
     try:
-        import ibeis.plottool as pt
+        import wbia.plottool as pt
     except ImportError:
         import plottool as pt
     pt.qtensure()
@@ -1811,7 +1811,7 @@ def qt4ensure():
 
 def qtensure():
     try:
-        import ibeis.plottool as pt
+        import wbia.plottool as pt
     except ImportError:
         import plottool as pt
     pt.qtensure()
@@ -1826,7 +1826,7 @@ def quit_if_noshow():
 
 def show_if_requested():
     try:
-        import ibeis.plottool as pt
+        import wbia.plottool as pt
     except ImportError:
         import plottool as pt
     pt.show_if_requested(N=2)

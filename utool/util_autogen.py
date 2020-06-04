@@ -80,7 +80,7 @@ def makeinit(mod_dpath, exclude_modnames=[], use_star=False):
         str: init_codeblock
 
     CommandLine:
-        python -m utool.util_autogen makeinit --modname=ibeis.algo
+        python -m utool.util_autogen makeinit --modname=wbia.algo
 
     Example:
         >>> # DISABLE_DOCTEST
@@ -412,7 +412,7 @@ def auto_docstr(modname, funcname, verbose=True, moddir=None, modpath=None, **kw
         >>> import utool as ut
         >>> from utool.util_autogen import *  # NOQA
         >>> ut.util_autogen.rrr(verbose=False)
-        >>> #docstr = ut.auto_docstr('ibeis.algo.hots.smk.smk_index', 'compute_negentropy_names')
+        >>> #docstr = ut.auto_docstr('wbia.algo.hots.smk.smk_index', 'compute_negentropy_names')
         >>> modname = ut.get_argval('--modname', default='utool.util_autogen')
         >>> funcname = ut.get_argval('--funcname', default='auto_docstr')
         >>> moddir = ut.get_argval('--moddir', type_=str, default=None)
@@ -443,9 +443,9 @@ def auto_docstr(modname, funcname, verbose=True, moddir=None, modpath=None, **kw
 
 def print_auto_docstr(modname, funcname):
     """
-    python -c "import utool; utool.print_auto_docstr('ibeis.algo.hots.smk.smk_index', 'compute_negentropy_names')"
+    python -c "import utool; utool.print_auto_docstr('wbia.algo.hots.smk.smk_index', 'compute_negentropy_names')"
     python -c "import utool;
-    utool.print_auto_docstr('ibeis.algo.hots.smk.smk_index', 'compute_negentropy_names')"
+    utool.print_auto_docstr('wbia.algo.hots.smk.smk_index', 'compute_negentropy_names')"
     """
     docstr = auto_docstr(modname, funcname)
     print(docstr)
@@ -575,10 +575,10 @@ def make_example_docstr(funcname=None, modname=None, argname_list=None,
         # DISABLE_DOCTEST
         from utool.util_autogen import *  # NOQA
         import utool as ut
-        import ibeis
-        species = ibeis.const.TEST_SPECIES.ZEB_PLAIN
+        import wbia
+        species = wbia.const.TEST_SPECIES.ZEB_PLAIN
         qaids = ibs.get_valid_aids(species=species)
-        qreq_ = ibeis.testdata_qreq_()
+        qreq_ = wbia.testdata_qreq_()
         foo = make_example_docstr(qaids, qreq_)
         result = ('foo = %s' % (ut.repr2(foo),))
         print(result)
@@ -596,16 +596,16 @@ def make_example_docstr(funcname=None, modname=None, argname_list=None,
 
     # TODO: Externally register these
     default_argval_map = {
-        'ibs'       : 'ibeis.opendb(defaultdb=\'testdb1\')',
-        'testres'   : 'ibeis.testdata_expts(\'PZ_MTEST\')',
-        'qreq_'     : 'ibeis.testdata_qreq_()',
+        'ibs'       : 'wbia.opendb(defaultdb=\'testdb1\')',
+        'testres'   : 'wbia.testdata_expts(\'PZ_MTEST\')',
+        'qreq_'     : 'wbia.testdata_qreq_()',
         'cm_list'   : 'qreq_.execute()',
         'cm'        : 'qreq_.execute()[0]',
         'aid_list'  : 'ibs.get_valid_aids()',
         'nid_list'  : 'ibs._get_all_known_nids()',
         'qaids'     : 'ibs.get_valid_aids(species=species)',
         'daids'     : 'ibs.get_valid_aids(species=species)',
-        'species'   : 'ibeis.const.TEST_SPECIES.ZEB_PLAIN',
+        'species'   : 'wbia.const.TEST_SPECIES.ZEB_PLAIN',
         'kpts'      : 'vt.dummy.get_dummy_kpts()',
         'dodraw'    : 'ut.show_was_requested()',
         'img_fpath' : 'ut.grab_test_imgpath(\'carl.jpg\')',

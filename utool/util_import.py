@@ -208,9 +208,9 @@ def package_contents(package, with_pkg=False, with_mod=True, ignore_prefix=[],
         >>> # DISABLE_DOCTEST
         >>> from utool.util_import import *  # NOQA
         >>> import utool as ut
-        >>> import ibeis
+        >>> import wbia
         >>> package = ibeis
-        >>> ignore_prefix = ['ibeis.tests', 'ibeis.control.__SQLITE3__',
+        >>> ignore_prefix = ['wbia.tests', 'wbia.control.__SQLITE3__',
         >>>                  '_autogen_explicit_controller']
         >>> ignore_suffix = ['_grave']
         >>> with_pkg = False
@@ -286,7 +286,7 @@ def check_module_installed(modname):
 
     CommandLine:
         python -m utool.util_import check_module_installed --show --verbimp --modname=this
-        python -m utool.util_import check_module_installed --show --verbimp --modname=ibeis.scripts.iccv
+        python -m utool.util_import check_module_installed --show --verbimp --modname=wbia.scripts.iccv
 
     Example:
         >>> # ENABLE_DOCTEST

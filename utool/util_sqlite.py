@@ -36,16 +36,16 @@ def get_table_csv(cur, tablename, exclude_columns=[]):
         str: csv_table
 
     CommandLine:
-        python -m ibeis.control.SQLDatabaseControl --test-get_table_csv
+        python -m wbia.control.SQLDatabaseControl --test-get_table_csv
 
     Example:
         >>> # DISABLE_DOCTEST
-        >>> from ibeis.control.SQLDatabaseControl import *  # NOQA
+        >>> from wbia.control.SQLDatabaseControl import *  # NOQA
         >>> # build test data
-        >>> import ibeis
-        >>> ibs = ibeis.opendb('testdb1')
+        >>> import wbia
+        >>> ibs = wbia.opendb('testdb1')
         >>> db = ibs.db
-        >>> tablename = ibeis.const.NAME_TABLE
+        >>> tablename = wbia.const.NAME_TABLE
         >>> exclude_columns = []
         >>> # execute function
         >>> csv_table = db.get_table_csv(tablename, exclude_columns)

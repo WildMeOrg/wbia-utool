@@ -80,10 +80,10 @@ def inject_instance(self, classkey=None, allow_override=False,
             # Probably should depricate this block of code
             # It tries to do too much
             classkey = self.__class__
-            if classkey == 'ibeis.gui.models_and_views.IBEISTableView':
+            if classkey == 'wbia.gui.models_and_views.IBEISTableView':
                 # HACK HACK HACK
                 try:
-                    from guitool_ibeis.__PYQT__ import QtWidgets  # NOQA
+                    from wbia.guitool.__PYQT__ import QtWidgets  # NOQA
                 except ImportError:
                     from guitool.__PYQT__ import QtWidgets  # NOQA
                 classkey = QtWidgets.QAbstractItemView
@@ -241,9 +241,9 @@ def autogen_explicit_injectable_metaclass(classname, regen_command=None,
         >>> # DISABLE_DOCTEST
         >>> from utool.util_class import *  # NOQA
         >>> from utool.util_class import  __CLASSTYPE_ATTRIBUTES__  # NOQA
-        >>> import ibeis
-        >>> import ibeis.control.IBEISControl
-        >>> classname = ibeis.control.controller_inject.CONTROLLER_CLASSNAME
+        >>> import wbia
+        >>> import wbia.control.IBEISControl
+        >>> classname = wbia.control.controller_inject.CONTROLLER_CLASSNAME
         >>> result = autogen_explicit_injectable_metaclass(classname)
         >>> print(result)
     """

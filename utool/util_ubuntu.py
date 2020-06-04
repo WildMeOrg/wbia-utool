@@ -303,7 +303,7 @@ class XCtrl(object):
         """
         import utool as ut
         try:
-            import ibeis.plottool.screeninfo as screeninfo
+            import wbia.plottool.screeninfo as screeninfo
         except ImportError:
             import plottool.screeninfo as screeninfo
         monitor_infos = {
