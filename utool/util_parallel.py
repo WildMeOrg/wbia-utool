@@ -131,7 +131,7 @@ def generate2(func, args_gen, kw_gen=None, ntasks=None, ordered=True,
         >>> # UNSTABLE_DOCTEST
         >>> # Trying to recreate the freeze seen in IBEIS
         >>> try:
-        >>>     import vtool_ibeis as vt
+        >>>     import vtool as vt
         >>> except ImportError:
         >>>     import vtool as vt
         >>> import utool as ut
@@ -158,7 +158,7 @@ def generate2(func, args_gen, kw_gen=None, ntasks=None, ordered=True,
         >>> # Extremely weird case: freezes only if dsize > (313, 313) AND __testwarp was called beforehand.
         >>> # otherwise the parallel loop works fine. Could be an opencv 3.0.0-dev issue.
         >>> try:
-        >>>     import vtool_ibeis as vt
+        >>>     import vtool as vt
         >>> except ImportError:
         >>>     import vtool as vt
         >>> import utool as ut
@@ -359,7 +359,7 @@ def __testwarp(tup):
     import cv2
     import numpy as np
     try:
-        import vtool_ibeis as vt
+        import vtool as vt
     except ImportError:
         import vtool as vt
     img = tup[0]
@@ -445,7 +445,7 @@ def _test_buffered_generator3():
         >>> _test_buffered_generator3()
     """
     try:
-        import vtool_ibeis as vt
+        import vtool as vt
     except ImportError:
         import vtool as vt
     import utool as ut
@@ -617,7 +617,7 @@ def bgfunc(path):
     # Test for /_test_buffered_generator_img
     #import utool as ut
     try:
-        import vtool_ibeis as vt
+        import vtool as vt
     except ImportError:
         import vtool as vt
     for _ in range(1):

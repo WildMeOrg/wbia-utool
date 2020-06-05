@@ -1931,7 +1931,7 @@ def graph_info(graph, ignore=None, stats=False, verbose=False):
 def get_graph_bounding_box(graph):
     # import utool as ut
     try:
-        import vtool_ibeis as vt
+        import vtool as vt
     except ImportError:
         import vtool as vt
     #nx.get_node_attrs = nx.get_node_attributes
