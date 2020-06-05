@@ -2170,7 +2170,7 @@ def inverable_group_multi_list(item_lists):
     """
     #unique_list1, inverse1 = np.unique(item1_list, return_index=True, return_inverse=True)
     try:
-        import vtool_ibeis as vt
+        import vtool as vt
     except ImportError:
         import vtool as vt
     import utool as ut

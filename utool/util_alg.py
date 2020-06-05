@@ -1774,7 +1774,7 @@ def maximin_distance_subset1d(items, K=None, min_thresh=None, verbose=False):
 
     import utool as ut
     try:
-        import vtool_ibeis as vt
+        import vtool as vt
     except ImportError:
         import vtool as vt
     points = np.array(items)[:, None]
@@ -2063,7 +2063,7 @@ def safe_pdist(arr, *args, **kwargs):
         return None
     else:
         try:
-            import vtool_ibeis as vt
+            import vtool as vt
         except ImportError:
             import vtool as vt
 

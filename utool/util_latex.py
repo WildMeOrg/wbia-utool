@@ -275,7 +275,7 @@ def render_latex(input_text, dpath=None, fname=None, preamb_extra=None,
     """
     import utool as ut
     try:
-        import vtool_ibeis as vt
+        import vtool as vt
     except ImportError:
         import vtool as vt
     # turn off page numbers
