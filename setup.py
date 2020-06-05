@@ -169,8 +169,9 @@ def native_mb_python_tag(plat_impl=None, version_info=None):
     return mb_tag
 
 
-NAME = 'utool'
+NAME = 'wbia-utool'
 VERSION = parse_version('utool/__init__.py')  # must be global for git tags
+
 
 if __name__ == '__main__':
     # run setuptools setup function
@@ -199,14 +200,12 @@ if __name__ == '__main__':
         classifiers=[
             # List of classifiers available at:
             # https://pypi.python.org/pypi?%3Aaction=list_classifiers
-            'Development Status :: 3 - Alpha',
             'Intended Audience :: Developers',
             'Topic :: Software Development :: Libraries :: Python Modules',
             'Topic :: Utilities',
             # This should be interpreted as Apache License v2.0
             'License :: OSI Approved :: Apache Software License',
             # Supported Python versions
-            'Programming Language :: Python :: 2.7',
             'Programming Language :: Python :: 3',
         ],
     )
