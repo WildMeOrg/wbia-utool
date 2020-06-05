@@ -694,7 +694,7 @@ def cachestr_repr(val):
             return to_json(val)
         except Exception:
             # SUPER HACK
-            if repr(val.__class__) == "<class 'ibeis.control.IBEISControl.IBEISController'>":
+            if repr(val.__class__) == "<class 'wbia.control.IBEISControl.IBEISController'>":
                 return val.get_dbname()
 
 

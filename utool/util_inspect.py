@@ -169,7 +169,7 @@ def get_internal_call_graph(fpath, with_doctests=False):
         >>> with_doctests = ut.get_argflag('--with_doctests')
         >>> G = get_internal_call_graph(fpath, with_doctests)
         >>> ut.quit_if_noshow()
-        >>> import ibeis.plottool as pt
+        >>> import wbia.plottool as pt
         >>> pt.qt4ensure()
         >>> pt.show_nx(G, fontsize=8, as_directed=False)
         >>> z = pt.zoom_factory()
@@ -474,7 +474,7 @@ def check_module_usage(modpath_patterns):
     # import copy
     # func_call_graph2 = copy.deepcopy(func_numcall_graph)
     # #ignore_modnames = []
-    # ignore_modnames = ['ibeis.algo.hots.multi_index', 'ibeis.algo.hots._neighbor_experiment']
+    # ignore_modnames = ['wbia.algo.hots.multi_index', 'wbia.algo.hots._neighbor_experiment']
     # num_callers = ut.ddict(dict)
     # for modname, modpath in list(zip(modnames, modpaths)):
     #     subdict = func_call_graph2[modname]
@@ -624,11 +624,11 @@ def get_dev_hints():
 
     registered_hints = OrderedDict([
         # General IBEIS hints
-        ('ibs.*'   , ('ibeis.IBEISController', 'image analysis api')),
-        ('testres', ('ibeis.TestResult', 'test result object')),
-        ('qreq_'   , ('ibeis.QueryRequest', 'query request object with hyper-parameters')),
-        ('cm'  , ('ibeis.ChipMatch', 'object of feature correspondences and scores')),
-        ('qparams*', ('ibeis.QueryParams', 'query hyper-parameters')),
+        ('ibs.*'   , ('wbia.IBEISController', 'image analysis api')),
+        ('testres', ('wbia.TestResult', 'test result object')),
+        ('qreq_'   , ('wbia.QueryRequest', 'query request object with hyper-parameters')),
+        ('cm'  , ('wbia.ChipMatch', 'object of feature correspondences and scores')),
+        ('qparams*', ('wbia.QueryParams', 'query hyper-parameters')),
         ('qaid2_cm.*'   , ('dict', 'dict of ``ChipMatch`` objects')),
         ('vecs'    , ('ndarray[uint8_t, ndim=2]', 'descriptor vectors')),
         ('maws'    , ('ndarray[float32_t, ndim=1]', 'multiple assignment weights')),
@@ -794,7 +794,7 @@ def infer_arg_types_and_descriptions(argname_list, defaults):
         python -m utool.util_inspect --test-infer_arg_types_and_descriptions
 
     Ignore:
-        python -c "import utool; print(utool.auto_docstr('ibeis.algo.hots.pipeline', 'build_chipmatches'))"
+        python -c "import utool; print(utool.auto_docstr('wbia.algo.hots.pipeline', 'build_chipmatches'))"
 
     Example:
         >>> # ENABLE_DOCTEST
@@ -911,19 +911,19 @@ def iter_module_doctestable(module, include_funcs=True, include_classes=True,
 
     CommandLine:
         python -m utool --tf iter_module_doctestable \
-            --modname=ibeis.algo.hots.chip_match
-            --modname=ibeis.control.IBEISControl
-            --modname=ibeis.control.SQLDatabaseControl
-            --modname=ibeis.control.manual_annot_funcs
-            --modname=ibeis.control.manual_annot_funcs
-            --modname=ibeis.expt.test_result
+            --modname=wbia.algo.hots.chip_match
+            --modname=wbia.control.IBEISControl
+            --modname=wbia.control.SQLDatabaseControl
+            --modname=wbia.control.manual_annot_funcs
+            --modname=wbia.control.manual_annot_funcs
+            --modname=wbia.expt.test_result
             --modname=utool.util_progress --debug-key=build_msg_fmtstr_time2
             --modname=utool.util_progress --debug-key=ProgressIter
 
     Debug:
        # fix profile with doctest
        utprof.py -m utool --tf iter_module_doctestable --modname=utool.util_inspect --debugkey=zzz_profiled_is_yes
-       utprof.py -m utool --tf iter_module_doctestable --modname=ibeis.algo.hots.chip_match --debugkey=to_json
+       utprof.py -m utool --tf iter_module_doctestable --modname=wbia.algo.hots.chip_match --debugkey=to_json
 
     Example1:
         >>> # ENABLE_DOCTEST
@@ -2223,7 +2223,7 @@ def execstr_func_doctest(func, num=0, start_sentinal=None, end_sentinal=None):
 
     func = encoder.learn_threshold2
     num = 0
-    start_sentinal = 'import ibeis.plottool as pt'
+    start_sentinal = 'import wbia.plottool as pt'
     end_sentinal = 'pnum_ = pt.make_pnum_nextgen'
     """
     import utool as ut
@@ -2247,7 +2247,7 @@ def exec_func_doctest(func, start_sentinal=None, end_sentinal=None, num=0, globa
 
     func = encoder.learn_threshold2
     num = 0
-    start_sentinal = 'import ibeis.plottool as pt'
+    start_sentinal = 'import wbia.plottool as pt'
     end_sentinal = 'pnum_ = pt.make_pnum_nextgen'
     """
     import utool as ut
@@ -2562,8 +2562,8 @@ def recursive_parse_kwargs(root_func, path_=None, verbose=None):
 
         python -m utool.util_inspect recursive_parse_kwargs:2 --mod vtool --func ScoreNormalizer.visualize
 
-        python -m utool.util_inspect recursive_parse_kwargs:2 --mod ibeis.viz.viz_matches --func show_name_matches --verbinspect
-        python -m utool.util_inspect recursive_parse_kwargs:2 --mod ibeis.expt.experiment_drawing --func draw_rank_cmc --verbinspect
+        python -m utool.util_inspect recursive_parse_kwargs:2 --mod wbia.viz.viz_matches --func show_name_matches --verbinspect
+        python -m utool.util_inspect recursive_parse_kwargs:2 --mod wbia.expt.experiment_drawing --func draw_rank_cmc --verbinspect
 
     Example:
         >>> # ENABLE_DOCTEST
@@ -2585,14 +2585,14 @@ def recursive_parse_kwargs(root_func, path_=None, verbose=None):
     Example:
         >>> # xdoctest: +REQUIRES(module:ibeis)
         >>> from utool.util_inspect import *  # NOQA
-        >>> from ibeis.algo.hots import chip_match
+        >>> from wbia.algo.hots import chip_match
         >>> import utool as ut
         >>> recursive_parse_kwargs(chip_match.ChipMatch.show_ranked_matches)
         >>> recursive_parse_kwargs(chip_match.ChipMatch)
 
-        import ibeis
+        import wbia
         import utool as ut
-        ibs = ibeis.opendb(defaultdb='testdb1')
+        ibs = wbia.opendb(defaultdb='testdb1')
         kwkeys1 = ibs.parse_annot_stats_filter_kws()
         ut.recursive_parse_kwargs(ibs.get_annotconfig_stats, verbose=1)
         kwkeys2 = list(ut.recursive_parse_kwargs(ibs.get_annotconfig_stats).keys())
@@ -2652,7 +2652,7 @@ def recursive_parse_kwargs(root_func, path_=None, verbose=None):
         if attr == 'ut':
             subdict = ut.__dict__
         elif attr == 'pt':
-            import ibeis.plottool as pt
+            import wbia.plottool as pt
             subdict = pt.__dict__
         else:
             subdict = None
@@ -2763,7 +2763,7 @@ def parse_func_kwarg_keys(func, with_vals=False):
 
 def get_func_kwargs(func, recursive=True):
     """
-    func = ibeis.run_experiment
+    func = wbia.run_experiment
 
     SeeAlso:
         argparse_funckw

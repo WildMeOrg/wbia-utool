@@ -197,11 +197,11 @@ def code_cell(sourcecode):
         str: json formatted ipython notebook code cell
 
     CommandLine:
-        python -m ibeis.templates.generate_notebook --exec-code_cell
+        python -m wbia.templates.generate_notebook --exec-code_cell
 
     Example:
         >>> # DISABLE_DOCTEST
-        >>> from ibeis.templates.generate_notebook import *  # NOQA
+        >>> from wbia.templates.generate_notebook import *  # NOQA
         >>> sourcecode = notebook_cells.timestamp_distribution[1]
         >>> sourcecode = notebook_cells.initialize[1]
         >>> result = code_cell(sourcecode)
@@ -246,11 +246,11 @@ def markdown_cell(markdown):
         str: json formatted ipython notebook markdown cell
 
     CommandLine:
-        python -m ibeis.templates.generate_notebook --exec-markdown_cell
+        python -m wbia.templates.generate_notebook --exec-markdown_cell
 
     Example:
         >>> # DISABLE_DOCTEST
-        >>> from ibeis.templates.generate_notebook import *  # NOQA
+        >>> from wbia.templates.generate_notebook import *  # NOQA
         >>> markdown = '# Title'
         >>> result = markdown_cell(markdown)
         >>> print(result)
@@ -336,11 +336,11 @@ def repr_single_for_md(s):
         str: str_repr
 
     CommandLine:
-        python -m ibeis.templates.generate_notebook --exec-repr_single_for_md --show
+        python -m wbia.templates.generate_notebook --exec-repr_single_for_md --show
 
     Example:
         >>> # DISABLE_DOCTEST
-        >>> from ibeis.templates.generate_notebook import *  # NOQA
+        >>> from wbia.templates.generate_notebook import *  # NOQA
         >>> s = '#HTML(\'<iframe src="%s" width=700 height=350></iframe>\' % pdf_fpath)'
         >>> result = repr_single_for_md(s)
         >>> print(result)

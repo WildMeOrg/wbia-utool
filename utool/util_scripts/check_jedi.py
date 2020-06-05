@@ -19,7 +19,7 @@ def check_jedi_can_read_googlestyle():
         def spam(ibs, bar):
             r"""
             Args:
-                ibs (ibeis.IBEISController): an object
+                ibs (wbia.IBEISController): an object
             """
             import jedi
             jedi.n
@@ -38,7 +38,7 @@ def check_jedi_can_read_googlestyle():
     vartype = script.goto_definitions()
     print('vartype = %r' % (vartype,))
 
-    print('\n---testing jedi with ibeis.IBEISController')
+    print('\n---testing jedi with wbia.IBEISController')
     script = jedi.Script(source2, line=10)
     script.completions()
     # Find the variable type of argument
@@ -66,7 +66,7 @@ def _insource_jedi_vim_test(data, ibs):
 
     Args:
         data (utool.ColumnLists): a column list objct
-        ibs (ibeis.IBEISController): an object
+        ibs (wbia.IBEISController): an object
     """
     # TESTME: type a dot and tab. Hopefully autocomplete will happen.
     data
@@ -74,8 +74,8 @@ def _insource_jedi_vim_test(data, ibs):
     import utool as ut
     xdata = ut.ColumnLists()
     xdata
-    import ibeis
-    xibs = ibeis.IBEISController()
+    import wbia
+    xibs = wbia.IBEISController()
     xibs
 
 

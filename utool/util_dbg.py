@@ -414,7 +414,7 @@ def _wip_embed(parent_locals=None, parent_globals=None, exec_lines=None,
         if remove_pyqt_hook:
             try:
                 try:
-                    import guitool_ibeis as gt
+                    import wbia.guitool as gt
                 except ImportError:
                     import guitool as gt
                 gt.remove_pyqt_input_hook()
@@ -487,7 +487,7 @@ def embed(parent_locals=None, parent_globals=None, exec_lines=None,
         if remove_pyqt_hook:
             try:
                 try:
-                    import guitool_ibeis as gt
+                    import wbia.guitool as gt
                 except ImportError:
                     import guitool as gt
                 gt.remove_pyqt_input_hook()

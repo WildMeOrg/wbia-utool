@@ -135,8 +135,8 @@ def generate2(func, args_gen, kw_gen=None, ntasks=None, ordered=True,
         >>> except ImportError:
         >>>     import vtool as vt
         >>> import utool as ut
-        >>> from ibeis.algo.preproc.preproc_chip import gen_chip
-        >>> #from ibeis.algo.preproc.preproc_feat import gen_feat_worker
+        >>> from wbia.algo.preproc.preproc_chip import gen_chip
+        >>> #from wbia.algo.preproc.preproc_feat import gen_feat_worker
         >>> key_list = ['grace.jpg', 'easy1.png', 'ada2.jpg', 'easy3.png',
         >>>             'hard3.png', 'zebra.png', 'patsy.jpg', 'ada.jpg',
         >>>             'carl.jpg', 'lena.png', 'easy2.png']
@@ -162,7 +162,7 @@ def generate2(func, args_gen, kw_gen=None, ntasks=None, ordered=True,
         >>> except ImportError:
         >>>     import vtool as vt
         >>> import utool as ut
-        >>> from ibeis.algo.preproc.preproc_chip import gen_chip
+        >>> from wbia.algo.preproc.preproc_chip import gen_chip
         >>> import cv2
         >>> from utool.util_parallel import __testwarp
         >>> key_list = ['grace.jpg', 'easy1.png', 'ada2.jpg', 'easy3.png',

@@ -325,7 +325,7 @@ def timeit_grid(stmt_list, setup='', iterations=10000, input_sizes=None,
     if show:
         time_grid = np.array(time_grid)
         try:
-            import ibeis.plottool as pt
+            import wbia.plottool as pt
         except ImportError:
             import plottool as pt
         color_list = pt.distinct_colors(len(stmt_list))
@@ -1656,10 +1656,10 @@ def get_object_nbytes(obj, fallback_type=None, follow_pointers=False, exclude_mo
         >>> # DISABLE_DOCTEST
         >>> # UNSTABLE_DOCTEST
         >>> from utool.util_dev import *  # NOQA
-        >>> import ibeis
+        >>> import wbia
         >>> import utool as ut
-        >>> species = ibeis.const.TEST_SPECIES.ZEB_PLAIN
-        >>> ibs = ibeis.opendb(defaultdb='testdb1')
+        >>> species = wbia.const.TEST_SPECIES.ZEB_PLAIN
+        >>> ibs = wbia.opendb(defaultdb='testdb1')
         >>> qaids = ibs.get_valid_aids(species=species)
         >>> daids = ibs.get_valid_aids(species=species)
         >>> qreq_ = ibs.new_query_request(qaids, daids, verbose=True)
@@ -2088,7 +2088,7 @@ def is_developer(mycomputers=None):
 def iup():
     """ shortcut when pt is not imported """
     try:
-        import ibeis.plottool as pt
+        import wbia.plottool as pt
     except ImportError:
         import plottool as pt
     pt.iup()
@@ -2354,7 +2354,7 @@ def get_submodules_from_dpath(dpath, only_packages=False, recursive=True):
 
 def pylab_qt4():
     try:
-        import ibeis.plottool as pt
+        import wbia.plottool as pt
     except ImportError:
         import plottool as pt
     pt.ensureqt()
@@ -2362,7 +2362,7 @@ def pylab_qt4():
 
 def ensureqt():
     try:
-        import ibeis.plottool as pt
+        import wbia.plottool as pt
     except ImportError:
         import plottool as pt
     pt.ensureqt()

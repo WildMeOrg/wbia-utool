@@ -1711,7 +1711,7 @@ class GridSearch(object):
             >>> # DISABLE_DOCTEST
             >>> from utool.util_gridsearch import *  # NOQA
             >>> import utool as ut
-            >>> import ibeis.plottool as pt
+            >>> import wbia.plottool as pt
             >>> # build test data
             >>> score_lbl = 'score_diff'
             >>> gridsearch = testdata_grid_search()
@@ -1814,7 +1814,7 @@ class GridSearch(object):
         Example:
             >>> # DISABLE_DOCTEST
             >>> from utool.util_gridsearch import *  # NOQA
-            >>> import ibeis.plottool as pt
+            >>> import wbia.plottool as pt
             >>> # build test data
             >>> gridsearch = testdata_grid_search()
             >>> param_lbl = 'p'
@@ -1825,7 +1825,7 @@ class GridSearch(object):
             >>> self.plot_dimension('dcvs_clip_max', score_lbl, fnum=1, pnum=(1, 3, 3))
             >>> pt.show_if_requested()
         """
-        import ibeis.plottool as pt
+        import wbia.plottool as pt
         param2_score_stats = gridsearch.get_dimension_stats(param_lbl, score_lbl)
         title = param_lbl
         #title = param_lbl + ' vs ' + score_lbl
@@ -2040,9 +2040,9 @@ def interact_gridsearch_result_images(show_result_func, cfgdict_list,
     assert callable(show_result_func), 'NEED FUNCTION GOT: %r' % (show_result_func,)
 
     import utool as ut
-    import ibeis.plottool as pt
-    from ibeis.plottool import plot_helpers as ph
-    from ibeis.plottool import interact_helpers as ih
+    import wbia.plottool as pt
+    from wbia.plottool import plot_helpers as ph
+    from wbia.plottool import interact_helpers as ih
     if verbose:
         print('Plotting gridsearch results figtitle=%r' % (figtitle,))
     if score_list is None:
@@ -2128,8 +2128,8 @@ def gridsearch_timer(func_list, args_list, niters=None, **searchkw):
     unpacked
 
     CommandLine:
-        python -m ibeis.annotmatch_funcs --exec-get_annotmatch_rowids_from_aid2 --show
-        python -m ibeis.annotmatch_funcs --exec-get_annotmatch_rowids_from_aid:1 --show
+        python -m wbia.annotmatch_funcs --exec-get_annotmatch_rowids_from_aid2 --show
+        python -m wbia.annotmatch_funcs --exec-get_annotmatch_rowids_from_aid:1 --show
 
     Args:
         func_list (list):
@@ -2208,7 +2208,7 @@ def gridsearch_timer(func_list, args_list, niters=None, **searchkw):
     xtick_list = [count_to_xtick(count, get_args(count)) for count in count_list]
 
     def plot_timings():
-        import ibeis.plottool as pt
+        import wbia.plottool as pt
         ydata_list = ut.dict_take(timings, func_list)
         xdata = xtick_list
 

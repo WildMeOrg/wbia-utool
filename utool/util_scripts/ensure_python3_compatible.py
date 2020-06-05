@@ -47,7 +47,7 @@ if 'CODE_DIR' in os.environ:
     'https://github.com/bluemellophone/detecttools.git',
     'https://github.com/Erotemic/hesaff.git',
     'https://github.com/bluemellophone/pyrf.git',
-    'https://github.com/Erotemic/ibeis.git',
+    'https://github.com/Erotemic/wbia.git',
     # 'https://github.com/aweinstock314/cyth.git',
     #'https://github.com/hjweide/pygist',
 ], CODE_DIR, forcessh=False)
@@ -59,9 +59,9 @@ ut.set_project_repos(IBEIS_REPO_URLS, IBEIS_REPO_DIRS)
 
 def ensure_ibeis_control_explicit_namespace(varname_list):
     # <input>
-    import ibeis
+    import wbia
     namespace = 'const'
-    module = ibeis.control.IBEISControl
+    module = wbia.control.IBEISControl
     fpath = module.__file__
     # </input>
     varname_list = [

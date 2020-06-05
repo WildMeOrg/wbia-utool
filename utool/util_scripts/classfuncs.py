@@ -69,7 +69,7 @@ if __name__ == '__main__':
         'https://github.com/bluemellophone/detecttools.git',
         'https://github.com/Erotemic/hesaff.git',
         'https://github.com/bluemellophone/pyrf.git',
-        'https://github.com/Erotemic/ibeis.git',
+        'https://github.com/Erotemic/wbia.git',
         'https://github.com/aweinstock314/cyth.git',
         #'https://github.com/hjweide/pygist',
     ], code_dir=CODE_DIR)
