@@ -403,8 +403,8 @@ def check_module_usage(modpath_patterns):
             r'\-\-exec\-',
             r'\-\-test-',
             r'^\s*python -m ',
-            r'^\s*python -m ibeis ',
-            r'^\s*ibeis ',
+            r'^\s*python -m wbia ',
+            r'^\s*wbia ',
             r'\-\-test\-[a-zA-z]*\.',
             r'\-\-exec\-[a-zA-z]*\.',
         ]
@@ -2583,7 +2583,7 @@ def recursive_parse_kwargs(root_func, path_=None, verbose=None):
         ]
 
     Example:
-        >>> # xdoctest: +REQUIRES(module:ibeis)
+        >>> # xdoctest: +REQUIRES(module:wbia)
         >>> from utool.util_inspect import *  # NOQA
         >>> from wbia.algo.hots import chip_match
         >>> import utool as ut
@@ -3085,7 +3085,7 @@ def infer_function_info(func):
 
     CommandLine:
         python -m utool --tf infer_function_info:0
-        python -m utool --tf infer_function_info:1 --funcname=ibeis_cnn.models.siam.ignore_hardest_cases
+        python -m utool --tf infer_function_info:1 --funcname=wbia_cnn.models.siam.ignore_hardest_cases
 
     Ignore:
         >>> # ENABLE_DOCTEST

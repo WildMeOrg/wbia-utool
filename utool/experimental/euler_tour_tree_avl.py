@@ -433,7 +433,7 @@ class EulerTourTree(ut.NiceRepr):
         return repr_tree
 
     def show_nx(self, labels=['value'], edge_labels=False, fnum=None):
-        import plottool as pt
+        import wbia.plottool as pt
         graph = self.to_networkx(labels=labels, edge_labels=edge_labels)
         pt.show_nx(graph, fnum=fnum)
 

@@ -305,7 +305,7 @@ class XCtrl(object):
         try:
             import wbia.plottool.screeninfo as screeninfo
         except ImportError:
-            import plottool.screeninfo as screeninfo
+            import wbia.plottool.screeninfo as screeninfo
         monitor_infos = {
             i + 1: screeninfo.get_resolution_info(i)
             for i in range(2)

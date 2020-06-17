@@ -57,7 +57,7 @@ ut.set_code_dir(CODE_DIR)
 ut.set_project_repos(IBEIS_REPO_URLS, IBEIS_REPO_DIRS)
 
 
-def ensure_ibeis_control_explicit_namespace(varname_list):
+def ensure_wbia_control_explicit_namespace(varname_list):
     # <input>
     import wbia
     namespace = 'const'

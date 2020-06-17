@@ -209,7 +209,7 @@ def package_contents(package, with_pkg=False, with_mod=True, ignore_prefix=[],
         >>> from utool.util_import import *  # NOQA
         >>> import utool as ut
         >>> import wbia
-        >>> package = ibeis
+        >>> package = wbia
         >>> ignore_prefix = ['wbia.tests', 'wbia.control.__SQLITE3__',
         >>>                  '_autogen_explicit_controller']
         >>> ignore_suffix = ['_grave']

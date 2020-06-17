@@ -364,7 +364,7 @@ def bayesnet():
 
     # _ draw model
 
-    import plottool as pt
+    import wbia.plottool as pt
     import networkx as netx
     fig = pt.figure()  # NOQA
     fig.clf()

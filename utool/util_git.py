@@ -811,7 +811,7 @@ class Repo(util_dev.NiceRepr):
             http://stackoverflow.com/questions/9524933/renaming-a-branch-in-github
 
         CommandLine:
-            python -m utool.util_git --test-rename_branch --old=mymaster --new=ibeis_master
+            python -m utool.util_git --test-rename_branch --old=mymaster --new=wbia_master
 
         Example:
             >>> # DISABLE_DOCTEST

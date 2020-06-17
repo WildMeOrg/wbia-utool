@@ -68,10 +68,10 @@ def archive_files(archive_fpath, fpath_list, small=True, allowZip64=False,
         # http://superuser.com/questions/281573/best-options-compressing-files-7-zip
         # Create a small 7zip archive
         7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on archive.7z dir1
-        7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on ibeis-linux-binary.7z ibeis
+        7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on wbia-linux-binary.7z wbia
 
         # Create a small zip archive
-        7za a -mm=Deflate -mfb=258 -mpass=15 -r ibeis-linux-binary.zip ibeis
+        7za a -mm=Deflate -mfb=258 -mpass=15 -r wbia-linux-binary.zip wbia
 
     """
     import utool as ut

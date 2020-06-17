@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import utool
 
-#def ibeis_wc():
+#def wbia_wc():
 
 
 if __name__ == '__main__':

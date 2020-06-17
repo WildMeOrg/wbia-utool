@@ -294,26 +294,26 @@ def make_run_tests_script_text(test_headers, test_argvs, quick_tests=None,
     return script_text
 
 
-def autogen_ibeis_runtest():
+def autogen_wbia_runtest():
     """ special case to generate tests script for IBEIS
 
     Example:
         >>> # DISABLE_DOCTEST
         >>> from autogen_test_script import *  # NOQA
-        >>> test_script = autogen_ibeis_runtest()
+        >>> test_script = autogen_wbia_runtest()
         >>> print(test_script)
 
     CommandLine:
-        python -c "import utool; utool.autogen_ibeis_runtest()"
-        python -c "import utool; print(utool.autogen_ibeis_runtest())"
+        python -c "import utool; utool.autogen_wbia_runtest()"
+        python -c "import utool; print(utool.autogen_wbia_runtest())"
 
-        python -c "import utool; print(utool.autogen_ibeis_runtest())" > run_tests.sh
+        python -c "import utool; print(utool.autogen_wbia_runtest())" > run_tests.sh
         chmod +x run_tests.sh
 
     """
 
     quick_tests = [
-        'ibeis/tests/assert_modules.py'
+        'wbia/tests/assert_modules.py'
     ]
 
     #test_pattern = [
@@ -415,7 +415,7 @@ if __name__ == '__main__':
         python autogen_test_script.py
         python autogen_test_script.py -w
     """
-    shscript_text, pyscript_text = autogen_ibeis_runtest()
+    shscript_text, pyscript_text = autogen_wbia_runtest()
     runtest_fname = None
 
     if runtest_fname is None and ut.get_argflag('-w'):

@@ -551,8 +551,8 @@ presetup = presetup_commands
 #     # from os.path import dirname, join
 #     import ast
 #     # repo_dpath = dirname(__file__)
-#     # file_fpath = join(repo_dpath, 'ibeis', '__init__.py')
-#     # file_fpath = join(repo_dpath, 'ibeis', 'control', 'DB_SCHEMA_CURRENT.py')
+#     # file_fpath = join(repo_dpath, 'wbia', '__init__.py')
+#     # file_fpath = join(repo_dpath, 'wbia', 'control', 'DB_SCHEMA_CURRENT.py')
 #     with open(fpath) as file_:
 #         sourcecode = file_.read()
 #     pt = ast.parse(sourcecode)

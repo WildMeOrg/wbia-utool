@@ -174,7 +174,7 @@ def get_package_testables(module=None, **tagkw):
         test_flags (None): (default = None)
 
     CommandLine:
-        python -m utool get_package_testables --show --mod ibeis
+        python -m utool get_package_testables --show --mod wbia
         python -m utool get_package_testables --show --mod utool --tags SCRIPT
         python -m utool get_package_testables --show --mod utool --tags ENABLE
 
@@ -1784,7 +1784,7 @@ def show_was_requested():
     try:
         import wbia.plottool as pt
     except ImportError:
-        import plottool as pt
+        import wbia.plottool as pt
     return pt.show_was_requested()
     #import utool as ut
     #return ut.get_argflag('--show') or ut.inIPython()
@@ -1805,7 +1805,7 @@ def qt4ensure():
     try:
         import wbia.plottool as pt
     except ImportError:
-        import plottool as pt
+        import wbia.plottool as pt
     pt.qtensure()
 
 
@@ -1813,7 +1813,7 @@ def qtensure():
     try:
         import wbia.plottool as pt
     except ImportError:
-        import plottool as pt
+        import wbia.plottool as pt
     pt.qtensure()
 
 
@@ -1828,7 +1828,7 @@ def show_if_requested():
     try:
         import wbia.plottool as pt
     except ImportError:
-        import plottool as pt
+        import wbia.plottool as pt
     pt.show_if_requested(N=2)
 
 
@@ -1900,8 +1900,8 @@ def get_module_completions(module):
 #    activate-global-python-argcomplete
 
 #    eval "$(register-python-argcomplete your_script)"
-#    register-python-argcomplete ibeis
-#    eval "$(register-python-argcomplete ibeis)"
+#    register-python-argcomplete wbia
+#    eval "$(register-python-argcomplete wbia)"
 #    """
 #    #if len(sys.argv) < 3:
 #    #    sys.exit(1)
@@ -1943,7 +1943,7 @@ def main_function_tester(module, ignore_prefix=[], ignore_suffix=[],
         testnames = get_module_completions(module)
         modname = module if isinstance(module, six.string_types) else module.__name__
         line = 'complete -W "%s" "%s"' % (' '.join(testnames), modname)
-        bash_completer = ut.unixjoin(ut.ensure_app_resource_dir('ibeis'), 'ibeis_bash_complete.sh')
+        bash_completer = ut.unixjoin(ut.ensure_app_resource_dir('wbia'), 'wbia_bash_complete.sh')
         ut.writeto(bash_completer, line)
         print('ADD TO BASHRC\nsource %s' % (bash_completer,))
         #print(line)

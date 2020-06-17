@@ -3168,7 +3168,7 @@ def delete_list_items(list_, item_list, copy=False):
 
 def unflat_map(func, unflat_items, vectorized=False, **kwargs):
     r"""
-    Uses an ibeis lookup function with a non-flat rowid list.
+    Uses an wbia lookup function with a non-flat rowid list.
     In essence this is equivilent to [list(map(func, _items)) for _items in unflat_items].
     The utility of this function is that it only calls method once.
     This is more efficient for calls that can take a list of inputs

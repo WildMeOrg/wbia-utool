@@ -349,7 +349,7 @@ def indent(str_, indent='    '):
 
 def indent_rest(str_, indent='    '):
     """ TODO fix name Indents every part of the string except the beginning
-    SeeAlso: ibeis/templates/generate_notebook.py
+    SeeAlso: wbia/templates/generate_notebook.py
     """
     return str_.replace('\n', '\n' + indent)
 
@@ -3081,7 +3081,7 @@ def testdata_text(num=1):
 
     text2 = ut.codeblock(r'''
         \begin{comment}
-        python -m ibeis -e rank_cmc -t invar -a viewdiff --test_cfgx_slice=6: --db PZ_Master1 --hargv=expt --prefix "Invariance+View Experiment "  # NOQA
+        python -m wbia -e rank_cmc -t invar -a viewdiff --test_cfgx_slice=6: --db PZ_Master1 --hargv=expt --prefix "Invariance+View Experiment "  # NOQA
         \end{comment}
         \ImageCommand{figuresX/expt_rank_cmc_PZ_Master1_a_viewdiff_t_invar.png}{\textwidth}{
         Results of the invariance experiment with different viewpoints for plains
