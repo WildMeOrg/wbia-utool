@@ -617,18 +617,18 @@ def make_example_docstr(funcname=None, modname=None, argname_list=None,
         'rng'       : 'np.random.RandomState(0)',
     }
     import_depends_map = {
-        'ibeis':    'import ibeis',
+        'wbia':    'import wbia',
         'vt':       'import vtool as vt',
         #'img':      'import vtool as vt',  # TODO: remove. fix dependency
-        #'species':  'import ibeis',
+        #'species':  'import wbia',
     }
     var_depends_map = {
-        'species':   ['ibeis'],
-        'ibs':       ['ibeis'],
-        'testres': ['ibeis'],
+        'species':   ['wbia'],
+        'ibs':       ['wbia'],
+        'testres': ['wbia'],
         'kpts':      ['vt'],
         #'qreq_':     ['ibs', 'species', 'daids', 'qaids'],
-        'qreq_':     ['ibeis'],
+        'qreq_':     ['wbia'],
         'qaids':     ['ibs'],
         'daids':     ['ibs'],
         'qaids':     ['species'],
@@ -1040,7 +1040,7 @@ def find_modname_in_pythonpath(modname):
 if __name__ == '__main__':
     """
     CommandLine:
-        python ibeis/control/template_generator.py --tbls annotations --Tflags getters native
+        python wbia/control/template_generator.py --tbls annotations --Tflags getters native
         python -c "import utool, utool.util_autogen; utool.doctest_funcs(utool.util_autogen, allexamples=True)"
         python -m utool.util_autogen
         python -m utool.util_autogen --allexamples

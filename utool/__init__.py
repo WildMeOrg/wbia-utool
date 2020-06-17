@@ -777,7 +777,7 @@ if DOELSE:
     from utool.util_project import (GrepResult, SetupRepo, UserProfile,
                                     ensure_text, ensure_user_profile,
                                     glob_projects, grep_projects,
-                                    ibeis_user_profile, sed_projects,
+                                    wbia_user_profile, sed_projects,
                                     setup_repo,)
     from utool.util_parallel import (KillableProcess, KillableThread, bgfunc,
                                      buffered_generator, generate2,

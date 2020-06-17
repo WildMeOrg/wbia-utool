@@ -29,7 +29,7 @@ class CountstrParser(object):
     Parses a statement like  '#primary>0&#primary1>1' and returns a filtered
     set.
 
-    FIXME: make generalizable beyond ibeis
+    FIXME: make generalizable beyond wbia
     """
     numop = '#'
     compare_op_map = {

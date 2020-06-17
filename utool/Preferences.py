@@ -313,7 +313,7 @@ class Pref(PrefNode):
                                   iswarning=True)
                 raise AttributeError(
                     ('Pref object is missing named attribute: name=%r.'
-                     'You might try running ibeis with --nocache-pref '
+                     'You might try running wbia with --nocache-pref '
                      'to see if that fixes things.')  % name)
                 #raise
 
@@ -598,7 +598,7 @@ def test_Preferences():
 
     Example:
         >>> # DISABLE_DOCTEST
-        >>> # xdoctest: +REQUIRES(module:guitool_ibeis)
+        >>> # xdoctest: +REQUIRES(module:wbia.guitool)
         >>> # FIXME depends on guitool_ibei
         >>> from utool.Preferences import *  # NOQA
         >>> import utool as ut

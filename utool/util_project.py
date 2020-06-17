@@ -148,7 +148,7 @@ def setup_repo():
         python -m utool setup_repo --repo=dtool --codedir=~/code
 
         python -m utool setup_repo --repo=dtool --codedir=~/code
-        python -m utool setup_repo --repo=ibeis-flukematch-module --codedir=~/code --modname=ibeis_flukematch
+        python -m utool setup_repo --repo=wbia-flukematch-module --codedir=~/code --modname=wbia_flukematch
         python -m utool setup_repo --repo=mtgmonte --codedir=~/code --modname=mtgmonte
         python -m utool setup_repo --repo=pydarknet --codedir=~/code --modname=pydarknet
         python -m utool setup_repo --repo=sandbox_utools --codedir=~/code --modname=sandbox_utools
@@ -536,7 +536,7 @@ class UserProfile(util_dev.NiceRepr):
     #     return
 
 
-def ibeis_user_profile():
+def wbia_user_profile():
     import utool as ut
     import sys
     addpath = True
@@ -545,7 +545,7 @@ def ibeis_user_profile():
         module_dpath = dirname(module_fpath)
         sys.path.append(module_dpath)
     REPOS1 = ut.import_module_from_fpath(module_fpath)
-    self = UserProfile(name='ibeis')
+    self = UserProfile(name='wbia')
     #self.project_dpaths = REPOS1.PROJECT_REPOS
     self.project_dpaths = REPOS1.IBEIS_REPOS
     # self.project_dpaths += [ut.truepath('~/latex/crall-candidacy-2015/')]
@@ -595,7 +595,7 @@ def ensure_user_profile(user_profile=None):
     if __GLOBAL_PROFILE__ is None:
         import utool as ut
         if ut.is_developer():
-            __GLOBAL_PROFILE__ = ibeis_user_profile()
+            __GLOBAL_PROFILE__ = wbia_user_profile()
         else:
             __GLOBAL_PROFILE__ = UserProfile('default')
     if user_profile is None:

@@ -327,7 +327,7 @@ def timeit_grid(stmt_list, setup='', iterations=10000, input_sizes=None,
         try:
             import wbia.plottool as pt
         except ImportError:
-            import plottool as pt
+            import wbia.plottool as pt
         color_list = pt.distinct_colors(len(stmt_list))
         for count, (stmt, color) in enumerate(zip(stmt_list, color_list)):
             pt.plot(input_sizes, time_grid.T[count], 'x-', color=color, label=stmt)
@@ -2090,7 +2090,7 @@ def iup():
     try:
         import wbia.plottool as pt
     except ImportError:
-        import plottool as pt
+        import wbia.plottool as pt
     pt.iup()
 
 
@@ -2356,7 +2356,7 @@ def pylab_qt4():
     try:
         import wbia.plottool as pt
     except ImportError:
-        import plottool as pt
+        import wbia.plottool as pt
     pt.ensureqt()
 
 
@@ -2364,7 +2364,7 @@ def ensureqt():
     try:
         import wbia.plottool as pt
     except ImportError:
-        import plottool as pt
+        import wbia.plottool as pt
     pt.ensureqt()
 
 

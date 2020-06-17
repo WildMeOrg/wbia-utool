@@ -45,7 +45,7 @@ def get_default_global_config():
 
             'joncrall': {'name': 'Jon Crall',
                          'email': 'erotemic@gmail.com',
-                         'permited repos': ['ibeis', 'utool', 'hesaff',
+                         'permited repos': ['wbia', 'utool', 'hesaff',
                                             'guitool', 'plottool', 'vtool'],
                          'aliases': [],
                          'machines': [], },

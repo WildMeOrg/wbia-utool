@@ -1090,7 +1090,7 @@ def get_nth_prime_bruteforce(n, start_guess=2, start_num_primes=0):
         >>>     time_list += [t.ellapsed]
         >>>     n_list += [n]
         >>> ut.quit_if_noshow()
-        >>> import plottool as pt
+        >>> import wbia.plottool as pt
         >>> pt.multi_plot(n_list, [time_list], xlabel='prime', ylabel='time')
         >>> ut.show_if_requested()
     """
@@ -2039,7 +2039,7 @@ def unixtime_hourdiff(x, y):
         >>> result = unixtime_hourdiff(x, y)
         >>> print(result)
         >>> ut.quit_if_noshow()
-        >>> import plottool as pt
+        >>> import wbia.plottool as pt
         >>> ut.show_if_requested()
     """
     return np.abs((x - y)) / (60. ** 2)
@@ -2775,7 +2775,7 @@ def expensive_task_gen(num=8700):
         >>>     time_list = list(ut.expensive_task_gen(num))
         >>> print(sum(time_list))
         >>> ut.quit_if_noshow()
-        >>> import plottool as pt
+        >>> import wbia.plottool as pt
         >>> #pt.plot(time_list)
         >>> from scipy.optimize import curve_fit
         >>> def func(x, a, b, c, d):

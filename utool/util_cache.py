@@ -184,13 +184,13 @@ def _args2_fpath(dpath, fname, cfgstr, ext):
         >>> from utool.util_cache import *  # NOQA
         >>> from utool.util_cache import _args2_fpath
         >>> import utool as ut
-        >>> dpath = 'F:\\data\\work\\PZ_MTEST\\_ibsdb\\_ibeis_cache'
+        >>> dpath = 'F:\\data\\work\\PZ_MTEST\\_ibsdb\\_wbia_cache'
         >>> fname = 'normalizer_'
         >>> cfgstr = u'PZ_MTEST_DSUUIDS((9)67j%dr%&bl%4oh4+)_QSUUIDS((9)67j%dr%&bl%4oh4+)zebra_plains_vsone_NN(single,K1+1,last,cks1024)_FILT(ratio<0.625;1.0,fg;1.0)_SV(0.01;2;1.57minIn=4,nRR=50,nsum,)_AGG(nsum)_FLANN(4_kdtrees)_FEATWEIGHT(ON,uselabel,rf)_FEAT(hesaff+sift_)_CHIP(sz450)'
         >>> ext = '.cPkl'
         >>> fpath = _args2_fpath(dpath, fname, cfgstr, ext)
         >>> result = str(ut.ensure_unixslash(fpath))
-        >>> target = 'F:/data/work/PZ_MTEST/_ibsdb/_ibeis_cache/normalizer_xfylfboirymmcpfg.cPkl'
+        >>> target = 'F:/data/work/PZ_MTEST/_ibsdb/_wbia_cache/normalizer_xfylfboirymmcpfg.cPkl'
         >>> ut.assert_eq(result, target)
 
     """

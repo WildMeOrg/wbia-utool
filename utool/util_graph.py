@@ -96,7 +96,7 @@ def nx_transitive_reduction(G, mode=1):
         >>> try:
         >>>     import wbia.plottool as pt
         >>> except ImportError:
-        >>>     import plottool as pt
+        >>>     import wbia.plottool as pt
         >>> G_ = nx.dag.transitive_closure(G)
         >>> pt.show_nx(G    , pnum=(1, 5, 1), fnum=1)
         >>> pt.show_nx(G_tr , pnum=(1, 5, 2), fnum=1)
@@ -251,7 +251,7 @@ def nx_dag_node_rank(graph, nodes=None):
     Ignore:
         simple_graph = ut.simplify_graph(exi_graph)
         adj_dict = ut.nx_to_adj_dict(simple_graph)
-        import plottool as pt
+        import wbia.plottool as pt
         pt.qt4ensure()
         pt.show_nx(graph)
 
@@ -1082,7 +1082,7 @@ def nx_ensure_agraph_color(graph):
         import wbia.plottool as pt
     except ImportError:
         from plottool import color_funcs
-        import plottool as pt
+        import wbia.plottool as pt
     #import six
     def _fix_agraph_color(data):
         try:
@@ -1157,7 +1157,7 @@ def testdata_graph():
         >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
         >>> (graph, G) = testdata_graph()
-        >>> import plottool as pt
+        >>> import wbia.plottool as pt
         >>> ut.ensureqt()
         >>> pt.show_nx(G, layout='agraph')
         >>> ut.show_if_requested()
@@ -1838,7 +1838,7 @@ def color_nodes(graph, labelattr='label', brightness=.878,
     try:
         import wbia.plottool as pt
     except ImportError:
-        import plottool as pt
+        import wbia.plottool as pt
     import utool as ut
     node_to_lbl = nx.get_node_attributes(graph, labelattr)
     unique_lbls = sorted(set(node_to_lbl.values()))
@@ -2068,7 +2068,7 @@ def approx_min_num_components(nodes, negative_edges):
         >>> g_pos = nx.Graph()
         >>> g_pos.add_edges_from(edges)
         >>> g_neg = nx.complement(g_pos)
-        >>> #import plottool as pt
+        >>> #import wbia.plottool as pt
         >>> #pt.qt4ensure()
         >>> #pt.show_nx(g_pos)
         >>> #pt.show_nx(g_neg)
