@@ -609,13 +609,13 @@ def random_combinations(items, size, num=None, rng=None):
         >>> result = ('combos = %s' % (ut.repr2(combos),))
         >>> print(result)
     """
-    import scipy.misc
+    import scipy.special
     import numpy as np
     import utool as ut
     rng = ut.ensure_rng(rng, impl='python')
     num_ = np.inf if num is None else num
     # Ensure we dont request more than is possible
-    n_max = int(scipy.misc.comb(len(items), size))
+    n_max = int(scipy.special.comb(len(items), size))
     num_ = min(n_max, num_)
     if num is not None and num_ > n_max // 2:
         # If num is too big just generate all combinations and shuffle them
