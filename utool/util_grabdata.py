@@ -468,7 +468,7 @@ def experiment_download_multiple_urls(url_list):
         >>>     'https://wildbookiarepository.azureedge.net/models/vgg.caffe.slice_0_30_None.pickle',
         >>>     'https://wildbookiarepository.azureedge.net/models/vgg.caffe.slice_0_30_None.pickle',
         >>>     'https://wildbookiarepository.azureedge.net/models/vgg.caffe.slice_0_30_None.pickle',
-        >>>     'https://snapshotserengeti.s3.msi.umn.edu/S1/L10/L10_R1/S1_L10_R1_PICT0070.JPG'
+        >>>     'https://snapshotserengeti.s3.msi.umn.edu/S1/L10/L10_R1/S1_L10_R1_PICT0070.JPG',
         >>>     'https://snapshotserengeti.s3.msi.umn.edu/S1/B04/B04_R1/S1_B04_R1_PICT0001.JPG',
         >>>     'https://snapshotserengeti.s3.msi.umn.edu/S1/B04/B04_R1/S1_B04_R1_PICT0002.JPG',
         >>>     'https://snapshotserengeti.s3.msi.umn.edu/S1/B04/B04_R1/S1_B04_R1_PICT0003.JPG',
