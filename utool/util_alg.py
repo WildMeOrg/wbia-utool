@@ -1657,8 +1657,8 @@ def choose(n, k):
     binomial combination (without replacement)
     scipy.special.binom
     """
-    import scipy.misc
-    return scipy.misc.comb(n, k, exact=True, repetition=False)
+    import scipy.special
+    return scipy.special.comb(n, k, exact=True, repetition=False)
 
 
 def triangular_number(n):
