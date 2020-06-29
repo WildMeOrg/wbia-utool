@@ -256,6 +256,13 @@ def save_cPkl(fpath, data, verbose=None, n=None):
         pickle.dump(data, file_, protocol=2)
 
 
+class FixRenamedUnpickler(pickle.Unpickler):
+    def find_class(self, module, name):
+        module = module.replace('ibeis', 'wbia')
+        name = name.replace('ibeis', 'wbia')
+        return super(FixRenamedUnpickler, self).find_class(module, name)
+
+
 def load_cPkl(fpath, verbose=None, n=None):
     r"""
     Loads a pickled file with optional verbosity.
@@ -334,12 +341,12 @@ def load_cPkl(fpath, verbose=None, n=None):
         print('[util_io] * load_cPkl(%r)' % (util_path.tail(fpath, n=n),))
     try:
         with open(fpath, 'rb') as file_:
-            data = pickle.load(file_)
+            data = FixRenamedUnpickler(file_).load()
     except UnicodeDecodeError:
         if six.PY3:
             # try to open python2 pickle
             with open(fpath, 'rb') as file_:
-                data = pickle.load(file_, encoding='latin1')
+                data = FixRenamedUnpickler(file_, encoding='latin1').load()
         else:
             raise
     except ValueError as ex:
