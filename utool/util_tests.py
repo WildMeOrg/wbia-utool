@@ -1561,7 +1561,7 @@ def get_module_doctest_tup(testable_list=None, check_flags=True, module=None,
                 mode = prefix.replace('-', '')
                 if testflag:
                     if veryverb:
-                        print("FOUND VARARG")
+                        print('FOUND VARARG')
                     break
             else:
                 # print('WARNING NO TEST IS ENABLED %r ' % (nametup,))

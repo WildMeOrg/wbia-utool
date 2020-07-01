@@ -310,7 +310,7 @@ def autogen_explicit_injectable_metaclass(classname, regen_command=None,
             classname=classname)
 
     depends_module_block = autogen_import_list(classname, conditional_imports)
-    inject_statement_fmt = ("print, rrr, profile = "
+    inject_statement_fmt = ('print, rrr, profile = '
                             "ut.inject2(__name__, '[autogen_explicit_inject_{classname}]')")
     inject_statement = inject_statement_fmt.format(classname=classname)
 

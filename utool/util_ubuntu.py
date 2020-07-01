@@ -349,9 +349,9 @@ class XCtrl(object):
         print('MOVING: win_id = %r' % (win_id,))
         fmtdict = locals()
         cmd_list = [
-            ("wmctrl -ir {win_id} -b remove,maximized_horz".format(**fmtdict)),
-            ("wmctrl -ir {win_id} -b remove,maximized_vert".format(**fmtdict)),
-            ("wmctrl -ir {win_id} -e 0,{abs_bbox}".format(**fmtdict)),
+            ('wmctrl -ir {win_id} -b remove,maximized_horz'.format(**fmtdict)),
+            ('wmctrl -ir {win_id} -b remove,maximized_vert'.format(**fmtdict)),
+            ('wmctrl -ir {win_id} -e 0,{abs_bbox}'.format(**fmtdict)),
         ]
         print('\n'.join(cmd_list))
         for cmd in cmd_list:
@@ -493,7 +493,7 @@ class XCtrl(object):
         XCtrl.do(*doscript, verbose=0, sleeptime=.001)
 
     @staticmethod
-    def copy_gvim_to_terminal_script(text, return_to_win="1", verbose=0, sleeptime=.02):
+    def copy_gvim_to_terminal_script(text, return_to_win='1', verbose=0, sleeptime=.02):
         """
         import utool.util_ubuntu
         utool.util_ubuntu.XCtrl.copy_gvim_to_terminal_script('print("hi")', verbose=1)
@@ -534,7 +534,7 @@ class XCtrl(object):
                 ('key', 'KP_Enter'),
             ]
 
-        if return_to_win == "1":
+        if return_to_win == '1':
             doscript += [
                 ('focus_id', '$ACTIVE_WIN'),
             ]

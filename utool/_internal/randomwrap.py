@@ -54,7 +54,7 @@ from six.moves import urllib
 def rnumlistwithoutreplacement(min, max):
     """Returns a randomly ordered list of the integers between min and max"""
     if checkquota() < 1:
-        raise Exception("Your www.random.org quota has already run out.")
+        raise Exception('Your www.random.org quota has already run out.')
     requestparam = build_request_parameterNR(min, max)
     request = urllib.request.Request(requestparam)
     request.add_header('User-Agent', 'randomwrapy/0.1 very alpha')
@@ -76,7 +76,7 @@ def rnumlistwithreplacement(howmany, max, min=0):
     """Returns a list of howmany integers with a maximum value = max.
     The minimum value defaults to zero."""
     if checkquota() < 1:
-        raise Exception("Your www.random.org quota has already run out.")
+        raise Exception('Your www.random.org quota has already run out.')
     requestparam = build_request_parameterWR(howmany, min, max)
     request = urllib.request.Request(requestparam)
     request.add_header('User-Agent', 'randomwrapy/0.1 very alpha')
@@ -114,7 +114,7 @@ def rrandom():
     import urllib.error
     import urllib.parse
     if checkquota() < 1:
-        raise Exception("Your www.random.org quota has already run out.")
+        raise Exception('Your www.random.org quota has already run out.')
     request = urllib.request.Request(
         'http://www.random.org/integers/?num=1&min=0&max=1000000000&col=1&base=10&format=plain&rnd=new')
     request.add_header('User-Agent', 'randomwrapy/0.1 very alpha')
@@ -126,7 +126,7 @@ def rrandom():
 
 def checkquota():
     request = urllib.request.Request(
-        "http://www.random.org/quota/?format=plain")
+        'http://www.random.org/quota/?format=plain')
     request.add_header('User-Agent', 'randomwrapy/0.1 very alpha')
     opener = urllib.request.build_opener()
     quota = opener.open(request).read()
@@ -135,9 +135,9 @@ def checkquota():
 
 def reportquota():
     request = urllib.request.Request(
-        "http://www.random.org/quota/?format=plain")
+        'http://www.random.org/quota/?format=plain')
     request.add_header('User-Agent', 'randomwrapy/0.1 very alpha')
     opener = urllib.request.build_opener()
     quota = opener.open(request).read()
-    print("This IP address has", quota,
-          "bits left. Visit http://www.random.org/quota for more information.")
+    print('This IP address has', quota,
+          'bits left. Visit http://www.random.org/quota for more information.')

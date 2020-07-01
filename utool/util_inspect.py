@@ -2259,7 +2259,7 @@ def exec_func_doctest(func, start_sentinal=None, end_sentinal=None, num=0, globa
     globals_new = globals_.copy()
     if locals_ is not None:
         globals_new.update(locals_)
-    print("EXEC PART")
+    print('EXEC PART')
     print(ut.highlight_code(docsrc_part))
     six.exec_(docsrc_part, globals_new)
 

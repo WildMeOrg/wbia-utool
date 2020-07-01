@@ -82,7 +82,7 @@ def make_hash(o):
     if type(o) == DictProxyType:
         o2 = {}
         for k, v in o.items():
-            if not k.startswith("__"):
+            if not k.startswith('__'):
                 o2[k] = v
             o = o2
     if isinstance(o, (set, tuple, list)):
@@ -823,7 +823,7 @@ def hashstr_md5(data):
 def hashstr_sha1(data, base10=False):
     text = hashlib.sha1(data).hexdigest()
     if base10:
-        text = int("0x" + text, 0)
+        text = int('0x' + text, 0)
     return text
 
 

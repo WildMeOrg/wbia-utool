@@ -25,9 +25,9 @@ def get_regstr(regtype, var, val):
         #val_ = ','.join([''.join(hex2) for hex2 in hex2zip])
         #import binascii  # NOQA
         x = val
-        ascii_ = x.encode("ascii")
-        hex_ = ascii_.encode("hex")
-        hex_ = x.encode("hex")
+        ascii_ = x.encode('ascii')
+        hex_ = ascii_.encode('hex')
+        hex_ = x.encode('hex')
         hex2zip = zip(hex_[0::2], hex_[1::2])
         spacezip = [('0', '0')] * len(hex2zip)
         hex3zip = zip(hex2zip, spacezip)

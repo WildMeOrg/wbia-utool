@@ -252,7 +252,7 @@ class Repo(util_dev.NiceRepr):
     def _remote_info(repo, remote):
         OLD = False
         if OLD:
-            remote_details = remote.repo.git.remote("get-url", remote.name, '--push')
+            remote_details = remote.repo.git.remote('get-url', remote.name, '--push')
             # TODO push into gitpython
             urls = [line for line in remote_details.split('\n')]
         else:
@@ -590,7 +590,7 @@ class Repo(util_dev.NiceRepr):
                                 ut.writeto(script_path, script.text)
                                 _ = ut.cmd('bash ', script_path)  # NOQA
                         else:
-                            print("CANT QUITE EXECUTE THIS YET")
+                            print('CANT QUITE EXECUTE THIS YET')
                             ut.print_code(script.text, 'bash')
                 #os.system(scriptname)
                 print('L**** exec %s script *******' % (script.type_))

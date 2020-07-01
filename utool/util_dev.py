@@ -522,7 +522,7 @@ def memory_dump():
        http://stackoverflow.com/questions/141351/how-do-i-find-what-is-using-memory-in-a-python-process-in-a-production-system
     """
     import cPickle
-    dump = open("memory.pickle", 'w')
+    dump = open('memory.pickle', 'w')
     for obj in gc.get_objects():
         i = id(obj)
         size = sys.getsizeof(obj, 0)

@@ -239,7 +239,7 @@ def total_purge_developed_repo(repodir):
     ]]
     import sys
     assert repo.modname not in sys.modules
-    print("# CHECK STATUS")
+    print('# CHECK STATUS')
     for cmd in checkcmds:
         print(cmd)
         #ut.cmd(cmd, verbose=False)

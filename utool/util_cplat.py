@@ -70,7 +70,7 @@ def get_plat_specifier():
     import setuptools  # NOQA
     import distutils
     plat_name = distutils.util.get_platform()
-    plat_specifier = ".%s-%s" % (plat_name, sys.version[0:3])
+    plat_specifier = '.%s-%s' % (plat_name, sys.version[0:3])
     if hasattr(sys, 'gettotalrefcount'):
         plat_specifier += '-pydebug'
     return plat_specifier
@@ -1079,7 +1079,7 @@ def get_flops():
     from sys import stdout
     from re import compile
 
-    filename = "linpack.out"
+    filename = 'linpack.out'
     fpnum = r'\d+\.\d+E[+-]\d\d'
     fpnum_1 = fpnum + r' +'
     pattern = compile(r'^ *' + fpnum_1 + fpnum_1 + fpnum_1 + r'(' + fpnum + r') +' + fpnum_1 + fpnum + r' *\n$')
@@ -1103,7 +1103,7 @@ def get_flops():
     if count != 0 :
         speeds[0] = speeds[0] / count
 
-    stdout.write("%6.1f MFlops (%d from %.1f to %.1f)\n" % (speeds[0], count, speeds[1], speeds[2]))
+    stdout.write('%6.1f MFlops (%d from %.1f to %.1f)\n' % (speeds[0], count, speeds[1], speeds[2]))
 
 
 def set_process_title(title):
