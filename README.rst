@@ -1,4 +1,4 @@
-|Pypi| |Downloads| |Codecov| |Travis| |Appveyor| 
+|Pypi| |Downloads| |Codecov| |Travis| |Appveyor|
 
 utool
 -----
@@ -11,7 +11,7 @@ Useful Utility Tools For You!
 
 The `utool` library is a collection of tools that I've found useful. I've
 written most of them from scratch, but there are a few I've taken or partially
-taken from StackOverflow. References are given in most locations.  
+taken from StackOverflow. References are given in most locations.
 
 In my experience the most useful functions in this library are:
 
@@ -64,7 +64,7 @@ Installation can now be done via pypi
     pip install utool
 
 If the pypi release is currently broken. Installing utool can be done via pip
-and github. 
+and github.
 
 .. code:: bash
 

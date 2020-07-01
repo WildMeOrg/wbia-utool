@@ -28,7 +28,7 @@ remove_profiles()
 
 
 # Choose one # plop or lineprof, or runsnake
-#export PROFILE_TYPE="runsnake"  
+#export PROFILE_TYPE="runsnake"
 export PROFILE_TYPE="lineprof"
 
 # Platform independent kernprof
@@ -67,7 +67,7 @@ export pyscript=$($PYEXE -c "import os; print(os.path.split(r'$1')[1])")
 if [ "$pyscript" = "clean" ]; then
     remove_profiles
     exit
-fi 
+fi
 
 echo "pyscript: $pyscript"
 
@@ -125,7 +125,7 @@ fi
 #assoc .sh=sh_auto_file
 #ftype sh_auto_file="C:\MinGW\msys\1.0\bin\sh.exe" %1 %*
 #
-#set PATHEXT=.sh;%PATHEXT% 
+#set PATHEXT=.sh;%PATHEXT%
 #assoc .sh
 #assoc .sh=bashscript
 #ftype bashscript="C:\MinGW\msys\1.0\bin\sh.exe" %1 %*
