@@ -437,6 +437,3 @@ def bayesnet_examples():
     student_model.add_cpds(grade_cpd, difficulty_cpd,
                            intel_cpd, letter_cpd,
                            sat_cpd)
-
-
-
