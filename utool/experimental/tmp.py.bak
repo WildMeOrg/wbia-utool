@@ -46,4 +46,3 @@ def disassemble(co, lasti=-1):
                     free = co.co_cellvars + co.co_freevars
                 print '(' + free[oparg] + ')',
         print
-
