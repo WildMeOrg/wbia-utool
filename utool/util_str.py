@@ -13,22 +13,23 @@ import math
 import collections
 from os.path import split
 from utool import util_type
-#from utool import util_time
+
+# from utool import util_time
 from utool import util_cplat
 from utool._internal import meta_util_six
 from utool._internal import meta_util_arg
 from utool import util_inject
+
 print, rrr, profile = util_inject.inject2(__name__)
 
-ENABLE_COLORS = (not util_cplat.WIN32 and
-                 not meta_util_arg.get_argflag('--nopygments'))
+ENABLE_COLORS = not util_cplat.WIN32 and not meta_util_arg.get_argflag('--nopygments')
 
 if util_type.HAVE_NUMPY:
     import numpy as np
 if util_type.HAVE_PANDAS:
     import pandas as pd
 
-TAU = (2 * math.pi)  # References: tauday.com
+TAU = 2 * math.pi  # References: tauday.com
 
 NO_TRUNCATE = '--no-truncate' in sys.argv
 
@@ -65,10 +66,14 @@ def ensure_ascii(str_):
 
 def ensure_unicode_strlist(str_list):
     __STR__ = util_type.__STR__
-    flag_list = [not isinstance(str_, __STR__) and is_byte_encoded_unicode(str_)
-                 for str_ in str_list]
-    new_str_list = [str_.decode('utf-8') if flag else __STR__(str_)
-                    for str_, flag in zip(str_list, flag_list)]
+    flag_list = [
+        not isinstance(str_, __STR__) and is_byte_encoded_unicode(str_)
+        for str_ in str_list
+    ]
+    new_str_list = [
+        str_.decode('utf-8') if flag else __STR__(str_)
+        for str_, flag in zip(str_list, flag_list)
+    ]
     return new_str_list
 
 
@@ -173,15 +178,17 @@ def verts_str(verts, pad=1):
     r""" makes a string from a list of integer verticies """
     if verts is None:
         return 'None'
-    fmtstr = ', '.join(['%' + six.text_type(pad) + 'd' +
-                        ', %' + six.text_type(pad) + 'd'] * 1)
+    fmtstr = ', '.join(
+        ['%' + six.text_type(pad) + 'd' + ', %' + six.text_type(pad) + 'd'] * 1
+    )
     return ', '.join(['(' + fmtstr % vert + ')' for vert in verts])
+
 
 # --- Strings ----
 
 
 def scalar_str(val, precision=None, max_precision=None):
-    isfloat = (isinstance(val, (float)) or util_type.is_float(val))
+    isfloat = isinstance(val, (float)) or util_type.is_float(val)
     if precision is not None and isfloat:
         return ('%.' + six.text_type(precision) + 'f') % (val,)
     elif max_precision is not None and isfloat:
@@ -248,8 +255,7 @@ def get_minimum_indentation(text):
         3
     """
     lines = text.split('\n')
-    indentations = [get_indentation(line_)
-                    for line_ in lines  if len(line_.strip()) > 0]
+    indentations = [get_indentation(line_) for line_ in lines if len(line_.strip()) > 0]
     if len(indentations) == 0:
         return 0
     return min(indentations)
@@ -281,7 +287,7 @@ def flatten_textlines(text):
 def remove_doublspaces(text):
     new_text = text
     new_text = re.sub('  *', ' ', new_text)
-    #, flags=re.MULTILINE)
+    # , flags=re.MULTILINE)
     return new_text
 
 
@@ -372,8 +378,7 @@ def indentjoin(strlist, indent='\n    ', suffix=''):
     strlist = list(strlist)
     if len(strlist) == 0:
         return ''
-    return indent_ + indent_.join([six.text_type(str_) + suffix
-                                   for str_ in strlist])
+    return indent_ + indent_.join([six.text_type(str_) + suffix for str_ in strlist])
 
 
 def truncate_str(str_, maxlen=110, truncmsg=' ~~~TRUNCATED~~~ '):
@@ -386,14 +391,21 @@ def truncate_str(str_, maxlen=110, truncmsg=' ~~~TRUNCATED~~~ '):
         return str_
     else:
         maxlen_ = maxlen - len(truncmsg)
-        lowerb  = int(maxlen_ * .8)
-        upperb  = maxlen_ - lowerb
+        lowerb = int(maxlen_ * 0.8)
+        upperb = maxlen_ - lowerb
         tup = (str_[:lowerb], truncmsg, str_[-upperb:])
         return ''.join(tup)
 
 
-def pack_into(text, textwidth=160, breakchars=' ', break_words=True,
-              newline_prefix='', wordsep=' ', remove_newlines=True):
+def pack_into(
+    text,
+    textwidth=160,
+    breakchars=' ',
+    break_words=True,
+    newline_prefix='',
+    wordsep=' ',
+    remove_newlines=True,
+):
     r"""
 
     DEPRICATE IN FAVOR OF textwrap.wrap
@@ -431,7 +443,7 @@ def pack_into(text, textwidth=160, breakchars=' ', break_words=True,
 
 
     """
-    #FIXME: messy code
+    # FIXME: messy code
     textwidth_ = textwidth
     # Accumulate a list of lines
     line_list = ['']
@@ -465,16 +477,31 @@ def pack_into(text, textwidth=160, breakchars=' ', break_words=True,
     return packed_str
 
 
-def packstr(instr, textwidth=160, breakchars=' ', break_words=True,
-            newline_prefix='', indentation='', nlprefix=None, wordsep=' ',
-            remove_newlines=True):
+def packstr(
+    instr,
+    textwidth=160,
+    breakchars=' ',
+    break_words=True,
+    newline_prefix='',
+    indentation='',
+    nlprefix=None,
+    wordsep=' ',
+    remove_newlines=True,
+):
     """ alias for pack_into. has more up to date kwargs """
     if not isinstance(instr, six.string_types):
         instr = repr(instr)
     if nlprefix is not None:
         newline_prefix = nlprefix
-    str_ = pack_into(instr, textwidth, breakchars, break_words, newline_prefix,
-                     wordsep, remove_newlines)
+    str_ = pack_into(
+        instr,
+        textwidth,
+        breakchars,
+        break_words,
+        newline_prefix,
+        wordsep,
+        remove_newlines,
+    )
     if indentation != '':
         str_ = indent(str_, indentation)
     return str_
@@ -499,6 +526,7 @@ def packtext(text, width=80):
     """
     import utool as ut
     import textwrap
+
     new_text = '\n'.join(textwrap.wrap(text, width))
     new_text = ut.remove_doublspaces(new_text).strip()
     return new_text
@@ -540,22 +568,22 @@ def seconds_str(num, prefix=None):
     """
     exponent_list = [-12, -9, -6, -3, 0, 3, 6, 9, 12]
     small_prefix_list = ['p', 'n', 'u', 'm', '', 'k', 'M', 'G', 'T']
-    #large_prefix_list = ['pico', 'nano', 'micro', 'mili', '', 'kilo', 'mega',
+    # large_prefix_list = ['pico', 'nano', 'micro', 'mili', '', 'kilo', 'mega',
     # 'giga', 'tera']
-    #large_suffix = 'second'
+    # large_suffix = 'second'
     small_suffix = 's'
     suffix = small_suffix
     prefix_list = small_prefix_list
     base = 10.0
-    secstr = order_of_magnitude_str(num, base, prefix_list, exponent_list,
-                                    suffix, prefix=prefix)
+    secstr = order_of_magnitude_str(
+        num, base, prefix_list, exponent_list, suffix, prefix=prefix
+    )
     return secstr
 
 
-def order_of_magnitude_str(num, base=10.0,
-                           prefix_list=None,
-                           exponent_list=None,
-                           suffix='', prefix=None):
+def order_of_magnitude_str(
+    num, base=10.0, prefix_list=None, exponent_list=None, suffix='', prefix=None
+):
     """
     TODO: Rewrite byte_str to use this func
     Returns:
@@ -583,7 +611,7 @@ def order_of_magnitude_str(num, base=10.0,
 def _magnitude_str(abs_num, magnitude, prefix_, suffix):
     scaled_num = abs_num / magnitude
     unit = prefix_ + suffix
-    unit_str = ('%.2f %s' % (scaled_num, unit))
+    unit_str = '%.2f %s' % (scaled_num, unit)
     return unit_str
 
 
@@ -611,6 +639,7 @@ def parse_bytes(bytes_str):
     """
     import utool as ut
     import re
+
     numstr = ut.named_field('num', r'\d\.?\d*')
     unitstr = ut.named_field('unit', r'[a-zA-Z]+')
     match = re.match(numstr + ' *' + unitstr, bytes_str)
@@ -675,13 +704,13 @@ def byte_str(nBytes, unit='bytes', precision=2):
     Returns:
         str
     """
-    #return (nBytes * ureg.byte).to(unit.upper())
+    # return (nBytes * ureg.byte).to(unit.upper())
     if unit.lower().startswith('b'):
         nUnit = nBytes
     elif unit.lower().startswith('k'):
-        nUnit =  nBytes / (2.0 ** 10)
+        nUnit = nBytes / (2.0 ** 10)
     elif unit.lower().startswith('m'):
-        nUnit =  nBytes / (2.0 ** 20)
+        nUnit = nBytes / (2.0 ** 20)
     elif unit.lower().startswith('g'):
         nUnit = nBytes / (2.0 ** 30)
     elif unit.lower().startswith('t'):
@@ -694,6 +723,7 @@ def byte_str(nBytes, unit='bytes', precision=2):
 def second_str(nsecs, unit=None, precision=None, abbrev=True):
     import utool as ut
     import pint
+
     ureg = pint.UnitRegistry()
     sec_quant = nsecs * ureg.s
     if unit is not None:
@@ -702,8 +732,12 @@ def second_str(nsecs, unit=None, precision=None, abbrev=True):
         unit_quant = sec_quant.to_compact()
     unit_str = str(unit_quant.units)
     if abbrev:
-        lookup = {'millisecond': 'ms', 'second': 's',
-                  'nanosecond': 'ns', 'microsecond': 'µs'}
+        lookup = {
+            'millisecond': 'ms',
+            'second': 's',
+            'nanosecond': 'ns',
+            'microsecond': 'µs',
+        }
         unit_str = lookup.get(unit_str, unit_str)
     else:
         unit_str = ut.pluralize(unit_str, unit_quant.magnitude)
@@ -714,11 +748,13 @@ def second_str(nsecs, unit=None, precision=None, abbrev=True):
 
 def file_megabytes_str(fpath):
     from utool import util_path
-    return ('%.2f MB' % util_path.file_megabytes(fpath))
+
+    return '%.2f MB' % util_path.file_megabytes(fpath)
 
 
-def func_str(func, args=[], kwargs={}, type_aliases=[], packed=False,
-             packkw=None, truncate=False):
+def func_str(
+    func, args=[], kwargs={}, type_aliases=[], packed=False, packkw=None, truncate=False
+):
     """
     string representation of function definition
 
@@ -754,18 +790,24 @@ def func_str(func, args=[], kwargs={}, type_aliases=[], packed=False,
         byte_str(1024, 'MB', precision=2)
     """
     import utool as ut
+
     # if truncate:
     # truncatekw = {'maxlen': 20}
     # else:
     truncatekw = {}
 
-    argrepr_list = ([] if args is None else
-                    ut.get_itemstr_list(args, nl=False, truncate=truncate,
-                                        truncatekw=truncatekw))
-    kwrepr_list = ([] if kwargs is None else
-                   ut.dict_itemstr_list(kwargs, explicit=True, nl=False,
-                                        truncate=truncate,
-                                        truncatekw=truncatekw))
+    argrepr_list = (
+        []
+        if args is None
+        else ut.get_itemstr_list(args, nl=False, truncate=truncate, truncatekw=truncatekw)
+    )
+    kwrepr_list = (
+        []
+        if kwargs is None
+        else ut.dict_itemstr_list(
+            kwargs, explicit=True, nl=False, truncate=truncate, truncatekw=truncatekw
+        )
+    )
     repr_list = argrepr_list + kwrepr_list
 
     argskwargs_str = ', '.join(repr_list)
@@ -801,6 +843,7 @@ def func_defsig(func, with_name=True):
         func_str(func, args=[], kwargs={}, type_aliases=[], packed=False, packkw=None, truncate=False)
     """
     import inspect
+
     argspec = inspect.getargspec(func)
     (args, varargs, varkw, defaults) = argspec
     defsig = inspect.formatargspec(*argspec)
@@ -832,6 +875,7 @@ def func_callsig(func, with_name=True):
         func_str(func, args, kwargs, type_aliases, packed, packkw, truncate)
     """
     import inspect
+
     argspec = inspect.getargspec(func)
     (args, varargs, varkw, defaults) = argspec
     callsig = inspect.formatargspec(*argspec[0:3])
@@ -926,47 +970,47 @@ def func_callsig(func, with_name=True):
 #     #+ suffix
 #     return formatted
 
-    # the old way of doing this breaks
-    # import numpy as np
-    # from numpy.core.numeric import _typelessdata
+# the old way of doing this breaks
+# import numpy as np
+# from numpy.core.numeric import _typelessdata
 
-    # if arr.__class__ is not np.ndarray:
-    #     cName = arr.__class__.__name__
-    # else:
-    #     cName = 'array'
+# if arr.__class__ is not np.ndarray:
+#     cName = arr.__class__.__name__
+# else:
+#     cName = 'array'
 
-    # prefix = cName + '('
+# prefix = cName + '('
 
-    # if arr.size > 0 or arr.shape == (0,):
-    #     separator = ', '
-    #     lst = array2string2(
-    #         arr, max_line_width, precision, suppress_small, separator, prefix,
-    #         **kwargs)
-    # else:
-    #     # show zero-length shape unless it is (0,)
-    #     lst = '[], shape=%s' % (repr(arr.shape),)
+# if arr.size > 0 or arr.shape == (0,):
+#     separator = ', '
+#     lst = array2string2(
+#         arr, max_line_width, precision, suppress_small, separator, prefix,
+#         **kwargs)
+# else:
+#     # show zero-length shape unless it is (0,)
+#     lst = '[], shape=%s' % (repr(arr.shape),)
 
-    # skipdtype = ((arr.dtype.type in _typelessdata) and arr.size > 0)
+# skipdtype = ((arr.dtype.type in _typelessdata) and arr.size > 0)
 
-    # if with_dtype is None:
-    #     with_dtype = not (skipdtype and not (cName == 'array' and force_dtype))
+# if with_dtype is None:
+#     with_dtype = not (skipdtype and not (cName == 'array' and force_dtype))
 
-    # if not with_dtype:
-    #     return '%s(%s)' % (cName, lst)
-    # else:
-    #     typename = arr.dtype.name
-    #     # Quote typename in the output if it is 'complex'.
-    #     if typename and not (typename[0].isalpha() and typename.isalnum()):
-    #         typename = '\'%s\'' % typename
+# if not with_dtype:
+#     return '%s(%s)' % (cName, lst)
+# else:
+#     typename = arr.dtype.name
+#     # Quote typename in the output if it is 'complex'.
+#     if typename and not (typename[0].isalpha() and typename.isalnum()):
+#         typename = '\'%s\'' % typename
 
-    #     lf = ''
-    #     if issubclass(arr.dtype.type, np.flexible):
-    #         if arr.dtype.names:
-    #             typename = '%s' % six.text_type(arr.dtype)
-    #         else:
-    #             typename = '\'%s\'' % six.text_type(arr.dtype)
-    #         lf = '\n' + ' ' * len(prefix)
-    #     return cName + '(%s, %sdtype=%s)' % (lst, lf, typename)
+#     lf = ''
+#     if issubclass(arr.dtype.type, np.flexible):
+#         if arr.dtype.names:
+#             typename = '%s' % six.text_type(arr.dtype)
+#         else:
+#             typename = '\'%s\'' % six.text_type(arr.dtype)
+#         lf = '\n' + ' ' * len(prefix)
+#     return cName + '(%s, %sdtype=%s)' % (lst, lf, typename)
 
 
 # def array2string2(a, max_line_width=None, precision=None, suppress_small=None,
@@ -1109,10 +1153,18 @@ def func_callsig(func, with_name=True):
 #     return lst
 
 
-def numpy_str(arr, strvals=False, precision=None, pr=None,
-              force_dtype=False,
-              with_dtype=None, suppress_small=None, max_line_width=None,
-              threshold=None, **kwargs):
+def numpy_str(
+    arr,
+    strvals=False,
+    precision=None,
+    pr=None,
+    force_dtype=False,
+    with_dtype=None,
+    suppress_small=None,
+    max_line_width=None,
+    threshold=None,
+    **kwargs
+):
     """
     suppress_small = False turns off scientific representation
     """
@@ -1158,11 +1210,14 @@ def numpy_str(arr, strvals=False, precision=None, pr=None,
         prefix = modname + '.empty('
         body = repr(tuple(map(int, data.shape)))
     else:
-        body = np.array2string(data, precision=precision,
-                               separator=separator,
-                               suppress_small=suppress_small,
-                               prefix=prefix,
-                               max_line_width=max_line_width)
+        body = np.array2string(
+            data,
+            precision=precision,
+            separator=separator,
+            suppress_small=suppress_small,
+            prefix=prefix,
+            max_line_width=max_line_width,
+        )
     if not newlines:
         # remove newlines if we need to
         body = re.sub('\n *', '', body)
@@ -1231,7 +1286,7 @@ def reprfunc(val, precision=None):
     """
     if isinstance(val, six.string_types):
         repr_ = repr(val)
-        if repr_.startswith('u\'') or repr_.startswith('u"'):
+        if repr_.startswith("u'") or repr_.startswith('u"'):
             # Remove unicode repr from python2 to agree with python3
             # output
             repr_ = repr_[1:]
@@ -1239,11 +1294,12 @@ def reprfunc(val, precision=None):
         return scalar_str(val, precision)
     elif isinstance(val, type):
         import utool as ut
+
         repr_ = ut.type_str(val)
     else:
-        #import utool as ut
-        #print('val = %r' % (val,))
-        #ut.repr2(val)
+        # import utool as ut
+        # print('val = %r' % (val,))
+        # ut.repr2(val)
         repr_ = repr(val)
     return repr_
 
@@ -1301,9 +1357,9 @@ def _rectify_countdown_or_bool(count_or_bool):
     elif isinstance(count_or_bool, int):
         if count_or_bool == 0:
             return 0
-        sign_ =  math.copysign(1, count_or_bool)
+        sign_ = math.copysign(1, count_or_bool)
         count_or_bool_ = int(count_or_bool - sign_)
-        #if count_or_bool_ == 0:
+        # if count_or_bool_ == 0:
         #    return sign_ == 1
     else:
         count_or_bool_ = False
@@ -1327,9 +1383,10 @@ def repr2(obj_, **kwargs):
 def repr2_json(obj_, **kwargs):
     """ hack for json reprs """
     import utool as ut
+
     kwargs['trailing_sep'] = False
     json_str = ut.repr2(obj_, **kwargs)
-    json_str = str(json_str.replace('\'', '"'))
+    json_str = str(json_str.replace("'", '"'))
     json_str = json_str.replace('(', '[')
     json_str = json_str.replace(')', ']')
     json_str = json_str.replace('None', 'null')
@@ -1451,7 +1508,7 @@ def dict_str(dict_, **dictkw):
     # Doesn't actually put in trailing comma if on same line
     trailing_sep = dictkw.get('trailing_sep', True)
     explicit = dictkw.get('explicit', False)
-    with_comma  = True
+    with_comma = True
     itemsep = dictkw.get('itemsep', ' ')
 
     if len(dict_) == 0:
@@ -1474,7 +1531,7 @@ def dict_str(dict_, **dictkw):
     if newlines:
         sep = ',\n' if with_comma else '\n'
         if nobraces:
-            retstr =  sep.join(itemstr_list)
+            retstr = sep.join(itemstr_list)
             if trailing_sep:
                 retstr += ','
         else:
@@ -1482,14 +1539,14 @@ def dict_str(dict_, **dictkw):
             body_str = sep.join(parts)
             if trailing_sep:
                 body_str += ','
-            retstr =  (lbr + '\n' + body_str + '\n' + rbr)
+            retstr = lbr + '\n' + body_str + '\n' + rbr
             if align:
                 retstr = ut.align(retstr, ':')
     else:
         sep = ',' + itemsep if with_comma else itemsep
         # hack away last trailing comma
         sequence_str = sep.join(itemstr_list)
-        retstr = lbr +  sequence_str + rbr
+        retstr = lbr + sequence_str + rbr
     # Is there a way to make truncate for dict_str compatible with list_str?
     return retstr
 
@@ -1513,6 +1570,7 @@ def dict_itemstr_list(dict_, **dictkw):
 
     if dosort and not isinstance(dict_, collections.OrderedDict):
         key_order = dictkw.get('key_order', None)
+
         def iteritems(d):
             if key_order is None:
                 # specify order explicilty
@@ -1528,6 +1586,7 @@ def dict_itemstr_list(dict_, **dictkw):
                 other_keys = sorted(list(set(unordered_keys) - set(key_order)))
                 keys = key_order + other_keys
                 return ((key, d[key]) for key in keys)
+
     else:
         iteritems = six.iteritems
 
@@ -1556,8 +1615,7 @@ def dict_itemstr_list(dict_, **dictkw):
             item_str = prefix + val_str
         return item_str
 
-    itemstr_list = [make_item_str(key, val)
-                    for (key, val) in iteritems(dict_)]
+    itemstr_list = [make_item_str(key, val) for (key, val) in iteritems(dict_)]
 
     reverse = False
     key_order_metric = dictkw.get('key_order_metric', None)
@@ -1648,11 +1706,11 @@ def list_str(list_, **listkw):
     if nobraces:
         lbr, rbr = '', ''
     elif is_tuple:
-        lbr, rbr  = '(', ')'
+        lbr, rbr = '(', ')'
     elif is_set:
-        lbr, rbr  = '{', '}'
+        lbr, rbr = '{', '}'
     else:
-        lbr, rbr  = '[', ']'
+        lbr, rbr = '[', ']'
 
     if len(itemstr_list) == 0:
         newlines = False
@@ -1671,20 +1729,19 @@ def list_str(list_, **listkw):
                 body_str = joinstr.join([itemstr for itemstr in itemstr_list])
                 if trailing_sep:
                     body_str += ','
-                braced_body_str = (lbr + '' + body_str + '' + rbr)
+                braced_body_str = lbr + '' + body_str + '' + rbr
             else:
-                body_str = sep.join([
-                    ut.indent(itemstr) for itemstr in itemstr_list])
+                body_str = sep.join([ut.indent(itemstr) for itemstr in itemstr_list])
                 if trailing_sep:
                     body_str += ','
-                braced_body_str = (lbr + '\n' + body_str + '\n' + rbr)
+                braced_body_str = lbr + '\n' + body_str + '\n' + rbr
             retstr = braced_body_str
     else:
         sep = ',' + itemsep if with_comma else itemsep
         body_str = sep.join(itemstr_list)
         if is_onetup:
             body_str += ','
-        retstr  = (lbr + body_str +  rbr)
+        retstr = lbr + body_str + rbr
 
     # TODO: rectify with dict_truncate
     do_truncate = truncate is not False and (truncate is True or truncate == 0)
@@ -1724,13 +1781,19 @@ def _make_valstr(**kwargs):
                 linewidth = kwargs.get('linewidth', max_line_width)
                 threshold = kwargs.get('threshold', None)
 
-                return numpy_str(val, strvals=strvals, precision=precision,
-                                 threshold=threshold, linewidth=linewidth,
-                                 with_dtype=with_dtype)
+                return numpy_str(
+                    val,
+                    strvals=strvals,
+                    precision=precision,
+                    threshold=threshold,
+                    linewidth=linewidth,
+                    with_dtype=with_dtype,
+                )
             else:
                 return list_str(val, **kwargs)
-        if precision is not None and (isinstance(val, (float)) or
-                                      util_type.is_float(val)):
+        if precision is not None and (
+            isinstance(val, (float)) or util_type.is_float(val)
+        ):
             return scalar_str(val, precision)
         elif isinstance(val, slice):
             if kwargs.get('itemsep', ' ') == '':
@@ -1740,6 +1803,7 @@ def _make_valstr(**kwargs):
         else:
             # base case
             return valfunc(val)
+
     return recursive_valfunc
 
 
@@ -1754,6 +1818,7 @@ def get_itemstr_list(list_, **listkw):
     them.
     """
     import utool as ut
+
     _valstr = _make_valstr(**listkw)
 
     def make_item_str(item):
@@ -1789,6 +1854,7 @@ def utf8_len(str_):
         http://stackoverflow.com/questions/2247205/python-returning-the-wrong-length-of-string-when-using-special-characters
     """
     import unicodedata
+
     return len(unicodedata.normalize('NFC', ensure_unicode(str_)))
 
 
@@ -1840,8 +1906,7 @@ def horiz_string(*args, **kwargs):
     else:
         val_list = args
 
-    val_list = [unicodedata.normalize('NFC', ensure_unicode(val))
-                for val in val_list]
+    val_list = [unicodedata.normalize('NFC', ensure_unicode(val)) for val in val_list]
     all_lines = []
     hpos = 0
     # for each value in the list or args
@@ -1854,8 +1919,7 @@ def horiz_string(*args, **kwargs):
             if util_type.HAVE_NUMPY:
                 try:
                     if isinstance(val, np.ndarray):
-                        str_ = np.array_str(val, precision=precision,
-                                            suppress_small=True)
+                        str_ = np.array_str(val, precision=precision, suppress_small=True)
                 except ImportError:
                     pass
         if str_ is None:
@@ -1877,6 +1941,7 @@ def horiz_string(*args, **kwargs):
     all_lines = [line.rstrip(' ') for line in all_lines]
     ret = '\n'.join(all_lines)
     return ret
+
 
 # Alias
 hz_str = horiz_string
@@ -1934,12 +1999,13 @@ def get_callable_name(func):
         return meta_util_six.get_funcname(func)
     except AttributeError:
         if isinstance(func, type):
-            return repr(func).replace('<type \'', '').replace('\'>', '')
+            return repr(func).replace("<type '", '').replace("'>", '')
         elif hasattr(func, '__name__'):
             return func.__name__
         else:
-            raise NotImplementedError(('cannot get func_name of func=%r'
-                                        'type(func)=%r') % (func, type(func)))
+            raise NotImplementedError(
+                ('cannot get func_name of func=%r' 'type(func)=%r') % (func, type(func))
+            )
 
 
 def align(text, character='=', replchar=None, pos=0):
@@ -2088,8 +2154,9 @@ def align_lines(line_list, character='=', replchar=None, pos=0):
         # recursive calls
         new_lines = line_list
         for pos in pos_list:
-            new_lines = align_lines(new_lines, character=character,
-                                    replchar=replchar, pos=pos)
+            new_lines = align_lines(
+                new_lines, character=character, replchar=replchar, pos=pos
+            )
         return new_lines
 
     # base case
@@ -2143,8 +2210,15 @@ def strip_ansi(text):
 
 
 # FIXME: HASHLEN is a global var in util_hash
-def long_fname_format(fmt_str, fmt_dict, hashable_keys=[], max_len=64,
-                      hashlen=16, ABS_MAX_LEN=255, hack27=False):
+def long_fname_format(
+    fmt_str,
+    fmt_dict,
+    hashable_keys=[],
+    max_len=64,
+    hashlen=16,
+    ABS_MAX_LEN=255,
+    hack27=False,
+):
     r"""
     DEPRICATE
 
@@ -2184,6 +2258,7 @@ def long_fname_format(fmt_str, fmt_dict, hashable_keys=[], max_len=64,
         qaid=5_res_racfntgq_quuid=yvuaffrp
     """
     from utool import util_hash
+
     fname = fmt_str.format(**fmt_dict)
     if max_len is None:
         return fname
@@ -2200,8 +2275,10 @@ def long_fname_format(fmt_str, fmt_dict, hashable_keys=[], max_len=64,
                 break
         if len(fname) > max_len:
             diff = len(fname) - max_len
-            msg = ('[util_str] Warning: Too big by %d chars. Exausted all options'
-                   'to make fname fit into size. ')  % (diff,)
+            msg = (
+                '[util_str] Warning: Too big by %d chars. Exausted all options'
+                'to make fname fit into size. '
+            ) % (diff,)
             print(msg)
             print('* len(fname) = %r' % len(fname))
             print('* fname = %r' % fname)
@@ -2274,8 +2351,8 @@ def pluralize(wordtext, num=2, plural_suffix='s'):
     if num == 1:
         return wordtext
     else:
-        if wordtext.endswith('\'s'):
-            return wordtext[:-2] + 's\''
+        if wordtext.endswith("'s"):
+            return wordtext[:-2] + "s'"
         else:
             return wordtext + plural_suffix
     return (wordtext + plural_suffix) if num != 1 else wordtext
@@ -2317,9 +2394,9 @@ def quantstr(typestr, num, plural_suffix='s'):
 def msgblock(key, text, side='|'):
     """ puts text inside a visual ascii block """
     blocked_text = ''.join(
-        [' + --- ', key, ' ---\n'] +
-        [' ' + side + ' ' + line + '\n' for line in text.split('\n')] +
-        [' L ___ ', key, ' ___\n']
+        [' + --- ', key, ' ---\n']
+        + [' ' + side + ' ' + line + '\n' for line in text.split('\n')]
+        + [' L ___ ', key, ' ___\n']
     )
     return blocked_text
 
@@ -2387,6 +2464,7 @@ def get_textdiff(text1, text2, num_context_lines=0, ignore_whitespace=False):
         >>> print(result)
     """
     import difflib
+
     text1 = ensure_unicode(text1)
     text2 = ensure_unicode(text2)
     text1_lines = text1.splitlines()
@@ -2394,8 +2472,7 @@ def get_textdiff(text1, text2, num_context_lines=0, ignore_whitespace=False):
     if ignore_whitespace:
         text1_lines = [t.rstrip() for t in text1_lines]
         text2_lines = [t.rstrip() for t in text2_lines]
-        ndiff_kw = dict(linejunk=difflib.IS_LINE_JUNK,
-                        charjunk=difflib.IS_CHARACTER_JUNK)
+        ndiff_kw = dict(linejunk=difflib.IS_LINE_JUNK, charjunk=difflib.IS_CHARACTER_JUNK)
     else:
         ndiff_kw = {}
     all_diff_lines = list(difflib.ndiff(text1_lines, text2_lines, **ndiff_kw))
@@ -2404,23 +2481,21 @@ def get_textdiff(text1, text2, num_context_lines=0, ignore_whitespace=False):
         diff_lines = all_diff_lines
     else:
         from utool import util_list
+
         # boolean for every line if it is marked or not
-        ismarked_list = [len(line) > 0 and line[0] in '+-?'
-                         for line in all_diff_lines]
+        ismarked_list = [len(line) > 0 and line[0] in '+-?' for line in all_diff_lines]
         # flag lines that are within num_context_lines away from a diff line
         isvalid_list = ismarked_list[:]
         for i in range(1, num_context_lines + 1):
-            isvalid_list[:-i] = util_list.or_lists(isvalid_list[:-i],
-                                                   ismarked_list[i:])
-            isvalid_list[i:]  = util_list.or_lists(isvalid_list[i:],
-                                                   ismarked_list[:-i])
+            isvalid_list[:-i] = util_list.or_lists(isvalid_list[:-i], ismarked_list[i:])
+            isvalid_list[i:] = util_list.or_lists(isvalid_list[i:], ismarked_list[:-i])
         USE_BREAK_LINE = True
         if USE_BREAK_LINE:
             # insert a visual break when there is a break in context
             diff_lines = []
             prev = False
             visual_break = '\n <... FILTERED CONTEXT ...> \n'
-            #print(isvalid_list)
+            # print(isvalid_list)
             for line, valid in zip(all_diff_lines, isvalid_list):
                 if valid:
                     diff_lines.append(line)
@@ -2489,6 +2564,7 @@ def doctest_code_line(line_str, varname=None, verbose=True):
 
 def doctest_repr(var, varname=None, precision=2, verbose=True):
     import utool as ut
+
     varname_ = ut.get_varname_from_stack(var, N=1) if varname is None else varname
     if util_type.HAVE_NUMPY and isinstance(var, np.ndarray):
         line_str = ut.numpy_str(var, precision=precision, suppress_small=True)
@@ -2514,12 +2590,13 @@ def format_text_as_docstr(text):
     """
     import utool as ut
     import re
+
     min_indent = ut.get_minimum_indentation(text)
-    indent_ =  ' ' * min_indent
-    formated_text = re.sub('^' + indent_, '' + indent_ + '>>> ', text,
-                           flags=re.MULTILINE)
-    formated_text = re.sub('^$', '' + indent_ + '>>> #', formated_text,
-                           flags=re.MULTILINE)
+    indent_ = ' ' * min_indent
+    formated_text = re.sub('^' + indent_, '' + indent_ + '>>> ', text, flags=re.MULTILINE)
+    formated_text = re.sub(
+        '^$', '' + indent_ + '>>> #', formated_text, flags=re.MULTILINE
+    )
     return formated_text
 
 
@@ -2539,16 +2616,18 @@ def unformat_text_as_docstr(formated_text):
     """
     import utool as ut
     import re
+
     min_indent = ut.get_minimum_indentation(formated_text)
-    indent_ =  ' ' * min_indent
-    unformated_text = re.sub('^' + indent_ + '>>> ', '' + indent_,
-                             formated_text, flags=re.MULTILINE)
+    indent_ = ' ' * min_indent
+    unformated_text = re.sub(
+        '^' + indent_ + '>>> ', '' + indent_, formated_text, flags=re.MULTILINE
+    )
     return unformated_text
 
 
 def lorium_ipsum():
     """ Standard testing string """
-    ipsum_str = '''
+    ipsum_str = """
     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
     do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
     minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
@@ -2556,7 +2635,7 @@ def lorium_ipsum():
     velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
     cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
     est laborum.
-    '''
+    """
     return ipsum_str
 
 
@@ -2578,6 +2657,7 @@ def bubbletext(text, font='cybermedium'):
         >>> print(bubble_text)
     """
     import utool as ut
+
     pyfiglet = ut.tryimport('pyfiglet', 'git+https://github.com/pwaller/pyfiglet')
     if pyfiglet is None:
         return text
@@ -2588,6 +2668,7 @@ def bubbletext(text, font='cybermedium'):
 
 def closet_words(query, options, num=1, subset=False):
     import utool as ut
+
     ranked_list = []
     if subset:
         query_ = query.lower()
@@ -2621,10 +2702,7 @@ def to_title_caps(underscore_case):
         title_str = The Foo Bar Func
     """
     words = underscore_case.split('_')
-    words2 = [
-        word[0].upper() + word[1:]
-        for count, word in enumerate(words)
-    ]
+    words2 = [word[0].upper() + word[1:] for count, word in enumerate(words)]
     title_str = ' '.join(words2)
     return title_str
 
@@ -2673,9 +2751,7 @@ def to_camel_case(underscore_case, mixed=False):
     thresh = 0 if mixed else -1
     words = underscore_case.split('_')
     words2 = [
-        word[0].upper() + word[1:]
-        if count > thresh else
-        word
+        word[0].upper() + word[1:] if count > thresh else word
         for count, word in enumerate(words)
     ]
     camel_case_str = ''.join(words2)
@@ -2684,13 +2760,15 @@ def to_camel_case(underscore_case, mixed=False):
 
 def is_url(str_):
     """ heuristic check if str is url formatted """
-    return any([
-        str_.startswith('http://'),
-        str_.startswith('https://'),
-        str_.startswith('www.'),
-        '.org/' in str_,
-        '.com/' in str_,
-    ])
+    return any(
+        [
+            str_.startswith('http://'),
+            str_.startswith('https://'),
+            str_.startswith('www.'),
+            '.org/' in str_,
+            '.com/' in str_,
+        ]
+    )
 
 
 def autoformat_pep8(sourcecode, **kwargs):
@@ -2725,6 +2803,7 @@ def autoformat_pep8(sourcecode, **kwargs):
         autopep8 --recursive --in-place --ignore E126,E127,E201,E202,E203,E221,E222,E241,E265,E271,E272,E301,E501,W602,E266,N801,N802,N803,N805,N806,N811,N813 .
     """
     import autopep8
+
     default_ignore = {
         'E126',  # continuation line hanging-indent
         'E127',  # continuation line over-indented for visual indent
@@ -2765,7 +2844,7 @@ def filtered_infostr(flags, lbl, reason=None):
     removed = total - sum(flags)
     reasonstr = '' if reason is None else ' based on %s' % (reason,)
     percent = 100 * removed / total
-    str_ = ('Removing %d / %d (%.2f%%) %s%s' % (removed, total, percent, lbl, reasonstr))
+    str_ = 'Removing %d / %d (%.2f%%) %s%s' % (removed, total, percent, lbl, reasonstr)
     return str_
 
 
@@ -2800,7 +2879,7 @@ def chr_range(*args, **kw):
         ['a', 'b']
     """
     if len(args) == 1:
-        stop, = args
+        (stop,) = args
         start, step = 0, 1
     elif len(args) == 2:
         start, stop = args
@@ -2842,31 +2921,31 @@ def highlight_text(text, lexer_name='python', **kwargs):
         color_text
     """
     # Resolve extensions to languages
-    lexer_name = {
-        'py': 'python',
-        'h': 'cpp',
-        'cpp': 'cpp',
-        'c': 'cpp',
-    }.get(lexer_name.replace('.', ''), lexer_name)
+    lexer_name = {'py': 'python', 'h': 'cpp', 'cpp': 'cpp', 'c': 'cpp',}.get(
+        lexer_name.replace('.', ''), lexer_name
+    )
     if lexer_name in ['red', 'yellow', 'blue', 'green']:
         # hack for coloring
         return color_text(text, lexer_name)
     import utool as ut
+
     if ENABLE_COLORS:
         try:
             import pygments
             import pygments.lexers
             import pygments.formatters
-            #from pygments import highlight
-            #from pygments.lexers import get_lexer_by_name
-            #from pygments.formatters import TerminalFormatter
-            #if ut.WIN32:
+
+            # from pygments import highlight
+            # from pygments.lexers import get_lexer_by_name
+            # from pygments.formatters import TerminalFormatter
+            # if ut.WIN32:
             #    assert False
             #    #formater = pygments.formatters.terminal256.Terminal256Formatter()
             #    import pygments.formatters.terminal256
             #    formater = pygments.formatters.terminal256.Terminal256Formatter()
-            #else:
+            # else:
             import pygments.formatters.terminal
+
             formater = pygments.formatters.terminal.TerminalFormatter(bg='dark')
             lexer = pygments.lexers.get_lexer_by_name(lexer_name, **kwargs)
             return pygments.highlight(text, lexer, formater)
@@ -2885,25 +2964,26 @@ def color_text(text, color):
     """
     # Depricated color codes for Pygments 2.2, changed in 2.4
     backup_color_mapping = {
-        'darkred'    : 'red',
-        'darkgreen'  : 'green',
-        'brown'      : 'yellow',
-        'darkblue'   : 'blue',
-        'purple'     : 'magenta',
-        'teal'       : 'cyan',
-        'lightgray'  : 'gray',
-        'darkgray'   : 'brightblack',
-        'red'        : 'brightred',
-        'green'      : 'brightgreen',
-        'yellow'     : 'brightyellow',
-        'blue'       : 'brightblue',
-        'fuchsia'    : 'brightmagenta',
-        'turquoise'  : 'brightcyan',
-        'darkyellow' : 'yellow',
-        'darkteal'   : 'brightcyan',
-        'fuscia'     : 'brightmagenta',
+        'darkred': 'red',
+        'darkgreen': 'green',
+        'brown': 'yellow',
+        'darkblue': 'blue',
+        'purple': 'magenta',
+        'teal': 'cyan',
+        'lightgray': 'gray',
+        'darkgray': 'brightblack',
+        'red': 'brightred',
+        'green': 'brightgreen',
+        'yellow': 'brightyellow',
+        'blue': 'brightblue',
+        'fuchsia': 'brightmagenta',
+        'turquoise': 'brightcyan',
+        'darkyellow': 'yellow',
+        'darkteal': 'brightcyan',
+        'fuscia': 'brightmagenta',
     }
     import utool as ut
+
     if color is None or not ENABLE_COLORS:
         return text
     elif color == 'python':
@@ -2913,18 +2993,22 @@ def color_text(text, color):
     try:
         import pygments
         import pygments.console
+
         # if color == 'guess':
         #     import linguist  # NOQA
         #     pygments.lexers.guess_lexer(text)
         #     return highlight_text(text, color)
         if color not in pygments.console.codes:
             color_ = backup_color_mapping.get(color, None)
-            assert color_ is not None, 'Color %r could not be found in pygments' % (color, )
+            assert color_ is not None, 'Color %r could not be found in pygments' % (
+                color,
+            )
             color = color_
         ansi_text = pygments.console.colorize(color, text)
         if ut.WIN32:
             import colorama
-            ansi_reset = (colorama.Style.RESET_ALL)
+
+            ansi_reset = colorama.Style.RESET_ALL
         else:
             ansi_reset = pygments.console.colorize('reset', '')
         ansi_text = ansi_text + ansi_reset
@@ -2937,28 +3021,28 @@ def highlight_regex(str_, pat, reflags=0, color='red'):
     """
     FIXME Use pygments instead
     """
-    #import colorama
+    # import colorama
     # from colorama import Fore, Style
-    #color = Fore.MAGENTA
+    # color = Fore.MAGENTA
     # color = Fore.RED
-    #match = re.search(pat, str_, flags=reflags)
+    # match = re.search(pat, str_, flags=reflags)
     matches = list(re.finditer(pat, str_, flags=reflags))
 
     colored = str_
 
     for match in reversed(matches):
-        #pass
-        #if match is None:
+        # pass
+        # if match is None:
         #    return str_
-        #else:
+        # else:
         start = match.start()
         end = match.end()
-        #colorama.init()
+        # colorama.init()
         colored_part = color_text(colored[start:end], color)
         colored = colored[:start] + colored_part + colored[end:]
         # colored = (colored[:start] + color + colored[start:end] +
         #            Style.RESET_ALL + colored[end:])
-        #colorama.deinit()
+        # colorama.deinit()
     return colored
 
 
@@ -2966,11 +3050,11 @@ def highlight_multi_regex(str_, pat_to_color, reflags=0):
     """
     FIXME Use pygments instead. must be mututally exclusive
     """
-    #import colorama
+    # import colorama
     # from colorama import Fore, Style
-    #color = Fore.MAGENTA
+    # color = Fore.MAGENTA
     # color = Fore.RED
-    #match = re.search(pat, str_, flags=reflags)
+    # match = re.search(pat, str_, flags=reflags)
 
     colored = str_
 
@@ -2991,9 +3075,11 @@ def highlight_multi_regex(str_, pat_to_color, reflags=0):
     return colored
 
 
-def varinfo_str(varval, varname, onlyrepr=False, canshowrepr=True,
-                varcolor='yellow', colored=True):
+def varinfo_str(
+    varval, varname, onlyrepr=False, canshowrepr=True, varcolor='yellow', colored=True
+):
     import utool as ut
+
     # varval = getattr(cm, varname.replace('cm.', ''))
     varinfo_list = []
     print_summary = not onlyrepr and ut.isiterable(varval)
@@ -3017,17 +3103,15 @@ def varinfo_str(varval, varname, onlyrepr=False, canshowrepr=True,
         if not show_repr:
             varinfo_list += [
                 # '    %s varinfo(%s):' % (symbol, varname,),
-                '    %s %s = <not shown!>' % (symbol, varname,),
+                '    %s %s = <not shown!>'
+                % (symbol, varname,),
             ]
-        varinfo_list += [
-            '          len = %r' % (len(varval),)]
+        varinfo_list += ['          len = %r' % (len(varval),)]
         if depth != len(varval):
             depth_str = ut.truncate_str(str(depth), maxlen=70)
-            varinfo_list += [
-                '          depth = %s' % (depth_str,)]
-        varinfo_list += [
-            '          types = %s' % (ut.list_type_profile(varval),)]
-        #varinfo = '\n'.join(ut.align_lines(varinfo_list, '='))
+            varinfo_list += ['          depth = %s' % (depth_str,)]
+        varinfo_list += ['          types = %s' % (ut.list_type_profile(varval),)]
+        # varinfo = '\n'.join(ut.align_lines(varinfo_list, '='))
     aligned_varinfo_list = ut.align_lines(varinfo_list, '=')
     varinfo = '\n'.join(aligned_varinfo_list)
     return varinfo
@@ -3035,8 +3119,10 @@ def varinfo_str(varval, varname, onlyrepr=False, canshowrepr=True,
 
 def testdata_text(num=1):
     import utool as ut
-    #ut.util_dbg.COLORED_EXCEPTIONS = False
-    text = r'''
+
+    # ut.util_dbg.COLORED_EXCEPTIONS = False
+    text = (
+        r"""
         % COMMENT
         Image matching relies on finding similar features between query and
         database images, and there are many factors that can cause this to be
@@ -3077,9 +3163,15 @@ def testdata_text(num=1):
                   If $\momentmatNOARG$ is degenerate than $\mat{X}$ does not
                 exist.)
         \end{enumerate}
-    '''.strip('\n') + '\n'
+    """.strip(
+            '\n'
+        )
+        + '\n'
+    )
 
-    text2 = ut.codeblock(r'''
+    text2 = (
+        ut.codeblock(
+            r"""
         \begin{comment}
         python -m wbia -e rank_cmc -t invar -a viewdiff --test_cfgx_slice=6: --db PZ_Master1 --hargv=expt --prefix "Invariance+View Experiment "  # NOQA
         \end{comment}
@@ -3092,17 +3184,22 @@ def testdata_text(num=1):
         invariance we we discuss here only refers to keypoint shape and not the
         invariance that is implicit in the SIFT descriptor).
         }{PZInvarViewExpt}
-    ''')  + '\n\n foobar foobar fooo. hwodefoobardoo\n\n'
+    """
+        )
+        + '\n\n foobar foobar fooo. hwodefoobardoo\n\n'
+    )
     return text if num == 1 else text2
 
 
 def regex_reconstruct_split(pattern, text, debug=False):
     import re
-    #separators = re.findall(pattern, text)
+
+    # separators = re.findall(pattern, text)
     separators = [match.group() for match in re.finditer(pattern, text)]
-    #separators = [match.group() for match in re.finditer(pattern, text, flags=re.MULTILINE)]
+    # separators = [match.group() for match in re.finditer(pattern, text, flags=re.MULTILINE)]
     if debug:
         import utool as ut
+
         ut.colorprint('[recon] separators = ' + ut.repr3(separators), 'green')
 
     remaining = text
@@ -3145,20 +3242,20 @@ def format_multiple_paragraph_sentences(text, debug=False, **kwargs):
     """
     debug = _rectify_countdown_or_bool(debug)
     import utool as ut
+
     # Hack
     text = re.sub('^ *$', '', text, flags=re.MULTILINE)
     if debug:
         ut.colorprint(msgblock('[fmt] text', text), 'yellow')
-    #print(text.replace(' ', '_'))
-    #ut.util_dbg.COLORED_EXCEPTIONS = False
+    # print(text.replace(' ', '_'))
+    # ut.util_dbg.COLORED_EXCEPTIONS = False
     # Patterns that define separations between paragraphs in latex
     pattern_list = [
-        '\n\n\n*',     # newlines
+        '\n\n\n*',  # newlines
         #'\n\n*$',     # newlines
         #'^\n\n*',     # newlines
         #'\n\n*',     # newlines
         '\n? *%.*\n',  # comments
-
         # paragraph commands
         '\n? *\\\\paragraph{[^}]*}\n',
         # '\n? *\\\\item \\\\textbf{[^}]*}: *\n',
@@ -3166,31 +3263,24 @@ def format_multiple_paragraph_sentences(text, debug=False, **kwargs):
         '\n? *\\\\section{[^}]*}\n',
         '\n? *\\\\section{[^}]*}\\\\label{[^}]*}\n',
         '\n? *\\\\section{[^}]*}\\~?\\\\label{[^}]*}\n',
-
         '\n? *\\\\subsection{[^}]*}\\~?\\\\label{[^}]*}\n',
         '\n? *\\\\subsection{[^~]*}\\~?\\\\label{[^}]*}\n',
         '\n? *\\\\subsection{[^}]*}\n',
-
         '\n? *\\\\subsubsection{[^~]*}\\~?\\\\label{[^}]*}\n',
         '\n? *\\\\subsubsection{[^}]*}\n',
-
         '\n----*\n',
         '##* .*\n',
-
         '\\.}\n',
         '\\?}\n',
-
         '\n? *\\\\newcommand{[^}]*}.*\n',
         # generic multiline commands with text inside (like devcomment)
         '\n? *\\\\[a-zA-Z]+{ *\n',
-
         '\n? *\\\\begin{[^}]*}\n',
         '\n? *\\\\item *\n',
         '\n? *\\\\noindent *\n',
         '\n? *\\\\ImageCommand[^}]*}[^}]*}{\n',
         '\n? *\\\\end{[^}]*}\n?',
         '\n}{',
-
         # docstr stuff
         '\n' + ut.TRIPLE_DOUBLE_QUOTE + '\n',
         '\n? *Args: *\n',
@@ -3198,56 +3288,57 @@ def format_multiple_paragraph_sentences(text, debug=False, **kwargs):
     ]
     pattern = '|'.join(['(%s)' % (pat,) for pat in pattern_list])
     # break into paragraph blocks
-    block_list, separators = regex_reconstruct_split(pattern, text,
-                                                     debug=False)
+    block_list, separators = regex_reconstruct_split(pattern, text, debug=False)
 
     collapse_pos_list = []
     # Dont format things within certain block types
     _iter = ut.iter_window([''] + separators + [''], 2)
     for count, (block, window) in enumerate(zip(block_list, _iter)):
-        if (window[0].strip() == r'\begin{comment}' and
-             window[1].strip() == r'\end{comment}'):
+        if (
+            window[0].strip() == r'\begin{comment}'
+            and window[1].strip() == r'\end{comment}'
+        ):
             collapse_pos_list.append(count)
 
     tofmt_block_list = block_list[:]
 
     collapse_pos_list = sorted(collapse_pos_list)[::-1]
     for pos in collapse_pos_list:
-        collapsed_sep = (separators[pos - 1] + tofmt_block_list[pos] +
-                         separators[pos])
+        collapsed_sep = separators[pos - 1] + tofmt_block_list[pos] + separators[pos]
         separators[pos - 1] = collapsed_sep
         del separators[pos]
         del tofmt_block_list[pos]
 
     if debug:
-        ut.colorprint('[fmt] tofmt_block_list = ' +
-                      ut.repr3(tofmt_block_list), 'white')
+        ut.colorprint('[fmt] tofmt_block_list = ' + ut.repr3(tofmt_block_list), 'white')
 
     # apply formatting
-    #if debug:
+    # if debug:
     #    ut.colorprint('--- FORMAT SENTENCE --- ', 'white')
     formated_block_list = []
     for block in tofmt_block_list:
-        fmtblock = format_single_paragraph_sentences(
-            block, debug=debug, **kwargs)
+        fmtblock = format_single_paragraph_sentences(block, debug=debug, **kwargs)
         formated_block_list.append(fmtblock)
-        #ut.colorprint('---------- ', 'white')
-    #if debug:
+        # ut.colorprint('---------- ', 'white')
+    # if debug:
     #    ut.colorprint('--- / FORMAT SENTENCE --- ', 'white')
     rejoined_list = list(ut.interleave((formated_block_list, separators)))
     if debug:
-        ut.colorprint('[fmt] formated_block_list = ' +
-                      ut.repr3(formated_block_list), 'turquoise')
-        #print(rejoined_list)
+        ut.colorprint(
+            '[fmt] formated_block_list = ' + ut.repr3(formated_block_list), 'turquoise'
+        )
+        # print(rejoined_list)
     formated_text = ''.join(rejoined_list)
-    #ut.colorprint(formated_text.replace(' ', '_'), 'red')
+    # ut.colorprint(formated_text.replace(' ', '_'), 'red')
     return formated_text
+
 
 format_multi_paragraphs = format_multiple_paragraph_sentences
 
 
 def split_sentences2(text, debug=0):
     import utool as ut
+
     raw_sep_chars = ['.', '?', '!', ':']
     USE_REGEX_SPLIT = True
 
@@ -3282,19 +3373,22 @@ def split_sentences2(text, debug=0):
             print('<SPLIT DBG>')
             print('num_groups = %r' % (num_groups,))
             print('len(split_list) = %r' % (len(split_list)))
-            print('len(split_list) / len(sentence_list) = %r' % (
-                len(split_list) / len(sentence_list)))
+            print(
+                'len(split_list) / len(sentence_list) = %r'
+                % (len(split_list) / len(sentence_list))
+            )
             print('len(sentence_list) = %r' % (len(sentence_list),))
             print('len(sep_list_group1) = %r' % (len(sep_list_group1),))
-            #print('len(sep_list_group2) = %r' % (len(sep_list_group2),))
+            # print('len(sep_list_group2) = %r' % (len(sep_list_group2),))
             print('full_pattern = %s' % (full_pattern,))
-            #print('split_list = %r' % (split_list,))
+            # print('split_list = %r' % (split_list,))
             print('sentence_list = %s' % (ut.repr2(sentence_list),))
             print('sep_list = %s' % ((sep_list),))
             print('</SPLIT DBG>')
         # ******* #
         # FIXME: Place the separators either before or after a sentence
         from six.moves import zip_longest
+
         sentence_list2 = ['']
         _iter = zip_longest(sentence_list, sep_list)
         for count, (sentence, sep) in enumerate(_iter):
@@ -3314,9 +3408,9 @@ def split_sentences2(text, debug=0):
         return sentence_list2
 
 
-def format_single_paragraph_sentences(text, debug=False, myprefix=True,
-                                      sentence_break=True, max_width=73,
-                                      sepcolon=True):
+def format_single_paragraph_sentences(
+    text, debug=False, myprefix=True, sentence_break=True, max_width=73, sepcolon=True
+):
     r"""
     helps me separatate sentences grouped in paragraphs that I have a
     difficult time reading due to dyslexia
@@ -3347,10 +3441,12 @@ def format_single_paragraph_sentences(text, debug=False, myprefix=True,
         >>> print(result)
     """
     import utool as ut
-    #ut.util_dbg.COLORED_EXCEPTIONS = False
+
+    # ut.util_dbg.COLORED_EXCEPTIONS = False
     import textwrap
     import re
-    #ut.rrrr(verbose=False)
+
+    # ut.rrrr(verbose=False)
     # max_width = 73  # 79  # 80
     debug = _rectify_countdown_or_bool(debug)
     min_indent = ut.get_minimum_indentation(text)
@@ -3398,13 +3494,15 @@ def format_single_paragraph_sentences(text, debug=False, myprefix=True,
                 print('<SPLIT DBG>')
                 print('num_groups = %r' % (num_groups,))
                 print('len(split_list) = %r' % (len(split_list)))
-                print('len(split_list) / len(sentence_list) = %r' % (
-                    len(split_list) / len(sentence_list)))
+                print(
+                    'len(split_list) / len(sentence_list) = %r'
+                    % (len(split_list) / len(sentence_list))
+                )
                 print('len(sentence_list) = %r' % (len(sentence_list),))
                 print('len(sep_list_group1) = %r' % (len(sep_list_group1),))
-                #print('len(sep_list_group2) = %r' % (len(sep_list_group2),))
+                # print('len(sep_list_group2) = %r' % (len(sep_list_group2),))
                 print('full_pattern = %s' % (full_pattern,))
-                #print('split_list = %r' % (split_list,))
+                # print('split_list = %r' % (split_list,))
                 print('sentence_list = %s' % (ut.repr2(sentence_list),))
                 print('sep_list = %s' % ((sep_list),))
                 print('</SPLIT DBG>')
@@ -3427,13 +3525,15 @@ def format_single_paragraph_sentences(text, debug=False, myprefix=True,
             width = max_width - min_indent - len(sentence_prefix)
 
             wrapkw = dict(width=width, break_on_hyphens=False, break_long_words=False)
-            #wrapped_lines_list = [textwrap.wrap(sentence_prefix + line, **wrapkw)
+            # wrapped_lines_list = [textwrap.wrap(sentence_prefix + line, **wrapkw)
             #                      for line in sentence_list]
             wrapped_lines_list = []
             for count, line in enumerate(sentence_list):
                 wrapped_lines = textwrap.wrap(line, **wrapkw)
-                wrapped_lines = [line_ if count == 0 else sentence_prefix + line_
-                                 for count, line_ in enumerate(wrapped_lines)]
+                wrapped_lines = [
+                    line_ if count == 0 else sentence_prefix + line_
+                    for count, line_ in enumerate(wrapped_lines)
+                ]
                 wrapped_lines_list.append(wrapped_lines)
 
             wrapped_sentences = ['\n'.join(line) for line in wrapped_lines_list]
@@ -3447,6 +3547,7 @@ def format_single_paragraph_sentences(text, debug=False, myprefix=True,
         # put the newline before or after the sep depending on if it is
         # supposed to prefix or suffix the sentence.
         from six.moves import zip_longest
+
         # FIXME: Place the separators either before or after a sentence
         sentence_list2 = ['']
         _iter = zip_longest(sentence_list, sep_list)
@@ -3466,7 +3567,7 @@ def format_single_paragraph_sentences(text, debug=False, myprefix=True,
         return sentence_list2
 
     # New way
-    #print('last_is_nl = %r' % (last_is_nl,))
+    # print('last_is_nl = %r' % (last_is_nl,))
     if sentence_break:
         # Break at sentences
         sentence_list, sep_list = split_sentences(text_)
@@ -3477,8 +3578,7 @@ def format_single_paragraph_sentences(text, debug=False, myprefix=True,
     else:
         # Break anywhere
         width = max_width - min_indent
-        wrapkw = dict(width=width, break_on_hyphens=False,
-                      break_long_words=False)
+        wrapkw = dict(width=width, break_on_hyphens=False, break_long_words=False)
         wrapped_block = '\n'.join(textwrap.wrap(text_, **wrapkw))
 
         if False:
@@ -3501,8 +3601,10 @@ def format_single_paragraph_sentences(text, debug=False, myprefix=True,
             wrapped_block = '\n'.join(lines)
 
     # HACK for last nl (seems to only happen if nl follows a seperator)
-    last_is_nl = text.endswith('\n') and  not wrapped_block.endswith('\n')
-    first_is_nl = len(text) > 1 and text.startswith('\n') and not wrapped_block.startswith('\n')
+    last_is_nl = text.endswith('\n') and not wrapped_block.endswith('\n')
+    first_is_nl = (
+        len(text) > 1 and text.startswith('\n') and not wrapped_block.startswith('\n')
+    )
     # if last_is_nl and wrapped_block.strip().endswith('.'):
     if last_is_nl:
         wrapped_block += '\n'
@@ -3519,13 +3621,14 @@ def find_block_end(row, line_list, sentinal, direction=1):
     with find_paragraph_end in pyvim_funcs
     """
     import re
+
     row_ = row
     line_ = line_list[row_]
     flag1 = row_ == 0 or row_ == len(line_list) - 1
     flag2 = re.match(sentinal, line_)
     if not (flag1 or flag2):
         while True:
-            if (row_ == 0 or row_ == len(line_list) - 1):
+            if row_ == 0 or row_ == len(line_list) - 1:
                 break
             line_ = line_list[row_]
             if re.match(sentinal, line_):
@@ -3539,10 +3642,10 @@ def insert_block_between_lines(text, row1, row2, line_list, inplace=False):
     if inplace:
         buffer_tail = line_list[row2:]  # Original end of the file
         new_tail = lines + buffer_tail
-        del line_list[row1 - 1:]  # delete old data
+        del line_list[row1 - 1 :]  # delete old data
         line_list.append(new_tail)  # append new data
     else:
-        line_list = line_list[:row1 + 1] + lines + line_list[row2:]
+        line_list = line_list[: row1 + 1] + lines + line_list[row2:]
     return line_list
 
 
@@ -3550,11 +3653,11 @@ def toggle_comment_lines(text, pattern, flag, char='#'):
     # TODO: respect indentation
     lines = text.split('\n')
     if flag:
-        lines = [char + line if re.search(pattern, line) else line
-                 for line in lines]
+        lines = [char + line if re.search(pattern, line) else line for line in lines]
     else:
-        lines = [line.lstrip(char) if re.search(pattern, line) else line
-                 for line in lines]
+        lines = [
+            line.lstrip(char) if re.search(pattern, line) else line for line in lines
+        ]
     new_text = '\n'.join(lines)
     return new_text
 
@@ -3567,6 +3670,8 @@ if __name__ == '__main__':
         python -m utool.util_str --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

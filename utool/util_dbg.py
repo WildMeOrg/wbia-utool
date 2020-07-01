@@ -17,6 +17,7 @@ import keyword
 import re
 import types
 import functools
+
 try:
     import numpy as np
 except ImportError:
@@ -29,10 +30,15 @@ from utool import util_print
 from utool import util_str
 from utool import util_type
 from utool._internal import meta_util_six
+
 print, rrr, profile = util_inject.inject2(__name__)
 
-RAISE_ALL = util_arg.get_argflag('--raise-all', help='Causes ut.printex to always reraise errors')
-FORCE_TB = util_arg.get_argflag('--force-tb', help='Causes ut.printex to always print traceback')
+RAISE_ALL = util_arg.get_argflag(
+    '--raise-all', help='Causes ut.printex to always reraise errors'
+)
+FORCE_TB = util_arg.get_argflag(
+    '--force-tb', help='Causes ut.printex to always print traceback'
+)
 # COLORED_EXCEPTIONS = util_arg.get_argflag(('--colorex', '--cex'))
 COLORED_EXCEPTIONS = not util_arg.get_argflag(('--no-colorex', '--no-cex'))
 
@@ -41,8 +47,9 @@ def print_traceback(with_colors=True):
     """
     prints current stack
     """
-    #traceback.print_tb()
+    # traceback.print_tb()
     import traceback
+
     stack = traceback.extract_stack()
     stack_lines = traceback.format_list(stack)
     tbtext = ''.join(stack_lines)
@@ -51,6 +58,7 @@ def print_traceback(with_colors=True):
             from pygments import highlight
             from pygments.lexers import get_lexer_by_name
             from pygments.formatters import TerminalFormatter
+
             lexer = get_lexer_by_name('pytb', stripall=True)
             formatter = TerminalFormatter(bg='dark')
             formatted_text = highlight(tbtext, lexer, formatter)
@@ -62,7 +70,8 @@ def print_traceback(with_colors=True):
 
 
 def ipython_execstr():
-    return textwrap.dedent(r'''
+    return textwrap.dedent(
+        r"""
     import sys
     embedded = False
     if '-w' in sys.argv or '--wait' in sys.argv or '--wshow' in sys.argv:
@@ -83,7 +92,8 @@ def ipython_execstr():
             except Exception as ex:
                 print('[ipython_execstr]: Error: ' + six.text_type(type(ex)) + six.text_type(ex))
                 raise
-    ''')
+    """
+    )
 
 
 def execstr_parent_locals():
@@ -171,6 +181,7 @@ def execstr_dict(dict_, local_name=None, exclude_list=None, explicit=False):
         b = False
     """
     import utool as ut
+
     if explicit:
         expr_list = []
         for (key, val) in sorted(dict_.items()):
@@ -188,7 +199,10 @@ def execstr_dict(dict_, local_name=None, exclude_list=None, explicit=False):
             assert isinstance(exclude_list, list)
             exclude_list.append(local_name)
             expr_list = []
-            assert isinstance(dict_, dict), 'incorrect type type(dict_)=%r, dict_=%r' % (type(dict), dict_)
+            assert isinstance(dict_, dict), 'incorrect type type(dict_)=%r, dict_=%r' % (
+                type(dict),
+                dict_,
+            )
             for (key, val) in sorted(dict_.items()):
                 assert isinstance(key, six.string_types), 'keys must be strings'
                 if not is_valid_varname(key):
@@ -207,7 +221,7 @@ def execstr_dict(dict_, local_name=None, exclude_list=None, explicit=False):
 def execstr_func(func):
     print(' ! Getting executable source for: ' + meta_util_six.get_funcname(func))
     _src = inspect.getsource(func)
-    execstr = textwrap.dedent(_src[_src.find(':') + 1:])
+    execstr = textwrap.dedent(_src[_src.find(':') + 1 :])
     # Remove return statments
     while True:
         # Find first 'return'
@@ -225,7 +239,7 @@ def execstr_func(func):
                 stmt_endx = stmt_endx_new
         # now have variables stmt_x, stmt_endx
         before = execstr[:stmtx]
-        after  = execstr[stmt_endx:]
+        after = execstr[stmt_endx:]
         execstr = before + after
     return execstr
 
@@ -270,6 +284,7 @@ def import_testdata():
 
 def breakpoint(*tags):
     import utool as ut
+
     if ut.get_argflag('--break'):
         ut.embed(N=1)
         return True
@@ -301,8 +316,10 @@ def fix_embed_globals():
         frame.f_globals['_did_embed_fix'] = True
     """
 
-def _wip_embed(parent_locals=None, parent_globals=None, exec_lines=None,
-               remove_pyqt_hook=True, N=0):
+
+def _wip_embed(
+    parent_locals=None, parent_globals=None, exec_lines=None, remove_pyqt_hook=True, N=0
+):
     """
     Starts interactive session. Similar to keyboard command in matlab.
     Wrapper around IPython.embed
@@ -404,7 +421,7 @@ def _wip_embed(parent_locals=None, parent_globals=None, exec_lines=None,
     getframe = partial(ut.get_parent_frame, N=N)  # NOQA
 
     exec(execstr_dict(parent_globals, 'parent_globals'))
-    exec(execstr_dict(parent_locals,  'parent_locals'))
+    exec(execstr_dict(parent_locals, 'parent_locals'))
     print('')
     print('================')
     print(ut.bubbletext('EMBEDDING'))
@@ -419,7 +436,7 @@ def _wip_embed(parent_locals=None, parent_globals=None, exec_lines=None,
                     import guitool as gt
                 gt.remove_pyqt_input_hook()
             except (ImportError, ValueError, AttributeError) as ex:
-                #print(ex)
+                # print(ex)
                 printex(ex, iswarning=True)
                 pass
             # make qt not loop forever (I had qflag loop forever with this off)
@@ -445,20 +462,25 @@ def _wip_embed(parent_locals=None, parent_globals=None, exec_lines=None,
         #'print("Entry Point: %r" % (ut.get_parent_frame(N=7).f_code.co_name,))',
         #'print("Entry Point: %r" % (ut.get_parent_frame(N=6).f_code.co_name,))',
         #'print("Entry Point: %r" % (ut.get_parent_frame(N=5).f_code.co_name,))',
-        #execstr_dict(parent_locals)
+        # execstr_dict(parent_locals)
     ] + ut.ensure_str_list(exec_lines if exec_lines is not None else [])
     config.InteractiveShellApp.exec_lines = exec_lines_
     print('Exec Lines: ')
     print(ut.indentjoin(exec_lines_, '\n    >>> '))
     IPython.start_ipython(config=config, argv=[], user_ns=user_ns)
     # Exit python immediately if specifed
-    if user_ns.get('qqq', False) or vars.get('qqq', False) or user_ns.get('EXIT_NOW', False):
+    if (
+        user_ns.get('qqq', False)
+        or vars.get('qqq', False)
+        or user_ns.get('EXIT_NOW', False)
+    ):
         print('[utool.embed] EXIT_NOW or qqq specified')
         sys.exit(1)
 
 
-def embed(parent_locals=None, parent_globals=None, exec_lines=None,
-          remove_pyqt_hook=True, N=0):
+def embed(
+    parent_locals=None, parent_globals=None, exec_lines=None, remove_pyqt_hook=True, N=0
+):
     """
     Starts interactive session. Similar to keyboard command in matlab.
     Wrapper around IPython.embed
@@ -492,38 +514,38 @@ def embed(parent_locals=None, parent_globals=None, exec_lines=None,
                     import guitool as gt
                 gt.remove_pyqt_input_hook()
             except (ImportError, ValueError, AttributeError) as ex:
-                #print(ex)
+                # print(ex)
                 printex(ex, iswarning=True)
                 pass
             # make qt not loop forever (I had qflag loop forever with this off)
     except ImportError as ex:
         print(ex)
 
-    #from IPython.config.loader import Config
+    # from IPython.config.loader import Config
     # cfg = Config()
-    #config_dict = {}
-    #if exec_lines is not None:
+    # config_dict = {}
+    # if exec_lines is not None:
     #    config_dict['exec_lines'] = exec_lines
-    #IPython.embed(**config_dict)
+    # IPython.embed(**config_dict)
     print('[util]  Get stack location with: ')
     # print('[util] ut.get_parent_frame(N=8).f_code.co_name')
     print('[util] ut.get_parent_frame(N=11).f_code.co_name')
     print('[util] set EXIT_NOW or qqq to True(ish) to hard exit on unembed')
-    #print('set iup to True to draw plottool stuff')
+    # print('set iup to True to draw plottool stuff')
     print('[util] call %pylab qt4 to get plottool stuff working')
     once = True
     # Allow user to set iup and redo the loop
     while once or vars().get('iup', False):
         if not once:
             # SUPER HACKY WAY OF GETTING FIGURES ON THE SCREEN BETWEEN UPDATES
-            #vars()['iup'] = False
+            # vars()['iup'] = False
             # ALL YOU NEED TO DO IS %pylab qt4
             print('re-emebeding')
             for _ in range(100):
-                time.sleep(.01)
+                time.sleep(0.01)
 
         once = False
-        #vars().get('iup', False):
+        # vars().get('iup', False):
         print('[util] calling IPython.embed()')
         """
         Notes:
@@ -532,13 +554,13 @@ def embed(parent_locals=None, parent_globals=None, exec_lines=None,
 
             # instance comes from  IPython.config.configurable.SingletonConfigurable.instance
         """
-        #c = IPython.Config()
-        #c.InteractiveShellApp.exec_lines = [
+        # c = IPython.Config()
+        # c.InteractiveShellApp.exec_lines = [
         #    '%pylab qt4',
         #    '%gui qt4',
         #    "print 'System Ready!'",
-        #]
-        #IPython.embed(config=c)
+        # ]
+        # IPython.embed(config=c)
         parent_ns = parent_globals.copy()
         parent_ns.update(parent_locals)
         locals().update(parent_ns)
@@ -546,15 +568,15 @@ def embed(parent_locals=None, parent_globals=None, exec_lines=None,
             IPython.embed()
         except RuntimeError as ex:
             ut.printex(ex, 'Failed to open ipython')
-        #config = IPython.terminal.ipapp.load_default_config()
-        #config.InteractiveShellEmbed = config.TerminalInteractiveShell
-        #module = sys.modules[parent_globals['__name__']]
-        #config['module'] = module
-        #config['module'] = module
-        #embed2(stack_depth=N + 2 + 1)
-        #IPython.embed(config=config)
-        #IPython.embed(config=config)
-        #IPython.embed(module=module)
+        # config = IPython.terminal.ipapp.load_default_config()
+        # config.InteractiveShellEmbed = config.TerminalInteractiveShell
+        # module = sys.modules[parent_globals['__name__']]
+        # config['module'] = module
+        # config['module'] = module
+        # embed2(stack_depth=N + 2 + 1)
+        # IPython.embed(config=config)
+        # IPython.embed(config=config)
+        # IPython.embed(module=module)
         # Exit python immediately if specifed
         if vars().get('EXIT_NOW', False) or vars().get('qqq', False):
             print('[utool.embed] EXIT_NOW specified')
@@ -566,17 +588,18 @@ def embed2(**kwargs):
     Modified from IPython.terminal.embed.embed so I can mess with stack_depth
     """
     config = kwargs.get('config')
-    header = kwargs.pop('header', u'')
+    header = kwargs.pop('header', '')
     stack_depth = kwargs.pop('stack_depth', 2)
     compile_flags = kwargs.pop('compile_flags', None)
     import IPython
     from IPython.core.interactiveshell import InteractiveShell
     from IPython.terminal.embed import InteractiveShellEmbed
+
     if config is None:
         config = IPython.terminal.ipapp.load_default_config()
         config.InteractiveShellEmbed = config.TerminalInteractiveShell
         kwargs['config'] = config
-    #save ps1/ps2 if defined
+    # save ps1/ps2 if defined
     ps1 = None
     ps2 = None
     try:
@@ -584,7 +607,7 @@ def embed2(**kwargs):
         ps2 = sys.ps2
     except AttributeError:
         pass
-    #save previous instance
+    # save previous instance
     saved_shell_instance = InteractiveShell._instance
     if saved_shell_instance is not None:
         cls = type(saved_shell_instance)
@@ -592,7 +615,7 @@ def embed2(**kwargs):
     shell = InteractiveShellEmbed.instance(**kwargs)
     shell(header=header, stack_depth=stack_depth, compile_flags=compile_flags)
     InteractiveShellEmbed.clear_instance()
-    #restore previous instance
+    # restore previous instance
     if saved_shell_instance is not None:
         cls = type(saved_shell_instance)
         cls.clear_instance()
@@ -613,24 +636,23 @@ def quitflag(num=None, embed_=False, parent_locals=None, parent_globals=None):
         exec(execstr_dict(parent_globals, 'parent_globals'))
         if embed_:
             print('Triggered --quit' + six.text_type(num))
-            embed(parent_locals=parent_locals,
-                  parent_globals=parent_globals)
+            embed(parent_locals=parent_locals, parent_globals=parent_globals)
         print('Triggered --quit' + six.text_type(num))
         sys.exit(1)
 
 
 def qflag(num=None, embed_=True):
     frame = get_parent_frame()
-    return quitflag(num, embed_=embed_,
-                    parent_locals=frame.f_locals,
-                    parent_globals=frame.f_globals)
+    return quitflag(
+        num, embed_=embed_, parent_locals=frame.f_locals, parent_globals=frame.f_globals
+    )
 
 
 def quit(num=None, embed_=False):
     frame = get_parent_frame()
-    return quitflag(num, embed_=embed_,
-                    parent_locals=frame.f_globals,
-                    parent_globals=frame.f_locals)
+    return quitflag(
+        num, embed_=embed_, parent_locals=frame.f_globals, parent_globals=frame.f_locals
+    )
 
 
 def in_jupyter_notebook():
@@ -639,8 +661,8 @@ def in_jupyter_notebook():
     """
     try:
         cfg = get_ipython().config
-        #print('cfg = %s' % (ut.repr4(cfg),))
-        #x = cfg['IPKernelApp']['parent_appname']
+        # print('cfg = %s' % (ut.repr4(cfg),))
+        # x = cfg['IPKernelApp']['parent_appname']
         # might not work if using jupyter-console
         if cfg['IPKernelApp']['connection_file'].count('jupyter'):
             return True
@@ -659,13 +681,13 @@ def inIPython():
     try:
         shell = get_ipython().__class__.__name__
         if shell == 'ZMQInteractiveShell':
-            return True   # Jupyter notebook or qtconsole
+            return True  # Jupyter notebook or qtconsole
         elif shell == 'TerminalInteractiveShell':
             return False  # Terminal running IPython
         else:
             return False  # Other type (?)
     except NameError:
-        return False      # Probably standard Python interpreter
+        return False  # Probably standard Python interpreter
 
 
 def haveIPython():
@@ -674,6 +696,7 @@ def haveIPython():
     """
     try:
         import IPython  # NOQA
+
         return True
     except NameError:
         return False
@@ -681,11 +704,18 @@ def haveIPython():
 
 def print_frame(frame):
     frame = frame if 'frame' in vars() else inspect.currentframe()
-    attr_list = ['f_code.co_name', 'f_code.co_filename', 'f_back', 'f_lineno',
-                 'f_code.co_names']
+    attr_list = [
+        'f_code.co_name',
+        'f_code.co_filename',
+        'f_back',
+        'f_lineno',
+        'f_code.co_names',
+    ]
     obj_name = 'frame'
-    execstr_print_list = ['print("%r=%%r" %% (%s,))' % (_execstr, _execstr)
-                          for _execstr in execstr_attr_list(obj_name, attr_list)]
+    execstr_print_list = [
+        'print("%r=%%r" %% (%s,))' % (_execstr, _execstr)
+        for _execstr in execstr_attr_list(obj_name, attr_list)
+    ]
     execstr = '\n'.join(execstr_print_list)
     exec(execstr)
     local_varnames = util_str.pack_into('; '.join(frame.f_locals.keys()))
@@ -745,6 +775,7 @@ def search_stack_for_var(varname, verbose=util_arg.NOT_QUIET):
         print('... Found nothing in all ' + six.text_type(frame_no) + ' frames.')
     return None
 
+
 # Alias
 get_var_from_stack = search_stack_for_var
 get_localvar_from_stack = search_stack_for_localvar
@@ -791,7 +822,7 @@ def get_caller_prefix(N=0, aserror=False):
 
 def get_caller_lineno(N=0, strict=True):
     parent_frame = get_stack_frame(N=N + 2)
-    lineno =  parent_frame.f_lineno
+    lineno = parent_frame.f_lineno
     return lineno
 
 
@@ -843,10 +874,10 @@ def get_caller_name(N=0, allow_genexpr=True):
                 caller_name = parent_frame.f_code.co_name
             else:
                 break
-    #try:
+    # try:
     #    if 'func' in  parent_frame.f_locals:
     #        caller_name += '(' + meta_util_six.get_funcname(parent_frame.f_locals['func']) + ')'
-    #except Exception:
+    # except Exception:
     #    pass
     if caller_name == '<module>':
         # Make the caller name the filename
@@ -866,6 +897,7 @@ def get_caller_modname(N=0, allowmain=True):
 
 def get_current_stack_depth():
     import traceback
+
     stack = traceback.extract_stack()
     return len(stack)
 
@@ -897,7 +929,7 @@ def explore_stack():
         print('--- Frame %2d: ---' % (ix))
         print_frame(frame)
         print('\n')
-        #next_frame = curr_frame.f_back
+        # next_frame = curr_frame.f_back
 
 
 def explore_module(module_, seen=None, maxdepth=2, nonmodules=False):
@@ -913,17 +945,19 @@ def explore_module(module_, seen=None, maxdepth=2, nonmodules=False):
 
     def __explore_module(module, indent, seen, depth, maxdepth, nonmodules):
         valid_children = []
-        ret = u''
+        ret = ''
         modname = six.text_type(module.__name__)
-        #modname = repr(module)
+        # modname = repr(module)
         for child, aname in __childiter(module):
             try:
                 childtype = type(child)
                 if not isinstance(childtype, types.ModuleType):
                     if nonmodules:
-                        fullstr = indent + '    ' + six.text_type(aname) + ' = ' + repr(child)
+                        fullstr = (
+                            indent + '    ' + six.text_type(aname) + ' = ' + repr(child)
+                        )
                         truncstr = util_str.truncate_str(fullstr) + '\n'
-                        ret +=  truncstr
+                        ret += truncstr
                     continue
                 childname = six.text_type(child.__name__)
                 if seen is not None:
@@ -942,17 +976,20 @@ def explore_module(module_, seen=None, maxdepth=2, nonmodules=False):
         # Recurse
         if maxdepth is not None and depth >= maxdepth:
             return ret
-        ret += ''.join([__explore_module(child,
-                                         indent + '    ',
-                                         seen, depth + 1,
-                                         maxdepth,
-                                         nonmodules)
-                       for child in iter(valid_children)])
+        ret += ''.join(
+            [
+                __explore_module(
+                    child, indent + '    ', seen, depth + 1, maxdepth, nonmodules
+                )
+                for child in iter(valid_children)
+            ]
+        )
         return ret
-    #ret +=
-    #print('#module = ' + str(module_))
+
+    # ret +=
+    # print('#module = ' + str(module_))
     ret = __explore_module(module_, '     ', seen, 0, maxdepth, nonmodules)
-    #print(ret)
+    # print(ret)
     sys.stdout.flush()
     return ret
 
@@ -1020,21 +1057,39 @@ def debug_exception(func):
             return func(*args, **kwargs)
         except Exception as ex:
             import utool
-            msg = ('[tools] ERROR: %s(%r, %r)' % (meta_util_six.get_funcname(func), args, kwargs))
-            #print(msg)
+
+            msg = '[tools] ERROR: %s(%r, %r)' % (
+                meta_util_six.get_funcname(func),
+                args,
+                kwargs,
+            )
+            # print(msg)
             utool.printex(ex, msg)
-            #print('[tools] ERROR: %r' % ex)
+            # print('[tools] ERROR: %r' % ex)
             raise
+
     return ex_wrapper
 
 
 TB = util_arg.get_flag('--tb')
 
 
-def printex(ex, msg='[!?] Caught exception', prefix=None, key_list=[],
-            locals_=None, iswarning=False, tb=TB, pad_stdout=True, N=0,
-            use_stdout=False, reraise=False, msg_=None, keys=None,
-            colored=None):
+def printex(
+    ex,
+    msg='[!?] Caught exception',
+    prefix=None,
+    key_list=[],
+    locals_=None,
+    iswarning=False,
+    tb=TB,
+    pad_stdout=True,
+    N=0,
+    use_stdout=False,
+    reraise=False,
+    msg_=None,
+    keys=None,
+    colored=None,
+):
     """
     Prints (and/or logs) an exception with relevant info
 
@@ -1057,6 +1112,7 @@ def printex(ex, msg='[!?] Caught exception', prefix=None, key_list=[],
         None
     """
     import utool as ut
+
     if isinstance(ex, MemoryError):
         ut.print_resource_usage()
     if keys is not None:
@@ -1071,13 +1127,17 @@ def printex(ex, msg='[!?] Caught exception', prefix=None, key_list=[],
     if msg is True:
         key_list = get_parent_frame().f_locals
         msg = msg_
-    exstr = formatex(ex, msg, prefix, key_list, locals_, iswarning, tb=tb, colored=colored)
+    exstr = formatex(
+        ex, msg, prefix, key_list, locals_, iswarning, tb=tb, colored=colored
+    )
     # get requested print function
     if use_stdout:
+
         def print_func(*args):
             msg = ', '.join(list(map(six.text_type, args)))
             sys.stdout.write(msg + '\n')
             sys.stdout.flush()
+
     else:
         print_func = ut.partial(ut.colorprint, color='yellow' if iswarning else 'red')
         # print_func = print
@@ -1099,9 +1159,18 @@ def printex(ex, msg='[!?] Caught exception', prefix=None, key_list=[],
         sys.exit(1)
 
 
-def formatex(ex, msg='[!?] Caught exception',
-             prefix=None, key_list=[], locals_=None, iswarning=False, tb=False,
-             N=0, keys=None, colored=None):
+def formatex(
+    ex,
+    msg='[!?] Caught exception',
+    prefix=None,
+    key_list=[],
+    locals_=None,
+    iswarning=False,
+    tb=False,
+    N=0,
+    keys=None,
+    colored=None,
+):
     r"""
     Formats an exception with relevant info
 
@@ -1173,10 +1242,13 @@ def formatex(ex, msg='[!?] Caught exception',
         tbtext = traceback.format_exc()
         if colored or COLORED_EXCEPTIONS:
             from utool import util_str
+
             tbtext = util_str.highlight_text(tbtext, lexer_name='pytb', stripall=True)
         errstr_list.append(tbtext)
-    errstr_list.append(prefix + ' ' + six.text_type(msg) + '\n%r: %s' % (type(ex), six.text_type(ex)))
-    #errstr_list.append(prefix + ' ' + six.text_type(msg) + '\ntype(ex)=%r' % (type(ex),))
+    errstr_list.append(
+        prefix + ' ' + six.text_type(msg) + '\n%r: %s' % (type(ex), six.text_type(ex))
+    )
+    # errstr_list.append(prefix + ' ' + six.text_type(msg) + '\ntype(ex)=%r' % (type(ex),))
     parse_locals_keylist(locals_, key_list, errstr_list, prefix)
     errstr_list.append('</!!! %s !!!>' % ex_tag)
     return '\n'.join(errstr_list)
@@ -1186,8 +1258,9 @@ def get_varname_from_stack(var, N=0, **kwargs):
     return get_varname_from_locals(var, get_parent_frame(N=N).f_locals, **kwargs)
 
 
-def get_varname_from_locals(val, locals_, default='varname-not-found',
-                            strict=False, cmpfunc_=operator.is_):
+def get_varname_from_locals(
+    val, locals_, default='varname-not-found', strict=False, cmpfunc_=operator.is_
+):
     """ Finds the string name which has where locals_[name] is val
 
     Check the varname is in the parent namespace
@@ -1309,6 +1382,7 @@ def parse_locals_keylist(locals_, key_list, strlist_=None, prefix=''):
         ]
     """
     from utool import util_str
+
     if strlist_ is None:
         strlist_ = []
 
@@ -1327,7 +1401,7 @@ def parse_locals_keylist(locals_, key_list, strlist_=None, prefix=''):
             elif isinstance(key, six.string_types):
                 # Try to infer print from variable name
                 val = get_varval_from_locals(key, locals_)
-                #valstr = util_str.truncate_str(repr(val), maxlen=200)
+                # valstr = util_str.truncate_str(repr(val), maxlen=200)
                 valstr = util_str.truncate_str(util_str.repr2(val), maxlen=200)
                 strlist_.append('%s %s = %s' % (prefix, key, valstr))
             else:
@@ -1335,11 +1409,16 @@ def parse_locals_keylist(locals_, key_list, strlist_=None, prefix=''):
                 val = key
                 typestr = repr(type(val))
                 namestr = get_varname_from_locals(val, locals_)
-                #valstr = util_str.truncate_str(repr(val), maxlen=200)
+                # valstr = util_str.truncate_str(repr(val), maxlen=200)
                 valstr = util_str.truncate_str(util_str.repr2(val), maxlen=200)
                 strlist_.append('%s %s %s = %s' % (prefix, typestr, namestr, valstr))
         except AssertionError as ex:
-            strlist_.append(prefix + ' ' + six.text_type(ex) + ' (this likely due to a misformatted printex and is not related to the exception)')
+            strlist_.append(
+                prefix
+                + ' '
+                + six.text_type(ex)
+                + ' (this likely due to a misformatted printex and is not related to the exception)'
+            )
     return strlist_
 
 
@@ -1367,8 +1446,8 @@ def printvar2(varstr, attr='', typepad=0):
 
 
 def printvar(locals_, varname, attr='.shape', typepad=0):
-    #npprintopts = np.get_printoptions()
-    #np.set_printoptions(threshold=5)
+    # npprintopts = np.get_printoptions()
+    # np.set_printoptions(threshold=5)
     dotpos = varname.find('.')
     # Locate var
     if dotpos == -1:
@@ -1393,10 +1472,10 @@ def printvar(locals_, varname, attr='.shape', typepad=0):
         print('[var] %s len(%s) = %s' % (typestr, varname, varstr))
     else:
         print('[var] %s %s = %r' % (typestr, varname, var))
-    #np.set_printoptions(**npprintopts)
+    # np.set_printoptions(**npprintopts)
 
 
-#def my_numpy_printops(linewidth=200, threshold=500, precision=8, edgeitems=5):
+# def my_numpy_printops(linewidth=200, threshold=500, precision=8, edgeitems=5):
 #    np.set_printoptions(linewidth=linewidth,
 #                        precision=precision,
 #                        edgeitems=edgeitems,
@@ -1407,6 +1486,7 @@ class EmbedOnException(object):
     """
     Context manager which embeds in ipython if an exception is thrown
     """
+
     def __init__(self):
         pass
 
@@ -1422,6 +1502,7 @@ class EmbedOnException(object):
             print('[util_dbg] %r in context manager!: %s ' % (type_, str(value)))
             import utool as ut
             import traceback
+
             traceback.print_exception(type_, value, trace)
             # Grab the context of the frame where the failure occurred
             trace_globals = trace.tb_frame.f_globals
@@ -1438,6 +1519,7 @@ class EmbedOnException(object):
             locals().update(trace_ns)
             ut.embed()
 
+
 # maybe this will be easier to type?
 embed_on_exception_context = EmbedOnException()
 eoxc = embed_on_exception_context
@@ -1451,6 +1533,8 @@ if __name__ == '__main__':
         python -m utool.util_dbg --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

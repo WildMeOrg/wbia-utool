@@ -20,6 +20,7 @@ from six.moves import zip, map
 from utool import util_inject
 from utool import util_path
 from utool import util_type
+
 (print, rrr, profile) = util_inject.inject2(__name__, '[hash]')
 
 if util_type.HAVE_NUMPY:
@@ -30,28 +31,157 @@ HASH_LEN = 16
 HASH_LEN2 = 32
 
 # HEX alphabet
-ALPHABET_16 = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-               'a', 'b', 'c', 'd', 'e', 'f']
+ALPHABET_16 = [
+    '0',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    'a',
+    'b',
+    'c',
+    'd',
+    'e',
+    'f',
+]
 
 # A large base-54 alphabet (all chars are valid for filenames but not pretty)
-ALPHABET_54 = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-               'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
-               'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
-               'u', 'v', 'w', 'x', 'y', 'z', ';', '=', '@', '[',
-               ']', '^', '_', '`', '{', '}', '~', '!', '#', '$',
-               '%', '&', '+', ',']
+ALPHABET_54 = [
+    '0',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    'a',
+    'b',
+    'c',
+    'd',
+    'e',
+    'f',
+    'g',
+    'h',
+    'i',
+    'j',
+    'k',
+    'l',
+    'm',
+    'n',
+    'o',
+    'p',
+    'q',
+    'r',
+    's',
+    't',
+    'u',
+    'v',
+    'w',
+    'x',
+    'y',
+    'z',
+    ';',
+    '=',
+    '@',
+    '[',
+    ']',
+    '^',
+    '_',
+    '`',
+    '{',
+    '}',
+    '~',
+    '!',
+    '#',
+    '$',
+    '%',
+    '&',
+    '+',
+    ',',
+]
 
 
 # A large base-41 alphabet (prettier subset of base 54)
-ALPHABET_41 = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-               'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
-               'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
-               'u', 'v', 'w', 'x', 'y', 'z', '@', '!', '%', '&',
-               '+']
+ALPHABET_41 = [
+    '0',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    'a',
+    'b',
+    'c',
+    'd',
+    'e',
+    'f',
+    'g',
+    'h',
+    'i',
+    'j',
+    'k',
+    'l',
+    'm',
+    'n',
+    'o',
+    'p',
+    'q',
+    'r',
+    's',
+    't',
+    'u',
+    'v',
+    'w',
+    'x',
+    'y',
+    'z',
+    '@',
+    '!',
+    '%',
+    '&',
+    '+',
+]
 
 ALPHABET_27 = [
-    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-    'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+    'a',
+    'b',
+    'c',
+    'd',
+    'e',
+    'f',
+    'g',
+    'h',
+    'i',
+    'j',
+    'k',
+    'l',
+    'm',
+    'n',
+    'o',
+    'p',
+    'q',
+    'r',
+    's',
+    't',
+    'u',
+    'v',
+    'w',
+    'x',
+    'y',
+    'z',
+]
 
 
 # ALPHABET = ALPHABET_41
@@ -170,6 +300,7 @@ def hashid_arr(arr, label='arr', hashlen=16):
     hashid = '{}-{}-{}'.format(label, shapestr, hashstr)
     return hashid
 
+
 if six.PY2:
     stringlike = (basestring, bytes)  # NOQA
 if six.PY3:
@@ -226,8 +357,7 @@ def _covert_to_hashable(data):
         return _covert_to_hashable(int(data))
     elif util_type.HAVE_NUMPY and isinstance(data, np.float64):
         a, b = float(data).as_integer_ratio()
-        hashable = (a.to_bytes(8, byteorder='big') +
-                    b.to_bytes(8, byteorder='big'))
+        hashable = a.to_bytes(8, byteorder='big') + b.to_bytes(8, byteorder='big')
         prefix = b'FLOAT'
     else:
         raise TypeError('unknown hashable type=%r' % (type(data)))
@@ -320,8 +450,7 @@ def _update_hasher(hasher, data):
     """
     if isinstance(data, (tuple, list, zip)):
         needs_iteration = True
-    elif (util_type.HAVE_NUMPY and isinstance(data, np.ndarray) and
-          data.dtype.kind == 'O'):
+    elif util_type.HAVE_NUMPY and isinstance(data, np.ndarray) and data.dtype.kind == 'O':
         # ndarrays of objects cannot be hashed directly.
         needs_iteration = True
     else:
@@ -403,6 +532,7 @@ SEP_BYTE = b(SEP_STR)
 
 def freeze_hash_bytes(bytes_):
     import codecs
+
     hexstr = codecs.encode(bytes_, 'hex').decode('utf8')
     return hexstr
 
@@ -485,7 +615,7 @@ def hash_data(data, hashlen=None, alphabet=None):
         hashlen = HASH_LEN2
     if isinstance(data, stringlike) and len(data) == 0:
         # Make a special hash for empty data
-        text = (alphabet[0] * hashlen)
+        text = alphabet[0] * hashlen
     else:
         hasher = hashlib.sha512()
         _update_hasher(hasher, data)
@@ -499,11 +629,7 @@ def hash_data(data, hashlen=None, alphabet=None):
 
 
 def digest_data(data, alg='sha256'):
-    hasher = {
-        'md5'    : hashlib.md5,
-        'sha1'   : hashlib.sha1,
-        'sha256' : hashlib.sha256,
-    }[alg]()
+    hasher = {'md5': hashlib.md5, 'sha1': hashlib.sha1, 'sha256': hashlib.sha256,}[alg]()
     _update_hasher(hasher, data)
     return hasher.digest()
 
@@ -644,7 +770,7 @@ def hashstr(data, hashlen=HASH_LEN, alphabet=ALPHABET):
 
     if isinstance(data, stringlike) and len(data) == 0:
         # Make a special hash for empty data
-        text = (alphabet[0] * hashlen)
+        text = alphabet[0] * hashlen
     else:
         # Get a 128 character hex string
         text = hashlib.sha512(data).hexdigest()
@@ -653,6 +779,7 @@ def hashstr(data, hashlen=HASH_LEN, alphabet=ALPHABET):
         # Truncate
         text = hashstr2[:hashlen]
     return text
+
 
 r"""
 def valid_filename_ascii_chars():
@@ -674,6 +801,7 @@ valid_filename_ascii_chars()
 """
 
 if six.PY3:
+
     def _int_to_bytes(int_):
         length = max(4, int_.bit_length())
         bytes_ = int_.to_bytes(length, byteorder='big')
@@ -684,14 +812,18 @@ if six.PY3:
     def _bytes_to_int(bytes_):
         int_ = int.from_bytes(bytes_, 'big')
         return int_
+
+
 else:
+
     def _py2_to_bytes(int_, length, byteorder='big'):
         h = '%x' % int_
         s = ('0' * (len(h) % 2) + h).zfill(length * 2).decode('hex')
-        bytes_ =  s if byteorder == 'big' else s[::-1]
+        bytes_ = s if byteorder == 'big' else s[::-1]
         return bytes_
 
     import codecs
+
     def _int_to_bytes(int_):
         length = max(4, int_.bit_length())
         bytes_ = _py2_to_bytes(int_, length, 'big')
@@ -708,11 +840,14 @@ else:
 def _test_int_byte_conversion():
     import itertools as it
     import utool as ut
-    inputs = list(it.chain(
-        range(0, 10),
-        (2 ** i for i in range(0, 256, 32)),
-        (2 ** i + 1 for i in range(0, 256, 32)),
-    ))
+
+    inputs = list(
+        it.chain(
+            range(0, 10),
+            (2 ** i for i in range(0, 256, 32)),
+            (2 ** i + 1 for i in range(0, 256, 32)),
+        )
+    )
     for int_0 in inputs:
         print('---')
         print('int_0 = %s' % (ut.repr2(int_0),))
@@ -816,7 +951,7 @@ def hashstr_md5(data):
 
     """
     text = hashlib.md5(data).hexdigest()
-    #bin(int(my_hexdata, scale))
+    # bin(int(my_hexdata, scale))
     return text
 
 
@@ -827,8 +962,7 @@ def hashstr_sha1(data, base10=False):
     return text
 
 
-def get_file_hash(fpath, blocksize=65536, hasher=None, stride=1,
-                  hexdigest=False):
+def get_file_hash(fpath, blocksize=65536, hasher=None, stride=1, hexdigest=False):
     r"""
     For better hashes use hasher=hashlib.sha256, and keep stride=1
 
@@ -912,17 +1046,17 @@ def write_hash_file(fpath, hash_tag='md5', recompute=False):
         >>> write_hash_file(fpath, 'md5')
     """
     hash_dict = {
-        'md5'    : hashlib.md5(),
-        'sha1'   : hashlib.sha1(),
-        'sha256' : hashlib.sha256(),
+        'md5': hashlib.md5(),
+        'sha1': hashlib.sha1(),
+        'sha256': hashlib.sha256(),
     }
     message = "Unrecognized hashing function.  Use 'md5', 'sha1', or 'sha256"
     assert hash_tag in hash_dict, message
-    if fpath.endswith('.%s' % (hash_tag, )):
+    if fpath.endswith('.%s' % (hash_tag,)):
         # No need to compute hashes on hashes
         return
     # Get hash path
-    hash_fpath = '%s.%s' % (fpath, hash_tag, )
+    hash_fpath = '%s.%s' % (fpath, hash_tag,)
     if os.path.exists(hash_fpath) and not recompute:
         return
     # Assert this is a file
@@ -971,7 +1105,7 @@ def get_file_uuid(fpath, hasher=None, stride=1):
     """
     if hasher is None:
         hasher = hashlib.sha1()  # 20 bytes of output
-        #hasher = hashlib.sha256()  # 32 bytes of output
+        # hasher = hashlib.sha256()  # 32 bytes of output
     # sha1 produces a 20 byte hash
     hashbytes_20 = get_file_hash(fpath, hasher=hasher, stride=stride)
     # sha1 produces 20 bytes, but UUID requires 16 bytes
@@ -997,10 +1131,10 @@ def image_uuid(pil_img):
 
 
 def augment_uuid(uuid_, *hashables):
-    #from six.moves import reprlib
-    #uuidhex_data   = uuid_.get_bytes()
-    uuidhex_data   = uuid_.bytes
-    #hashable_str    = ''.join(map(repr, hashables))
+    # from six.moves import reprlib
+    # uuidhex_data   = uuid_.get_bytes()
+    uuidhex_data = uuid_.bytes
+    # hashable_str    = ''.join(map(repr, hashables))
     # Python 2 and 3 diverge here because repr returns
     # ascii data in python2 and unicode text in python3
     # it would be nice to
@@ -1012,15 +1146,16 @@ def augment_uuid(uuid_, *hashables):
             if y.startswith('u'):
                 y = y[1:]
         return y
+
     if six.PY2:
         hashable_text = ''.join(map(tmprepr, hashables))
         hashable_data = hashable_text.encode('utf-8')
-        #hashable_data = b''.join(map(bytes, hashables))
+        # hashable_data = b''.join(map(bytes, hashables))
     elif six.PY3:
-        hashable_text    = ''.join(map(tmprepr, hashables))
+        hashable_text = ''.join(map(tmprepr, hashables))
         hashable_data = hashable_text.encode('utf-8')
-        #hashable_data = b''.join(map(bytes, hashables))
-    augmented_data   = uuidhex_data + hashable_data
+        # hashable_data = b''.join(map(bytes, hashables))
+    augmented_data = uuidhex_data + hashable_data
     augmented_uuid_ = hashable_to_uuid(augmented_data)
     return augmented_uuid_
 
@@ -1089,6 +1224,7 @@ def combine_uuids(uuids, ordered=True, salt=''):
 
 
 if six.PY3:
+
     def _ensure_hashable_bytes(hashable_):
         # If hashable_ is text (python3)
         if isinstance(hashable_, bytes):
@@ -1102,8 +1238,11 @@ if six.PY3:
             return str(hashable_).encode('utf-8')
         else:
             return hashable_
+
+
 elif six.PY2:
     import struct
+
     def _ensure_hashable_bytes(hashable_):
         # If hashable_ is data (python2)
         if isinstance(hashable_, bytes):
@@ -1186,11 +1325,14 @@ def random_nonce(length=64, alphabet=None):
     assert length > 0
     if alphabet is None:
         alphabet = ALPHABET_16
-    return ''.join( [alphabet[random.randint(0, len(alphabet) - 1)] for _ in range(length)] )
+    return ''.join(
+        [alphabet[random.randint(0, len(alphabet) - 1)] for _ in range(length)]
+    )
 
 
 def get_zero_uuid():
     return uuid.UUID('00000000-0000-0000-0000-000000000000')
+
 
 # Cleanup namespace
 # del ALPHABET_41
@@ -1206,6 +1348,8 @@ if __name__ == '__main__':
         python -m utool.util_hash --allexamples --noface --nosrc
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

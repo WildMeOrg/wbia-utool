@@ -20,10 +20,10 @@ import os
 import sys
 from utool._internal import meta_util_arg, meta_util_six
 
-VERBOSE            = meta_util_arg.VERBOSE
-VERYVERBOSE        = meta_util_arg.VERYVERBOSE
-PRINT_ALL_CALLERS  = meta_util_arg.PRINT_ALL_CALLERS
-LOGGING_VERBOSE    = meta_util_arg.LOGGING_VERBOSE  # --verb-logging
+VERBOSE = meta_util_arg.VERBOSE
+VERYVERBOSE = meta_util_arg.VERYVERBOSE
+PRINT_ALL_CALLERS = meta_util_arg.PRINT_ALL_CALLERS
+LOGGING_VERBOSE = meta_util_arg.LOGGING_VERBOSE  # --verb-logging
 PRINT_INJECT_ORDER = meta_util_arg.PRINT_INJECT_ORDER
 
 
@@ -44,12 +44,12 @@ __CURRENT_LOGFILE_HANDLER__ = None
 # __PYTHON_FLUSH__  = __PYTHON_STDOUT__.flush
 
 # Initialize utool values
-__UTOOL_STDOUT__    = None
-__UTOOL_PRINT__     = None
+__UTOOL_STDOUT__ = None
+__UTOOL_PRINT__ = None
 
 # TODO: Allow write and flush to have a logging equivalent
-__UTOOL_WRITE__     = None
-__UTOOL_FLUSH__     = None
+__UTOOL_WRITE__ = None
+__UTOOL_FLUSH__ = None
 __UTOOL_WRITE_BUFFER__ = []
 
 
@@ -104,6 +104,7 @@ def testlogprog():
         >>> print(result)
     """
     import utool as ut
+
     print('Starting test log function')
 
     def test_body(count, logmode, backspace):
@@ -115,13 +116,14 @@ def testlogprog():
             ut.start_logging('test.log')
         print('Start main loop')
         import time
+
         for count in ut.ProgressIter(range(20), freq=3, backspace=backspace):
-            time.sleep(.01)
+            time.sleep(0.01)
         print('Done with main loop work')
         print('Exiting main body')
         if logmode:
             ut.stop_logging()
-            #print('-----DONE LOGGING----')
+            # print('-----DONE LOGGING----')
             testlog_text = ut.readfrom('test.log')
             print(ut.indent(testlog_text.replace('\r', '\n'), '        '))
 
@@ -134,21 +136,22 @@ def testlogprog():
             ut.start_logging('test.log')
         print('Start main loop')
         import time
+
         for count in ut.ProgressIter(range(2), freq=1, backspace=backspace):
             for count in ut.ProgressIter(range(50), freq=1, backspace=backspace):
-                time.sleep(.01)
+                time.sleep(0.01)
         print('Done with main loop work')
         print('Exiting main body')
         if logmode:
             ut.stop_logging()
-            #print('-----DONE LOGGING----')
-            #testlog_text = ut.readfrom('test.log')
-            #print(ut.indent(testlog_text.replace('\r', '\n'), '        '))
+            # print('-----DONE LOGGING----')
+            # testlog_text = ut.readfrom('test.log')
+            # print(ut.indent(testlog_text.replace('\r', '\n'), '        '))
 
-    #test_body(0, False, True)
-    #test_body(1, False, False)
-    #test_body(2, True, True)
-    #test_body(3, True, False)
+    # test_body(0, False, True)
+    # test_body(1, False, False)
+    # test_body(2, True, True)
+    # test_body(3, True, False)
 
     test_body2(4, True, True)
     test_body2(5, False, True)
@@ -196,15 +199,16 @@ def get_logging_dir(appname='default'):
     from utool._internal import meta_util_cache
     from utool._internal import meta_util_cplat
     from utool import util_cache
-    if appname is None or  appname == 'default':
+
+    if appname is None or appname == 'default':
         appname = util_cache.get_default_appname()
     resource_dpath = meta_util_cplat.get_resource_dir()
     default = join(resource_dpath, appname, 'logs')
     # Check global cache for a custom logging dir otherwise
     # use the default.
-    log_dir = meta_util_cache.global_cache_read(logdir_cacheid,
-                                                appname=appname,
-                                                default=default)
+    log_dir = meta_util_cache.global_cache_read(
+        logdir_cacheid, appname=appname, default=default
+    )
     log_dir_realpath = realpath(log_dir)
     return log_dir_realpath
 
@@ -221,15 +225,16 @@ def get_shelves_dir(appname='default'):
     from utool._internal import meta_util_cache
     from utool._internal import meta_util_cplat
     from utool import util_cache
-    if appname is None or  appname == 'default':
+
+    if appname is None or appname == 'default':
         appname = util_cache.get_default_appname()
     resource_dpath = meta_util_cplat.get_resource_dir()
     default = join(resource_dpath, appname, 'shelves')
     # Check global cache for a custom logging dir otherwise
     # use the default.
-    log_dir = meta_util_cache.global_cache_read(logdir_cacheid,
-                                                appname=appname,
-                                                default=default)
+    log_dir = meta_util_cache.global_cache_read(
+        logdir_cacheid, appname=appname, default=default
+    )
     log_dir_realpath = realpath(log_dir)
     return log_dir_realpath
 
@@ -287,8 +292,8 @@ def add_logging_handler(handler, format_='file'):
         builtins.print('[WARNING] logger not started, cannot add handler')
         return
     # create formatter and add it to the handlers
-    #logformat = '%Y-%m-%d %H:%M:%S'
-    #logformat = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    # logformat = '%Y-%m-%d %H:%M:%S'
+    # logformat = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     # timeformat = '%H:%M:%S'
     timeformat = '%Y-%m-%d %H:%M:%S'
     if format_ == 'file':
@@ -351,23 +356,27 @@ class CustomStreamHandler(logging.Handler):
                 stream.write(fs % (msg, self.terminator))
             else:
                 try:
-                    if (isinstance(msg, unicode) and getattr(stream, 'encoding', None)):
-                        ufs = u'%s%s'
+                    if isinstance(msg, unicode) and getattr(stream, 'encoding', None):
+                        ufs = '%s%s'
                         try:
                             stream.write(ufs % (msg, self.terminator))
                         except UnicodeEncodeError:
-                            #Printing to terminals sometimes fails. For example,
-                            #with an encoding of 'cp1251', the above write will
-                            #work if written to a stream opened or wrapped by
-                            #the codecs module, but fail when writing to a
-                            #terminal even when the codepage is set to cp1251.
-                            #An extra encoding step seems to be needed.
-                            stream.write((ufs % (msg, self.terminator)).encode(stream.encoding))
+                            # Printing to terminals sometimes fails. For example,
+                            # with an encoding of 'cp1251', the above write will
+                            # work if written to a stream opened or wrapped by
+                            # the codecs module, but fail when writing to a
+                            # terminal even when the codepage is set to cp1251.
+                            # An extra encoding step seems to be needed.
+                            stream.write(
+                                (ufs % (msg, self.terminator)).encode(stream.encoding)
+                            )
                     else:
                         stream.write(fs % (msg, self.terminator))
                 except UnicodeError:
-                    stream.write(fs % (msg.encode('UTF-8'), self.terminator.encode('UTF-8')))
-            #self.flush()
+                    stream.write(
+                        fs % (msg.encode('UTF-8'), self.terminator.encode('UTF-8'))
+                    )
+            # self.flush()
         except (KeyboardInterrupt, SystemExit):
             raise
         except Exception:
@@ -439,26 +448,26 @@ def start_logging(log_fpath=None, mode='a', appname='default', log_dir=None):
     if __UTOOL_ROOT_LOGGER__ is None and __IN_MAIN_PROCESS__ and not __inside_doctest():
         if LOGGING_VERBOSE:
             print('[utool] start_logging()... rootcheck OK')
-        #logging.config.dictConfig(LOGGING)
+        # logging.config.dictConfig(LOGGING)
         if log_fpath is None:
             log_fpath = get_log_fpath(num='next', appname=appname, log_dir=log_dir)
         __CURRENT_LOG_FPATH__ = log_fpath
         # Print what is about to happen
         # if VERBOSE or LOGGING_VERBOSE:
-        startmsg = ('logging to log_fpath=%r' % log_fpath)
+        startmsg = 'logging to log_fpath=%r' % log_fpath
         _utool_print()(startmsg)
         # Create root logger
         __UTOOL_ROOT_LOGGER__ = logging.getLogger('root')
         __UTOOL_ROOT_LOGGER__.setLevel('DEBUG')
         # create file handler which logs even debug messages
-        #fh = logging.handlers.WatchedFileHandler(log_fpath)
+        # fh = logging.handlers.WatchedFileHandler(log_fpath)
         logfile_handler = logging.FileHandler(log_fpath, mode=mode)
         __CURRENT_LOGFILE_HANDLER__ = logfile_handler
-        #stdout_handler = logging.StreamHandler(__UTOOL_STDOUT__)
+        # stdout_handler = logging.StreamHandler(__UTOOL_STDOUT__)
         stdout_handler = CustomStreamHandler(__UTOOL_STDOUT__)
         stdout_handler.terminator = '\n'
         # http://stackoverflow.com/questions/7168790/suppress-newline-in-python-logging-module
-        #stdout_handler.terminator = ''
+        # stdout_handler.terminator = ''
         add_logging_handler(logfile_handler, format_='file')
         add_logging_handler(stdout_handler, format_='stdout')
         __UTOOL_ROOT_LOGGER__.propagate = False
@@ -469,34 +478,35 @@ def start_logging(log_fpath=None, mode='a', appname='default', log_dir=None):
             """ flushes whatever is in the current utool write buffer """
             # Flushes only the stdout handler
             stdout_handler.flush()
-            #__UTOOL_ROOT_LOGGER__.flush()
-            #global __UTOOL_WRITE_BUFFER__
-            #if len(__UTOOL_WRITE_BUFFER__) > 0:
+            # __UTOOL_ROOT_LOGGER__.flush()
+            # global __UTOOL_WRITE_BUFFER__
+            # if len(__UTOOL_WRITE_BUFFER__) > 0:
             #    msg = ''.join(__UTOOL_WRITE_BUFFER__)
             #    #sys.stdout.write('FLUSHING %r\n' % (len(__UTOOL_WRITE_BUFFER__)))
             #    __UTOOL_WRITE_BUFFER__ = []
             #    return __UTOOL_ROOT_LOGGER__.info(msg)
-            #__PYTHON_FLUSH__()
+            # __PYTHON_FLUSH__()
 
         def utool_write(*args):
             """ writes to current utool logs and to sys.stdout.write """
-            #global __UTOOL_WRITE_BUFFER__
-            #sys.stdout.write('WRITEING\n')
+            # global __UTOOL_WRITE_BUFFER__
+            # sys.stdout.write('WRITEING\n')
             msg = ', '.join(map(six.text_type, args))
-            #__UTOOL_WRITE_BUFFER__.append(msg)
+            # __UTOOL_WRITE_BUFFER__.append(msg)
             __UTOOL_ROOT_LOGGER__.info(msg)
-            #if msg.endswith('\n'):
+            # if msg.endswith('\n'):
             #    # Flush on newline, and remove newline
             #    __UTOOL_WRITE_BUFFER__[-1] = __UTOOL_WRITE_BUFFER__[-1][:-1]
             #    utool_flush()
-            #elif len(__UTOOL_WRITE_BUFFER__) > 32:
+            # elif len(__UTOOL_WRITE_BUFFER__) > 32:
             #    # Flush if buffer is too large
             #    utool_flush()
 
         if not PRINT_ALL_CALLERS:
+
             def utool_print(*args):
                 """ standard utool print function """
-                #sys.stdout.write('PRINT\n')
+                # sys.stdout.write('PRINT\n')
                 # endline = '\n'
                 endline = ''
                 args_ = []
@@ -511,25 +521,31 @@ def start_logging(log_fpath=None, mode='a', appname='default', log_dir=None):
                         pass
                     args_.append(arg)
                 msg = ', '.join(args_)
-                return  __UTOOL_ROOT_LOGGER__.info(msg + endline)
+                return __UTOOL_ROOT_LOGGER__.info(msg + endline)
+
         else:
+
             def utool_print(*args):
                 """ debugging utool print function """
                 import utool as ut
+
                 utool_flush()
                 # endline = '\n'
                 endline = ''
                 __UTOOL_ROOT_LOGGER__.info('\n\n----------')
                 __UTOOL_ROOT_LOGGER__.info(ut.get_caller_name(range(0, 20)))
-                return  __UTOOL_ROOT_LOGGER__.info(', '.join(map(six.text_type, args)) + endline)
+                return __UTOOL_ROOT_LOGGER__.info(
+                    ', '.join(map(six.text_type, args)) + endline
+                )
 
         def utool_printdbg(*args):
             """ DRPRICATE standard utool print debug function """
-            return  __UTOOL_ROOT_LOGGER__.debug(', '.join(map(six.text_type, args)))
+            return __UTOOL_ROOT_LOGGER__.debug(', '.join(map(six.text_type, args)))
+
         # overwrite the utool printers
-        __UTOOL_WRITE__    = utool_write
-        __UTOOL_FLUSH__    = utool_flush
-        __UTOOL_PRINT__    = utool_print
+        __UTOOL_WRITE__ = utool_write
+        __UTOOL_FLUSH__ = utool_flush
+        __UTOOL_PRINT__ = utool_print
         # Test out our shiney new logger
         if VERBOSE or LOGGING_VERBOSE:
             __UTOOL_PRINT__('<__LOG_START__>')
@@ -561,14 +577,16 @@ def stop_logging():
             __UTOOL_ROOT_LOGGER__.removeHandler(h)
         # Reset objects
         __UTOOL_ROOT_LOGGER__ = None
-        __UTOOL_PRINT__    = None
-        __UTOOL_WRITE__    = None
-        __UTOOL_FLUSH__    = None
+        __UTOOL_PRINT__ = None
+        __UTOOL_WRITE__ = None
+        __UTOOL_FLUSH__ = None
+
 
 # HAVE TO HACK THIS IN FOR UTOOL SPECIAL CASE ONLY
 # OTHER MODULE CAN USE NOINJECT
 if PRINT_INJECT_ORDER:
     from utool._internal import meta_util_dbg
+
     callername = meta_util_dbg.get_caller_name(N=1, strict=False)
     fmtdict = dict(callername=callername, modname='utool.util_logging')
     msg = '[util_inject] {modname} is imported by {callername}'.format(**fmtdict)
@@ -583,6 +601,8 @@ if __name__ == '__main__':
         python -m utool.util_logging --allexamples --noface --nosrc
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

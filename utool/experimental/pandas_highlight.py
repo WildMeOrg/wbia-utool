@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function, unicode_literals  # NOQA
+
 # print, rrr, profile = ut.inject2(__name__)
 
 
@@ -7,6 +8,7 @@ def monkey_to_str_columns(self, latex=False):
     import numpy as np
     import pandas as pd
     import utool as ut
+
     frame = self.tr_frame
     highlight_func = 'max'
     highlight_cols = self.highlight_cols
@@ -54,14 +56,12 @@ def monkey_to_str_columns(self, latex=False):
         stringified = []
         for i, c in enumerate(frame):
             cheader = str_columns[i]
-            max_colwidth = max(self.col_space or 0, *(self.adj.len(x)
-                                                      for x in cheader))
+            max_colwidth = max(self.col_space or 0, *(self.adj.len(x) for x in cheader))
             fmt_values = self._format_col(i)
-            fmt_values = _make_fixed_width(fmt_values, self.justify,
-                                           minimum=max_colwidth,
-                                           adj=self.adj)
-            max_len = max(np.max([self.adj.len(x) for x in fmt_values]),
-                          max_colwidth)
+            fmt_values = _make_fixed_width(
+                fmt_values, self.justify, minimum=max_colwidth, adj=self.adj
+            )
+            max_len = max(np.max([self.adj.len(x) for x in fmt_values]), max_colwidth)
             cheader = self.adj.justify(cheader, max_len, mode=self.justify)
 
             # Apply custom coloring
@@ -73,9 +73,9 @@ def monkey_to_str_columns(self, latex=False):
         stringified = []
         for i, c in enumerate(frame):
             fmt_values = self._format_col(i)
-            fmt_values = _make_fixed_width(fmt_values, self.justify,
-                                           minimum=(self.col_space or 0),
-                                           adj=self.adj)
+            fmt_values = _make_fixed_width(
+                fmt_values, self.justify, minimum=(self.col_space or 0), adj=self.adj
+            )
 
             stringified.append(fmt_values)
 
@@ -91,8 +91,7 @@ def monkey_to_str_columns(self, latex=False):
         col_num = self.tr_col_num
         # infer from column header
         col_width = self.adj.len(strcols[self.tr_size_col][0])
-        strcols.insert(self.tr_col_num + 1, ['...'.center(col_width)] *
-                       (len(str_index)))
+        strcols.insert(self.tr_col_num + 1, ['...'.center(col_width)] * (len(str_index)))
     if truncate_v:
         n_header_rows = len(str_index) - len(frame)
         row_num = self.tr_row_num
@@ -155,6 +154,7 @@ def to_string_monkey(df, highlight_cols=None, latex=False):
         import utool as ut
         import numpy as np
         import six
+
         if isinstance(highlight_cols, six.string_types) and highlight_cols == 'all':
             highlight_cols = np.arange(len(df.columns))
         # kwds = dict(buf=None, columns=None, col_space=None, header=True,
@@ -173,10 +173,13 @@ def to_string_monkey(df, highlight_cols=None, latex=False):
         def monkey(self):
             return monkey_to_str_columns(self, latex=latex)
 
-        ut.inject_func_as_method(self, monkey, '_to_str_columns', override=True, force=True)
+        ut.inject_func_as_method(
+            self, monkey, '_to_str_columns', override=True, force=True
+        )
 
         def strip_ansi(text):
             import re
+
             ansi_escape = re.compile(r'\x1b[^m]*m')
             return ansi_escape.sub('', text)
 
@@ -187,10 +190,14 @@ def to_string_monkey(df, highlight_cols=None, latex=False):
                 return [x.center(max_len + (len(x) - len(strip_ansi(x)))) for x in texts]
             else:
                 return [x.rjust(max_len + (len(x) - len(strip_ansi(x)))) for x in texts]
-        ut.inject_func_as_method(self.adj, justify_ansi, 'justify', override=True, force=True)
+
+        ut.inject_func_as_method(
+            self.adj, justify_ansi, 'justify', override=True, force=True
+        )
 
         def strlen_ansii(self, text):
             return pd.compat.strlen(strip_ansi(text), encoding=self.encoding)
+
         ut.inject_func_as_method(self.adj, strlen_ansii, 'len', override=True, force=True)
 
         if False:
@@ -210,13 +217,15 @@ def to_string_monkey(df, highlight_cols=None, latex=False):
         result = '\n'.join([x.rstrip() for x in result.split('\n')])
         return result
     except Exception as ex:
-        ut.printex('pandas monkey-patch is broken: {}'.format(str(ex)),
-                   tb=True, iswarning=True)
+        ut.printex(
+            'pandas monkey-patch is broken: {}'.format(str(ex)), tb=True, iswarning=True
+        )
         return str(df)
 
 
 def pandas_repr(df):
     import utool as ut
+
     args = [
         df.values,
     ]
@@ -227,13 +236,11 @@ def pandas_repr(df):
     header = 'pd.DataFrame('
     footer = ')'
 
-    arg_parts = [
-        ut.hz_str('    ', ut.repr2(arg))
-        for arg in args if arg is not None
-    ]
+    arg_parts = [ut.hz_str('    ', ut.repr2(arg)) for arg in args if arg is not None]
     kwarg_parts = [
         ut.hz_str('    {}={}'.format(key, ut.repr2(val)))
-        for key, val in kwargs if val is not None
+        for key, val in kwargs
+        if val is not None
     ]
     body = ',\n'.join(arg_parts + kwarg_parts)
     dfrepr = '\n'.join([header, body, footer])

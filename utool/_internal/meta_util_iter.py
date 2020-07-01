@@ -70,14 +70,14 @@ def isiterable(obj):
         return not isinstance(obj, six.string_types)
     except Exception:
         return False
-    #return np.iterable(obj) and not isinstance(obj, six.string_types)
+    # return np.iterable(obj) and not isinstance(obj, six.string_types)
 
 
 def isscalar(obj):
     return not isiterable(obj)
 
 
-#def isscalar(obj):
+# def isscalar(obj):
 if __name__ == '__main__':
     """
     CommandLine:
@@ -86,6 +86,8 @@ if __name__ == '__main__':
         python -m utool._internal.meta_util_iter --allexamples --noface --nosrc
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

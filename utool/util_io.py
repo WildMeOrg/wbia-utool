@@ -5,13 +5,16 @@ from six.moves import cPickle as pickle
 from utool import util_path
 from utool import util_inject
 from os.path import splitext, basename, exists
+
 try:
     import lockfile
+
     HAVE_LOCKFILE = True
 except ImportError:
     HAVE_LOCKFILE = False
 try:
     import numpy as np
+
     HAS_NUMPY = True
 except ImportError as ex:
     HAS_NUMPY = False
@@ -21,12 +24,12 @@ print, rrr, profile = util_inject.inject2(__name__)
 
 __PRINT_IO__ = True
 __PRINT_WRITES__ = __PRINT_IO__
-__PRINT_READS__  =  __PRINT_IO__
+__PRINT_READS__ = __PRINT_IO__
 __FORCE_PRINT_READS__ = False
 __FORCE_PRINT_WRITES__ = False
 __READ_TAIL_N__ = 3
-#__FORCE_PRINT_READS__ = True
-#__FORCE_PRINT_WRITES__ = True
+# __FORCE_PRINT_READS__ = True
+# __FORCE_PRINT_WRITES__ = True
 
 
 def load_data(fpath, **kwargs):
@@ -79,8 +82,9 @@ def _rectify_verb_read(verbose):
     return verbose
 
 
-def write_to(fpath, to_write, aslines=False, verbose=None,
-             onlyifdiff=False, mode='w', n=None):
+def write_to(
+    fpath, to_write, aslines=False, verbose=None, onlyifdiff=False, mode='w', n=None
+):
     """ Writes text to a file. Automatically encodes text as utf8.
 
     Args:
@@ -116,6 +120,7 @@ def write_to(fpath, to_write, aslines=False, verbose=None,
     """
     if onlyifdiff:
         import utool as ut
+
         if ut.hashstr(read_from(fpath)) == ut.hashstr(to_write):
             print('[util_io] * no difference')
             return
@@ -151,6 +156,7 @@ def write_to(fpath, to_write, aslines=False, verbose=None,
                 print(repr(context))
                 print(context)
                 from utool import util_dbg
+
                 util_dbg.printex(ex, keys=[(type, 'to_write')])
                 file_.close()
                 if backup:
@@ -186,32 +192,36 @@ def read_from(fpath, verbose=None, aslines=False, strict=True, n=None, errors='r
     try:
         if not util_path.checkpath(fpath, verbose=verbose, n=n):
             raise IOError('[io] * FILE DOES NOT EXIST!')
-        #with open(fpath, 'r') as file_:
+        # with open(fpath, 'r') as file_:
         with open(fpath, 'rb') as file_:
             if aslines:
-                #text = file_.readlines()
+                # text = file_.readlines()
                 if six.PY2:
                     # python2 writes in bytes, so read as bytes then convert to
                     # utf8
-                    text = [line.decode('utf8', errors=errors)
-                            for line in file_.readlines()]
+                    text = [
+                        line.decode('utf8', errors=errors) for line in file_.readlines()
+                    ]
                 else:
-                    text = [line.decode('utf8', errors=errors)
-                            for line in file_.readlines()]
-                    #text = file_.readlines()
+                    text = [
+                        line.decode('utf8', errors=errors) for line in file_.readlines()
+                    ]
+                    # text = file_.readlines()
             else:
                 # text = file_.read()
                 if six.PY2:
                     text = file_.read().decode('utf8', errors=errors)
                 else:
-                    #text = file_.read()
+                    # text = file_.read()
                     text = file_.read().decode('utf8', errors=errors)
         return text
     except IOError as ex:
         from utool import util_dbg
+
         if verbose or strict:
-            util_dbg.printex(ex, ' * Error reading fpath=%r' %
-                             util_path.tail(fpath, n=n), '[io]')
+            util_dbg.printex(
+                ex, ' * Error reading fpath=%r' % util_path.tail(fpath, n=n), '[io]'
+            )
         if strict:
             raise
 
@@ -219,12 +229,13 @@ def read_from(fpath, verbose=None, aslines=False, strict=True, n=None, errors='r
 def read_lines_from(fpath, num_lines=None, verbose=None, n=None):
     with open(fpath, 'r') as file_:
         line_list = []
-        #for lineno, line in enumerate(file_.readline()):
+        # for lineno, line in enumerate(file_.readline()):
         for lineno, line in enumerate(file_):
             line_list.append(line)
             if num_lines is not None and lineno > num_lines:
                 break
     return line_list
+
 
 # aliases
 readfrom = read_from
@@ -235,12 +246,14 @@ load_text = read_from
 
 def save_json(fpath, data, **kwargs):
     import utool as ut
+
     json_data = ut.to_json(data, **kwargs)
     ut.save_text(fpath, json_data)
 
 
 def load_json(fpath):
     import utool as ut
+
     json_data = ut.load_text(fpath)
     data = ut.from_json(json_data)
     return data
@@ -354,7 +367,8 @@ def load_cPkl(fpath, verbose=None, n=None):
             if ex.message == 'unsupported pickle protocol: 4':
                 raise ValueError(
                     'unsupported Python3 pickle protocol 4 '
-                    'in Python2 for fpath=%r' % (fpath,))
+                    'in Python2 for fpath=%r' % (fpath,)
+                )
             else:
                 raise
         else:
@@ -379,6 +393,7 @@ def _python2_load_cpkl(fpath):
     # We can override the Unpickler and loads
     class Python_3_Unpickler(pickle.Unpickler):
         """Class for pickling objects from Python 3"""
+
         def find_class(self, module, name):
             if module in REVERSE_MAPPING:
                 module = REVERSE_MAPPING[module]
@@ -575,32 +590,33 @@ def save_hdf5(fpath, data, verbose=None, compression='lzf'):
     fname = basename(fpath)
 
     # check for parallel hdf5
-    #have_mpi = h5py.h5.get_config().mpi
-    #if have_mpi:
+    # have_mpi = h5py.h5.get_config().mpi
+    # if have_mpi:
     #    import mpi4py
     #    h5kw = dict(driver='mpio', comm=mpi4py.MPI.COMM_WORLD)
     #    # cant use compression with mpi
     #    #ValueError: Unable to create dataset (Parallel i/o does not support filters yet)
-    #else:
+    # else:
     h5kw = {}
 
     if isinstance(data, dict):
-        array_data = {key: val for key, val in data.items()
-                      if isinstance(val, (list, np.ndarray))}
+        array_data = {
+            key: val for key, val in data.items() if isinstance(val, (list, np.ndarray))
+        }
         attr_data = {key: val for key, val in data.items() if key not in array_data}
 
-        #assert all([
+        # assert all([
         #    isinstance(vals, np.ndarray)
         #    for vals in six.itervalues(data)
-        #]), ('can only save dicts as ndarrays')
+        # ]), ('can only save dicts as ndarrays')
         # file_ = h5py.File(fpath, 'w', **h5kw)
         with h5py.File(fpath, mode='w', **h5kw) as file_:
             grp = file_.create_group(fname)
             for key, val in six.iteritems(array_data):
                 val = np.asarray(val)
                 dset = grp.create_dataset(
-                    key, val.shape,  val.dtype, chunks=chunks,
-                    compression=compression)
+                    key, val.shape, val.dtype, chunks=chunks, compression=compression
+                )
                 dset[...] = val
             for key, val in six.iteritems(attr_data):
                 grp.attrs[key] = val
@@ -608,24 +624,26 @@ def save_hdf5(fpath, data, verbose=None, compression='lzf'):
         assert isinstance(data, np.ndarray)
         shape = data.shape
         dtype = data.dtype
-        #if verbose or (verbose is None and __PRINT_WRITES__):
+        # if verbose or (verbose is None and __PRINT_WRITES__):
         #    print('[util_io] * save_hdf5(%r, data)' % (util_path.tail(fpath),))
         # file_ = h5py.File(fpath, 'w', **h5kw)
         with h5py.File(fpath, mode='w', **h5kw) as file_:
-            #file_.create_dataset(
+            # file_.create_dataset(
             #    fname, shape,  dtype, chunks=chunks, compression=compression,
             #    data=data)
             dset = file_.create_dataset(
-                fname, shape,  dtype, chunks=chunks, compression=compression)
+                fname, shape, dtype, chunks=chunks, compression=compression
+            )
             dset[...] = data
 
 
 def load_hdf5(fpath, verbose=None):
     import h5py
+
     fname = basename(fpath)
-    #file_ = h5py.File(fpath, 'r')
-    #file_.values()
-    #file_.keys()
+    # file_ = h5py.File(fpath, 'r')
+    # file_.values()
+    # file_.keys()
     verbose = _rectify_verb_read(verbose)
     if verbose:
         print('[util_io] * load_hdf5(%r)' % (util_path.tail(fpath),))
@@ -684,11 +702,12 @@ def save_pytables(fpath, data, verbose=False):
         >>> assert ut.delete(fpath)
     """
     import tables
-    #from os.path import basename
-    #fname = basename(fpath)
-    #shape = data.shape
-    #dtype = data.dtype
-    #file_ = tables.open_file(fpath)
+
+    # from os.path import basename
+    # fname = basename(fpath)
+    # shape = data.shape
+    # dtype = data.dtype
+    # file_ = tables.open_file(fpath)
     verbose = _rectify_verb_write(verbose)
     if verbose:
         print('[util_io] * save_pytables(%r, data)' % (util_path.tail(fpath),))
@@ -697,15 +716,16 @@ def save_pytables(fpath, data, verbose=False):
         filters = tables.Filters(complib='blosc', complevel=5)
         dset = file_.createCArray(file_.root, 'data', atom, data.shape, filters=filters)
         # save w/o compressive filter
-        #dset = file_.createCArray(file_.root, 'all_data', atom, all_data.shape)
+        # dset = file_.createCArray(file_.root, 'all_data', atom, all_data.shape)
         dset[:] = data
 
 
 def load_pytables(fpath, verbose=False):
     import tables
-    #from os.path import basename
-    #fname = basename(fpath)
-    #file_ = tables.open_file(fpath)
+
+    # from os.path import basename
+    # fname = basename(fpath)
+    # file_ = tables.open_file(fpath)
     verbose = _rectify_verb_read(verbose)
     if verbose:
         print('[util_io] * load_pytables(%r, data)' % (util_path.tail(fpath),))
@@ -728,7 +748,7 @@ def save_numpy(fpath, data, verbose=None, **kwargs):
     return np.save(fpath, data)
 
 
-#def save_capnp(fpath, data, verbose=False):
+# def save_capnp(fpath, data, verbose=False):
 #    r"""
 #    Refernces:
 #        http://jparyani.github.io/pycapnp/quickstart.html#dictionaries
@@ -741,22 +761,99 @@ def save_numpy(fpath, data, verbose=None, **kwargs):
 def try_decode(x):
     # All python encoding formats
     codec_list = [
-        'ascii', 'big5', 'big5hkscs', 'cp037', 'cp424', 'cp437', 'cp500',
-        'cp720', 'cp737', 'cp775', 'cp850', 'cp852', 'cp855', 'cp856', 'cp857',
-        'cp858', 'cp860', 'cp861', 'cp862', 'cp863', 'cp864', 'cp865', 'cp866',
-        'cp869', 'cp874', 'cp875', 'cp932', 'cp949', 'cp950', 'cp1006',
-        'cp1026', 'cp1140', 'cp1250', 'cp1251', 'cp1252', 'cp1253', 'cp1254',
-        'cp1255', 'cp1256', 'cp1257', 'cp1258', 'euc_jp', 'euc_jis_2004',
-        'euc_jisx0213', 'euc_kr', 'gb2312', 'gbk', 'gb18030', 'hz',
-        'iso2022_jp', 'iso2022_jp_1', 'iso2022_jp_2', 'iso2022_jp_2004',
-        'iso2022_jp_3', 'iso2022_jp_ext', 'iso2022_kr', 'latin_1', 'iso8859_2',
-        'iso8859_3', 'iso8859_4', 'iso8859_5', 'iso8859_6', 'iso8859_7',
-        'iso8859_8', 'iso8859_9', 'iso8859_10', 'iso8859_13', 'iso8859_14',
-        'iso8859_15', 'iso8859_16', 'johab', 'koi8_r', 'koi8_u', 'mac_cyrillic',
-        'mac_greek', 'mac_iceland', 'mac_latin2', 'mac_roman', 'mac_turkish',
-        'ptcp154', 'shift_jis', 'shift_jis_2004', 'shift_jisx0213', 'utf_32',
-        'utf_32_be', 'utf_32_le', 'utf_16', 'utf_16_be', 'utf_16_le', 'utf_7',
-        'utf_8', 'utf_8_sig', ]
+        'ascii',
+        'big5',
+        'big5hkscs',
+        'cp037',
+        'cp424',
+        'cp437',
+        'cp500',
+        'cp720',
+        'cp737',
+        'cp775',
+        'cp850',
+        'cp852',
+        'cp855',
+        'cp856',
+        'cp857',
+        'cp858',
+        'cp860',
+        'cp861',
+        'cp862',
+        'cp863',
+        'cp864',
+        'cp865',
+        'cp866',
+        'cp869',
+        'cp874',
+        'cp875',
+        'cp932',
+        'cp949',
+        'cp950',
+        'cp1006',
+        'cp1026',
+        'cp1140',
+        'cp1250',
+        'cp1251',
+        'cp1252',
+        'cp1253',
+        'cp1254',
+        'cp1255',
+        'cp1256',
+        'cp1257',
+        'cp1258',
+        'euc_jp',
+        'euc_jis_2004',
+        'euc_jisx0213',
+        'euc_kr',
+        'gb2312',
+        'gbk',
+        'gb18030',
+        'hz',
+        'iso2022_jp',
+        'iso2022_jp_1',
+        'iso2022_jp_2',
+        'iso2022_jp_2004',
+        'iso2022_jp_3',
+        'iso2022_jp_ext',
+        'iso2022_kr',
+        'latin_1',
+        'iso8859_2',
+        'iso8859_3',
+        'iso8859_4',
+        'iso8859_5',
+        'iso8859_6',
+        'iso8859_7',
+        'iso8859_8',
+        'iso8859_9',
+        'iso8859_10',
+        'iso8859_13',
+        'iso8859_14',
+        'iso8859_15',
+        'iso8859_16',
+        'johab',
+        'koi8_r',
+        'koi8_u',
+        'mac_cyrillic',
+        'mac_greek',
+        'mac_iceland',
+        'mac_latin2',
+        'mac_roman',
+        'mac_turkish',
+        'ptcp154',
+        'shift_jis',
+        'shift_jis_2004',
+        'shift_jisx0213',
+        'utf_32',
+        'utf_32_be',
+        'utf_32_le',
+        'utf_16',
+        'utf_16_be',
+        'utf_16_le',
+        'utf_7',
+        'utf_8',
+        'utf_8_sig',
+    ]
     for codec in codec_list:
         try:
             print(('%20s: ' % (codec,)) + x.encode(codec))
@@ -778,6 +875,8 @@ if __name__ == '__main__':
         python -m utool.util_io --allexamples --noface --nosrc
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

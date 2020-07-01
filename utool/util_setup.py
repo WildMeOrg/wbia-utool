@@ -9,7 +9,8 @@ from utool import util_cplat
 from utool import util_path
 from utool import util_io
 from utool import util_str
-#from utool import util_dev
+
+# from utool import util_dev
 from utool.util_dbg import printex
 from utool._internal import meta_util_arg
 
@@ -20,37 +21,47 @@ class SetupManager(object):
     """
     Helps with writing setup.py
     """
+
     def __init__(self):
         self.cmdclass = {}
 
     def _register_command(self, name, func):
         import setuptools
+
         class _WrapCommand(setuptools.Command):
             """
             https://dankeder.com/posts/adding-custom-commands-to-setup-py/
             """
+
             description = name
             user_options = []
+
             def initialize_options(self):
                 pass
+
             def finalize_options(self):
                 pass
+
             def run(cmd):
                 func()
+
         self.cmdclass[name] = _WrapCommand
-        #self.cmdclass[name] = func
-        #TmpCommand
+        # self.cmdclass[name] = func
+        # TmpCommand
 
     def register_command(self, name):
         import utool as ut
+
         if ut.is_funclike(name):
             func = name
             name = ut.get_funcname(func)
             self._register_command(name, func)
             return func
         else:
+
             def _wrap(func):
                 self._register_command(name, func)
+
             return _wrap
 
     def get_cmdclass(self):
@@ -59,7 +70,7 @@ class SetupManager(object):
         return cmdclass
 
 
-class SETUP_PATTERNS():
+class SETUP_PATTERNS:
     clutter_pybuild = [
         '*.pyc',
         '*.pyo',
@@ -74,9 +85,9 @@ class SETUP_PATTERNS():
         '_*_cyth.html',
         '_*_cyth.pyx',
         '_*_cyth.so',
-        '_*_cyth.dylib'
+        '_*_cyth.dylib',
     ]
-    chmod_test   = ['test_*.py']
+    chmod_test = ['test_*.py']
 
 
 def read_license(license_file):
@@ -93,16 +104,16 @@ def read_license(license_file):
 def build_pyo(project_dirs):
     pyexe = util_cplat.python_executable()
     for dir_ in project_dirs:
-        #command_args = [pyexe, '-O', '-m', 'compileall', dir_ + '\*.py']
+        # command_args = [pyexe, '-O', '-m', 'compileall', dir_ + '\*.py']
         command_args = [pyexe, '-O', '-m', 'compileall', dir_]
-        #command = ' '.join(command_args)
-        #os.system(command)
+        # command = ' '.join(command_args)
+        # os.system(command)
         util_cplat.shell(command_args)
 
 
 def setup_chmod(setup_fpath, setup_dir, chmod_patterns):
     """ Gives files matching pattern the same chmod flags as setup.py """
-    #st_mode = os.stat(setup_fpath).st_mode
+    # st_mode = os.stat(setup_fpath).st_mode
     st_mode = 33277
     for pattern in chmod_patterns:
         for fpath in util_path.glob(setup_dir, pattern, recursive=True):
@@ -114,14 +125,14 @@ def assert_in_setup_repo(setup_fpath, name=''):
     """ pass in __file__ from setup.py """
     setup_dir, setup_fname = split(setup_fpath)
     cwd = os.getcwd()
-    #repo_dname = split(setup_dir)[1]
-    #print('cwd       = %r' % (cwd))
-    #print('repo_dname = %r' % repo_dname)
-    #print('setup_dir = %r' % (setup_dir))
-    #print('setup_fname = %r' % (setup_fname))
+    # repo_dname = split(setup_dir)[1]
+    # print('cwd       = %r' % (cwd))
+    # print('repo_dname = %r' % repo_dname)
+    # print('setup_dir = %r' % (setup_dir))
+    # print('setup_fname = %r' % (setup_fname))
     try:
         assert setup_fname == 'setup.py', 'name is not setup.py'
-        #assert name == '' or repo_dname == name,
+        # assert name == '' or repo_dname == name,
         ('name=%r' % name)
         assert cwd == setup_dir, 'cwd is not setup_dir'
         assert exists(setup_dir), 'setup dir does not exist'
@@ -138,23 +149,22 @@ def clean(setup_dir, clutter_patterns, clutter_dirs):
     _clutter_dirs = [pat[:-1] for pat in clutter_patterns if pat.endswith('/')]
     clutter_dirs_ = _clutter_dirs + clutter_dirs
 
-    util_path.remove_files_in_dir(setup_dir,
-                                  clutter_patterns_,
-                                  recursive=True,
-                                  verbose=VERBOSE)
+    util_path.remove_files_in_dir(
+        setup_dir, clutter_patterns_, recursive=True, verbose=VERBOSE
+    )
 
     for dir_ in clutter_dirs_:
         util_path.delete(dir_, verbose=VERBOSE, print_exists=False)
-        #util_path.remove_files_in_dir(dir_)
+        # util_path.remove_files_in_dir(dir_)
 
-    #for fpath in cython_files:
+    # for fpath in cython_files:
     #    fname, ext = splitext(fpath)
     #    for libext in util_cplat.LIB_EXT_LIST:
     #        util_path.remove_file(fname + libext)
     #    util_path.remove_file(fname + '.c')
 
 
-#def build_cython(cython_files):
+# def build_cython(cython_files):
 #    """ doesn't work """
 #    for fpath in cython_files:
 #        util_dev.compile_cython(fpath)
@@ -168,6 +178,7 @@ def clean(setup_dir, clutter_patterns, clutter_dirs):
 def get_numpy_include_dir():
     try:
         import numpy as np
+
         return np.get_include()
     except ImportError:
         return ''
@@ -177,11 +188,12 @@ def find_ext_modules(disable_warnings=True):
     from setuptools import Extension
     import utool
     from os.path import relpath
+
     cwd = os.getcwd()
 
     # CYTH      = 'cyth' in sys.argv
-    BEXT      = 'bext' in sys.argv
-    BUILD     = 'build' in sys.argv
+    BEXT = 'bext' in sys.argv
+    BUILD = 'build' in sys.argv
     BUILD_EXT = 'build_ext' in sys.argv
 
     # if any([BEXT, CYTH]):
@@ -191,7 +203,7 @@ def find_ext_modules(disable_warnings=True):
         # dont find modules if they are not being built
         return []
 
-    #pyx_list = utool.glob(cwd, '*_cython.pyx', recursive=True)
+    # pyx_list = utool.glob(cwd, '*_cython.pyx', recursive=True)
     pyx_list = utool.glob(cwd, '*.pyx', recursive=True)
 
     if disable_warnings:
@@ -206,9 +218,12 @@ def find_ext_modules(disable_warnings=True):
         print('[find_ext] Found Module:')
         print('   * pyx_modname = %r' % (pyx_modname,))
         print('   * pyx_relpath = %r' % (pyx_relpath,))
-        extmod = Extension(pyx_modname, [pyx_relpath],
-                           include_dirs=[get_numpy_include_dir()],
-                           extra_compile_args=extra_compile_args)
+        extmod = Extension(
+            pyx_modname,
+            [pyx_relpath],
+            include_dirs=[get_numpy_include_dir()],
+            extra_compile_args=extra_compile_args,
+        )
         ext_modules.append(extmod)
     return ext_modules
 
@@ -218,9 +233,14 @@ def find_packages(recursive=True, maxdepth=None):
     Finds all directories with an __init__.py file in them
     """
     import utool
+
     if utool.VERBOSE:
-        print('[util_setup] find_packages(recursive=%r, maxdepth=%r)' % (recursive, maxdepth))
+        print(
+            '[util_setup] find_packages(recursive=%r, maxdepth=%r)'
+            % (recursive, maxdepth)
+        )
     from os.path import relpath
+
     cwd = os.getcwd()
     init_files = utool.glob(cwd, '__init__.py', recursive=recursive, maxdepth=maxdepth)
     package_paths = list(map(dirname, init_files))
@@ -239,11 +259,14 @@ def get_cmdclass():
     """ DEPRICATE """
     try:
         from Cython.Distutils import build_ext
+
         cmdclass = {'build_ext': build_ext}
         return cmdclass
     except Exception as ex:
         print(ex)
-        print('WARNING: Cython is not installed. This is only a problem if you are building C extensions')
+        print(
+            'WARNING: Cython is not installed. This is only a problem if you are building C extensions'
+        )
         return {}
 
 
@@ -251,7 +274,7 @@ def parse_author():
     """ TODO: this function should parse setup.py or a module for
     the author variable
     """
-    return 'Jon Crall'   # FIXME
+    return 'Jon Crall'  # FIXME
 
 
 def autogen_sphinx_apidoc():
@@ -314,9 +337,10 @@ def autogen_sphinx_apidoc():
         packages = ut.find_packages(maxdepth=1)
         assert len(packages) != 0, 'directory must contain at least one package'
         if len(packages) > 1:
-            assert len(packages) == 1,\
-                ('FIXME I dont know what to do with more than one root package: %r'
-                 % (packages,))
+            assert len(packages) == 1, (
+                'FIXME I dont know what to do with more than one root package: %r'
+                % (packages,)
+            )
         pkgdir = packages[0]
         version = ut.parse_package_for_version(pkgdir)
         modpath = dirname(ut.truepath(pkgdir))
@@ -342,7 +366,7 @@ def autogen_sphinx_apidoc():
         #
         # Make custom edits to conf.py
         # FIXME:
-        #ext_search_text = ut.unindent(
+        # ext_search_text = ut.unindent(
         #    r'''
         #    extensions = [
         #    [^\]]*
@@ -353,7 +377,7 @@ def autogen_sphinx_apidoc():
         #'sphinx.ext.mathjax',
         exclude_modules = []
         ext_repl_text = ut.codeblock(
-            '''
+            """
             MOCK_MODULES = {exclude_modules}
             if len(MOCK_MODULES) > 0:
                 import mock
@@ -370,18 +394,19 @@ def autogen_sphinx_apidoc():
                 'sphinxcontrib.napoleon',
                 #'sphinx.ext.napoleon',
             ]
-            '''
+            """
         ).format(exclude_modules=str(exclude_modules))
-        #theme_search = 'html_theme = \'default\''
-        theme_search = 'html_theme = \'[a-zA-Z_1-3]*\''
+        # theme_search = 'html_theme = \'default\''
+        theme_search = "html_theme = '[a-zA-Z_1-3]*'"
         theme_repl = ut.codeblock(
-            '''
+            """
             import sphinx_rtd_theme
             html_theme = "sphinx_rtd_theme"
             html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-            ''')
+            """
+        )
         head_text = ut.codeblock(
-            '''
+            """
             from sphinx.ext.autodoc import between
             import sphinx_rtd_theme
             import sys
@@ -397,21 +422,35 @@ def autogen_sphinx_apidoc():
             autosummary_generate = True
 
             modindex_common_prefix = ['_']
-            '''
+            """
         ).format(modpath=ut.truepath(modpath))
         tail_text = ut.codeblock(
-            '''
+            """
             def setup(app):
                 # Register a sphinx.ext.autodoc.between listener to ignore everything
                 # between lines that contain the word IGNORE
                 app.connect('autodoc-process-docstring', between('^.*IGNORE.*$', exclude=True))
                 return app
-            '''
+            """
         )
-        return (ext_search_text, ext_repl_text, theme_search, theme_repl, head_text, tail_text)
+        return (
+            ext_search_text,
+            ext_repl_text,
+            theme_search,
+            theme_repl,
+            head_text,
+            tail_text,
+        )
 
     apidoc_cmdstr, modpath, outputdir = build_sphinx_apidoc_cmdstr()
-    ext_search_text, ext_repl_text, theme_search, theme_repl, head_text, tail_text = build_conf_replstr()
+    (
+        ext_search_text,
+        ext_repl_text,
+        theme_search,
+        theme_repl,
+        head_text,
+        tail_text,
+    ) = build_conf_replstr()
 
     dry = ut.get_argflag('--dry')
 
@@ -432,10 +471,10 @@ def autogen_sphinx_apidoc():
         conf_text = head_text + '\n' + conf_text + tail_text
         ut.write_to(conf_fname, conf_text)
         # Make the documentation
-        #if ut.LINUX:
+        # if ut.LINUX:
         #    ut.cmd('make html', shell=True)
-        #if ut.WIN32:
-        #raw_input('waiting')
+        # if ut.WIN32:
+        # raw_input('waiting')
         if not ut.get_argflag('--nomake'):
             ut.cmd('make', 'html', shell=True)
     else:
@@ -454,15 +493,19 @@ def presetup_commands(setup_fpath, kwargs):
         print('[setup] presetup_commands()')
     name = kwargs.get('name', '')
     # Parse args
-    project_dirs     = kwargs.pop('project_dirs', None)
-    chmod_patterns   = kwargs.pop('chmod_patterns', [])
-    clutter_dirs     = kwargs.pop('clutter_dirs', None)
+    project_dirs = kwargs.pop('project_dirs', None)
+    chmod_patterns = kwargs.pop('chmod_patterns', [])
+    clutter_dirs = kwargs.pop('clutter_dirs', None)
     clutter_patterns = kwargs.pop('clutter_patterns', [])
-    build_command    = kwargs.pop('build_command', NOOP)
+    build_command = kwargs.pop('build_command', NOOP)
     # Augment patterns with builtin patterns
-    chmod_patterns   += SETUP_PATTERNS.chmod_test if kwargs.pop('chmod_tests', True) else []
-    clutter_patterns += SETUP_PATTERNS.clutter_pybuild if kwargs.pop('clean_pybuild', True) else []
-    clutter_patterns += SETUP_PATTERNS.clutter_cyth if kwargs.pop('clean_pybuild', True) else []
+    chmod_patterns += SETUP_PATTERNS.chmod_test if kwargs.pop('chmod_tests', True) else []
+    clutter_patterns += (
+        SETUP_PATTERNS.clutter_pybuild if kwargs.pop('clean_pybuild', True) else []
+    )
+    clutter_patterns += (
+        SETUP_PATTERNS.clutter_cyth if kwargs.pop('clean_pybuild', True) else []
+    )
     setup_fpath = util_path.truepath(setup_fpath)
     #
     setup_dir = dirname(setup_fpath)
@@ -473,31 +516,25 @@ def presetup_commands(setup_fpath, kwargs):
     # Augment clutter dirs
     if clutter_dirs is None:
         clutter_dirs = []
-    clutter_dirs += [
-        'build',
-        'dist',
-        name + '.egg-info',
-        '__pycache__'
-    ]
+    clutter_dirs += ['build', 'dist', name + '.egg-info', '__pycache__']
 
     if project_dirs is None:
         project_dirs = util_path.ls_moduledirs(setup_dir)
-# Execute pre-setup commands based on argv
-    #BEXT = 'bext' in sys.argv
-    #BUILD_EXT = 'build_ext' in sys.argv
-    #CYTH = 'cyth' in sys.argv
+    # Execute pre-setup commands based on argv
+    # BEXT = 'bext' in sys.argv
+    # BUILD_EXT = 'build_ext' in sys.argv
+    # CYTH = 'cyth' in sys.argv
 
-    #if CYTH:
+    # if CYTH:
     #    translate_cyth()
 
     for arg in iter(sys.argv[:]):
-        #print(arg)
+        # print(arg)
         # Clean clutter files
         if arg in ['clean']:
             clean(setup_dir, clutter_patterns, clutter_dirs)
-            #sys.exit(0)
-        if arg in ['build'] or (not exists(build_dir) and
-                                'clean' not in sys.argv):
+            # sys.exit(0)
+        if arg in ['build'] or (not exists(build_dir) and 'clean' not in sys.argv):
             if VERBOSE:
                 print('[setup] Executing build command')
             try:
@@ -510,6 +547,7 @@ def presetup_commands(setup_fpath, kwargs):
             print('Testing preqres package versions')
             install_requires = kwargs.get('install_requires', [])
             import pip
+
             print('Checking install_requires = [\n%s\n]' % '\n'.join(install_requires))
             pip.main(['show'] + [depline.split(' ')[0] for depline in install_requires])
             print('L ___ Done Version Testing')
@@ -520,7 +558,7 @@ def presetup_commands(setup_fpath, kwargs):
         if arg in ['o', 'pyo']:
             build_pyo(project_dirs)
         # Cythonize files
-        #if arg in ['cython']:
+        # if arg in ['cython']:
         #    build_cython(cython_files)
         # Chmod files
         if arg in ['chmod']:
@@ -529,7 +567,7 @@ def presetup_commands(setup_fpath, kwargs):
     try:
         sys.argv.remove('docs')
         sys.argv.remove('cyth')
-        #sys.argv.remove('--cyth-write')
+        # sys.argv.remove('--cyth-write')
     except ValueError:
         pass
 
@@ -574,25 +612,30 @@ def parse_package_for_version(name):
     the module.
     """
     from utool import util_regex
+
     init_fpath = join(name, '__init__.py')
     version_errmsg = textwrap.dedent(
-        '''
+        """
         You must include a __version__ variable
         in %s\'s __init__.py file.
         Try something like:
-        __version__ = '1.0.0.dev1' ''' % (name,))
+        __version__ = '1.0.0.dev1' """
+        % (name,)
+    )
     if not exists(init_fpath):
         raise AssertionError(version_errmsg)
     val_regex = util_regex.named_field('version', '[0-9a-zA-Z.]+')
     regexstr = '__version__ *= *[\'"]' + val_regex
+
     def parse_version(line):
         # Helper
         line = line.replace(' ', '').replace('\t', '')
         match_dict = util_regex.regex_parse(regexstr, line)
         if match_dict is not None:
             return match_dict['version']
+
     # Find the version  in the text of the source
-    #version = 'UNKNOWN_VERSION'
+    # version = 'UNKNOWN_VERSION'
     with open(init_fpath, 'r') as file_:
         for line in file_.readlines():
             if line.startswith('__version__'):
@@ -605,13 +648,13 @@ def parse_package_for_version(name):
 def __infer_setup_kwargs(module, kwargs):
     """ Implicitly build kwargs based on standard info """
     # Get project name from the module
-    #if 'name' not in kwargs:
+    # if 'name' not in kwargs:
     #    kwargs['name'] = module.__name__
-    #else:
+    # else:
     #    raise AssertionError('must specify module name!')
     name = kwargs['name']
     # Our projects depend on utool
-    #if kwargs['name'] != 'utool':
+    # if kwargs['name'] != 'utool':
     #    install_requires = kwargs.get('install_requires', [])
     #    if 'utool' not in install_requires:
     #        install_requires.append('utool')
@@ -627,7 +670,7 @@ def __infer_setup_kwargs(module, kwargs):
         kwargs['version'] = version
 
     # Parse version
-    #if 'version' not in kwargs:
+    # if 'version' not in kwargs:
     #    if module is None:
     #        version_errmsg = 'You must include a version (preferably one that matches the __version__ variable in your modules init file'
     #        raise AssertionError(version_errmsg)
@@ -689,6 +732,7 @@ def setuptools_setup(setup_fpath=None, module=None, **kwargs):
         license            short string     ('license for the package')
     """
     from utool.util_inject import inject_colored_exceptions
+
     inject_colored_exceptions()  # Fluffly, but nice
     if VERBOSE:
         print(util_str.repr4(kwargs))
@@ -707,6 +751,8 @@ if __name__ == '__main__':
         python -m utool.util_setup --allexamples --noface --nosrc
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

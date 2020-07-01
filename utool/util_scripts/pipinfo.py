@@ -21,8 +21,9 @@ import utool as ut
 #     return sitepackages
 
 
-def module_stdinfo_dict(module, versionattr='__version__', version=None,
-                        libdep=None, name=None, **kwargs):
+def module_stdinfo_dict(
+    module, versionattr='__version__', version=None, libdep=None, name=None, **kwargs
+):
     infodict = ut.odict()
     if module is None:
         infodict['__version__'] = version
@@ -49,15 +50,21 @@ def print_module_info(modname):
     if modname.lower() == 'pillow':
         from PIL import Image
         import PIL
+
         pil_path = PIL.__path__
-        infodict = module_stdinfo_dict(Image, versionattr='PILLOW_VERSION',
-                                       image_version=Image.VERSION,
-                                       pil_path=pil_path)
+        infodict = module_stdinfo_dict(
+            Image,
+            versionattr='PILLOW_VERSION',
+            image_version=Image.VERSION,
+            pil_path=pil_path,
+        )
     elif modname.lower() == 'pyqt4':
         from PyQt4 import QtCore
+
         infodict = module_stdinfo_dict(QtCore, 'PYQT_VERSION_STR')
     elif modname.lower() == 'pyqt5':
         from PyQt5 import QtCore
+
         infodict = module_stdinfo_dict(QtCore, 'PYQT_VERSION_STR')
     else:
         # Handle normal modules

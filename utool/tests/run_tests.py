@@ -8,6 +8,7 @@ import sys
 def run_tests():
     # Build module list and run tests
     import sys
+
     exclude_doctests_fnames = set(['__init__.py'])
 
     exclude_dirs = [
@@ -21,7 +22,8 @@ def run_tests():
         'notebook',
     ]
     from os.path import dirname
-    #dpath_list = ['vtool']
+
+    # dpath_list = ['vtool']
     if ut.in_pyinstaller_package():
         # HACK, find_doctestable_modnames does not work in pyinstaller
         """
@@ -75,14 +77,15 @@ def run_tests():
             'utool._internal.meta_util_iter',
         ]
     else:
-        #dpath_list = ['utool']
+        # dpath_list = ['utool']
         dpath_list = [dirname(ut.__file__)]
         doctest_modname_list = ut.find_doctestable_modnames(
-            dpath_list, exclude_doctests_fnames, exclude_dirs)
+            dpath_list, exclude_doctests_fnames, exclude_dirs
+        )
     # Finding weird error
     # util cache and util inspect
-    #doctest_modname_list = (doctest_modname_list[4:5] + doctest_modname_list[17:18])
-    #doctest_modname_list = doctest_modname_list[17:18]
+    # doctest_modname_list = (doctest_modname_list[4:5] + doctest_modname_list[17:18])
+    # doctest_modname_list = doctest_modname_list[17:18]
 
     modname_list2 = []
     for modname in doctest_modname_list:
@@ -107,21 +110,21 @@ def run_tests():
         return 1
     else:
         return 0
-    #print(ut.repr4(doctest_modname_list))
+    # print(ut.repr4(doctest_modname_list))
 
 
 def convert_tests_from_utool_to_nose(module_list):
     # PARSE OUT TESTABLE DOCTESTTUPS
-    #import utool as ut
+    # import utool as ut
     testtup_list = []
     seen_ = set()
 
     topimport_list = []
 
     for module in module_list:
-        mod_doctest_tup = ut.get_module_doctest_tup(module=module,
-                                                    verbose=False,
-                                                    allexamples=True)
+        mod_doctest_tup = ut.get_module_doctest_tup(
+            module=module, verbose=False, allexamples=True
+        )
         enabled_testtup_list, frame_fpath, all_testflags, module = mod_doctest_tup
         flags = [tup.src not in seen_ for tup in enabled_testtup_list]
         enabled_testtup_list = ut.compress(enabled_testtup_list, flags)
@@ -132,31 +135,38 @@ def convert_tests_from_utool_to_nose(module_list):
     print('Found %d test tups' % (len(testtup_list)))
 
     autogen_test_src_funcs = []
-    #import redbaron
+    # import redbaron
     for testtup in testtup_list:
         name = testtup.name
-        num  = testtup.num
-        src  = testtup.src
+        num = testtup.num
+        src = testtup.src
         want = testtup.want
         import re
+
         src = re.sub('# ENABLE_DOCTEST\n', '', src)
         src = re.sub('from [^*]* import \* *# NOQA\n', '', src)
         src = re.sub('from [^*]* import \*\n', '', src)
-        #flag = testtup.flag
+        # flag = testtup.flag
         if want.endswith('\n'):
             want = want[:-1]
         if want:
-            #src_node = redbaron.RedBaron(src)
-            #if len(src_node.find_all('name', 'result')) > 0:
+            # src_node = redbaron.RedBaron(src)
+            # if len(src_node.find_all('name', 'result')) > 0:
             #    src_node.append('assert result == %r' % (want,))
             if '\nresult = ' in src:
                 src += '\nassert str(result) == %r' % (want,)
         func_src = 'def test_%s_%d():\n' % (name.replace('.', '_'), num,) + ut.indent(src)
         autogen_test_src_funcs.append(func_src)
 
-    autogen_test_src = '\n'.join(topimport_list) + '\n\n\n' + '\n\n\n'.join(autogen_test_src_funcs) + '\n'
+    autogen_test_src = (
+        '\n'.join(topimport_list)
+        + '\n\n\n'
+        + '\n\n\n'.join(autogen_test_src_funcs)
+        + '\n'
+    )
     from utool import tests
     from os.path import join
+
     moddir = ut.get_module_dir(tests)
     ut.writeto(join(moddir, 'test_autogen_nose_tests.py'), autogen_test_src)
 
@@ -166,6 +176,7 @@ if __name__ == '__main__':
     python -m utool.tests.run_tests
     """
     import multiprocessing
+
     multiprocessing.freeze_support()
     retcode = run_tests()
     sys.exit(retcode)

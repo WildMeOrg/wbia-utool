@@ -3,22 +3,25 @@ from __future__ import absolute_import, division, print_function
 import six
 import itertools
 import random
+
 try:
     import numpy as np
 except ImportError as ex:
     pass
 from utool import util_inject
+
 print, rrr, profile = util_inject.inject2(__name__)
 
 
 def tiled_range(range_, cols):
     return np.tile(np.arange(range_), (cols, 1)).T
-    #np.tile(np.arange(num_qf).reshape(num_qf, 1), (1, k_vsmany))
+    # np.tile(np.arange(num_qf).reshape(num_qf, 1), (1, k_vsmany))
 
 
 def quantum_random():
     """ returns a 32 bit unsigned integer quantum random number """
     import quantumrandom
+
     data16 = quantumrandom.uint16(array_length=2)
     assert data16.flags['C_CONTIGUOUS']
     data32 = data16.view(np.dtype('uint32'))[0]
@@ -171,11 +174,11 @@ def random_indexes(max_index, subset_size=None, seed=None, rng=None):
     if subset_size is None:
         subst = subst_
     else:
-        subst = subst_[0:min(subset_size, max_index)]
+        subst = subst_[0 : min(subset_size, max_index)]
     return subst
 
 
-#def list_index(search_list, to_find_list):
+# def list_index(search_list, to_find_list):
 #    """ Keep this function
 #    Searches search_list for each element in to_find_list"""
 #    try:
@@ -252,19 +255,19 @@ def intersect2d(A, B):
         >>> print(result)
         (array([[1, 2, 3]]), array([0]), array([0]))
     """
-    Cset  =  set(tuple(x) for x in A).intersection(set(tuple(x) for x in B))
+    Cset = set(tuple(x) for x in A).intersection(set(tuple(x) for x in B))
     Ax = np.array([x for x, item in enumerate(A) if tuple(item) in Cset], dtype=np.int)
     Bx = np.array([x for x, item in enumerate(B) if tuple(item) in Cset], dtype=np.int)
     C = np.array(tuple(Cset))
     return C, Ax, Bx
 
 
-#def unique_ordered(arr):
-    #""" pandas.unique preseves order and seems to be faster due to index overhead """
-    #import pandas as pd
-    #return pd.unique(arr)
-    #_, idx = np.unique(arr, return_index=True)
-    #return arr[np.sort(idx)]
+# def unique_ordered(arr):
+# """ pandas.unique preseves order and seems to be faster due to index overhead """
+# import pandas as pd
+# return pd.unique(arr)
+# _, idx = np.unique(arr, return_index=True)
+# return arr[np.sort(idx)]
 
 
 def deterministic_shuffle(list_, seed=0, rng=None):
@@ -397,7 +400,9 @@ def sample_domain(min_, max_, nSamp, mode='linear'):
         base = 2
         logmin = np.log2(min_) / np.log2(base)
         logmax = np.log2(max_) / np.log2(base)
-        samples_ = np.rint(np.logspace(logmin, logmax, nSamp + 1, base=base)).astype(np.int64)
+        samples_ = np.rint(np.logspace(logmin, logmax, nSamp + 1, base=base)).astype(
+            np.int64
+        )
     else:
         raise NotImplementedError(mode)
     sample = [index for index in samples_ if index < max_]
@@ -422,6 +427,8 @@ if __name__ == '__main__':
         python -m utool.util_numpy --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

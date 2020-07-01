@@ -8,6 +8,7 @@ from six.moves import range, map, zip
 import os
 import re
 import textwrap
+
 try:
     import numpy as np
 except ImportError:
@@ -15,9 +16,10 @@ except ImportError:
 from os.path import join, splitext, dirname  # NOQA
 from utool import util_num
 from utool import util_inject
+
 print, rrr, profile = util_inject.inject2(__name__)
 
-#def ensure_latex_environ():
+# def ensure_latex_environ():
 #    paths = os.environ['PATH'].split(os.pathsep)
 #    mpl.rc('font',**{'family':'serif'})
 #    mpl.rc('text', usetex=True)
@@ -27,6 +29,7 @@ print, rrr, profile = util_inject.inject2(__name__)
 
 def find_ghostscript_exe():
     import utool as ut
+
     if ut.WIN32:
         gs_exe = r'C:\Program Files (x86)\gs\gs9.16\bin\gswin32c.exe'
     else:
@@ -37,6 +40,7 @@ def find_ghostscript_exe():
 def compress_pdf(pdf_fpath, output_fname=None):
     """ uses ghostscript to write a pdf """
     import utool as ut
+
     ut.assertpath(pdf_fpath)
     suffix = '_' + ut.get_datestamp(False) + '_compressed'
     print('pdf_fpath = %r' % (pdf_fpath,))
@@ -51,7 +55,7 @@ def compress_pdf(pdf_fpath, output_fname=None):
         '-dQUIET',
         '-dBATCH',
         '-sOutputFile=' + output_pdf_fpath,
-        pdf_fpath
+        pdf_fpath,
     )
     ut.cmd(*cmd_list)
     return output_pdf_fpath
@@ -82,7 +86,9 @@ def make_full_document(text, title=None, preamp_decl={}, preamb_extra=None):
         >>> print(result)
     """
     import utool as ut
-    doc_preamb = ut.codeblock('''
+
+    doc_preamb = ut.codeblock(
+        """
     %\\documentclass{article}
     \\documentclass[10pt,twocolumn,letterpaper]{article}
     % \\usepackage[utf8]{inputenc}
@@ -98,37 +104,43 @@ def make_full_document(text, title=None, preamp_decl={}, preamb_extra=None):
     \\usepackage{booktabs}
 
     %\\pagenumbering{gobble}
-    ''')
+    """
+    )
     if preamb_extra is not None:
         if isinstance(preamb_extra, (list, tuple)):
             preamb_extra = '\n'.join(preamb_extra)
-        doc_preamb += '\n' +  preamb_extra + '\n'
+        doc_preamb += '\n' + preamb_extra + '\n'
     if title is not None:
         preamp_decl['title'] = title
 
-    decl_lines = [r'\{key}{{{val}}}'.format(key=key, val=val)
-                  for key, val in preamp_decl.items()]
+    decl_lines = [
+        r'\{key}{{{val}}}'.format(key=key, val=val) for key, val in preamp_decl.items()
+    ]
     doc_decllines = '\n'.join(decl_lines)
 
     doc_header = ut.codeblock(
-        r'''
+        r"""
         \begin{document}
-        ''')
+        """
+    )
     if preamp_decl.get('title') is not None:
         doc_header += r'\maketitle'
 
     doc_footer = ut.codeblock(
-        r'''
+        r"""
         \end{document}
-        ''')
+        """
+    )
     text_ = '\n'.join((doc_preamb, doc_decllines, doc_header, text, doc_footer))
     return text_
 
 
-def render_latex_text(input_text, nest_in_doc=False, preamb_extra=None,
-                      appname='utool', verbose=None):
+def render_latex_text(
+    input_text, nest_in_doc=False, preamb_extra=None, appname='utool', verbose=None
+):
     """ compiles latex and shows the result """
     import utool as ut
+
     if verbose is None:
         verbose = ut.VERBOSE
     dpath = ut.ensure_app_resource_dir(appname, 'latex_tmp')
@@ -136,15 +148,22 @@ def render_latex_text(input_text, nest_in_doc=False, preamb_extra=None,
     # print(input_text)
     fname = 'temp_render_latex'
     pdf_fpath = ut.compile_latex_text(
-        input_text, dpath=dpath, fname=fname, preamb_extra=preamb_extra,
-        verbose=verbose)
+        input_text, dpath=dpath, fname=fname, preamb_extra=preamb_extra, verbose=verbose
+    )
     ut.startfile(pdf_fpath)
     return pdf_fpath
 
 
-def compile_latex_text(input_text, dpath=None, fname=None, verbose=True,
-                       move=True, nest_in_doc=None, title=None,
-                       preamb_extra=None):
+def compile_latex_text(
+    input_text,
+    dpath=None,
+    fname=None,
+    verbose=True,
+    move=True,
+    nest_in_doc=None,
+    title=None,
+    preamb_extra=None,
+):
     r"""
     CommandLine:
         python -m utool.util_latex --test-compile_latex_text --show
@@ -172,14 +191,14 @@ def compile_latex_text(input_text, dpath=None, fname=None, verbose=True,
         >>> ut.startfile(pdf_fpath)
     """
     import utool as ut
+
     if verbose:
         print('[ut] compile_latex_text')
 
     if nest_in_doc is None:
         nest_in_doc = 'documentclass' not in input_text
     if nest_in_doc:
-        text = make_full_document(input_text, title=title,
-                                  preamb_extra=preamb_extra)
+        text = make_full_document(input_text, title=title, preamb_extra=preamb_extra)
     if not dpath:
         dpath = os.getcwd()
     if fname is None:
@@ -198,10 +217,16 @@ def compile_latex_text(input_text, dpath=None, fname=None, verbose=True,
 
     with ut.ChdirContext(work_dpath, verbose=verbose > 1):
         # print(text)
-        args = ' '.join([
-            'lualatex', '-shell-escape', '--synctex=-1', '-src-specials',
-            '-interaction=nonstopmode', tex_fpath
-        ])
+        args = ' '.join(
+            [
+                'lualatex',
+                '-shell-escape',
+                '--synctex=-1',
+                '-src-specials',
+                '-interaction=nonstopmode',
+                tex_fpath,
+            ]
+        )
         info = ut.cmd2(args, verbose=verbose > 1)
         if not ut.checkpath(pdf_fpath_output, verbose=verbose > 1):
             print('Error compiling LaTeX')
@@ -217,9 +242,9 @@ def compile_latex_text(input_text, dpath=None, fname=None, verbose=True,
     return pdf_fpath
 
 
-def convert_pdf_to_image(pdf_fpath, ext='.jpg', verbose=1, dpi=300,
-                         quality=90):
+def convert_pdf_to_image(pdf_fpath, ext='.jpg', verbose=1, dpi=300, quality=90):
     import utool as ut
+
     if verbose:
         print('[ut] convert_pdf_to_image.')
     img_fpath = ut.ensure_ext(pdf_fpath, ext)
@@ -227,8 +252,9 @@ def convert_pdf_to_image(pdf_fpath, ext='.jpg', verbose=1, dpi=300,
         convert_fpath = ut.cmd2('which convert')['out'].strip()
         if not convert_fpath:
             raise Exception('ImageMagik convert was not found')
-    args = ' '.join(['convert', '-density', str(dpi), pdf_fpath, '-quality',
-                     str(quality), img_fpath])
+    args = ' '.join(
+        ['convert', '-density', str(dpi), pdf_fpath, '-quality', str(quality), img_fpath]
+    )
     info = ut.cmd2(args, verbose=verbose > 1)  # NOQA
     if not ut.checkpath(img_fpath, verbose=verbose > 1):
         print('Failed to convert pdf to ' + ext)
@@ -237,8 +263,9 @@ def convert_pdf_to_image(pdf_fpath, ext='.jpg', verbose=1, dpi=300,
     return img_fpath
 
 
-def render_latex(input_text, dpath=None, fname=None, preamb_extra=None,
-                 verbose=1, **kwargs):
+def render_latex(
+    input_text, dpath=None, fname=None, preamb_extra=None, verbose=1, **kwargs
+):
     """
     Renders latex text into a jpeg.
 
@@ -274,6 +301,7 @@ def render_latex(input_text, dpath=None, fname=None, preamb_extra=None,
         >>>     ut.startfile(jpg_fpath)
     """
     import utool as ut
+
     try:
         import vtool as vt
     except ImportError:
@@ -284,8 +312,13 @@ def render_latex(input_text, dpath=None, fname=None, preamb_extra=None,
     img_fname = ut.ensure_ext(fname, ['.jpg'] + list(ut.IMG_EXTENSIONS))
     img_fpath = join(dpath, img_fname)
     pdf_fpath = ut.compile_latex_text(
-        input_text_, fname=fname, dpath=dpath, preamb_extra=preamb_extra,
-        verbose=verbose, move=False)
+        input_text_,
+        fname=fname,
+        dpath=dpath,
+        preamb_extra=preamb_extra,
+        verbose=verbose,
+        move=False,
+    )
     ext = splitext(img_fname)[1]
     fpath_in = ut.convert_pdf_to_image(pdf_fpath, ext=ext, verbose=verbose)
     # Clip of boundaries of the pdf imag
@@ -304,6 +337,7 @@ def latex_multirow(data, nrow=2):
 
 def latex_get_stats(lbl, data, mode=0):
     import utool as ut
+
     stats_ = ut.get_stats(data)
     if stats_.get('empty_list', False):
         return '% NA: latex_get_stats, data=[]'
@@ -311,33 +345,40 @@ def latex_get_stats(lbl, data, mode=0):
         max_ = stats_['max']
         min_ = stats_['min']
         mean = stats_['mean']
-        std  = stats_['std']
+        std = stats_['std']
         shape = stats_['shape']
     except KeyError as ex:
         stat_keys = stats_.keys()  # NOQA
         ut.printex(ex, key_list=['stat_keys', 'stats_', 'data'])
         raise
 
-    #int_fmt = lambda num: util.num_fmt(int(num))
+    # int_fmt = lambda num: util.num_fmt(int(num))
     def float_fmt(num):
         return util_num.num_fmt(float(num))
 
     def tup_fmt(tup):
         return str(tup)
-    fmttup = (float_fmt(min_), float_fmt(max_), float_fmt(mean), float_fmt(std), tup_fmt(shape))
+
+    fmttup = (
+        float_fmt(min_),
+        float_fmt(max_),
+        float_fmt(mean),
+        float_fmt(std),
+        tup_fmt(shape),
+    )
     lll = ' ' * len(lbl)
     if mode == 0:
-        prefmtstr = r'''
+        prefmtstr = r"""
         {label} stats & min ; max = %s ; %s\\
         {space}       & mean; std = %s ; %s\\
-        {space}       & shape = %s \\'''
+        {space}       & shape = %s \\"""
     if mode == 1:
-        prefmtstr = r'''
+        prefmtstr = r"""
         {label} stats & min  = $%s$\\
         {space}       & max  = $%s$\\
         {space}       & mean = $%s$\\
         {space}       & std  = $%s$\\
-        {space}       & shape = $%s$\\'''
+        {space}       & shape = $%s$\\"""
     fmtstr = prefmtstr.format(label=lbl, space=lll)
     latex_str = textwrap.dedent(fmtstr % fmttup).strip('\n') + '\n'
     return latex_str
@@ -390,7 +431,13 @@ def escape_latex(text):
         '>': r'\textgreater',
     }
     import six
-    regex = re.compile('|'.join(re.escape(six.text_type(key)) for key in sorted(conv.keys(), key=lambda item: - len(item))))
+
+    regex = re.compile(
+        '|'.join(
+            re.escape(six.text_type(key))
+            for key in sorted(conv.keys(), key=lambda item: -len(item))
+        )
+    )
     return regex.sub(lambda match: conv[match.group()], text)
 
 
@@ -402,11 +449,27 @@ def replace_all(str_, repltups):
 
 
 def make_score_tabular(
-        row_lbls, col_lbls, values, title=None, out_of=None, bold_best=False,
-        flip=False, bigger_is_better=True, multicol_lbls=None, FORCE_INT=False,
-        precision=None, SHORTEN_ROW_LBLS=False, col_align='l', col_sep='|',
-        multicol_sep='|', centerline=True, astable=False, table_position='',
-        AUTOFIX_LATEX=True, **kwargs):
+    row_lbls,
+    col_lbls,
+    values,
+    title=None,
+    out_of=None,
+    bold_best=False,
+    flip=False,
+    bigger_is_better=True,
+    multicol_lbls=None,
+    FORCE_INT=False,
+    precision=None,
+    SHORTEN_ROW_LBLS=False,
+    col_align='l',
+    col_sep='|',
+    multicol_sep='|',
+    centerline=True,
+    astable=False,
+    table_position='',
+    AUTOFIX_LATEX=True,
+    **kwargs
+):
     r"""
     makes a LaTeX tabular for displaying scores or errors
 
@@ -481,6 +544,7 @@ def make_score_tabular(
         >>> render_latex_text(tabular_str)
     """
     import utool as ut
+
     if flip:
         bigger_is_better = not bigger_is_better
         flip_repltups = [
@@ -488,7 +552,7 @@ def make_score_tabular(
             ('>', '<='),
             ('\\leq', '\\gt'),
             ('\\geq', '\\lt'),
-            ('score', 'error')
+            ('score', 'error'),
         ]
         col_lbls = [replace_all(lbl, flip_repltups) for lbl in col_lbls]
         if title is not None:
@@ -504,7 +568,7 @@ def make_score_tabular(
         else:
             row_lbl_list = row_lbls.flatten().tolist()
         # Split the rob labels into the alg components
-        #algcomp_list = [lbl.split(')_') for lbl in row_lbl_list]
+        # algcomp_list = [lbl.split(')_') for lbl in row_lbl_list]
         longest = long_substr(row_lbl_list)
         common_strs = []
         while len(longest) > 10:
@@ -530,6 +594,7 @@ def make_score_tabular(
         def padvec(shape=(1, 1)):
             pad = np.array([[' ' for c in range(shape[1])] for r in range(shape[0])])
             return pad
+
         col_lbls = ensure_rowvec(col_lbls)
         row_lbls = ensure_colvec(row_lbls)
         _0 = np.vstack([padvec(), row_lbls])
@@ -539,8 +604,11 @@ def make_score_tabular(
     else:
         assert len(row_lbls) == len(values)
         body = [[' '] + col_lbls]
-        body += [[row_lbl] + ensurelist(row_values) for row_lbl, row_values in zip(row_lbls, values)]
-    #import utool as ut
+        body += [
+            [row_lbl] + ensurelist(row_values)
+            for row_lbl, row_values in zip(row_lbls, values)
+        ]
+    # import utool as ut
     # Fix things in each body cell
     DO_PERCENT = True
     try:
@@ -562,6 +630,7 @@ def make_score_tabular(
                     body[r][c] = escape_latex(body[r][c])
     except Exception as ex:
         import utool as ut
+
         print('len(row_lbls) = %r' % (len(row_lbls),))
         print('len(col_lbls) = %r' % (len(col_lbls),))
         print('len(values) = %r' % (values,))
@@ -572,8 +641,10 @@ def make_score_tabular(
     # Bold the best values
     if bold_best:
         best_col_scores = values.max(0) if bigger_is_better else values.min(0)
-        rows_to_bold = [np.where(values[:, colx] == best_col_scores[colx])[0]
-                        for colx in range(len(values.T))]
+        rows_to_bold = [
+            np.where(values[:, colx] == best_col_scores[colx])[0]
+            for colx in range(len(values.T))
+        ]
         for colx, rowx_list in enumerate(rows_to_bold):
             for rowx in rowx_list:
                 body[rowx + 1][colx + 1] = '\\txtbf{' + body[rowx + 1][colx + 1] + '}'
@@ -608,54 +679,67 @@ def make_score_tabular(
     colvalsep = ' & '
     endl = '\\\\\n'
     hline = r'\hline'
-    #extra_rowsep_pos_list = [1]  # rows to insert an extra hline after
+    # extra_rowsep_pos_list = [1]  # rows to insert an extra hline after
     extra_rowsep_pos_list = []  # rows to insert an extra hline after
     if HLINE_SEP:
         rowvalsep = hline + '\n'
     # rowstr list holds blocks of rows
     rowstr_list = [colvalsep.join(row) + endl for row in body]
-    #rowstr_list = [row[0] + rowlbl_sep + colvalsep.join(row[1:]) + endl for row in body]
-    #rowstr_list = [(
+    # rowstr_list = [row[0] + rowlbl_sep + colvalsep.join(row[1:]) + endl for row in body]
+    # rowstr_list = [(
     #    ('' if len(row) == 0 else row[0])
     #    if len(row) <= 1 else
     #    row[0] + rowlblcol_sep + colvalsep.join(row[1:]) + endl)
     #    for row in body]
-    rowsep_list = [rowvalsep for row in rowstr_list[0:-1]]  # should be len 1 less than rowstr_list
+    rowsep_list = [
+        rowvalsep for row in rowstr_list[0:-1]
+    ]  # should be len 1 less than rowstr_list
     # Insert multicolumn names
     if multicol_lbls is not None:
         # TODO: label of the row labels
         multicol_sep
-        multicols = [latex_multicolumn(multicol, size, 'c' + multicol_sep) for multicol, size in multicol_lbls]
-        multicol_str = latex_multirow('', 2) + colvalsep + colvalsep.join(multicols) + endl
+        multicols = [
+            latex_multicolumn(multicol, size, 'c' + multicol_sep)
+            for multicol, size in multicol_lbls
+        ]
+        multicol_str = (
+            latex_multirow('', 2) + colvalsep + colvalsep.join(multicols) + endl
+        )
         ncols = sum([tup[1] for tup in multicol_lbls])
         mcol_sep = '\\cline{2-%d}\n' % (ncols + 1,)
         rowstr_list = [multicol_str] + rowstr_list
         rowsep_list = [mcol_sep] + rowsep_list
-        #extra_rowsep_pos_list += [1]
+        # extra_rowsep_pos_list += [1]
 
     # Insert title
     if title is not None and not astable:
         tex_title = latex_multicolumn(title, len(body[0])) + endl
         rowstr_list = [tex_title] + rowstr_list
         rowsep_list = [rowvalsep] + rowsep_list
-        #extra_rowsep_pos_list += [2]
+        # extra_rowsep_pos_list += [2]
 
     # Apply an extra hline (for label)
-    #extra_rowsep_pos_list = []
+    # extra_rowsep_pos_list = []
     for pos in sorted(extra_rowsep_pos_list)[::-1]:
         rowstr_list.insert(pos, '')
         rowsep_list.insert(pos, rowvalsep)
-    #tabular_body = rowvalsep.join(rowstr_list)
+    # tabular_body = rowvalsep.join(rowstr_list)
     from six.moves import zip_longest
-    tabular_body = ''.join([row if sep is None else row + sep for row, sep in zip_longest(rowstr_list, rowsep_list)])
+
+    tabular_body = ''.join(
+        [
+            row if sep is None else row + sep
+            for row, sep in zip_longest(rowstr_list, rowsep_list)
+        ]
+    )
 
     # Build Column Layout
     col_align_list = [col_align] * len(body[0])
-    #extra_collayoutsep_pos_list = [1]
+    # extra_collayoutsep_pos_list = [1]
     extra_collayoutsep_pos_list = []
-    for pos in  sorted(extra_collayoutsep_pos_list)[::-1]:
+    for pos in sorted(extra_collayoutsep_pos_list)[::-1]:
         col_align_list.insert(pos, '')
-    #col_layaout_sep_list = rowlblcol_sep  # TODO
+    # col_layaout_sep_list = rowlblcol_sep  # TODO
 
     rowlblcol_sep = '|'
     # Build build internal seprations between column alignments
@@ -672,12 +756,15 @@ def make_score_tabular(
                 col_align_sep_list[offset] = multicol_sep
 
     from six.moves import zip_longest
-    _tmp = [ut.filter_Nones(tup) for tup in zip_longest(col_align_list, col_align_sep_list)]
+
+    _tmp = [
+        ut.filter_Nones(tup) for tup in zip_longest(col_align_list, col_align_sep_list)
+    ]
     col_layout = ''.join(ut.flatten(_tmp))
 
-    #if len(col_align_list) > 1:
+    # if len(col_align_list) > 1:
     #    col_layout = col_align_list[0] + rowlblcol_sep + col_sep.join(col_align_list[1:])
-    #else:
+    # else:
     #    col_layout = col_sep.join(col_align_list)
 
     tabular_head = (r'\begin{tabular}{|%s|}' % col_layout) + '\n'
@@ -688,7 +775,7 @@ def make_score_tabular(
         tabular_tail = tabular_tail + '}'
 
     if astable:
-        #tabular_head = r'\begin{centering}' + '\n' + tabular_head
+        # tabular_head = r'\begin{centering}' + '\n' + tabular_head
         tabular_head = r'\centering' + '\n' + tabular_head
         tabular_head = r'\begin{table}' + table_position + '\n' + tabular_head
 
@@ -697,8 +784,12 @@ def make_score_tabular(
         if AUTOFIX_LATEX:
             caption = escape_latex(caption)
         caption = '\n% ---\n' + caption + '\n% ---\n'
-        #tabular_head = r'\end{centering}' + '\n' + tabular_head
-        tabular_tail = tabular_tail + '\n\caption[%s]{%s}\n\label{tbl:%s}\n\end{table}' % (lblstr, caption, lblstr)
+        # tabular_head = r'\end{centering}' + '\n' + tabular_head
+        tabular_tail = (
+            tabular_tail
+            + '\n\caption[%s]{%s}\n\label{tbl:%s}\n\end{table}'
+            % (lblstr, caption, lblstr)
+        )
 
     tabular_str = rowvalsep.join([tabular_head, tabular_body, tabular_tail])
     topsep = '\\hline\n' if True else '\\toprule\n'
@@ -706,7 +797,7 @@ def make_score_tabular(
     tabular_str = tabular_head + topsep + tabular_body + botsep + tabular_tail
 
     if common_rowlbl is not None:
-        #tabular_str += escape_latex('\n\nThe following parameters were held fixed:\n' + common_rowlbl)
+        # tabular_str += escape_latex('\n\nThe following parameters were held fixed:\n' + common_rowlbl)
         pass
     return tabular_str
 
@@ -715,6 +806,7 @@ def get_latex_figure_str2(fpath_list, cmdname, **kwargs):
     """ hack for candidacy """
     import utool as ut
     from os.path import relpath
+
     # Make relative paths
     if kwargs.pop('relpath', True):
         start = ut.truepath('~/latex/crall-candidacy-2015')
@@ -722,15 +814,24 @@ def get_latex_figure_str2(fpath_list, cmdname, **kwargs):
     cmdname = ut.latex_sanitize_command_name(cmdname)
 
     kwargs['caption_str'] = kwargs.get('caption_str', cmdname)
-    figure_str  = ut.get_latex_figure_str(fpath_list, **kwargs)
+    figure_str = ut.get_latex_figure_str(fpath_list, **kwargs)
     latex_block = ut.latex_newcommand(cmdname, figure_str)
     return latex_block
 
 
-def get_latex_figure_str(fpath_list, caption_str=None, label_str=None,
-                         width_str=r'\textwidth', height_str=None, nCols=None,
-                         dpath=None, colpos_sep=' ', nlsep='',
-                         use_sublbls=None, use_frame=False):
+def get_latex_figure_str(
+    fpath_list,
+    caption_str=None,
+    label_str=None,
+    width_str=r'\textwidth',
+    height_str=None,
+    nCols=None,
+    dpath=None,
+    colpos_sep=' ',
+    nlsep='',
+    use_sublbls=None,
+    use_frame=False,
+):
     r"""
     Args:
         fpath_list (list):
@@ -758,16 +859,16 @@ def get_latex_figure_str(fpath_list, caption_str=None, label_str=None,
     USE_SUBFIGURE = True
 
     if width_str is not None:
-        colwidth = (1.0 / nCols)
+        colwidth = 1.0 / nCols
         if USE_SUBFIGURE:
-            colwidth *= .95
+            colwidth *= 0.95
             graphics_sizestr = ('%.2f' % (colwidth,)) + width_str
         else:
             graphics_sizestr = '[width=%.1f%s]' % (colwidth, width_str)
     elif height_str is not None:
         graphics_sizestr = '[height=%s]' % (height_str)
     else:
-        graphics_sizestr =  ''
+        graphics_sizestr = ''
 
     if dpath is not None:
         fpath_list = [ut.relpath_unix(fpath_, dpath) for fpath_ in fpath_list]
@@ -785,7 +886,7 @@ def get_latex_figure_str(fpath_list, caption_str=None, label_str=None,
             """
             CHRLBLS = True
             if CHRLBLS:
-                #subchar = chr(97 + count)
+                # subchar = chr(97 + count)
                 subchar = chr(65 + count)
             else:
                 subchar = str(count)
@@ -808,16 +909,23 @@ def get_latex_figure_str(fpath_list, caption_str=None, label_str=None,
     else:
         if True:
             graphics_list = [
-                r'\includegraphics%s{%s}\captionof{figure}{%s}' % (
-                    graphics_sizestr, fpath, 'fd',
+                r'\includegraphics%s{%s}\captionof{figure}{%s}'
+                % (
+                    graphics_sizestr,
+                    fpath,
+                    'fd',
                     #'(' + str(count) + ')'
                     #'(' + chr(97 + count) + ')'
                 )
-                for count, fpath in enumerate(fpath_list)]
+                for count, fpath in enumerate(fpath_list)
+            ]
         else:
-            graphics_list = [r'\includegraphics%s{%s}' % (graphics_sizestr, fpath,) for fpath in fpath_list]
-        #graphics_list = [r'\includegraphics%s{%s}' % (graphics_sizestr, fpath,) ]
-    #nRows = len(graphics_list) // nCols
+            graphics_list = [
+                r'\includegraphics%s{%s}' % (graphics_sizestr, fpath,)
+                for fpath in fpath_list
+            ]
+        # graphics_list = [r'\includegraphics%s{%s}' % (graphics_sizestr, fpath,) ]
+    # nRows = len(graphics_list) // nCols
 
     # Add separators
     NL = '\n'
@@ -828,36 +936,39 @@ def get_latex_figure_str(fpath_list, caption_str=None, label_str=None,
         col_spacer_mid = NL + '&' + NL
         col_spacer_end = NL + r'\\' + nlsep + NL
     sep_list = [
-        col_spacer_mid  if count % nCols > 0 else col_spacer_end
+        col_spacer_mid if count % nCols > 0 else col_spacer_end
         for count in range(1, len(graphics_list) + 1)
     ]
     if len(sep_list) > 0:
         sep_list[-1] = ''
     graphics_list_ = [graphstr + sep for graphstr, sep in zip(graphics_list, sep_list)]
 
-    #graphics_body = '\n&\n'.join(graphics_list)
+    # graphics_body = '\n&\n'.join(graphics_list)
     graphics_body = ''.join(graphics_list_)
     header_str = colpos_sep.join(['c'] * nCols)
 
     if USE_SUBFIGURE:
         figure_body = graphics_body
     else:
-        figure_body =  ut.codeblock(
-            r'''
+        figure_body = (
+            ut.codeblock(
+                r"""
             \begin{tabular}{%s}
             %s
             \end{tabular}
-            '''
-        ) % (header_str, graphics_body)
+            """
+            )
+            % (header_str, graphics_body)
+        )
     if caption_str is not None:
-        #tabular_body += '\n\caption{\\footnotesize{%s}}' % (caption_str,)
+        # tabular_body += '\n\caption{\\footnotesize{%s}}' % (caption_str,)
         if label_str is not None:
             figure_body += '\n\caption[%s]{%s}' % (label_str, caption_str,)
         else:
             figure_body += '\n\caption{%s}' % (caption_str,)
     if label_str is not None:
         figure_body += '\n\label{fig:%s}' % (label_str,)
-    #figure_fmtstr = ut.codeblock(
+    # figure_fmtstr = ut.codeblock(
     #    r'''
     #    \begin{figure*}
     #    \begin{center}
@@ -865,14 +976,14 @@ def get_latex_figure_str(fpath_list, caption_str=None, label_str=None,
     #    \end{center}
     #    \end{figure*}
     #    '''
-    #)
+    # )
     figure_fmtstr = ut.codeblock(
-        r'''
+        r"""
         \begin{figure}[ht!]
         \centering
         %s
         \end{figure}
-        '''
+        """
     )
     figure_str = figure_fmtstr % (figure_body)
     return figure_str
@@ -885,8 +996,8 @@ def long_substr(strlist):
     if len(strlist) > 1 and len(strlist[0]) > 0:
         for i in range(len(strlist[0])):
             for j in range(len(strlist[0]) - i + 1):
-                if j > len(substr) and is_substr(strlist[0][i:i + j], strlist):
-                    substr = strlist[0][i:i + j]
+                if j > len(substr) and is_substr(strlist[0][i : i + j], strlist):
+                    substr = strlist[0][i : i + j]
     return substr
 
 
@@ -901,12 +1012,16 @@ def is_substr(find, strlist):
 
 def tabular_join(tabular_body_list, nCols=2):
     dedent = textwrap.dedent
-    tabular_head = dedent(r'''
+    tabular_head = dedent(
+        r"""
     \begin{tabular}{|l|l|}
-    ''')
-    tabular_tail = dedent(r'''
+    """
+    )
+    tabular_tail = dedent(
+        r"""
     \end{tabular}
-    ''')
+    """
+    )
     hline = ''.join([r'\hline', '\n'])
     tabular_body = hline.join(tabular_body_list)
     tabular = hline.join([tabular_head, tabular_body, tabular_tail])
@@ -948,10 +1063,13 @@ def latex_sanitize_command_name(_cmdname):
         FooBar
     """
     import utool as ut
+
     command_name = _cmdname
     try:
+
         def subroman(match):
             import roman
+
             try:
                 groupdict = match.groupdict()
                 num = int(groupdict['num'])
@@ -961,6 +1079,7 @@ def latex_sanitize_command_name(_cmdname):
             except Exception as ex:
                 ut.printex(ex, keys=['groupdict'])
                 raise
+
         command_name = re.sub(ut.named_field('num', r'\d+'), subroman, command_name)
     except ImportError as ex:
         if ut.SUPER_STRICT:
@@ -969,12 +1088,12 @@ def latex_sanitize_command_name(_cmdname):
     # remove numbers
     command_name = re.sub(r'[\d' + re.escape('#()[]{}.') + ']', '', command_name)
     # Remove _ for camel case
-    #def to_camel_case(str_list):
+    # def to_camel_case(str_list):
     #    # hacky
     #    return ''.join([str_ if len(str_) < 1 else str_[0].upper() + str_[1:] for str_ in str_list])
-    #command_name = to_cammel_case(re.split('[_ ]', command_name)[::2])
+    # command_name = to_cammel_case(re.split('[_ ]', command_name)[::2])
     str_list = re.split('[_ ]', command_name)
-    #command_name = to_cammel_case(str_list)
+    # command_name = to_cammel_case(str_list)
     command_name = ut.to_camel_case('_'.join(str_list), mixed=True)
     return command_name
 
@@ -987,6 +1106,8 @@ if __name__ == '__main__':
         python -m utool.util_latex --allexamples --noface --nosrc
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

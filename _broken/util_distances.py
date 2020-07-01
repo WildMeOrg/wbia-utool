@@ -3,17 +3,20 @@
 # TODO DEPRICATE AND MOVE TO VTOOL
 """
 from __future__ import absolute_import, division, print_function
+
 try:
     import numpy as np
 except ImportError:
     pass
-#from collections import OrderedDict
-#from six.moves import zip
+# from collections import OrderedDict
+# from six.moves import zip
 from utool import util_inject
+
 print, rrr, profile = util_inject.inject2(__name__)
 
 
 # TODO DEPRICATE AND MOVE TO VTOOL
+
 
 def nearest_point(x, y, pts, mode='random'):
     """ finds the nearest point(s) in pts to (x, y)
@@ -34,41 +37,41 @@ def nearest_point(x, y, pts, mode='random'):
     return fx, mindist
 
 
-#def compute_distances(hist1, hist2, dist_list=['L1', 'L2']):
+# def compute_distances(hist1, hist2, dist_list=['L1', 'L2']):
 #    dtype_ = np.float64
 #    hist1 = np.array(hist1, dtype=dtype_)
 #    hist2 = np.array(hist2, dtype=dtype_)
 #    return OrderedDict([(type_, globals()[type_](hist1, hist2)) for type_ in dist_list])
 
 
-#def L1(hist1, hist2):
+# def L1(hist1, hist2):
 #    """ returns L1 (aka manhatten or grid) distance between two histograms """
 #    return (np.abs(hist1 - hist2)).sum(-1)
 
 
-#def L2_sqrd(hist1, hist2):
+# def L2_sqrd(hist1, hist2):
 #    """ returns the squared L2 distance
 #    seealso L2
 #    """
 #    return (np.abs(hist1 - hist2) ** 2).sum(-1)
 
 
-#def L2(hist1, hist2):
+# def L2(hist1, hist2):
 #    """ returns L2 (aka euclidean or standard) distance between two histograms """
 #    return np.sqrt((np.abs(hist1 - hist2) ** 2).sum(-1))
 
 
-#def bar_L2_sift(hist1, hist2):
+# def bar_L2_sift(hist1, hist2):
 #    """  1 - Normalized SIFT L2 """
 #    return 1.0 - L2_sift(hist1, hist2)
 
 
-#def bar_cos_sift(hist1, hist2):
+# def bar_cos_sift(hist1, hist2):
 #    """  1 - Normalized SIFT L2 """
 #    return 1.0 - cos_sift(hist1, hist2)
 
 
-#def L2_sift(hist1, hist2):
+# def L2_sift(hist1, hist2):
 #    """  1 - Normalized SIFT L2 """
 #    psuedo_max = 512.0
 #    sift1 = hist1 / psuedo_max
@@ -78,7 +81,7 @@ def nearest_point(x, y, pts, mode='random'):
 #    return L2(sift1, sift2)
 
 
-#def cos_sift(hist1, hist2):
+# def cos_sift(hist1, hist2):
 #    """ returns the squared L2 distance
 #    seealso L2
 #    """
@@ -92,7 +95,7 @@ def nearest_point(x, y, pts, mode='random'):
 #    return (sift1 * sift2).sum(-1)
 
 
-#def hist_isect(hist1, hist2):
+# def hist_isect(hist1, hist2):
 #    """ returns histogram intersection distance between two histograms """
 #    numer = (np.dstack([hist1, hist2])).min(-1).sum(-1)
 #    denom = hist2.sum(-1)
@@ -102,7 +105,7 @@ def nearest_point(x, y, pts, mode='random'):
 #    return hisect_dist
 
 
-#def emd(hist1, hist2):
+# def emd(hist1, hist2):
 #    """
 #    earth mover's distance by robjects(lpSovle::lp.transport)
 #    require: lpsolve55-5.5.0.9.win32-py2.7.exe
@@ -164,6 +167,8 @@ if __name__ == '__main__':
         python -m utool.util_distances --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

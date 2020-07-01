@@ -63,6 +63,7 @@ def rnumlistwithoutreplacement(min, max):
     numlist = opener.open(request).read()
     return numlist.split()
 
+
 # helper
 
 
@@ -85,6 +86,7 @@ def rnumlistwithreplacement(howmany, max, min=0):
     numlist = opener.open(request).read()
     return numlist.split()
 
+
 """
 Example usage:
 
@@ -104,6 +106,7 @@ def build_request_parameterWR(howmany, min, max):
     params = str(howmany) + '&min=' + str(min) + '&max=' + str(max)
     return randomorg + params + vanilla
 
+
 # next function is prototype for integration with random module of python
 # see worldrandom module for a more developed implementation
 
@@ -114,10 +117,12 @@ def rrandom():
     import urllib.request
     import urllib.error
     import urllib.parse
+
     if checkquota() < 1:
         raise Exception('Your www.random.org quota has already run out.')
     request = urllib.request.Request(
-        'http://www.random.org/integers/?num=1&min=0&max=1000000000&col=1&base=10&format=plain&rnd=new')
+        'http://www.random.org/integers/?num=1&min=0&max=1000000000&col=1&base=10&format=plain&rnd=new'
+    )
     request.add_header('User-Agent', 'randomwrapy/0.1 very alpha')
     opener = urllib.request.build_opener()
     numlist = opener.open(request).read()
@@ -126,8 +131,7 @@ def rrandom():
 
 
 def checkquota():
-    request = urllib.request.Request(
-        'http://www.random.org/quota/?format=plain')
+    request = urllib.request.Request('http://www.random.org/quota/?format=plain')
     request.add_header('User-Agent', 'randomwrapy/0.1 very alpha')
     opener = urllib.request.build_opener()
     quota = opener.open(request).read()
@@ -135,10 +139,12 @@ def checkquota():
 
 
 def reportquota():
-    request = urllib.request.Request(
-        'http://www.random.org/quota/?format=plain')
+    request = urllib.request.Request('http://www.random.org/quota/?format=plain')
     request.add_header('User-Agent', 'randomwrapy/0.1 very alpha')
     opener = urllib.request.build_opener()
     quota = opener.open(request).read()
-    print('This IP address has', quota,
-          'bits left. Visit http://www.random.org/quota for more information.')
+    print(
+        'This IP address has',
+        quota,
+        'bits left. Visit http://www.random.org/quota for more information.',
+    )

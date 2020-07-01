@@ -6,11 +6,13 @@ Ignore:
 from __future__ import absolute_import, division, print_function  # , unicode_literals
 from six.moves import zip, filter, filterfalse, map, range  # NOQA
 import six  # NOQA
-#from os.path import split, dirname, join
+
+# from os.path import split, dirname, join
 from os.path import dirname, join
 from utool import util_class  # NOQA
 from utool import util_dev
 from utool import util_inject
+
 print, rrr, profile = util_inject.inject2(__name__)
 
 
@@ -34,6 +36,7 @@ def ensure_text(fname, text, repo_dpath='.', force=None, locals_={}, chmod=None)
         >>> print(result)
     """
     import utool as ut
+
     ut.colorprint('Ensuring fname=%r' % (fname), 'yellow')
 
     # if not fname.endswith('__init__.py'):
@@ -77,10 +80,11 @@ class SetupRepo(object):
 
     def __init__(self):
         import utool as ut
+
         self.modname = None
         code_dpath = ut.truepath(ut.get_argval('--code-dir', default='~/code'))
         self.code_dpath = ut.unexpanduser(code_dpath)
-        self.repo_fname = (ut.get_argval(('--repo', '--repo-name'), type_=str))
+        self.repo_fname = ut.get_argval(('--repo', '--repo-name'), type_=str)
         self.repo_dpath = join(code_dpath, self.repo_fname)
         self.modname = ut.get_argval('--modname', default=self.repo_fname)
         self.regenfmt = 'python -m utool SetupRepo.{cmd} --modname={modname} --repo={repo_fname} --codedir={code_dpath}'
@@ -90,8 +94,9 @@ class SetupRepo(object):
         pass
 
     def ensure_text(self, fname, text, **kwargs):
-        ensure_text(fname, text, locals_=self.__dict__,
-                    repo_dpath=self.repo_dpath, **kwargs)
+        ensure_text(
+            fname, text, locals_=self.__dict__, repo_dpath=self.repo_dpath, **kwargs
+        )
 
     def main(self):
         """
@@ -106,6 +111,7 @@ class SetupRepo(object):
         """
         self.regencmd = self.regenfmt.format(cmd='main', **self.__dict__)
         import utool as ut
+
         self.ensure_text(
             fname=join(self.modname, '__main__.py'),
             chmod='+x',
@@ -136,7 +142,7 @@ class SetupRepo(object):
                     {modname}_main()
                 # ENDBLOCK
                 '''
-            )
+            ),
         )
 
 
@@ -174,10 +180,11 @@ def setup_repo():
     # import os
     from functools import partial
     import utool as ut
+
     # import os
-    code_dpath  = ut.truepath(ut.get_argval('--code-dir', default='~/code'))
+    code_dpath = ut.truepath(ut.get_argval('--code-dir', default='~/code'))
     _code_dpath = ut.unexpanduser(code_dpath)
-    repo_fname = (ut.get_argval(('--repo', '--repo-name'), type_=str))
+    repo_fname = ut.get_argval(('--repo', '--repo-name'), type_=str)
     repo_dpath = join(code_dpath, repo_fname)
     modname = ut.get_argval('--modname', default=repo_fname)
     ut.ensuredir(repo_dpath, verbose=True)
@@ -194,23 +201,25 @@ def setup_repo():
         _ensure_text(
             fname='todo.md',
             text=ut.codeblock(
-                r'''
+                r"""
                 # STARTBLOCK
                 # {modname} TODO File
 
                 * Add TODOS!
                 # ENDBLOCK
-                ''')
+                """
+            ),
         )
 
         _ensure_text(
             fname='README.md',
             text=ut.codeblock(
-                r'''
+                r"""
                 # STARTBLOCK
                 # {modname} README FILE
                 # ENDBLOCK
-                ''')
+                """
+            ),
         )
 
         _ensure_text(
@@ -266,13 +275,13 @@ def setup_repo():
                     setup(**kwargs)
                 # ENDBLOCK
                 '''
-            )
+            ),
         )
 
         _ensure_text(
             fname='.gitignore',
             text=ut.codeblock(
-                r'''
+                r"""
                 # STARTBLOCK
                 *.py[cod]
 
@@ -332,8 +341,8 @@ def setup_repo():
                 timeings.txt
                 failed_doctests.txt
                 # ENDBLOCK
-                '''
-            )
+                """
+            ),
         )
 
         _ensure_text(
@@ -378,7 +387,7 @@ def setup_repo():
                     # </AUTOGEN_INIT>
                 # ENDBLOCK
                 '''
-            )
+            ),
         )
 
         _ensure_text(
@@ -411,7 +420,7 @@ def setup_repo():
                     {modname}_main()
                 # ENDBLOCK
                 '''
-            )
+            ),
         )
 
         _ensure_text(
@@ -493,13 +502,13 @@ def setup_repo():
                     sys.exit(retcode)
                 # ENDBLOCK
                 '''
-            )
+            ),
         )
 
     ut.ensuredir(join(repo_dpath, modname), verbose=True)
 
 
-#@util_class.ReloadingMetaclass
+# @util_class.ReloadingMetaclass
 class UserProfile(util_dev.NiceRepr):
     def __nice__(self):
         num_repos = 0 if self.project_dpaths is None else len(self.project_dpaths)
@@ -539,6 +548,7 @@ class UserProfile(util_dev.NiceRepr):
 def wbia_user_profile():
     import utool as ut
     import sys
+
     addpath = True
     module_fpath = ut.truepath('~/local/init/REPOS1.py')
     if addpath:
@@ -546,7 +556,7 @@ def wbia_user_profile():
         sys.path.append(module_dpath)
     REPOS1 = ut.import_module_from_fpath(module_fpath)
     self = UserProfile(name='wbia')
-    #self.project_dpaths = REPOS1.PROJECT_REPOS
+    # self.project_dpaths = REPOS1.PROJECT_REPOS
     self.project_dpaths = REPOS1.IBEIS_REPOS
     # self.project_dpaths += [ut.truepath('~/latex/crall-candidacy-2015/')]
     self.project_dpaths += [
@@ -559,12 +569,25 @@ def wbia_user_profile():
     self.project_dpaths = ut.unique(self.project_dpaths)
     # self.project_dpaths += [ut.truepath('~/local/vim/rc')]
     self.project_include_patterns = [
-        '*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h', '*.vim'
+        '*.py',
+        '*.cxx',
+        '*.cpp',
+        '*.hxx',
+        '*.hpp',
+        '*.c',
+        '*.h',
+        '*.vim'
         #'*.py',  # '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h', '*.vim'
     ]
     self.project_exclude_dirs = [
-        '_graveyard', '_broken', 'CompilerIdCXX', 'CompilerIdC', 'build',
-        'old', '_old_qt_hs_matcher', 'htmlcov'
+        '_graveyard',
+        '_broken',
+        'CompilerIdCXX',
+        'CompilerIdC',
+        'build',
+        'old',
+        '_old_qt_hs_matcher',
+        'htmlcov',
     ]
     self.project_exclude_patterns = ['_grave*', '_autogen_explicit_controller*']
     return self
@@ -594,6 +617,7 @@ def ensure_user_profile(user_profile=None):
     global __GLOBAL_PROFILE__
     if __GLOBAL_PROFILE__ is None:
         import utool as ut
+
         if ut.is_developer():
             __GLOBAL_PROFILE__ = wbia_user_profile()
         else:
@@ -603,8 +627,7 @@ def ensure_user_profile(user_profile=None):
     return user_profile
 
 
-def grep_projects(tofind_list, user_profile=None, verbose=True, new=False,
-                  **kwargs):
+def grep_projects(tofind_list, user_profile=None, verbose=True, new=False, **kwargs):
     r"""
     Greps the projects defined in the current UserProfile
 
@@ -628,6 +651,7 @@ def grep_projects(tofind_list, user_profile=None, verbose=True, new=False,
         >>> grep_projects(tofind_list)
     """
     import utool as ut
+
     user_profile = ensure_user_profile(user_profile)
     print('user_profile = {!r}'.format(user_profile))
 
@@ -648,17 +672,16 @@ def grep_projects(tofind_list, user_profile=None, verbose=True, new=False,
     print_ = msg_list1.append
     print_('Greping Projects')
     print_('tofind_list = %s' % (ut.repr4(tofind_list, nl=True),))
-    #print_('grepkw = %s' % ut.repr4(grepkw, nl=True))
+    # print_('grepkw = %s' % ut.repr4(grepkw, nl=True))
     if verbose:
         print('\n'.join(msg_list1))
-    #with ut.Timer('greping', verbose=True):
+    # with ut.Timer('greping', verbose=True):
     grep_result = ut.grep(tofind_list, **grepkw)
     found_fpath_list, found_lines_list, found_lxs_list = grep_result
 
     # HACK, duplicate behavior. TODO: write grep print result function
     reflags = grepkw.get('reflags', 0)
-    _exprs_flags = [ut.extend_regex2(expr, reflags)
-                    for expr in tofind_list]
+    _exprs_flags = [ut.extend_regex2(expr, reflags) for expr in tofind_list]
     extended_regex_list = ut.take_column(_exprs_flags, 0)
     reflags_list = ut.take_column(_exprs_flags, 1)
     # HACK
@@ -666,11 +689,12 @@ def grep_projects(tofind_list, user_profile=None, verbose=True, new=False,
     reflags = reflags_list[0]
 
     # from utool import util_regex
-    resultstr = ut.make_grep_resultstr(grep_result, extended_regex_list,
-                                       reflags, colored=colored)
+    resultstr = ut.make_grep_resultstr(
+        grep_result, extended_regex_list, reflags, colored=colored
+    )
     msg_list2.append(resultstr)
     print_ = msg_list2.append
-    #for fpath, lines, lxs in zip(found_fpath_list, found_lines_list,
+    # for fpath, lines, lxs in zip(found_fpath_list, found_lines_list,
     #                             found_lxs_list):
     #    print_('----------------------')
     #    print_('found %d line(s) in %r: ' % (len(lines), fpath))
@@ -696,14 +720,19 @@ def grep_projects(tofind_list, user_profile=None, verbose=True, new=False,
     print_('====================')
     print_('found_fpath_list = ' + ut.repr4(found_fpath_list))
     print_('')
-    #print_('gvim -o ' + ' '.join(found_fpath_list))
+    # print_('gvim -o ' + ' '.join(found_fpath_list))
     if verbose:
         print('\n'.join(msg_list2))
     msg_list = msg_list1 + msg_list2
 
     if new:
-        return GrepResult(found_fpath_list, found_lines_list, found_lxs_list,
-                          extended_regex_list, reflags)
+        return GrepResult(
+            found_fpath_list,
+            found_lines_list,
+            found_lxs_list,
+            extended_regex_list,
+            reflags,
+        )
     else:
         return msg_list
 
@@ -721,16 +750,31 @@ def glob_projects(pat, user_profile=None, recursive=True):
         >>> from utool.util_project import *  # NOQA
     """
     import utool as ut  # NOQA
+
     user_profile = ensure_user_profile(user_profile)
-    glob_results = ut.flatten([ut.glob(dpath, pat, recursive=recursive,
-                                       exclude_dirs=user_profile.project_exclude_dirs)
-                               for dpath in user_profile.project_dpaths])
+    glob_results = ut.flatten(
+        [
+            ut.glob(
+                dpath,
+                pat,
+                recursive=recursive,
+                exclude_dirs=user_profile.project_exclude_dirs,
+            )
+            for dpath in user_profile.project_dpaths
+        ]
+    )
     return glob_results
 
 
 class GrepResult(util_dev.NiceRepr):
-    def __init__(self, found_fpath_list, found_lines_list,
-                 found_lxs_list, extended_regex_list, reflags):
+    def __init__(
+        self,
+        found_fpath_list,
+        found_lines_list,
+        found_lxs_list,
+        extended_regex_list,
+        reflags,
+    ):
         self.found_fpath_list = found_fpath_list
         self.found_lines_list = found_lines_list
         self.found_lxs_list = found_lxs_list
@@ -749,6 +793,7 @@ class GrepResult(util_dev.NiceRepr):
 
     def __delitem__(self, index):
         import utool as ut
+
         index = ut.ensure_iterable(index)
         ut.delete_items_by_index(self.found_fpath_list, index)
         ut.delete_items_by_index(self.found_lines_list, index)
@@ -766,10 +811,11 @@ class GrepResult(util_dev.NiceRepr):
 
     def make_resultstr(self, colored=True):
         import utool as ut
-        tup = (self.found_fpath_list, self.found_lines_list,
-               self.found_lxs_list)
-        return ut.make_grep_resultstr(tup, self.extended_regex_list,
-                                      self.reflags, colored=colored)
+
+        tup = (self.found_fpath_list, self.found_lines_list, self.found_lxs_list)
+        return ut.make_grep_resultstr(
+            tup, self.extended_regex_list, self.reflags, colored=colored
+        )
 
     # def make_big_resultstr():
     #     pass
@@ -777,12 +823,18 @@ class GrepResult(util_dev.NiceRepr):
     def pattern_filterflags(self, filter_pat):
         self.filter_pats.append(filter_pat)
         import re
-        flags_list = [[re.search(filter_pat, line) is None for line in lines]
-                      for fpath, lines, lxs in zip(self.found_fpath_list, self.found_lines_list, self.found_lxs_list)]
+
+        flags_list = [
+            [re.search(filter_pat, line) is None for line in lines]
+            for fpath, lines, lxs in zip(
+                self.found_fpath_list, self.found_lines_list, self.found_lxs_list
+            )
+        ]
         return flags_list
 
     def inplace_filter_results(self, filter_pat):
         import utool as ut
+
         self.filter_pats.append(filter_pat)
         # Get zipflags
         flags_list = self.pattern_filterflags(filter_pat)
@@ -802,6 +854,7 @@ class GrepResult(util_dev.NiceRepr):
 
     def hack_remove_pystuff(self):
         import utool as ut
+
         # Hack of a method
         new_lines = []
         for lines in self.found_lines_list:
@@ -815,20 +868,36 @@ class GrepResult(util_dev.NiceRepr):
 
             # remove cmdline tests
             import re
-            flags = [not re.search('--test-' + self.extended_regex_list[0], line) for line in lines]
+
+            flags = [
+                not re.search('--test-' + self.extended_regex_list[0], line)
+                for line in lines
+            ]
             lines = ut.compress(lines, flags)
 
-            flags = [not re.search('--exec-' + self.extended_regex_list[0], line) for line in lines]
+            flags = [
+                not re.search('--exec-' + self.extended_regex_list[0], line)
+                for line in lines
+            ]
             lines = ut.compress(lines, flags)
 
-            flags = [not re.search('--exec-[a-zA-z]*\.' + self.extended_regex_list[0], line) for line in lines]
+            flags = [
+                not re.search('--exec-[a-zA-z]*\.' + self.extended_regex_list[0], line)
+                for line in lines
+            ]
             lines = ut.compress(lines, flags)
 
-            flags = [not re.search('--test-[a-zA-z]*\.' + self.extended_regex_list[0], line) for line in lines]
+            flags = [
+                not re.search('--test-[a-zA-z]*\.' + self.extended_regex_list[0], line)
+                for line in lines
+            ]
             lines = ut.compress(lines, flags)
 
             # remove func defs
-            flags = [not re.search('def ' + self.extended_regex_list[0], line) for line in lines]
+            flags = [
+                not re.search('def ' + self.extended_regex_list[0], line)
+                for line in lines
+            ]
             lines = ut.compress(lines, flags)
             new_lines += [lines]
         self.found_lines_list = new_lines
@@ -840,12 +909,13 @@ class GrepResult(util_dev.NiceRepr):
 
 
 ## Grep my projects
-#def gp(r, regexp):
+# def gp(r, regexp):
 #    rob_nav._grep(r, [regexp], recursive=True, dpath_list=project_dpaths(), regex=True)
 
 ## Sed my projects
-#def sp(r, regexpr, repl, force=False):
+# def sp(r, regexpr, repl, force=False):
 #    rob_nav._sed(r, regexpr, repl, force=force, recursive=True, dpath_list=project_dpaths())
+
 
 def sed_projects(regexpr, repl, force=False, recursive=True, user_profile=None, **kwargs):
     r"""
@@ -878,6 +948,7 @@ def sed_projects(regexpr, repl, force=False, recursive=True, user_profile=None, 
     """
     # FIXME: finishme
     import utool as ut
+
     user_profile = ensure_user_profile(user_profile)
 
     sedkw = {}
@@ -887,7 +958,7 @@ def sed_projects(regexpr, repl, force=False, recursive=True, user_profile=None, 
     sedkw.update(kwargs)
 
     msg_list1 = []
-    #msg_list2 = []
+    # msg_list2 = []
 
     print_ = msg_list1.append
     print_('Seding Projects')
@@ -899,14 +970,16 @@ def sed_projects(regexpr, repl, force=False, recursive=True, user_profile=None, 
     print(' * force: %r' % (force,))
 
     # Walk through each directory recursively
-    for fpath in ut.matching_fpaths(sedkw['dpath_list'],
-                                    sedkw['include_patterns'],
-                                    sedkw['exclude_dirs'],
-                                    recursive=recursive):
+    for fpath in ut.matching_fpaths(
+        sedkw['dpath_list'],
+        sedkw['include_patterns'],
+        sedkw['exclude_dirs'],
+        recursive=recursive,
+    ):
         ut.sedfile(fpath, regexpr, repl, force)
 
 
-#def extend_regex(regexpr):
+# def extend_regex(regexpr):
 #    regex_map = {
 #        r'\<': r'\b(?=\w)',
 #        r'\>': r'\b(?!\w)',
@@ -922,8 +995,8 @@ def sed_projects(regexpr, repl, force=False, recursive=True, user_profile=None, 
 #                print('WARNING! Unsafe regex with: %r' % (key,))
 #            regexpr = regexpr.replace(search, repl)
 #    return regexpr
-#regexpr = extend_regex(regexpr)
-#if '\x08' in regexpr:
+# regexpr = extend_regex(regexpr)
+# if '\x08' in regexpr:
 #    print('Remember \\x08 != \\b')
 #    print('subsituting for you for you')
 #    regexpr = regexpr.replace('\x08', '\\b')
@@ -931,6 +1004,7 @@ def sed_projects(regexpr, repl, force=False, recursive=True, user_profile=None, 
 
 
 if False:
+
     def ensure_vim_plugins():
         """
 
@@ -950,6 +1024,7 @@ if False:
         """
         import utool as ut
         from os.path import normpath
+
         mod_fpath = ut.truepath('~/code/ibeis/ibeis/expt/results_analyzer.py')
         mod_fpath = ut.truepath('~/code/ibeis/ibeis/expt/results_all.py')
         mod_fpath = ut.truepath('~/code/ibeis/ibeis/expt/results_organizer.py')
@@ -964,24 +1039,37 @@ if False:
         usage_map = {}
         for funcname, func in doctestables:
             print('Searching for funcname = %r' % (funcname,))
-            found_fpath_list, found_lines_list, found_lxs_list = ut.grep([funcname], **grepkw)
+            found_fpath_list, found_lines_list, found_lxs_list = ut.grep(
+                [funcname], **grepkw
+            )
             used_in = (found_fpath_list, found_lines_list, found_lxs_list)
             usage_map[funcname] = used_in
 
         external_usage_map = {}
         for funcname, used_in in usage_map.items():
             (found_fpath_list, found_lines_list, found_lxs_list) = used_in
-            isexternal_flag = [normpath(fpath) != normpath(mod_fpath) for fpath in found_fpath_list]
-            ext_used_in = (ut.compress(found_fpath_list, isexternal_flag),
-                           ut.compress(found_lines_list, isexternal_flag),
-                           ut.compress(found_lxs_list, isexternal_flag))
+            isexternal_flag = [
+                normpath(fpath) != normpath(mod_fpath) for fpath in found_fpath_list
+            ]
+            ext_used_in = (
+                ut.compress(found_fpath_list, isexternal_flag),
+                ut.compress(found_lines_list, isexternal_flag),
+                ut.compress(found_lxs_list, isexternal_flag),
+            )
             external_usage_map[funcname] = ext_used_in
 
         for funcname, used_in in external_usage_map.items():
             (found_fpath_list, found_lines_list, found_lxs_list) = used_in
 
-        print('Calling modules: \n' +
-              ut.repr2(ut.unique_ordered(ut.flatten([used_in[0] for used_in in  external_usage_map.values()])), nl=True))
+        print(
+            'Calling modules: \n'
+            + ut.repr2(
+                ut.unique_ordered(
+                    ut.flatten([used_in[0] for used_in in external_usage_map.values()])
+                ),
+                nl=True,
+            )
+        )
 
 
 if __name__ == '__main__':
@@ -992,6 +1080,8 @@ if __name__ == '__main__':
         python -m utool.util_project --allexamples --noface --nosrc
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

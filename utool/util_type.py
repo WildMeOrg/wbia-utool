@@ -8,7 +8,8 @@ import types
 from utool import util_inject
 from utool._internal.meta_util_six import IntType, LongType, FloatType, BooleanType
 from utool._internal import meta_util_six
-#import warnings
+
+# import warnings
 print, rrr, profile = util_inject.inject2(__name__)
 
 
@@ -16,51 +17,67 @@ __STR__ = meta_util_six.__STR__
 
 
 if six.PY2:
+
     def type_str(type_):
         str_ = str(type_)
-        str_ = str_.replace('<type \'', '').replace('\'>', '')
-        str_ = str_.replace('<class \'', '').replace('\'>', '')
+        str_ = str_.replace("<type '", '').replace("'>", '')
+        str_ = str_.replace("<class '", '').replace("'>", '')
         return str_
+
     VALID_STRING_TYPES = (str, unicode, basestring)
 else:
+
     def type_str(type_):
-        return str(type_).replace('<class \'', '').replace('\'>', '')
+        return str(type_).replace("<class '", '').replace("'>", '')
+
     VALID_STRING_TYPES = (str,)
 
 
 # Very odd that I have to put in dtypes in two different ways.
 try:
     import numpy as np
+
     HAVE_NUMPY = True
-    NUMPY_SCALAR_NAMES = sorted(list(set(
-        (str_.replace('numpy.', '')
-         for str_ in (type_str(type_) for type_ in np.ScalarType)
-         if str_.startswith('numpy.')
-         ))))
+    NUMPY_SCALAR_NAMES = sorted(
+        list(
+            set(
+                (
+                    str_.replace('numpy.', '')
+                    for str_ in (type_str(type_) for type_ in np.ScalarType)
+                    if str_.startswith('numpy.')
+                )
+            )
+        )
+    )
 
-    VALID_INT_TYPES = (IntType, LongType,
-                       np.typeDict['int64'],
-                       np.typeDict['int32'],
-                       np.typeDict['uint8'],
-                       np.dtype('int32'),
-                       np.dtype('uint8'),
-                       np.dtype('int64'),)
+    VALID_INT_TYPES = (
+        IntType,
+        LongType,
+        np.typeDict['int64'],
+        np.typeDict['int32'],
+        np.typeDict['uint8'],
+        np.dtype('int32'),
+        np.dtype('uint8'),
+        np.dtype('int64'),
+    )
 
-    VALID_FLOAT_TYPES = (FloatType,
-                         np.typeDict['float64'],
-                         np.typeDict['float32'],
-                         np.typeDict['float16'],
-                         np.dtype('float64'),
-                         np.dtype('float32'),
-                         np.dtype('float16'),)
+    VALID_FLOAT_TYPES = (
+        FloatType,
+        np.typeDict['float64'],
+        np.typeDict['float32'],
+        np.typeDict['float16'],
+        np.dtype('float64'),
+        np.dtype('float32'),
+        np.dtype('float16'),
+    )
 
     VALID_BOOL_TYPES = (BooleanType, np.bool_)
     LISTLIKE_TYPES = (tuple, list, np.ndarray)
-    NUMPY_TYPE_TUPLE = (
-        tuple([np.ndarray] + list(set(np.typeDict.values()))))
+    NUMPY_TYPE_TUPLE = tuple([np.ndarray] + list(set(np.typeDict.values())))
 
     try:
         import pandas as pd  # NOQA
+
         HAVE_PANDAS = True
     except ImportError:
         HAVE_PANDAS = False
@@ -69,7 +86,10 @@ except (ImportError, AttributeError):
     # TODO remove numpy
     HAVE_NUMPY = False
     HAVE_PANDAS = False
-    VALID_INT_TYPES = (IntType, LongType,)
+    VALID_INT_TYPES = (
+        IntType,
+        LongType,
+    )
     VALID_FLOAT_TYPES = (FloatType,)
     VALID_BOOL_TYPES = (BooleanType,)
     LISTLIKE_TYPES = (tuple, list)
@@ -88,16 +108,27 @@ COMPARABLE_TYPES = {
     for type_ in type_list
 }
 for int_type_ in VALID_INT_TYPES:
-    COMPARABLE_TYPES[int_type_] = COMPARABLE_TYPES[int_type_] + tuple([other for other in VALID_BOOL_TYPES if isinstance(other, type)])
+    COMPARABLE_TYPES[int_type_] = COMPARABLE_TYPES[int_type_] + tuple(
+        [other for other in VALID_BOOL_TYPES if isinstance(other, type)]
+    )
 for float_type_ in VALID_FLOAT_TYPES:
-    COMPARABLE_TYPES[float_type_] = (COMPARABLE_TYPES[float_type_] +
-                                     tuple([other for other in VALID_BOOL_TYPES if isinstance(other, type)]) +
-                                     tuple([other for other in VALID_INT_TYPES if isinstance(other, type)]))
+    COMPARABLE_TYPES[float_type_] = (
+        COMPARABLE_TYPES[float_type_]
+        + tuple([other for other in VALID_BOOL_TYPES if isinstance(other, type)])
+        + tuple([other for other in VALID_INT_TYPES if isinstance(other, type)])
+    )
 
 
-PRIMATIVE_TYPES = (
-    tuple(six.string_types) + (bytes, list, dict, set, frozenset, int, float,
-                               bool, type(None))
+PRIMATIVE_TYPES = tuple(six.string_types) + (
+    bytes,
+    list,
+    dict,
+    set,
+    frozenset,
+    int,
+    float,
+    bool,
+    type(None),
 )
 
 
@@ -142,7 +173,7 @@ def is_valid_floattype(type_):
         bool: if a ``type_`` is a valid float ``type_`` (not variable)
     """
     return type_ in VALID_FLOAT_TYPES
-    #try:
+    # try:
     #    #flags = [type_ == float_type for float_type in VALID_FLOAT_TYPES]
     #    #return any(flags)
     #    tried = []
@@ -151,7 +182,7 @@ def is_valid_floattype(type_):
     #        if type_ == float_type:
     #            return True
     #    return False
-    #except Exception:
+    # except Exception:
     #    print('tried=%r' % (tried,))
     #    print('type_=%r' % (type_,))
     #    print('float_type=%r' % (float_type,))
@@ -223,7 +254,7 @@ def smart_cast(var, type_):
         >>> print(result)
         slice(1, None, 3)
     """
-    #if isinstance(type_, tuple):
+    # if isinstance(type_, tuple):
     #    for trytype in type_:
     #        try:
     #            return trytype(var)
@@ -232,7 +263,7 @@ def smart_cast(var, type_):
     #    raise TypeError('Cant figure out type=%r' % (type_,))
     if type_ is None or var is None:
         return var
-    #if not isinstance(type_, six.string_types):
+    # if not isinstance(type_, six.string_types):
     try:
         if issubclass(type_, type(None)):
             return var
@@ -253,7 +284,7 @@ def smart_cast(var, type_):
                 return fuzzy_subset(var)
             if type_ == 'eval':
                 return eval(var, {}, {})
-            #elif type_ == 'fuzzy_int':
+            # elif type_ == 'fuzzy_int':
             #    return fuzzy_subset(var)
             else:
                 raise NotImplementedError('Uknown smart type_=%r' % (type_,))
@@ -299,12 +330,12 @@ def smart_cast2(var):
         elif lower == 'none':
             return None
         if var.startswith('[') and var.endswith(']'):
-            #import re
-            #subvar_list = re.split(r',\s*' + ut.negative_lookahead(r'[^\[\]]*\]'), var[1:-1])
+            # import re
+            # subvar_list = re.split(r',\s*' + ut.negative_lookahead(r'[^\[\]]*\]'), var[1:-1])
             return smart_cast(var[1:-1], list)
         elif var.startswith('(') and var.endswith(')'):
-            #import re
-            #subvar_list = re.split(r',\s*' + ut.negative_lookahead(r'[^\[\]]*\]'), var[1:-1])
+            # import re
+            # subvar_list = re.split(r',\s*' + ut.negative_lookahead(r'[^\[\]]*\]'), var[1:-1])
             return tuple(smart_cast(var[1:-1], list))
         type_list = [int, float]
         for type_ in type_list:
@@ -361,6 +392,7 @@ def fuzzy_int(str_):
 
 def assert_int(var, lbl='var'):
     from utool.util_arg import NO_ASSERTS
+
     if NO_ASSERTS:
         return
     try:
@@ -370,8 +402,9 @@ def assert_int(var, lbl='var'):
         print('[tools] VALID_INT_TYPES: %r' % VALID_INT_TYPES)
         raise
 
+
 # if HAVE_NUMPY:
-_WIN32 = (sys.platform == 'win32')
+_WIN32 = sys.platform == 'win32'
 
 
 def get_type(var):
@@ -405,12 +438,12 @@ def get_type(var):
 
 def is_type(var, valid_types):
     """ Checks for types accounting for numpy """
-    #printDBG('checking type var=%r' % (var,))
-    #var_type = type(var)
-    #printDBG('type is type(var)=%r' % (var_type,))
-    #printDBG('must be in valid_types=%r' % (valid_types,))
-    #ret = var_type in valid_types
-    #printDBG('result is %r ' % ret)
+    # printDBG('checking type var=%r' % (var,))
+    # var_type = type(var)
+    # printDBG('type is type(var)=%r' % (var_type,))
+    # printDBG('must be in valid_types=%r' % (valid_types,))
+    # ret = var_type in valid_types
+    # printDBG('result is %r ' % ret)
     return get_type(var) in valid_types
 
 
@@ -441,7 +474,7 @@ def is_int(var):
         >>> print(result)
         [True, True, False, False]
     """
-    #if _newbehavior:
+    # if _newbehavior:
     #    if is_bool(var):
     #        msg = 'Comparing bool to int. Make sure legacy code does is updated accordingly.'
     #        print('Warning: ' + msg)
@@ -449,7 +482,7 @@ def is_int(var):
     #        return False
     #    else:
     #        return is_type(var, VALID_INT_TYPES)
-    #else:
+    # else:
     return is_type(var, VALID_INT_TYPES)
 
 
@@ -479,7 +512,7 @@ def is_float(var):
 
 def is_str(var):
     return isinstance(var, six.string_types)
-    #return is_type(var, VALID_STRING_TYPES)
+    # return is_type(var, VALID_STRING_TYPES)
 
 
 def is_bool(var):
@@ -511,15 +544,14 @@ def is_func_or_method(var):
 
 
 def is_func_or_method_or_partial(var):
-    return isinstance(var, (types.MethodType, types.FunctionType,
-                            functools.partial))
+    return isinstance(var, (types.MethodType, types.FunctionType, functools.partial))
 
 
 def is_funclike(var):
     return hasattr(var, '__call__')
 
 
-#def get_list_type(list_):
+# def get_list_type(list_):
 #    if isinstance(list_, np.ndarray):
 #        return list_.dtype
 #        pass
@@ -561,6 +593,8 @@ if __name__ == '__main__':
         python -m utool.util_type --allexamples --noface --nosrc
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

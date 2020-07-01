@@ -12,27 +12,28 @@ import argparse
 from utool import util_inject
 from utool import util_type
 from utool._internal import meta_util_six, meta_util_arg, meta_util_iter
+
 print, rrr, profile = util_inject.inject2(__name__)
 
-#STRICT = '--nostrict' not in sys.argv
-DEBUG2       = meta_util_arg.DEBUG2
-NO_ASSERTS   = meta_util_arg.NO_ASSERTS
-SAFE         = meta_util_arg.SAFE
-STRICT       = meta_util_arg.STRICT
-REPORT       = meta_util_arg.REPORT
+# STRICT = '--nostrict' not in sys.argv
+DEBUG2 = meta_util_arg.DEBUG2
+NO_ASSERTS = meta_util_arg.NO_ASSERTS
+SAFE = meta_util_arg.SAFE
+STRICT = meta_util_arg.STRICT
+REPORT = meta_util_arg.REPORT
 SUPER_STRICT = meta_util_arg.SUPER_STRICT
-TRACE        = meta_util_arg.TRACE
-USE_ASSERT   = meta_util_arg.USE_ASSERT
-SILENT       = meta_util_arg.SILENT
-VERBOSE      = meta_util_arg.VERBOSE
-VERYVERBOSE  = meta_util_arg.VERYVERBOSE
-NOT_QUIET    = meta_util_arg.NOT_QUIET
-QUIET        = meta_util_arg.QUIET
+TRACE = meta_util_arg.TRACE
+USE_ASSERT = meta_util_arg.USE_ASSERT
+SILENT = meta_util_arg.SILENT
+VERBOSE = meta_util_arg.VERBOSE
+VERYVERBOSE = meta_util_arg.VERYVERBOSE
+NOT_QUIET = meta_util_arg.NOT_QUIET
+QUIET = meta_util_arg.QUIET
 
 DEBUG = 0
 
 
-#(switch, type, default, help)
+# (switch, type, default, help)
 # TODO: make a static help file available via printing
 __REGISTERED_ARGS__ = []
 
@@ -40,9 +41,10 @@ __REGISTERED_ARGS__ = []
 def aug_sysargv(cmdstr):
     """ DEBUG FUNC modify argv to look like you ran a command """
     import shlex
+
     argv = shlex.split(cmdstr)
     sys.argv.extend(argv)
-    #return argv
+    # return argv
 
 
 def get_module_verbosity_flags(*labels):
@@ -50,16 +52,20 @@ def get_module_verbosity_flags(*labels):
     verbose_prefix_list = ['--verbose-', '--verb', '--verb-']
     veryverbose_prefix_list = ['--veryverbose-', '--veryverb', '--veryverb-']
     verbose_flags = tuple(
-        [prefix + lbl for prefix, lbl in
-         itertools.product(verbose_prefix_list, labels)])
+        [prefix + lbl for prefix, lbl in itertools.product(verbose_prefix_list, labels)]
+    )
     veryverbose_flags = tuple(
-        [prefix + lbl for prefix, lbl in
-         itertools.product(veryverbose_prefix_list, labels)])
+        [
+            prefix + lbl
+            for prefix, lbl in itertools.product(veryverbose_prefix_list, labels)
+        ]
+    )
     veryverbose_module = get_argflag(veryverbose_flags) or VERYVERBOSE
-    verbose_module = (get_argflag(verbose_flags) or veryverbose_module or VERBOSE)
+    verbose_module = get_argflag(verbose_flags) or veryverbose_module or VERBOSE
     if veryverbose_module:
         verbose_module = 2
     return verbose_module, veryverbose_module
+
 
 get_verbflag = get_module_verbosity_flags
 
@@ -97,8 +103,8 @@ def autogen_argparse_block(extra_args=[]):
         >>> result = ut.autogen_argparse_block(extra_args)
         >>> print(result)
     """
-    #import utool as ut  # NOQA
-    #__REGISTERED_ARGS__
+    # import utool as ut  # NOQA
+    # __REGISTERED_ARGS__
     # TODO FINISHME
 
     grouped_args = []
@@ -128,14 +134,22 @@ def autogen_argparse_block(extra_args=[]):
             multi_groups.append(vals)
     if len(multi_groups) > 0:
         import utool as ut
+
         print('Following arg was specified multiple times')
         print(ut.repr4(multi_groups, newlines=2))
 
 
-def get_argflag(argstr_, default=False, help_='', return_specified=None,
-                need_prefix=True, return_was_specified=False, argv=None,
-                debug=None,
-                **kwargs):
+def get_argflag(
+    argstr_,
+    default=False,
+    help_='',
+    return_specified=None,
+    need_prefix=True,
+    return_was_specified=False,
+    argv=None,
+    debug=None,
+    **kwargs
+):
     """
     Checks if the commandline has a flag or a corresponding noflag
 
@@ -173,7 +187,7 @@ def get_argflag(argstr_, default=False, help_='', return_specified=None,
         argv = sys.argv
     assert isinstance(default, bool), 'default must be boolean'
     argstr_list = meta_util_iter.ensure_iterable(argstr_)
-    #if VERYVERBOSE:
+    # if VERYVERBOSE:
     #    print('[util_arg] checking argstr_list=%r' % (argstr_list,))
     # arg registration
     _register_arg(argstr_list, bool, default, help_)
@@ -185,24 +199,25 @@ def get_argflag(argstr_, default=False, help_='', return_specified=None,
 
     # Check environment variables for default as well as argv
     import os
-    #"""
-    #set UTOOL_NOCNN=True
-    #export UTOOL_NOCNN True
-    #"""
-    #argv_orig = argv[:]
+
+    # """
+    # set UTOOL_NOCNN=True
+    # export UTOOL_NOCNN True
+    # """
+    # argv_orig = argv[:]
     # HACK: make this not happen very time you loop
     for key, val in os.environ.items():
         key = key.upper()
         sentinal = 'UTOOL_'
         if key.startswith(sentinal):
-            flag = '--' + key[len(sentinal):].lower().replace('_', '-')
+            flag = '--' + key[len(sentinal) :].lower().replace('_', '-')
             if val.upper() in ['TRUE', 'ON']:
                 pass
             elif val.upper() in ['FALSE', 'OFF']:
                 continue
             else:
                 continue
-                #flag += '=False'
+                # flag += '=False'
             new_argv = [flag]
             argv = argv[:] + new_argv
             if debug:
@@ -210,7 +225,7 @@ def get_argflag(argstr_, default=False, help_='', return_specified=None,
                 print('argv.extend(new_argv=%r)' % (new_argv,))
 
     for argstr in argstr_list:
-        #if VERYVERBOSE:
+        # if VERYVERBOSE:
         #    print('[util_arg]   * checking argstr=%r' % (argstr,))
         if not (argstr.find('--') == 0 or (argstr.find('-') == 0 and len(argstr) == 2)):
             raise AssertionError('Invalid argstr: %r' % (argstr,))
@@ -220,19 +235,19 @@ def get_argflag(argstr_, default=False, help_='', return_specified=None,
                 parsed_val = True
                 was_specified = True
                 break
-        #if argstr.find('--no') == 0:
-            #argstr = argstr.replace('--no', '--')
+        # if argstr.find('--no') == 0:
+        # argstr = argstr.replace('--no', '--')
         noarg = argstr.replace('--', '--no')
         if argstr in argv:
             parsed_val = True
             was_specified = True
-            #if VERYVERBOSE:
+            # if VERYVERBOSE:
             #    print('[util_arg]   * ...WAS_SPECIFIED. AND PARSED')
             break
         elif noarg in argv:
             parsed_val = False
             was_specified = True
-            #if VERYVERBOSE:
+            # if VERYVERBOSE:
             #    print('[util_arg]   * ...WAS_SPECIFIED. AND NOT PARSED')
             break
         elif argstr + '=True' in argv:
@@ -255,11 +270,21 @@ def get_argflag(argstr_, default=False, help_='', return_specified=None,
 
 # TODO: rectify with meta_util_arg
 # This has diverged and is now better
-#from utool._internal.meta_util_arg import get_argval
-#@profile
-def get_argval(argstr_, type_=None, default=None, help_=None, smartcast=True,
-               return_specified=None, argv=None, verbose=None,
-               debug=None, return_was_specified=False, pos=None):
+# from utool._internal.meta_util_arg import get_argval
+# @profile
+def get_argval(
+    argstr_,
+    type_=None,
+    default=None,
+    help_=None,
+    smartcast=True,
+    return_specified=None,
+    argv=None,
+    verbose=None,
+    debug=None,
+    return_was_specified=False,
+    pos=None,
+):
     r"""
     Returns a value of an argument specified on the command line after some flag
 
@@ -365,19 +390,19 @@ def get_argval(argstr_, type_=None, default=None, help_=None, smartcast=True,
     if argv is None:
         argv = sys.argv
 
-    #verbose = 1
+    # verbose = 1
 
     if verbose:
         print('[get_argval] Searching Commandline for argstr_=%r' % (argstr_,))
-        #print('[get_argval]  * type_ = %r' % (type_,))
-        #print('[get_argval]  * default = %r' % (default,))
-        #print('[get_argval]  * help_ = %r' % (help_,))
-        #print('[get_argval]  * smartcast = %r' % (smartcast,))
+        # print('[get_argval]  * type_ = %r' % (type_,))
+        # print('[get_argval]  * default = %r' % (default,))
+        # print('[get_argval]  * help_ = %r' % (help_,))
+        # print('[get_argval]  * smartcast = %r' % (smartcast,))
 
     if return_specified is None:
         return_specified = return_was_specified
 
-    #print(argstr_)
+    # print(argstr_)
     was_specified = False
     arg_after = default
     if type_ is bool:
@@ -405,26 +430,27 @@ def get_argval(argstr_, type_=None, default=None, help_=None, smartcast=True,
                     continue
                 argstr2_0 = argstr[0:num] + argstr[num:].replace('_', '-')
                 argstr2_1 = argstr[0:num] + argstr[num:].replace('-', '_')
-                if argstr2_0 not  in seen_:
+                if argstr2_0 not in seen_:
                     argstr_list2.append(argstr2_0)
                     seen_.add(argstr2_0)
-                if argstr2_1 not  in seen_:
+                if argstr2_1 not in seen_:
                     argstr_list2.append(argstr2_1)
                     seen_.add(argstr2_1)
             argstr_list = argstr_list2
 
         # Check environment variables for default as well as argv
         import os
+
         """
         set UTOOL_NOCNN=True
         export UTOOL_NOCNN True
         """
-        #argv_orig = argv[:]
+        # argv_orig = argv[:]
         for key, val in os.environ.items():
             key = key.upper()
             sentinal = 'UTOOL_'
             if key.startswith(sentinal):
-                key = '--' + key[len(sentinal):].lower()
+                key = '--' + key[len(sentinal) :].lower()
                 new_argv = [key, val]
                 if val.upper() in ['TRUE', 'FALSE', 'ON', 'OFF']:
                     # handled by get_argflag
@@ -448,7 +474,10 @@ def get_argval(argstr_, type_=None, default=None, help_=None, smartcast=True,
                             # HACK FOR LIST. TODO INTEGRATE
                             if debug:
                                 print('[get_argval] ... argstr=%r' % (argstr,))
-                                print('[get_argval] ... Found noequal list argx=%r' % (argx,))
+                                print(
+                                    '[get_argval] ... Found noequal list argx=%r'
+                                    % (argx,)
+                                )
                             arg_after = parse_arglist_hack(argx, argv=argv)
                             if debug:
                                 print('[get_argval] ... arg_after=%r' % (arg_after,))
@@ -456,11 +485,17 @@ def get_argval(argstr_, type_=None, default=None, help_=None, smartcast=True,
                             if smartcast:
                                 arg_after = list(map(util_type.smart_cast2, arg_after))
                                 if debug:
-                                    print('[get_argval] ... smartcast arg_after=%r' % (arg_after,))
+                                    print(
+                                        '[get_argval] ... smartcast arg_after=%r'
+                                        % (arg_after,)
+                                    )
                         else:
                             if debug:
                                 print('[get_argval] ... argstr=%r' % (argstr,))
-                                print('[get_argval] ... Found type_=%r argx=%r' % (type_, argx,))
+                                print(
+                                    '[get_argval] ... Found type_=%r argx=%r'
+                                    % (type_, argx,)
+                                )
                             arg_after = argv[argx + 1]
                             if type_ is not None:
                                 arg_after = util_type.try_cast(arg_after, type_)
@@ -480,11 +515,15 @@ def get_argval(argstr_, type_=None, default=None, help_=None, smartcast=True,
                         if True:
                             # Hacker way to be less hacky about parsing lists
                             from utool import util_gridsearch
+
                             blocks = util_gridsearch.parse_nestings(val_after_)
                             sentinal = '##COM&&'
-                            changed = [(block[0], block[1].replace(',', sentinal))
-                                       if block[0] == 'nonNested' else block
-                                       for block in blocks]
+                            changed = [
+                                (block[0], block[1].replace(',', sentinal))
+                                if block[0] == 'nonNested'
+                                else block
+                                for block in blocks
+                            ]
                             val_after2 = util_gridsearch.recombine_nestings(changed)
                             arg_after = val_after2.split(sentinal)
                         else:
@@ -499,7 +538,9 @@ def get_argval(argstr_, type_=None, default=None, help_=None, smartcast=True,
                                 arg_after = val_after
                         else:
                             arg_after = util_type.try_cast(val_after, type_)
-                            if not isinstance(type_, six.string_types) and issubclass(type_, six.string_types):
+                            if not isinstance(type_, six.string_types) and issubclass(
+                                type_, six.string_types
+                            ):
                                 if arg_after == 'None':
                                     # hack
                                     arg_after = None
@@ -509,6 +550,7 @@ def get_argval(argstr_, type_=None, default=None, help_=None, smartcast=True,
                     break
     except Exception as ex:
         import utool as ut
+
         ut.printex(ex, 'problem in arg_val', keys=['type_'])
         if ut.SUPER_STRICT:
             raise
@@ -524,7 +566,10 @@ def get_argval(argstr_, type_=None, default=None, help_=None, smartcast=True,
                 arg_after = util_type.smart_cast2(arg_after)
 
     if verbose:
-        print('[get_argval] ... Parsed arg_after=%r, was_specified=%r' % (arg_after, was_specified))
+        print(
+            '[get_argval] ... Parsed arg_after=%r, was_specified=%r'
+            % (arg_after, was_specified)
+        )
     if return_specified:
         return arg_after, was_specified
     else:
@@ -588,8 +633,8 @@ def parse_arglist_hack(argx, argv=None):
     if argv is None:
         argv = sys.argv
     arglist = []
-    #import utool as ut
-    #ut.embed()
+    # import utool as ut
+    # ut.embed()
     for argx2 in range(argx + 1, len(argv)):
         listarg = argv[argx2]
         if listarg.startswith('-'):
@@ -659,10 +704,10 @@ def get_arg_dict(argv=None, prefix_list=['--'], type_hints={}):
         arg = argv[argx]
         for prefix in prefix_list:
             if arg.startswith(prefix):
-                argname = arg[len(prefix):]
+                argname = arg[len(prefix) :]
                 if argx_has_value(argv, argx):
                     if arg.find('=') > -1:
-                        argname = arg[len(prefix):arg.find('=')]
+                        argname = arg[len(prefix) : arg.find('=')]
                     argvalue = get_arg_value(argv, argx, argname)
                     arg_dict[argname] = argvalue
                 else:
@@ -670,12 +715,13 @@ def get_arg_dict(argv=None, prefix_list=['--'], type_hints={}):
                 break
     return arg_dict
 
+
 # Backwards Compatibility Aliases
-get_arg  = get_argval
-get_flag  = get_argflag
+get_arg = get_argval
+get_flag = get_argflag
 
 
-#def argv_flag(name, default, **kwargs):
+# def argv_flag(name, default, **kwargs):
 #    if name.find('--') == 0:
 #        name = name[2:]
 #    if '--' + name in sys.argv and default is False:
@@ -703,11 +749,12 @@ def switch_sanataize(switch):
 
 class ArgumentParser2(object):
     """ Wrapper around argparse.ArgumentParser with convinence functions """
+
     def __init__(self, parser):
         self.parser = parser
 
     def add_arg(self, switch, *args, **kwargs):
-        #print('[argparse2] add_arg(%r) ' % (switch,))
+        # print('[argparse2] add_arg(%r) ' % (switch,))
         if isinstance(switch, tuple):
             args = tuple(list(switch) + list(args))
             return self.parser.add_argument(*args, **kwargs)
@@ -715,26 +762,28 @@ class ArgumentParser2(object):
             return self.parser.add_argument(switch, *args, **kwargs)
 
     def add_meta(self, switch, type, default=None, help='', **kwargs):
-        #print('[argparse2] add_meta()')
+        # print('[argparse2] add_meta()')
         dest, switch = switch_sanataize(switch)
-        self.add_arg(switch, metavar=dest, type=type, default=default, help=help, **kwargs)
+        self.add_arg(
+            switch, metavar=dest, type=type, default=default, help=help, **kwargs
+        )
 
     def add_flag(self, switch, default=False, **kwargs):
-        #print('[argparse2] add_flag()')
+        # print('[argparse2] add_flag()')
         action = 'store_false' if default else 'store_true'
         dest, switch = switch_sanataize(switch)
         self.add_arg(switch, dest=dest, action=action, default=default, **kwargs)
 
     def add_int(self, switch, *args, **kwargs):
-        self.add_meta(switch, util_type.fuzzy_int,  *args, **kwargs)
+        self.add_meta(switch, util_type.fuzzy_int, *args, **kwargs)
 
     def add_intlist(self, switch, *args, **kwargs):
-        self.add_meta(switch, util_type.fuzzy_int,  *args, nargs='*', **kwargs)
+        self.add_meta(switch, util_type.fuzzy_int, *args, nargs='*', **kwargs)
 
     add_ints = add_intlist
 
     def add_strlist(self, switch, *args, **kwargs):
-        self.add_meta(switch, str,  *args, nargs='*', **kwargs)
+        self.add_meta(switch, str, *args, nargs='*', **kwargs)
 
     add_strs = add_strlist
 
@@ -770,6 +819,7 @@ def autogen_argparse2(dpath_list):
     """
     import utool as ut
     import parse
+
     include_patterns = ['*.py']
     regex_list = ['get_argflag', 'get_argval']
     recursive = True
@@ -783,7 +833,7 @@ def autogen_argparse2(dpath_list):
             line_ = ut.regex_replace('#.*', '', line)
 
             argval_parse_list = [
-                '\'{flag}\' in sys.argv',
+                "'{flag}' in sys.argv",
                 'get_argval({flagtup}, type={type}, default={default})',
                 'get_argval({flagtup}, {type}, default={default})',
                 'get_argval({flagtup}, {type}, {default})',
@@ -792,18 +842,20 @@ def autogen_argparse2(dpath_list):
             argflag_parse_list = [
                 'get_argflag({flagtup})',
             ]
+
             def parse_pattern_list(parse_list, line):
-                #result_list = []
+                # result_list = []
                 result = None
                 for pattern in parse_list:
                     result = parse.parse('{_prefix}' + pattern, line_)
                     if result is not None:
                         break
-                        #if len(result_list) > 1:
+                        # if len(result_list) > 1:
                         #    print('warning')
-                        #result_list.append(result)
+                        # result_list.append(result)
                 return result
-            val_result  = parse_pattern_list(argval_parse_list, line)
+
+            val_result = parse_pattern_list(argval_parse_list, line)
             flag_result = parse_pattern_list(argflag_parse_list, line)
             if flag_result is None and val_result is None:
                 print('warning1')
@@ -820,12 +872,16 @@ def make_argparse2(prog='Program', description='', *args, **kwargs):
     formatter_classes = [
         argparse.RawDescriptionHelpFormatter,
         argparse.RawTextHelpFormatter,
-        argparse.ArgumentDefaultsHelpFormatter]
-    parser = argparse.ArgumentParser(prog=prog,
-                                     description=description,
-                                     prefix_chars='+-',
-                                     formatter_class=formatter_classes[2], *args,
-                                     **kwargs)
+        argparse.ArgumentDefaultsHelpFormatter,
+    ]
+    parser = argparse.ArgumentParser(
+        prog=prog,
+        description=description,
+        prefix_chars='+-',
+        formatter_class=formatter_classes[2],
+        *args,
+        **kwargs
+    )
     return ArgumentParser2(parser)
 
 
@@ -833,15 +889,19 @@ def make_argparse2(prog='Program', description='', *args, **kwargs):
 # the decorated function does not execute without its corresponding
 # flag
 
+
 def get_fpath_args(arglist_=None, pat='*'):
     import utool
+
     if arglist_ is None:
         arglist_ = sys.argv[1:]
     input_path_list = []
     for input_path in arglist_:
         input_path = utool.truepath(input_path)
         if os.path.isdir(input_path):
-            input_path_list.extend(utool.glob(input_path, pat, recursive=False, with_dirs=False))
+            input_path_list.extend(
+                utool.glob(input_path, pat, recursive=False, with_dirs=False)
+            )
         else:
             input_path_list.append(input_path)
     return input_path_list
@@ -862,6 +922,7 @@ def argv_flag_dec(*argin, **kwargs):
     kwargs = kwargs.copy()
     kwargs['default'] = kwargs.get('default', False)
     from utool import util_decor
+
     @util_decor.ignores_exc_tb(outer_wrapper=False)
     def wrap_argv_flag_dec(func):
         return __argv_flag_dec(func, **kwargs)
@@ -884,6 +945,7 @@ def __argv_flag_dec(func, default=False, quiet=QUIET, indent=False):
     Logic for controlling if a function gets called based on command line
     """
     from utool import util_decor
+
     flagname = meta_util_six.get_funcname(func)
     if flagname.find('no') == 0:
         flagname = flagname[2:]
@@ -896,12 +958,15 @@ def __argv_flag_dec(func, default=False, quiet=QUIET, indent=False):
     @util_decor.ignores_exc_tb(outer_wrapper=False)
     def GaurdWrapper(*args, **kwargs):
         from utool import util_print
+
         # FIXME: the --print-all is a hack
         default_ = kwargs.pop('default', default)
         alias_flags = kwargs.pop('alias_flags', [])
-        is_flagged = (get_argflag(flags, default_) or
-                      get_argflag('--print-all') or
-                      any([get_argflag(_) for _ in alias_flags]))
+        is_flagged = (
+            get_argflag(flags, default_)
+            or get_argflag('--print-all')
+            or any([get_argflag(_) for _ in alias_flags])
+        )
         if flagname in kwargs:
             is_flagged = kwargs.pop(flagname)
         if is_flagged:
@@ -919,18 +984,26 @@ def __argv_flag_dec(func, default=False, quiet=QUIET, indent=False):
             return ret
         else:
             PRINT_DISABLED_FLAGDEC = not get_argflag(
-                '--noinform', help_='does not print disabled flag decorators')
+                '--noinform', help_='does not print disabled flag decorators'
+            )
             if not quiet and PRINT_DISABLED_FLAGDEC:
-                #print('\n~~~ %s ~~~' % flag)
+                # print('\n~~~ %s ~~~' % flag)
                 print('~~~ %s ~~~' % flags[0])
+
     meta_util_six.set_funcname(GaurdWrapper, meta_util_six.get_funcname(func))
     return GaurdWrapper
 
 
 @profile
-def argparse_dict(default_dict_, lbl=None, verbose=None,
-                  only_specified=False, force_keys={}, type_hint=None,
-                  alias_dict={}):
+def argparse_dict(
+    default_dict_,
+    lbl=None,
+    verbose=None,
+    only_specified=False,
+    force_keys={},
+    type_hint=None,
+    alias_dict={},
+):
     r"""
     Gets values for a dict based on the command line
 
@@ -974,6 +1047,7 @@ def argparse_dict(default_dict_, lbl=None, verbose=None,
     """
     if verbose is None:
         verbose = VERBOSE_ARGPARSE
+
     def make_argstrs(key, prefix_list):
         for prefix in prefix_list:
             yield prefix + key
@@ -1008,30 +1082,31 @@ def argparse_dict(default_dict_, lbl=None, verbose=None,
                 val, was_specified = get_argflag(truekeys, return_specified=True)
         else:
             argtup = list(set(make_argstrs(key, ['--'])))
-            #if key == 'species':
+            # if key == 'species':
             #    import utool as ut
             #    ut.embed()
-            val, was_specified = get_argval(argtup, type_=type_,
-                                            default=default,
-                                            return_specified=True)
+            val, was_specified = get_argval(
+                argtup, type_=type_, default=default, return_specified=True
+            )
         return val, was_specified
 
-    dict_  = {}
+    dict_ = {}
     num_specified = 0
     for key, default in six.iteritems(default_dict_):
         val, was_specified = get_dictkey_cmdline_val(key, default, type_hint)
         if not was_specified:
             alias_keys = meta_util_iter.ensure_iterable(alias_dict.get(key, []))
             for alias_key in alias_keys:
-                val, was_specified = get_dictkey_cmdline_val(alias_key, default,
-                                                             type_hint)
+                val, was_specified = get_dictkey_cmdline_val(
+                    alias_key, default, type_hint
+                )
                 if was_specified:
                     break
         if VERBOSE_ARGPARSE:
             if was_specified:
                 num_specified += 1
                 print('[argparse_dict] Specified key=%r, val=%r' % (key, val))
-        #if key == 'foo':
+        # if key == 'foo':
         #    import utool as ut
         #    ut.embed()
         if not only_specified or was_specified or key in force_keys:
@@ -1039,23 +1114,27 @@ def argparse_dict(default_dict_, lbl=None, verbose=None,
     if VERBOSE_ARGPARSE:
         print('[argparse_dict] num_specified = %r' % (num_specified,))
         print('[argparse_dict] force_keys = %r' % (force_keys,))
-    #dict_ = {key: get_dictkey_cmdline_val(key, default) for key, default in
-    #six.iteritems(default_dict_)}
+    # dict_ = {key: get_dictkey_cmdline_val(key, default) for key, default in
+    # six.iteritems(default_dict_)}
 
     if verbose:
         for key in dict_:
             if dict_[key] != default_dict_[key]:
-                print('[argparse_dict] GOT ARGUMENT: cfgdict[%r] = %r' % (key, dict_[key]))
+                print(
+                    '[argparse_dict] GOT ARGUMENT: cfgdict[%r] = %r' % (key, dict_[key])
+                )
 
-    do_helpx = get_argflag('--helpx',
-                           help_='Specifies that argparse_dict should print help and quit')
+    do_helpx = get_argflag(
+        '--helpx', help_='Specifies that argparse_dict should print help and quit'
+    )
 
     if get_argflag(('--help', '--help2')) or do_helpx:
         import utool as ut
+
         print('COMMAND LINE IS ACCEPTING THESE PARAMS WITH DEFAULTS:')
         if lbl is not None:
             print(lbl)
-        #print(ut.align(ut.repr4(dict_, sorted_=True), ':'))
+        # print(ut.align(ut.repr4(dict_, sorted_=True), ':'))
         print(ut.align(ut.repr4(default_dict_, sorted_=True), ':'))
         if do_helpx:
             sys.exit(1)
@@ -1106,6 +1185,7 @@ def get_argv_tail(scriptname, prefer_main=None, argv=None):
     if argv is None:
         argv = sys.argv
     import utool as ut
+
     modname = ut.get_argval('-m', help_='specify module name to profile', argv=argv)
     if modname is not None:
         # hack to account for -m scripts
@@ -1120,7 +1200,7 @@ def get_argv_tail(scriptname, prefer_main=None, argv=None):
                 # HACK
                 if scriptname in arg:
                     break
-        argv_tail = argv[(argvx + 1):]
+        argv_tail = argv[(argvx + 1) :]
     return argv_tail
 
 
@@ -1161,8 +1241,7 @@ argval = get_argval
 argflag = get_argflag
 
 
-def argval(key, default=None, type=None, smartcast=True, return_exists=False,
-           argv=None):
+def argval(key, default=None, type=None, smartcast=True, return_exists=False, argv=None):
     """
     alias for get_argval
 
@@ -1181,17 +1260,23 @@ def argval(key, default=None, type=None, smartcast=True, return_exists=False,
     defaultable_types = (tuple, list, int, float)
     if type is None and isinstance(default, defaultable_types):
         type = builtins.type(default)
-    return get_argval(key, type_=type, default=default,
-                      return_was_specified=return_exists, smartcast=smartcast,
-                      argv=argv)
+    return get_argval(
+        key,
+        type_=type,
+        default=default,
+        return_was_specified=return_exists,
+        smartcast=smartcast,
+        argv=argv,
+    )
 
 
 VERBOSE_ARGPARSE = get_argflag(
     ('--verbose-argparse', '--verb-argparse', '--verb-arg', '--verbarg'),
-    help_='debug util_arg')
+    help_='debug util_arg',
+)
 
 
-#if __name__ == '__main__':
+# if __name__ == '__main__':
 #    """
 #    CommandLine:
 #        python utool/util_arg.py --test-autogen_argparse2
@@ -1206,6 +1291,8 @@ if __name__ == '__main__':
         python -m utool.util_arg --allexamples --noface --nosrc
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

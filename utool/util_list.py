@@ -12,6 +12,7 @@ from utool import util_inject
 from utool import util_str
 from utool import util_type
 from utool._internal.meta_util_six import get_funcname, set_funcname
+
 print, rrr, profile = util_inject.inject2(__name__)
 
 if util_type.HAVE_NUMPY:
@@ -55,6 +56,7 @@ def ezip(*args):
     """
     return list(zip(*args))
 
+
 lmap = emap
 lzip = ezip
 lstarmap = estarmap
@@ -71,6 +73,7 @@ def rebase_labels(label_list):
         if label not in orig_to_new:
             orig_to_new[label] = six.next(counter)
     import utool as ut
+
     rebased_labels = ut.take(orig_to_new, label_list)
     return rebased_labels
 
@@ -105,9 +108,9 @@ def replace_nones(list_, repl=-1):
 
     """
     repl_list = [
-        repl if item is None else (
-            replace_nones(item, repl) if isinstance(item, list) else item
-        )
+        repl
+        if item is None
+        else (replace_nones(item, repl) if isinstance(item, list) else item)
         for item in list_
     ]
     return repl_list
@@ -119,8 +122,9 @@ def recursive_replace(list_, target, repl=-1):
     the repl variable
     """
     repl_list = [
-        recursive_replace(item, target, repl) if isinstance(item, (list, np.ndarray)) else
-        (repl if item == target else item)
+        recursive_replace(item, target, repl)
+        if isinstance(item, (list, np.ndarray))
+        else (repl if item == target else item)
         for item in list_
     ]
     return repl_list
@@ -144,7 +148,7 @@ def alloc_lists(num_alloc):
 def alloc_nones(num_alloc):
     """ allocates space for a ``list`` of Nones """
     return [None] * num_alloc
-    #return [None for _ in range(num_alloc)]
+    # return [None for _ in range(num_alloc)]
 
 
 def ensure_list_size(list_, size_):
@@ -163,6 +167,7 @@ def ensure_list_size(list_, size_):
 
 
 # --- List Searching --- #
+
 
 def get_list_column_slice(list_, start=None, stop=None, stride=None):
     return list(util_iter.iget_list_column_slice(list_, start, stop, stride))
@@ -217,17 +222,17 @@ def take_column(list_, colx):
         >>> print(result)
         [['EGGS'], ['JAM']]
     """
-    #return list(util_iter.iget_list_column(list_, colx))
+    # return list(util_iter.iget_list_column(list_, colx))
     return list(util_iter.itake_column(list_, colx))
-    #if isinstance(colx, list):
+    # if isinstance(colx, list):
     #    # multi select
     #    return [[row[colx_] for colx_ in colx] for row in list_]
-    #else:
+    # else:
     #    return [row[colx] for row in list_]
 
 
 get_list_column = take_column
-#def get_list_row(list_, rowx):
+# def get_list_row(list_, rowx):
 #    return list_[rowx]
 
 
@@ -240,7 +245,7 @@ def safeapply(func, *args, **kwargs):
 
 def safelen(list_):
     return safeapply(len, list_)
-    #return None if list_ is None else len(list_)
+    # return None if list_ is None else len(list_)
 
 
 def safe_listget(list_, index, default='?'):
@@ -376,13 +381,17 @@ def search_list(text_list, pattern, flags=0):
     """
     import re
     import utool as ut
+
     match_list = [re.search(pattern, text, flags=flags) for text in text_list]
-    valid_index_list = [index for index, match in enumerate(match_list) if match is not None]
+    valid_index_list = [
+        index for index, match in enumerate(match_list) if match is not None
+    ]
     valid_match_list = ut.take(match_list, valid_index_list)
     return valid_index_list, valid_match_list
 
 
 # --- List Modification --- #
+
 
 def multi_replace(instr, search_list=[], repl_list=None):
     """
@@ -471,8 +480,7 @@ def unflatten1(flat_list, reverse_list):
         unflatten2
 
     """
-    unflat_list2 = [[flat_list[index] for index in tup]
-                    for tup in reverse_list]
+    unflat_list2 = [[flat_list[index] for index in tup] for tup in reverse_list]
     return unflat_list2
 
 
@@ -509,10 +517,13 @@ def total_flatten(unflat_list):
         >>> print(result)
     """
     import utool as ut
+
     next_list = unflat_list
     scalar_flags = [not ut.isiterable(item) for item in next_list]
     while not all(scalar_flags):
-        unflatenized = [[item] if flag else item for flag, item in zip(scalar_flags, next_list)]
+        unflatenized = [
+            [item] if flag else item for flag, item in zip(scalar_flags, next_list)
+        ]
         flatter_list = ut.flatten(unflatenized)
         next_list = flatter_list
         scalar_flags = [not ut.isiterable(item) for item in next_list]
@@ -546,13 +557,15 @@ def invertible_total_flatten(unflat_list):
 
     """
     import utool as ut
+
     next_list = unflat_list
     scalar_flags = [not ut.isiterable(item) for item in next_list]
     invert_stack = []
     # print('unflat_list = %r' % (unflat_list,))
     while not all(scalar_flags):
-        unflattenized = [[item] if flag else item
-                         for flag, item in zip(scalar_flags, next_list)]
+        unflattenized = [
+            [item] if flag else item for flag, item in zip(scalar_flags, next_list)
+        ]
         flatter_list, invert_part = ut.invertible_flatten1(unflattenized)
         # print('flatter_list = %r' % (flatter_list,))
         for idx in ut.where(scalar_flags):
@@ -569,6 +582,7 @@ def invertible_total_flatten(unflat_list):
 
 def total_unflatten(flat_list, invert_levels):
     import utool as ut
+
     less_flat_list = flat_list
     # print('less_flat_list = %r' % (less_flat_list,))
     for lx, level in enumerate(invert_levels):
@@ -720,8 +734,10 @@ def unflatten2(flat_list, cumlen_list):
         >>> print(result)
         [[5], [2, 3, 12, 3, 3], [9], [13, 3], [5]]
     """
-    unflat_list2 = [flat_list[low:high] for low, high in
-                    zip(itertools.chain([0], cumlen_list), cumlen_list)]
+    unflat_list2 = [
+        flat_list[low:high]
+        for low, high in zip(itertools.chain([0], cumlen_list), cumlen_list)
+    ]
     return unflat_list2
 
 
@@ -779,6 +795,7 @@ def unflat_unique_rowid_map(func, unflat_rowids, **kwargs):
 
     """
     import utool as ut
+
     # First flatten the list, and remember the original dimensions
     flat_rowids, reverse_list = ut.invertible_flatten2(unflat_rowids)
     # Then make the input unique
@@ -788,7 +805,7 @@ def unflat_unique_rowid_map(func, unflat_rowids, **kwargs):
     unique_flat_vals = func(unique_flat_rowids, **kwargs)
     # Then broadcast unique values back to original flat positions
     flat_vals_ = np.array(unique_flat_vals)[inverse_unique]
-    #flat_vals_ = np.array(unique_flat_vals).take(inverse_unique, axis=0)
+    # flat_vals_ = np.array(unique_flat_vals).take(inverse_unique, axis=0)
     output_shape = tuple(list(flat_rowids_arr.shape) + list(flat_vals_.shape[1:]))
     flat_vals = np.array(flat_vals_).reshape(output_shape)
     # Then _unflatten the results to the original input dimensions
@@ -798,6 +815,7 @@ def unflat_unique_rowid_map(func, unflat_rowids, **kwargs):
 
 def unpack_iterables(list_):
     import utool as ut
+
     if ut.isiterable(list_):
         return [new_item for item in list_ for new_item in unpack_iterables(item)]
     else:
@@ -810,13 +828,13 @@ def safe_slice(list_, *args):
     """
     if len(args) == 3:
         start = args[0]
-        stop  = args[1]
-        step  = args[2]
+        stop = args[1]
+        step = args[2]
     else:
         step = 1
         if len(args) == 2:
             start = args[0]
-            stop  = args[1]
+            stop = args[1]
         else:
             start = 0
             stop = args[0]
@@ -864,9 +882,10 @@ def list_all_eq_to(list_, val, strict=True):
         with warnings.catch_warnings():
             warnings.filterwarnings('ignore', category=FutureWarning)
             flags = [item == val for item in list_]
-            return all([np.all(flag) if hasattr(flag, '__array__') else flag
-                        for flag in flags])
-        #return all([item == val for item in list_])
+            return all(
+                [np.all(flag) if hasattr(flag, '__array__') else flag for flag in flags]
+            )
+        # return all([item == val for item in list_])
     except ValueError:
         if not strict:
             return all([repr(item) == repr(val) for item in list_])
@@ -886,12 +905,10 @@ def get_dirty_items(item_list, flag_list):
         dirty_items
     """
     assert len(item_list) == len(flag_list)
-    dirty_items = [item for (item, flag) in
-                   zip(item_list, flag_list)
-                   if not flag]
-    #print('num_dirty_items = %r' % len(dirty_items))
-    #print('item_list = %r' % (item_list,))
-    #print('flag_list = %r' % (flag_list,))
+    dirty_items = [item for (item, flag) in zip(item_list, flag_list) if not flag]
+    # print('num_dirty_items = %r' % len(dirty_items))
+    # print('item_list = %r' % (item_list,))
+    # print('flag_list = %r' % (flag_list,))
     return dirty_items
 
 
@@ -910,8 +927,9 @@ def compress(item_list, flag_list):
         list : filtered_items - masked items
     """
     assert len(item_list) == len(flag_list), (
-        'lists should correspond. len(item_list)=%r len(flag_list)=%r' %
-        (len(item_list), len(flag_list)))
+        'lists should correspond. len(item_list)=%r len(flag_list)=%r'
+        % (len(item_list), len(flag_list))
+    )
     filtered_items = list(util_iter.iter_compress(item_list, flag_list))
     return filtered_items
 
@@ -925,8 +943,9 @@ def ziptake(items_list, indexes_list):
     SeeAlso:
         vt.ziptake
     """
-    return [take(list_, index_list)
-            for list_, index_list in zip(items_list, indexes_list)]
+    return [
+        take(list_, index_list) for list_, index_list in zip(items_list, indexes_list)
+    ]
 
 
 def zipcompress(items_list, flags_list):
@@ -934,8 +953,7 @@ def zipcompress(items_list, flags_list):
     SeeAlso:
         vt.zipcompress
     """
-    return [compress(list_, flags)
-            for list_, flags in zip(items_list, flags_list)]
+    return [compress(list_, flags) for list_, flags in zip(items_list, flags_list)]
 
 
 def list_zipflatten(*items_lists):
@@ -1339,11 +1357,13 @@ def iflag_unique_items(list_):
         flag_iter
     """
     seen = set()
+
     def unseen(item):
         if item in seen:
             return False
         seen.add(item)
         return True
+
     flag_iter = (unseen(item) for item in list_)
     return flag_iter
 
@@ -1499,10 +1519,13 @@ def sortedby(item_list, key_list, reverse=False):
         [5, 2, 3, 1, 4]
 
     """
-    assert len(item_list) == len(key_list), (
-        'Expected same len. Got: %r != %r' % (len(item_list), len(key_list)))
-    sorted_list = [item for (key, item) in
-                   sorted(list(zip(key_list, item_list)), reverse=reverse)]
+    assert len(item_list) == len(key_list), 'Expected same len. Got: %r != %r' % (
+        len(item_list),
+        len(key_list),
+    )
+    sorted_list = [
+        item for (key, item) in sorted(list(zip(key_list, item_list)), reverse=reverse)
+    ]
     return sorted_list
 
 
@@ -1552,13 +1575,14 @@ def sortedby2(item_list, *args, **kwargs):
     reverse = kwargs.get('reverse', False)
     key = operator.itemgetter(*range(1, len(args) + 1))
     tup_list = list(zip(item_list, *args))
-    #print(tup_list)
+    # print(tup_list)
     try:
         sorted_tups = sorted(tup_list, key=key, reverse=reverse)
     except TypeError:
         # Python 3 does not allow sorting mixed types
         def keyfunc(tup):
             return tuple(map(str, tup[1:]))
+
         sorted_tups = sorted(tup_list, key=keyfunc, reverse=reverse)
     sorted_list = [tup[0] for tup in sorted_tups]
     return sorted_list
@@ -1587,10 +1611,10 @@ def unflat_take(items_list, unflat_index_list):
         >>> print(result)
         [[1, 2], [3, 4], [1, 5]]
     """
-    return [unflat_take(items_list, xs)
-            if isinstance(xs, list) else
-            take(items_list, xs)
-            for xs in unflat_index_list]
+    return [
+        unflat_take(items_list, xs) if isinstance(xs, list) else take(items_list, xs)
+        for xs in unflat_index_list
+    ]
 
 
 def argsort(*args, **kwargs):
@@ -1659,8 +1683,9 @@ def argsort2(indexable, key=None, reverse=False):
     if key is None:
         indices = [k for v, k in sorted(vk_iter, reverse=reverse)]
     else:
-        indices = [k for v, k in sorted(vk_iter, key=lambda vk: key(vk[0]),
-                                        reverse=reverse)]
+        indices = [
+            k for v, k in sorted(vk_iter, key=lambda vk: key(vk[0]), reverse=reverse)
+        ]
     return indices
 
 
@@ -1734,11 +1759,15 @@ def argmin(input_, key=None):
         return list(input.keys())[argmin(list(input.values()), key=key)]
     else:
         if key is None:
+
             def _key(item):
                 return item[1]
+
         else:
+
             def _key(item):
                 return key(item[1])
+
         return min(enumerate(input), key=_key)[0]
 
 
@@ -1820,8 +1849,9 @@ def take(list_, index_list):
         return [list_[index] for index in index_list]
     except TypeError:
         return list_[index_list]
-    #if util_iter.isiterable(index_list):
-    #else:
+    # if util_iter.isiterable(index_list):
+    # else:
+
 
 # def take
 
@@ -1869,11 +1899,11 @@ def snapped_slice(size, frac, n):
     if size < n:
         n = size
     start = int(size * frac - ceil(n / 2)) + 1
-    stop  = int(size * frac + floor(n / 2)) + 1
+    stop = int(size * frac + floor(n / 2)) + 1
     # slide to the front or the back
     buf = 0
     if stop >= size:
-        buf = (size - stop)
+        buf = size - stop
     elif start < 0:
         buf = 0 - start
     stop += buf
@@ -1897,8 +1927,10 @@ def flag_percentile_parts(arr, front=None, mid=None, back=None):
         slices += [snapped_slice(len(arr), 1.0, back)]
 
     import itertools as it
-    indices = sorted(set(it.chain.from_iterable(
-        range(*sl.indices(len(arr))) for sl in slices)))
+
+    indices = sorted(
+        set(it.chain.from_iterable(range(*sl.indices(len(arr))) for sl in slices))
+    )
     flags = index_to_boolmask(indices, len(arr))
     return flags
 
@@ -2024,8 +2056,9 @@ def broadcast_zip(list1, list2):
     elif len(list1) > 1 and len(list2) == 1:
         list2 = list2 * len(list1)
     elif len(list1) != len(list2):
-        raise ValueError('out of alignment len(list1)=%r, len(list2)=%r' % (
-            len(list1), len(list2)))
+        raise ValueError(
+            'out of alignment len(list1)=%r, len(list2)=%r' % (len(list1), len(list2))
+        )
     # return list(zip(list1, list2))
     return zip(list1, list2)
 
@@ -2080,13 +2113,17 @@ def partial_imap_1to1(func, si_func):
 
     DEPRICATE
     """
+
     @functools.wraps(si_func)
     def wrapper(input_):
         if not util_iter.isiterable(input_):
             return func(si_func(input_))
         else:
             return list(map(func, si_func(input_)))
-    set_funcname(wrapper, util_str.get_callable_name(func) + '_mapper_' + get_funcname(si_func))
+
+    set_funcname(
+        wrapper, util_str.get_callable_name(func) + '_mapper_' + get_funcname(si_func)
+    )
     return wrapper
 
 
@@ -2179,12 +2216,14 @@ def sample_lists(items_list, num=1, seed=None):
         rng = np.random.RandomState(seed)
     else:
         rng = np.random
+
     def random_choice(items, num):
         size = min(len(items), num)
         return rng.choice(items, size, replace=False).tolist()
-    samples_list = [random_choice(items, num)
-                    if len(items) > 0 else []
-                    for items in items_list]
+
+    samples_list = [
+        random_choice(items, num) if len(items) > 0 else [] for items in items_list
+    ]
     return samples_list
 
 
@@ -2204,6 +2243,7 @@ def strided_sample(items, num, offset=0):
         >>> print(result)
     """
     import math
+
     stride = max(int(math.ceil(len(items) / num)), 1)
     sample_items = items[offset::stride]
     return sample_items
@@ -2252,7 +2292,7 @@ def find_nonconsec_values(values, min_=None, max_=None):
         min_ = values[0]
     if max_ is None:
         max_ = values[-1]
-    valx   = 0
+    valx = 0
     missing_values = []
     for check in range(min_, max_ + 1):
         if values[valx] != check:
@@ -2368,6 +2408,7 @@ def find_duplicate_items(items, k=2):
         >>> print(result)
     """
     import utool as ut
+
     # Build item histogram
     duplicate_map = ut.ddict(list)
     for count, item in enumerate(items):
@@ -2383,7 +2424,7 @@ def find_duplicate_items(items, k=2):
     return duplicate_map
 
 
-#get_non_consecutive_positions = debug_consec_list
+# get_non_consecutive_positions = debug_consec_list
 
 
 def duplicates_exist(items):
@@ -2398,12 +2439,15 @@ def isunique(items):
 def print_duplicate_map(duplicate_map, *args, **kwargs):
     # args are corresponding lists
     import utool as ut
+
     printfn = kwargs.get('printfn', print)
     printfn('There are %d duplicates' % (len(duplicate_map)))
     for key, index_list in six.iteritems(duplicate_map):
-        printfn('item=%s appears %d times at indices: %r' % (key, len(index_list), index_list))
+        printfn(
+            'item=%s appears %d times at indices: %r' % (key, len(index_list), index_list)
+        )
         for argx, arg in enumerate(args):
-            #argname = 'arg%d' % (argx)
+            # argname = 'arg%d' % (argx)
             argname = ut.get_varname_from_stack(arg, N=2)
             for index in index_list:
                 printfn(' * %s[%d] = %r' % (argname, index, arg[index]))
@@ -2412,15 +2456,18 @@ def print_duplicate_map(duplicate_map, *args, **kwargs):
 
 def debug_duplicate_items(items, *args, **kwargs):
     import utool as ut
+
     pad_stdout = kwargs.get('pad_stdout', True)
     if pad_stdout:
         print('')
 
     varname = ut.get_varname_from_locals(items, ut.get_parent_frame().f_locals)
     print('[util_list] +--- DEBUG DUPLICATE ITEMS  %r ---' % (varname,))
+
     def printfn(msg):
         print('[util_list] |' + msg)
-    #with ut.Indenter('[util_list] | '):
+
+    # with ut.Indenter('[util_list] | '):
     duplicate_map = ut.find_duplicate_items(items)
     printkw = {'printfn': printfn}
     ut.print_duplicate_map(duplicate_map, *args, **printkw)
@@ -2447,8 +2494,11 @@ def list_depth(list_, func=max, _depth=0):
         >>> print(result)
 
     """
-    depth_list = [list_depth(item, func=func, _depth=_depth + 1)
-                  for item in  list_ if util_type.is_listlike(item)]
+    depth_list = [
+        list_depth(item, func=func, _depth=_depth + 1)
+        for item in list_
+        if util_type.is_listlike(item)
+    ]
     if len(depth_list) > 0:
         return func(depth_list)
     else:
@@ -2461,8 +2511,11 @@ def depth(sequence, func=max, _depth=0):
     """
     if isinstance(sequence, dict):
         sequence = list(sequence.values())
-    depth_list = [depth(item, func=func, _depth=_depth + 1)
-                  for item in sequence if (isinstance(item, dict) or util_type.is_listlike(item))]
+    depth_list = [
+        depth(item, func=func, _depth=_depth + 1)
+        for item in sequence
+        if (isinstance(item, dict) or util_type.is_listlike(item))
+    ]
     if len(depth_list) > 0:
         return func(depth_list)
     else:
@@ -2482,7 +2535,13 @@ def list_deep_types(list_):
     return type_list
 
 
-def depth_profile(list_, max_depth=None, compress_homogenous=True, compress_consecutive=False, new_depth=False):
+def depth_profile(
+    list_,
+    max_depth=None,
+    compress_homogenous=True,
+    compress_consecutive=False,
+    new_depth=False,
+):
     r"""
     Returns a nested list corresponding the shape of the nested structures
     lists represent depth, tuples represent shape. The values of the items do
@@ -2587,7 +2646,7 @@ def depth_profile(list_, max_depth=None, compress_homogenous=True, compress_cons
         >>> print(result)
     """
     if isinstance(list_, dict):
-        list_ = list(list_.values())   # handle dict
+        list_ = list(list_.values())  # handle dict
     level_shape_list = []
     # For a pure bottom level list return the length
     if not any(map(util_type.is_listlike, list_)):
@@ -2654,10 +2713,10 @@ def depth_profile(list_, max_depth=None, compress_homogenous=True, compress_cons
                     consec_str += str(value) + ', '
             if consec_str.endswith(', '):
                 consec_str = consec_str[:-2]
-                #consec_str += ']'
-            #consec_str = consec_str.rstrip(', ').rstrip(']')
-            #consec_str = consec_str.rstrip(', ')
-            #if consec_str.endswith(']'):
+                # consec_str += ']'
+            # consec_str = consec_str.rstrip(', ').rstrip(']')
+            # consec_str = consec_str.rstrip(', ')
+            # if consec_str.endswith(']'):
             #    consec_str = consec_str[:-1]
             consec_str += ']'
             level_shape_list = consec_str
@@ -2665,7 +2724,7 @@ def depth_profile(list_, max_depth=None, compress_homogenous=True, compress_cons
 
 
 def list_type(list_):
-    types =  unique_ordered(list(map(type, list_)))
+    types = unique_ordered(list(map(type, list_)))
     if len(types) == 1:
         return types[0]
     else:
@@ -2699,11 +2758,13 @@ def list_type_profile(sequence, compress_homogenous=True, with_dtype=True):
         level_type_str = list(list(int*2), ndarray[int32], tuple(ndarray[int32]*1))
     """
     # For a pure bottom level list return the length
-    #if not any(map(util_type.is_listlike, sequence)) or (isinstance(sequence, np.ndarray) and sequence.dtype != object):
-    if not util_type.is_listlike(sequence) or (isinstance(sequence, np.ndarray) and sequence.dtype != object):
-        typename = str(type(sequence)).replace('<type \'', '').replace('\'>', '')
+    # if not any(map(util_type.is_listlike, sequence)) or (isinstance(sequence, np.ndarray) and sequence.dtype != object):
+    if not util_type.is_listlike(sequence) or (
+        isinstance(sequence, np.ndarray) and sequence.dtype != object
+    ):
+        typename = str(type(sequence)).replace("<type '", '').replace("'>", '')
         if six.PY3:
-            typename = str(type(sequence)).replace('<class \'', '').replace('\'>', '')
+            typename = str(type(sequence)).replace("<class '", '').replace("'>", '')
         if with_dtype and typename == 'numpy.ndarray':
             typename = typename.replace('numpy.', '')
             typename += '[%s]' % (sequence.dtype,)
@@ -2715,7 +2776,7 @@ def list_type_profile(sequence, compress_homogenous=True, with_dtype=True):
 
     level_type_list = []
     for item in sequence:
-        #if util_type.is_listlike(item):
+        # if util_type.is_listlike(item):
         item_type_profile = list_type_profile(item, with_dtype=with_dtype)
         level_type_list.append(item_type_profile)
 
@@ -2726,9 +2787,9 @@ def list_type_profile(sequence, compress_homogenous=True, with_dtype=True):
             level_type_str = str(type_) + '*' + str(len(level_type_list))
         else:
             level_type_str = ', '.join(level_type_list)
-    typename = str(type(sequence)).replace('<type \'', '').replace('\'>', '')
+    typename = str(type(sequence)).replace("<type '", '').replace("'>", '')
     if six.PY3:
-        typename = str(type(sequence)).replace('<class \'', '').replace('\'>', '')
+        typename = str(type(sequence)).replace("<class '", '').replace("'>", '')
     level_type_str = typename + '(' + str(level_type_str) + ')'
     return level_type_str
 
@@ -2758,8 +2819,10 @@ def type_profile2(sequence, TypedSequence=None):
     if TypedSequence is None:
         TypedSequence = type_sequence_factory()
     # For a pure bottom level list return the length
-    #if not any(map(util_type.is_listlike, sequence)) or (isinstance(sequence, np.ndarray) and sequence.dtype != object):
-    if not util_type.is_listlike(sequence) or (isinstance(sequence, np.ndarray) and sequence.dtype != object):
+    # if not any(map(util_type.is_listlike, sequence)) or (isinstance(sequence, np.ndarray) and sequence.dtype != object):
+    if not util_type.is_listlike(sequence) or (
+        isinstance(sequence, np.ndarray) and sequence.dtype != object
+    ):
         # Scalar / ndarray type
         if type(sequence) == 'numpy.ndarray':
             subtype_list = '[%s]' % (sequence.dtype,)
@@ -2776,12 +2839,13 @@ def type_profile2(sequence, TypedSequence=None):
             subtype_list.append(item_type_profile)
         sequence_type_profile = TypedSequence(sequence_type, subtype_list)
         return sequence_type_profile
-        #level_type_str = typename + '(' + str(level_type_str) + ')'
-        #return level_type_str
+        # level_type_str = typename + '(' + str(level_type_str) + ')'
+        # return level_type_str
 
 
 def type_sequence_factory():
     from utool import util_dev
+
     class TypedSequence(util_dev.NiceRepr):
         def __init__(self, type_, subtype_list=None):
             self.type_ = type_
@@ -2792,15 +2856,16 @@ def type_sequence_factory():
 
         def type_str(self):
             type_str = six.text_type(self.type_)
-            type_str = type_str.replace('\'>', '')
-            type_str = type_str.replace('<type \'', '')
-            type_str = type_str.replace('<class \'', '')
+            type_str = type_str.replace("'>", '')
+            type_str = type_str.replace("<type '", '')
+            type_str = type_str.replace("<class '", '')
             type_str = type_str.replace('numpy.', '')
 
             return type_str
 
         def subtype_str(self):
             import utool as ut
+
             if self.subtype_list is None:
                 return ''
             elif isinstance(self.subtype_list, six.string_types):
@@ -2819,15 +2884,21 @@ def type_sequence_factory():
                 grouped.append(group)
 
                 if len(grouped) == len(self.subtype_list):
-                    toret = '(' + ', '.join([sub.__nice__()[1:] for sub in self.subtype_list]) + ')'
+                    toret = (
+                        '('
+                        + ', '.join([sub.__nice__()[1:] for sub in self.subtype_list])
+                        + ')'
+                    )
                 else:
                     compressed_types = ut.take_column(grouped, 0)
                     compressed_lens = ut.lmap(len, grouped)
                     zip(compressed_types, compressed_lens)
                     groupstrs = [
-                        sub.__nice__()[1:] + '*' + str(num) if num > 1 else
-                        sub.__nice__()[1:]
-                        for sub, num in zip(compressed_types, compressed_lens)]
+                        sub.__nice__()[1:] + '*' + str(num)
+                        if num > 1
+                        else sub.__nice__()[1:]
+                        for sub, num in zip(compressed_types, compressed_lens)
+                    ]
                     toret = '(' + ', '.join(groupstrs) + ')'
                 return toret
 
@@ -2836,6 +2907,7 @@ def type_sequence_factory():
             if self.subtype_list is not None:
                 type_str += self.subtype_str()
             return ' ' + type_str
+
     return TypedSequence
 
 
@@ -2875,7 +2947,7 @@ def list_cover(list1, list2):
 
 
 def and_lists(*args):
-    #[all(tup) for tup in zip(*args)]
+    # [all(tup) for tup in zip(*args)]
     return list(util_iter.and_iters(*args))
 
 
@@ -2909,14 +2981,17 @@ def or_lists(*args):
 def make_sortby_func(item_list, reverse=False):
     sortxs_ = argsort(item_list)
     sortxs = sortxs_[::-1] if reverse else sortxs_
+
     def sortby_func(list_):
         return take(list_, sortxs)
+
     return sortby_func
 
 
 def filter_startswith(list_, str_):
     def item_startswith(item):
         return item.startswith(str_)
+
     return list(filter(item_startswith, list_))
 
 
@@ -3043,6 +3118,7 @@ def list_alignment(list1, list2, missing=False):
         list1_aligned = ['a', None, 'b', 'c', None]
     """
     import utool as ut
+
     item1_to_idx = make_index_lookup(list1)
     if missing:
         sortx = ut.dict_take(item1_to_idx, list2, None)
@@ -3056,6 +3132,7 @@ def unique_inverse(item_list):
     Like np.unique(item_list, return_inverse=True)
     """
     import utool as ut
+
     unique_items = ut.unique(item_list)
     inverse = list_alignment(unique_items, item_list)
     return unique_items, inverse
@@ -3197,6 +3274,7 @@ def unflat_map(func, unflat_items, vectorized=False, **kwargs):
         [[], [2, 3, 4], [5, 6], [7, 8, 9, 10], [], []]
     """
     import utool as ut
+
     # First flatten the list, and remember the original dimensions
     flat_items, reverse_list = ut.invertible_flatten2(unflat_items)
     # Then preform the lookup / implicit mapping
@@ -3207,34 +3285,39 @@ def unflat_map(func, unflat_items, vectorized=False, **kwargs):
         flat_vals = [func(item, **kwargs) for item in flat_items]
     if True:
         assert len(flat_vals) == len(flat_items), (
-            'flat lens not the same, len(flat_vals)=%d len(flat_items)=%d' %
-            (len(flat_vals), len(flat_items),))
+            'flat lens not the same, len(flat_vals)=%d len(flat_items)=%d'
+            % (len(flat_vals), len(flat_items),)
+        )
     # Then ut.unflatten2 the results to the original input dimensions
     unflat_vals = ut.unflatten2(flat_vals, reverse_list)
     if True:
         assert len(unflat_vals) == len(unflat_items), (
-            'unflat lens not the same, len(unflat_vals)=%d len(unflat_rowids)=%d' %
-            (len(unflat_vals), len(unflat_items),))
+            'unflat lens not the same, len(unflat_vals)=%d len(unflat_rowids)=%d'
+            % (len(unflat_vals), len(unflat_items),)
+        )
     return unflat_vals
 
 
 def unflat_vecmap(func, unflat_items, vectorized=False, **kwargs):
     """ unflat map for vectorized functions """
     import utool as ut
+
     # First flatten the list, and remember the original dimensions
     flat_items, reverse_list = ut.invertible_flatten2(unflat_items)
     # Then preform the lookup / implicit mapping
     flat_vals = func(flat_items, **kwargs)
     if True:
         assert len(flat_vals) == len(flat_items), (
-            'flat lens not the same, len(flat_vals)=%d len(flat_items)=%d' %
-            (len(flat_vals), len(flat_items),))
+            'flat lens not the same, len(flat_vals)=%d len(flat_items)=%d'
+            % (len(flat_vals), len(flat_items),)
+        )
     # Then ut.unflatten2 the results to the original input dimensions
     unflat_vals = ut.unflatten2(flat_vals, reverse_list)
     if True:
         assert len(unflat_vals) == len(unflat_items), (
-            'unflat lens not the same, len(unflat_vals)=%d len(unflat_rowids)=%d' %
-            (len(unflat_vals), len(unflat_items),))
+            'unflat lens not the same, len(unflat_vals)=%d len(unflat_rowids)=%d'
+            % (len(unflat_vals), len(unflat_items),)
+        )
     return unflat_vals
 
 
@@ -3336,6 +3419,7 @@ def list_strip(list_, to_strip, left=True, right=True):
     stripped_list = ut.list_strip(list_, to_strip)
     """
     import utool as ut
+
     flags = [item != to_strip for item in list_]
     flag_lists = []
     if right:
@@ -3357,7 +3441,7 @@ def insert_values(list_, index, values, inplace=False):
             list_.insert(index, new)
     else:
         left_part = list_[:index]
-        right_part = list_[index + 1:]
+        right_part = list_[index + 1 :]
         new_list = left_part + values + right_part
     return new_list
 
@@ -3394,14 +3478,14 @@ def aslist(sequence):
     return list_
 
 
-#def partition2(list_, idxs1, idxs2):
+# def partition2(list_, idxs1, idxs2):
 #    list1_ = ut.take(list_, idxs1)
 #    list2_ = list(zip(ut.take(list_, idxs2)))
 #    partitioned_items = [list1_, list2_]
 #    return partitioned_items
 
 
-#class ListLike(object):
+# class ListLike(object):
 #    """
 #    similar to DictLike
 #    """
@@ -3478,8 +3562,7 @@ def length_hint(obj, default=0):
         if hint is NotImplemented:
             return default
         if not isinstance(hint, int):
-            raise TypeError('Length hint must be an integer, not %r' %
-                            type(hint))
+            raise TypeError('Length hint must be an integer, not %r' % type(hint))
         if hint < 0:
             raise ValueError('__length_hint__() should return >= 0')
         return hint
@@ -3502,6 +3585,8 @@ if __name__ == '__main__':
         python -m utool.util_list --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

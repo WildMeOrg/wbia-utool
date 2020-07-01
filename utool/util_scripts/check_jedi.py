@@ -2,6 +2,7 @@
 def check_jedi_can_read_googlestyle():
     import jedi
     import utool as ut
+
     source1 = ut.codeblock(
         r'''
         # STARTBLOCK
@@ -73,9 +74,11 @@ def _insource_jedi_vim_test(data, ibs):
     data
     ibs
     import utool as ut
+
     xdata = ut.ColumnLists()
     xdata
     import wbia
+
     xibs = wbia.IBEISController()
     xibs
 
@@ -83,8 +86,9 @@ def _insource_jedi_vim_test(data, ibs):
 def check_jedi_closures():
     import jedi
     import textwrap
+
     source = textwrap.dedent(
-        r'''
+        r"""
         def foo(data):
             import matplotlib
             import matplotlib
@@ -101,7 +105,7 @@ def check_jedi_closures():
                 return data
 
             import matplotlib
-        '''
+        """
     )
     print('SOURCE: ')
     print(source)
@@ -139,10 +143,11 @@ def check_jedi_closures():
 def check_jedi_utool():
     import jedi
     import textwrap
+
     source = textwrap.dedent(
-        r'''
+        r"""
         import utool as ut
-        ut.'''
+        ut."""
     )
     script = jedi.Script(source)
 

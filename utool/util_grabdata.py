@@ -1,6 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
-from os.path import dirname, split, join, splitext, exists, realpath, basename, commonprefix
+from os.path import (
+    dirname,
+    split,
+    join,
+    splitext,
+    exists,
+    realpath,
+    basename,
+    commonprefix,
+)
 import six
 import sys
 import zipfile
@@ -16,6 +25,7 @@ from utool import util_cplat
 from utool import util_arg
 from utool import util_inject
 from utool import util_hash
+
 print, rrr, profile = util_inject.inject2(__name__)
 
 
@@ -25,8 +35,15 @@ BadZipfile = zipfile.BadZipfile
 TIMEOUT = 10.0
 
 
-def archive_files(archive_fpath, fpath_list, small=True, allowZip64=False,
-                  overwrite=False, verbose=True, common_prefix=False):
+def archive_files(
+    archive_fpath,
+    fpath_list,
+    small=True,
+    allowZip64=False,
+    overwrite=False,
+    verbose=True,
+    common_prefix=False,
+):
     r"""
     Adds the files in `fpath_list` to an zip/tar archive.
 
@@ -76,6 +93,7 @@ def archive_files(archive_fpath, fpath_list, small=True, allowZip64=False,
     """
     import utool as ut
     from os.path import relpath, dirname
+
     if not overwrite and ut.checkpath(archive_fpath, verbose=True):
         raise AssertionError('cannot overrwite archive_fpath=%r' % (archive_fpath,))
     print('Archiving %d files' % len(fpath_list))
@@ -91,8 +109,9 @@ def archive_files(archive_fpath, fpath_list, small=True, allowZip64=False,
     else:
         rel_arcpath = dirname(archive_fpath)
     with zipfile.ZipFile(archive_fpath, 'w', compression, allowZip64) as myzip:
-        for fpath in ut.ProgressIter(fpath_list, lbl='archiving files',
-                                     enabled=verbose, adjust=True):
+        for fpath in ut.ProgressIter(
+            fpath_list, lbl='archiving files', enabled=verbose, adjust=True
+        ):
             arcname = relpath(fpath, rel_arcpath)
             myzip.write(fpath, arcname)
 
@@ -115,7 +134,7 @@ def unarchive_file(archive_fpath, force_commonprefix=True, **kwargs):
             with open(output_fpath, 'wb') as file_:
                 file_.write(contents)
         return output_fpath
-    #elif archive_fpath.endswith('.gz'):
+    # elif archive_fpath.endswith('.gz'):
     #    # This is to handle .gz files (not .tar.gz) like how MNIST is stored
     #    # Example: http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz
     #    return ungz_file(archive_fpath)
@@ -125,7 +144,7 @@ def unarchive_file(archive_fpath, force_commonprefix=True, **kwargs):
         raise AssertionError('unknown archive format: %r' % (archive_fpath,))
 
 
-#def ungz_file(gz_fpath):
+# def ungz_file(gz_fpath):
 #    # Jon, this is something I'm not sure how to generalize with your structure
 #    # below, so I'm just going to leave it here in a nice little function.
 #    # I think the original code will still work correctly with .tar.gz, but
@@ -142,29 +161,50 @@ def untar_file(targz_fpath, force_commonprefix=True):
     tar_file = tarfile.open(targz_fpath, 'r:gz')
     output_dir = dirname(targz_fpath)
     archive_namelist = [mem.path for mem in tar_file.getmembers()]
-    output_dir = _extract_archive(targz_fpath, tar_file, archive_namelist,
-                                  output_dir, force_commonprefix)
+    output_dir = _extract_archive(
+        targz_fpath, tar_file, archive_namelist, output_dir, force_commonprefix
+    )
     tar_file.close()
     return output_dir
 
 
-def unzip_file(zip_fpath, force_commonprefix=True, output_dir=None,
-               prefix=None, dryrun=False, overwrite=None):
+def unzip_file(
+    zip_fpath,
+    force_commonprefix=True,
+    output_dir=None,
+    prefix=None,
+    dryrun=False,
+    overwrite=None,
+):
     zip_file = zipfile.ZipFile(zip_fpath)
     if output_dir is None:
-        output_dir  = dirname(zip_fpath)
+        output_dir = dirname(zip_fpath)
     archive_namelist = zip_file.namelist()
-    output_dir  = _extract_archive(zip_fpath, zip_file, archive_namelist,
-                                   output_dir, force_commonprefix,
-                                   prefix=prefix, dryrun=dryrun,
-                                   overwrite=overwrite)
+    output_dir = _extract_archive(
+        zip_fpath,
+        zip_file,
+        archive_namelist,
+        output_dir,
+        force_commonprefix,
+        prefix=prefix,
+        dryrun=dryrun,
+        overwrite=overwrite,
+    )
     zip_file.close()
     return output_dir
 
 
-def _extract_archive(archive_fpath, archive_file, archive_namelist, output_dir,
-                     force_commonprefix=True, prefix=None,
-                     dryrun=False, verbose=not QUIET, overwrite=None):
+def _extract_archive(
+    archive_fpath,
+    archive_file,
+    archive_namelist,
+    output_dir,
+    force_commonprefix=True,
+    prefix=None,
+    dryrun=False,
+    verbose=not QUIET,
+    overwrite=None,
+):
     """
     archive_fpath = zip_fpath
     archive_file = zip_file
@@ -215,6 +255,7 @@ def open_url_in_browser(url, browsername=None, fallback=False):
         >>> open_url_in_browser(url, 'chrome')
     """
     import webbrowser
+
     print('[utool] Opening url=%r in browser' % (url,))
     if browsername is None:
         browser = webbrowser.open(url)
@@ -250,6 +291,7 @@ def get_prefered_browser(pref_list=[], fallback=True):
     """
     import webbrowser
     import utool as ut
+
     pref_list = ut.ensure_iterable(pref_list)
     error_list = []
 
@@ -279,12 +321,20 @@ def get_prefered_browser(pref_list=[], fallback=True):
         browser = webbrowser
         return browser
     else:
-        raise AssertionError('No browser meets preferences=%r. error_list=%r' %
-                             (pref_list, error_list,))
+        raise AssertionError(
+            'No browser meets preferences=%r. error_list=%r' % (pref_list, error_list,)
+        )
 
 
-def download_url(url, filename=None, spoof=False, iri_fallback=True,
-                 verbose=True, new=True, chunk_size=None):
+def download_url(
+    url,
+    filename=None,
+    spoof=False,
+    iri_fallback=True,
+    verbose=True,
+    new=True,
+    chunk_size=None,
+):
     r""" downloads a url to a filename.
 
     Args:
@@ -309,11 +359,12 @@ def download_url(url, filename=None, spoof=False, iri_fallback=True,
         >>> print(fpath)
         ispack.exe
     """
+
     def reporthook_(num_blocks, block_nBytes, total_nBytes, start_time=0):
-        total_seconds = time.time() - start_time + 1E-9
-        num_kb_down   = int(num_blocks * block_nBytes) / 1024
-        num_mb_down   = num_kb_down / 1024
-        percent_down  = int(num_blocks * block_nBytes * 100 / total_nBytes)
+        total_seconds = time.time() - start_time + 1e-9
+        num_kb_down = int(num_blocks * block_nBytes) / 1024
+        num_mb_down = num_kb_down / 1024
+        percent_down = int(num_blocks * block_nBytes * 100 / total_nBytes)
         kb_per_second = int(num_kb_down / (total_seconds))
         fmt_msg = '\r...%d%%, %d MB, %d KB/s, %d seconds passed'
         msg = fmt_msg % (percent_down, num_mb_down, kb_per_second, total_seconds)
@@ -333,15 +384,18 @@ def download_url(url, filename=None, spoof=False, iri_fallback=True,
 
     if new:
         import requests
-        #from contextlib import closing
+
+        # from contextlib import closing
         con = requests.get(url, stream=True, timeout=TIMEOUT)
 
         try:
             code = con.status_code
             if code != 200:
-                raise ValueError('URL download failed (HTTP Error %d) for %r' % (code, url, ))
+                raise ValueError(
+                    'URL download failed (HTTP Error %d) for %r' % (code, url,)
+                )
 
-            #import math
+            # import math
             content_length = con.headers.get('content-length', None)
             if content_length is None:
                 # No progress available
@@ -351,7 +405,7 @@ def download_url(url, filename=None, spoof=False, iri_fallback=True,
                 if chunk_size is None:
                     chunk_size = 2 ** 20  # one megabyte at a time
                 content_length = int(content_length)
-                #length = int(math.ceil(content_length / chunk_size))
+                # length = int(math.ceil(content_length / chunk_size))
                 with open(filename, 'wb') as file_:
                     chunk_iter = con.iter_content(chunk_size=chunk_size)
                     # chunk_iter = ut.ProgIter(chunk_iter, length=length, lbl='downloading', freq=1)
@@ -363,6 +417,7 @@ def download_url(url, filename=None, spoof=False, iri_fallback=True,
         except Exception as ex:
             print(ex)
             import utool as ut
+
             ut.delete(filename)
             filename = None
         finally:
@@ -370,6 +425,7 @@ def download_url(url, filename=None, spoof=False, iri_fallback=True,
     else:
         # Weird that we seem to need this here for tests
         import urllib  # NOQA
+
         try:
             if spoof:
                 # Different agents that can be used for spoofing
@@ -379,10 +435,12 @@ def download_url(url, filename=None, spoof=False, iri_fallback=True,
                     'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)',  # NOQA
                     'Mozilla/5.0 (compatible; Konqueror/3.5; Linux) KHTML/3.5.5 (like Gecko) (Kubuntu)',
                     'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.0.12) Gecko/20070731 Ubuntu/dapper-security Firefox/1.5.0.12',  # NOQA
-                    'Lynx/2.8.5rel.1 libwww-FM/2.14 SSL-MM/1.4.1 GNUTLS/1.2.9'
+                    'Lynx/2.8.5rel.1 libwww-FM/2.14 SSL-MM/1.4.1 GNUTLS/1.2.9',
                 ]
+
                 class SpoofingOpener(urllib.FancyURLopener, object):
                     version = user_agents[0]
+
                 spoofing_opener = SpoofingOpener()
                 spoofing_opener.retrieve(url, filename=filename, reporthook=reporthook)
             else:
@@ -391,11 +449,15 @@ def download_url(url, filename=None, spoof=False, iri_fallback=True,
                     urllib.urlretrieve(url, filename=filename, reporthook=reporthook)
                 elif six.PY3:
                     import urllib.request
-                    urllib.request.urlretrieve(url, filename=filename, reporthook=reporthook)
+
+                    urllib.request.urlretrieve(
+                        url, filename=filename, reporthook=reporthook
+                    )
                 else:
                     assert False, 'unknown python'
         except UnicodeError as ex:
             import requests
+
             # iri error
             print('Detected iri error: %r' % (ex,))
             print('Falling back to requests.get (no progress is shown)')
@@ -408,9 +470,9 @@ def download_url(url, filename=None, spoof=False, iri_fallback=True,
     return filename
 
 
-#if six.PY2:
+# if six.PY2:
 #    import urllib as _urllib
-#elif six.PY3:
+# elif six.PY3:
 #    import urllib.request as _urllib
 
 
@@ -424,7 +486,7 @@ def url_read(url, verbose=True):
         print('Reading data from url=%r' % (url,))
     try:
         file_ = _urllib.request.urlopen(url)
-        #file_ = _urllib.urlopen(url)
+        # file_ = _urllib.urlopen(url)
     except IOError:
         raise
     data = file_.read()
@@ -489,6 +551,7 @@ def experiment_download_multiple_urls(url_list):
     """
     import requests
     import os
+
     session = requests.session()
 
     def session_download_url(url):
@@ -530,12 +593,10 @@ def clean_dropbox_link(dropbox_url):
         dl.dropbox.com/s/123456789abcdef/foobar.zip
     """
     cleaned_url = dropbox_url.replace('www.dropbox', 'dl.dropbox')
-    postfix_list = [
-        '?dl=0'
-    ]
+    postfix_list = ['?dl=0']
     for postfix in postfix_list:
         if cleaned_url.endswith(postfix):
-            cleaned_url = cleaned_url[:-1 * len(postfix)]
+            cleaned_url = cleaned_url[: -1 * len(postfix)]
     # cleaned_url = cleaned_url.rstrip('?dl=0')
     return cleaned_url
 
@@ -544,7 +605,7 @@ def split_archive_ext(path):
     special_exts = ['.tar.gz', '.tar.bz2']
     for ext in special_exts:
         if path.endswith(ext):
-            name, ext = path[:-len(ext)], path[-len(ext):]
+            name, ext = path[: -len(ext)], path[-len(ext) :]
             break
     else:
         name, ext = splitext(path)
@@ -552,20 +613,20 @@ def split_archive_ext(path):
 
 
 TESTIMG_URL_DICT = {
-    'grace.jpg' : 'http://i.imgur.com/rgQyu7r.jpg',
-    'jeff.png'  : 'http://i.imgur.com/l00rECD.png',
-    'ada2.jpg'  : 'http://i.imgur.com/zHOpTCb.jpg',
-    'ada.jpg'   : 'http://i.imgur.com/iXNf4Me.jpg',
-    'lena.png'  : 'http://i.imgur.com/JGrqMnV.png',  # depricate lena
-    'astro.png' : 'https://i.imgur.com/KXhKM72.png',  # Use instead of lena
-    'carl.jpg'  : 'http://i.imgur.com/flTHWFD.jpg',
-    'easy1.png' : 'http://i.imgur.com/Qqd0VNq.png',
-    'easy2.png' : 'http://i.imgur.com/BDP8MIu.png',
-    'easy3.png' : 'http://i.imgur.com/zBcm5mS.png',
-    'hard3.png' : 'http://i.imgur.com/ST91yBf.png',
-    'zebra.png' : 'http://i.imgur.com/58hbGcd.png',
-    'star.png'  : 'http://i.imgur.com/d2FHuIU.png',
-    'patsy.jpg' : 'http://i.imgur.com/C1lNRfT.jpg',
+    'grace.jpg': 'http://i.imgur.com/rgQyu7r.jpg',
+    'jeff.png': 'http://i.imgur.com/l00rECD.png',
+    'ada2.jpg': 'http://i.imgur.com/zHOpTCb.jpg',
+    'ada.jpg': 'http://i.imgur.com/iXNf4Me.jpg',
+    'lena.png': 'http://i.imgur.com/JGrqMnV.png',  # depricate lena
+    'astro.png': 'https://i.imgur.com/KXhKM72.png',  # Use instead of lena
+    'carl.jpg': 'http://i.imgur.com/flTHWFD.jpg',
+    'easy1.png': 'http://i.imgur.com/Qqd0VNq.png',
+    'easy2.png': 'http://i.imgur.com/BDP8MIu.png',
+    'easy3.png': 'http://i.imgur.com/zBcm5mS.png',
+    'hard3.png': 'http://i.imgur.com/ST91yBf.png',
+    'zebra.png': 'http://i.imgur.com/58hbGcd.png',
+    'star.png': 'http://i.imgur.com/d2FHuIU.png',
+    'patsy.jpg': 'http://i.imgur.com/C1lNRfT.jpg',
 }
 
 
@@ -588,6 +649,7 @@ def clear_test_img_cache():
         >>> print(result)
     """
     import utool as ut
+
     download_dir = util_cplat.get_app_cache_dir('utool')
     for key in TESTIMG_URL_DICT:
         fpath = join(download_dir, key)
@@ -627,10 +689,11 @@ def grab_test_imgpath(key='lena.png', allow_external=True, verbose=True):
         testimg_fpath = key
         if not util_path.checkpath(testimg_fpath, verbose=True):
             import utool as ut
+
             raise AssertionError(
-                'testimg_fpath=%r not found did you mean %s' % (
-                    testimg_fpath,
-                    ut.conj_phrase(get_valid_test_imgkeys(), 'or')))
+                'testimg_fpath=%r not found did you mean %s'
+                % (testimg_fpath, ut.conj_phrase(get_valid_test_imgkeys(), 'or'))
+            )
     else:
         testimg_fname = key
         testimg_url = TESTIMG_URL_DICT[key]
@@ -667,6 +730,7 @@ def grab_selenium_chromedriver(redownload=False):
     import utool as ut
     import os
     import stat
+
     # TODO: use a better download dir (but it must be in the PATh or selenium freaks out)
     chromedriver_dpath = ut.ensuredir(ut.truepath('~/bin'))
     chromedriver_fpath = join(chromedriver_dpath, 'chromedriver')
@@ -675,9 +739,17 @@ def grab_selenium_chromedriver(redownload=False):
         # TODO: make this work for windows as well
         if ut.LINUX and ut.util_cplat.is64bit_python():
             import requests
-            rsp = requests.get('http://chromedriver.storage.googleapis.com/LATEST_RELEASE', timeout=TIMEOUT)
+
+            rsp = requests.get(
+                'http://chromedriver.storage.googleapis.com/LATEST_RELEASE',
+                timeout=TIMEOUT,
+            )
             assert rsp.status_code == 200
-            url = 'http://chromedriver.storage.googleapis.com/' + rsp.text.strip() + '/chromedriver_linux64.zip'
+            url = (
+                'http://chromedriver.storage.googleapis.com/'
+                + rsp.text.strip()
+                + '/chromedriver_linux64.zip'
+            )
             ut.grab_zipped_url(url, download_dir=chromedriver_dpath, redownload=True)
         else:
             raise AssertionError('unsupported chrome driver getter script')
@@ -694,6 +766,7 @@ def grab_selenium_driver(driver_name=None):
     pip install selenium -U
     """
     from selenium import webdriver
+
     if driver_name is None:
         driver_name = 'firefox'
     if driver_name.lower() == 'chrome':
@@ -708,10 +781,10 @@ def grab_selenium_driver(driver_name=None):
 
 HASH_DICT = {
     # No local file hash verification, but we need to verify validity of remote hash
-    'sha1.custom' : hashlib.sha1,
-    'md5'         : hashlib.md5,
-    'sha1'        : hashlib.sha1,
-    'sha256'      : hashlib.sha256,
+    'sha1.custom': hashlib.sha1,
+    'md5': hashlib.md5,
+    'sha1': hashlib.sha1,
+    'sha256': hashlib.sha256,
 }
 
 
@@ -722,11 +795,13 @@ def get_file_local_hash(fpath, hash_list, verbose=False):
             continue
 
         if hash_tag not in HASH_DICT:
-            raise ValueError('Unrecognized hashing function (custom, md5, sha1, sha256 supported).')
+            raise ValueError(
+                'Unrecognized hashing function (custom, md5, sha1, sha256 supported).'
+            )
 
         # Get the hashing parameters and the expected hash destination
         hasher = HASH_DICT[hash_tag]()
-        hash_fpath = '%s.%s' % (fpath, hash_tag, )
+        hash_fpath = '%s.%s' % (fpath, hash_tag,)
 
         if exists(hash_fpath):
             with open(hash_fpath, 'r') as hash_file:
@@ -734,7 +809,9 @@ def get_file_local_hash(fpath, hash_list, verbose=False):
 
             if not hash_tag.endswith('.custom'):
                 # Get the current local hash of the file and verify it
-                hash_local_fresh = util_hash.get_file_hash(fpath, hasher=hasher, hexdigest=True)
+                hash_local_fresh = util_hash.get_file_hash(
+                    fpath, hasher=hasher, hexdigest=True
+                )
                 if hash_local_fresh != hash_local:
                     continue
 
@@ -761,14 +838,16 @@ def grab_file_remote_hash(file_url, hash_list, verbose=False):
             continue
 
         if hash_tag not in HASH_DICT:
-            raise ValueError('Unrecognized hashing function (custom, md5, sha1, sha256 supported).')
+            raise ValueError(
+                'Unrecognized hashing function (custom, md5, sha1, sha256 supported).'
+            )
 
         # Get the hashing parameters and the expected hash destination
         hasher = HASH_DICT[hash_tag]()
-        hash_url = '%s.%s' % (file_url, hash_tag, )
+        hash_url = '%s.%s' % (file_url, hash_tag,)
 
         if verbose:
-            print('[utool] Checking remote hash URL %r' % (hash_url, ))
+            print('[utool] Checking remote hash URL %r' % (hash_url,))
 
         # Get the actual hash from the remote server, save in memory
         try:
@@ -796,9 +875,17 @@ def grab_file_remote_hash(file_url, hash_list, verbose=False):
     return None, None
 
 
-def grab_file_url(file_url, appname='utool', download_dir=None, delay=None,
-                  spoof=False, fname=None, verbose=True, redownload=False,
-                  check_hash=False):
+def grab_file_url(
+    file_url,
+    appname='utool',
+    download_dir=None,
+    delay=None,
+    spoof=False,
+    fname=None,
+    verbose=True,
+    redownload=False,
+    check_hash=False,
+):
     r"""
     Downloads a file and returns the local path of the file.
 
@@ -870,23 +957,29 @@ def grab_file_url(file_url, appname='utool', download_dir=None, delay=None,
             hash_list = ['md5']
             # hash_list = ['sha1.custom', 'md5', 'sha1', 'sha256']
         # Get expected remote file
-        hash_remote, hash_tag_remote = grab_file_remote_hash(file_url, hash_list, verbose=verbose)
+        hash_remote, hash_tag_remote = grab_file_remote_hash(
+            file_url, hash_list, verbose=verbose
+        )
         hash_list = [hash_tag_remote]
         # We have a valid candidate hash from remote, check for same hash locally
-        hash_local, hash_tag_local = get_file_local_hash(fpath, hash_list, verbose=verbose)
+        hash_local, hash_tag_local = get_file_local_hash(
+            fpath, hash_list, verbose=verbose
+        )
         if verbose:
-            print('[utool] Pre Local Hash:  %r' % (hash_local, ))
-            print('[utool] Pre Remote Hash: %r' % (hash_remote, ))
+            print('[utool] Pre Local Hash:  %r' % (hash_local,))
+            print('[utool] Pre Remote Hash: %r' % (hash_remote,))
         # Check all 4 hash conditions
         if hash_remote is None:
             # No remote hash provided, turn off post-download hash check
             check_hash = False
         elif hash_local is None:
             if verbose:
-                print('[utool] Remote hash provided but local hash missing, redownloading.')
+                print(
+                    '[utool] Remote hash provided but local hash missing, redownloading.'
+                )
             redownload = True
         elif hash_local == hash_remote:
-            assert hash_tag_local == hash_tag_remote, ('hash tag disagreement')
+            assert hash_tag_local == hash_tag_remote, 'hash tag disagreement'
         else:
             if verbose:
                 print('[utool] Both hashes provided, but they disagree, redownloading.')
@@ -910,21 +1003,30 @@ def grab_file_url(file_url, appname='utool', download_dir=None, delay=None,
     # Post-download local hash verification
     if check_hash:
         # File has been successfuly downloaded, write remote hash to local hash file
-        hash_fpath = '%s.%s' % (fpath, hash_tag_remote, )
+        hash_fpath = '%s.%s' % (fpath, hash_tag_remote,)
         with open(hash_fpath, 'w') as hash_file:
             hash_file.write(hash_remote)
         # For sanity check (custom) and file verification (hashing), get local hash again
-        hash_local, hash_tag_local = get_file_local_hash(fpath, hash_list, verbose=verbose)
+        hash_local, hash_tag_local = get_file_local_hash(
+            fpath, hash_list, verbose=verbose
+        )
         if verbose:
-            print('[utool] Post Local Hash: %r' % (hash_local, ))
+            print('[utool] Post Local Hash: %r' % (hash_local,))
         assert hash_local == hash_remote, 'Post-download hash disagreement'
         assert hash_tag_local == hash_tag_remote, 'Post-download hash tag disagreement'
     return fpath
 
 
-def grab_zipped_url(zipped_url, ensure=True, appname='utool',
-                    download_dir=None, force_commonprefix=True, cleanup=False,
-                    redownload=False, spoof=False):
+def grab_zipped_url(
+    zipped_url,
+    ensure=True,
+    appname='utool',
+    download_dir=None,
+    force_commonprefix=True,
+    cleanup=False,
+    redownload=False,
+    spoof=False,
+):
     r"""
     downloads and unzips the url
 
@@ -980,7 +1082,7 @@ def grab_zipped_url(zipped_url, ensure=True, appname='utool',
         if not exists(data_dir) or redownload:
             # Download and unzip testdata
             zip_fpath = realpath(join(download_dir, zip_fname))
-            #print('[utool] Downloading archive %s' % zip_fpath)
+            # print('[utool] Downloading archive %s' % zip_fpath)
             if not exists(zip_fpath) or redownload:
                 download_url(zipped_url, zip_fpath, spoof=spoof)
             unarchive_file(zip_fpath, force_commonprefix)
@@ -995,34 +1097,36 @@ def geo_locate(default='Unknown', timeout=1):
     try:
         import urllib2
         import json
-        req = urllib2.Request('http://freegeoip.net/json/',
-                              headers={'User-Agent': 'Mozilla/5.0' })
+
+        req = urllib2.Request(
+            'http://freegeoip.net/json/', headers={'User-Agent': 'Mozilla/5.0'}
+        )
         f = urllib2.urlopen(req, timeout=timeout)
         json_string = f.read()
         f.close()
         location = json.loads(json_string)
-        location_city    = location['city']
-        location_state   = location['region_name']
+        location_city = location['city']
+        location_state = location['region_name']
         location_country = location['country_name']
-        location_zip     = location['zipcode']
+        location_zip = location['zipcode']
         success = True
     except Exception:
         success = False
-        location_city    = default
-        location_state   = default
-        location_zip     = default
+        location_city = default
+        location_state = default
+        location_zip = default
         location_country = default
     return success, location_city, location_state, location_country, location_zip
 
 
 def s3_dict_encode_to_str(s3_dict, return_local_directory_if_available=False):
     default_s3_dict = {
-        '_localDirect'    : None,
-        'bucket'          : None,
-        'key'             : None,
-        'auth_domain'     : None,
-        'auth_access_id'  : None,
-        'auth_secret_key' : None,
+        '_localDirect': None,
+        'bucket': None,
+        'key': None,
+        'auth_domain': None,
+        'auth_access_id': None,
+        'auth_secret_key': None,
     }
     default_s3_dict.update(s3_dict)
     # Remove any miscellaneous keys received, enumerated explicitly below
@@ -1062,11 +1166,11 @@ def s3_dict_encode_to_str(s3_dict, return_local_directory_if_available=False):
 
 def s3_str_decode_to_dict(s3_str):
     default_s3_dict = {
-        'bucket'          : None,
-        'key'             : None,
-        'auth_domain'     : None,
-        'auth_access_id'  : None,
-        'auth_secret_key' : None,
+        'bucket': None,
+        'key': None,
+        'auth_domain': None,
+        'auth_access_id': None,
+        'auth_secret_key': None,
     }
     assert s3_str.startswith('s3://')
 
@@ -1074,10 +1178,10 @@ def s3_str_decode_to_dict(s3_str):
     left, right = s3_str.split('@')
     left = left.split(':')
     right = right.split(':')
-    default_s3_dict['bucket']          = right[1]
-    default_s3_dict['key']             = right[2]
-    default_s3_dict['auth_domain']     = right[0]
-    default_s3_dict['auth_access_id']  = left[0]
+    default_s3_dict['bucket'] = right[1]
+    default_s3_dict['key'] = right[2]
+    default_s3_dict['auth_domain'] = right[0]
+    default_s3_dict['auth_access_id'] = left[0]
     default_s3_dict['auth_secret_key'] = left[1]
 
     assert len(default_s3_dict.keys()) == 5
@@ -1092,10 +1196,12 @@ def s3_str_decode_to_dict(s3_str):
     return default_s3_dict
 
 
-def read_s3_contents(bucket, key, auth_access_id=None, auth_secret_key=None,
-                     auth_domain=None):
+def read_s3_contents(
+    bucket, key, auth_access_id=None, auth_secret_key=None, auth_domain=None
+):
     import boto
     from boto.s3.connection import S3Connection
+
     if auth_access_id is not None and auth_secret_key is not None:
         conn = S3Connection(auth_access_id, auth_secret_key)
         bucket = conn.get_bucket(bucket)
@@ -1115,10 +1221,12 @@ def read_s3_contents(bucket, key, auth_access_id=None, auth_secret_key=None,
     return contents
 
 
-def grab_s3_contents(fpath, bucket, key, auth_access_id=None, auth_secret_key=None,
-                     auth_domain=None):
+def grab_s3_contents(
+    fpath, bucket, key, auth_access_id=None, auth_secret_key=None, auth_domain=None
+):
     import boto
     from boto.s3.connection import S3Connection
+
     if auth_access_id is not None and auth_secret_key is not None:
         conn = S3Connection(auth_access_id, auth_secret_key)
         bucket = conn.get_bucket(bucket)
@@ -1140,6 +1248,7 @@ def grab_s3_contents(fpath, bucket, key, auth_access_id=None, auth_secret_key=No
 def scp_pull(remote_path, local_path='.', remote='localhost', user=None):
     r""" wrapper for scp """
     import utool as ut
+
     if user is not None:
         remote_uri = user + '@' + remote + ':' + remote_path
     else:
@@ -1157,8 +1266,10 @@ def list_remote(remote_uri, verbose=False):
     if not remote_dpath:
         remote_dpath = '.'
     import utool as ut
+
     out = ut.cmd('ssh', remote_uri1, 'ls -l %s' % (remote_dpath,), verbose=verbose)
     import re
+
     # Find lines that look like ls output
     split_lines = [re.split(r'\s+', t) for t in out[0].split('\n')]
     paths = [' '.join(t2[8:]) for t2 in split_lines if len(t2) > 8]
@@ -1211,9 +1322,10 @@ def rsync(src_uri, dst_uri, exclude_dirs=[], port=22, dryrun=False):
         -P                          same as --partial --progress
     """
     from utool import util_cplat
+
     rsync_exe = 'rsync'
     rsync_options = '-avhzP'
-    #rsync_options += ' --port=%d' % (port,)
+    # rsync_options += ' --port=%d' % (port,)
     rsync_options += ' -e "ssh -p %d"' % (port,)
     if len(exclude_dirs) > 0:
         exclude_tup = ['--exclude ' + dir_ for dir_ in exclude_dirs]
@@ -1227,7 +1339,7 @@ def rsync(src_uri, dst_uri, exclude_dirs=[], port=22, dryrun=False):
     print('[rsync] cmdstr = %r' % cmdstr)
     print(cmdstr)
 
-    #if not dryrun:
+    # if not dryrun:
     util_cplat.cmd(cmdstr, dryrun=dryrun)
 
 
@@ -1239,6 +1351,8 @@ if __name__ == '__main__':
         python -m utool.util_grabdata --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

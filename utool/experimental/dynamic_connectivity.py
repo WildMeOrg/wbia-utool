@@ -4,6 +4,7 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 import collections  # NOQA
 import networkx as nx
 import utool as ut
+
 print, rrr, profile = ut.inject2(__name__)
 # import bintrees
 # import rbtree
@@ -53,6 +54,7 @@ def comparison():
     num = 3
 
     import utool
+
     for timer in utool.Timerit(num, 'old bst version (PY)'):
         g = nx.balanced_tree(2, n)
         self = TestETT.from_tree(g, version='bst', fast=False)
@@ -60,6 +62,7 @@ def comparison():
             self.delete_edge_bst_version(a, b, bstjoin=False)
 
     import utool
+
     for timer in utool.Timerit(num, 'new bst version (PY) (with join)'):
         g = nx.balanced_tree(2, n)
         self = TestETT.from_tree(g, version='bst', fast=False)
@@ -67,6 +70,7 @@ def comparison():
             self.delete_edge_bst_version(a, b, bstjoin=True)
 
     import utool
+
     for timer in utool.Timerit(num, 'old bst version (C)'):
         g = nx.balanced_tree(2, n)
         self = TestETT.from_tree(g, version='bst', fast=True)
@@ -74,6 +78,7 @@ def comparison():
             self.delete_edge_bst_version(a, b, bstjoin=False)
 
     import utool
+
     for timer in utool.Timerit(num, 'new bst version (C) (with join)'):
         g = nx.balanced_tree(2, n)
         self = TestETT.from_tree(g, version='bst', fast=True)
@@ -81,6 +86,7 @@ def comparison():
             self.delete_edge_bst_version(a, b, bstjoin=True)
 
     import utool
+
     for timer in utool.Timerit(num, 'list version'):
         g = nx.balanced_tree(2, n)
         self = TestETT.from_tree(g, version='list')
@@ -123,6 +129,7 @@ class TestETT(object):
 
         >>> mst = nx.balanced_tree(2, 4)
     """
+
     def __init__(self):
         pass
 
@@ -151,6 +158,7 @@ class TestETT(object):
     @profile
     def from_tour(TestETT, tour, version='bst', fast=True):
         import bintrees
+
         self = TestETT()
         self.fast = fast
         self.version = version
@@ -182,6 +190,7 @@ class TestETT(object):
 
             """
             import sortedcontainers
+
             tour_order = sortedcontainers.SortedList(enumerate(tour))
             self.first_lookup = dict(i[::-1] for i in tour_order[::-1])
             self.last_lookup = dict(i[::-1] for i in tour_order)
@@ -229,14 +238,13 @@ class TestETT(object):
             # ET(T2) inner - is given by the interval of ET (o_b1, o_b2)
             # Smaller compoment is reconstructed
             # in amortized O(log(n)) time
-            t2_slice = self.tour_tree[o_b1:o_b2 + 1]
+            t2_slice = self.tour_tree[o_b1 : o_b2 + 1]
             t2_tour = list(t2_slice.values())
-            other = TestETT.from_tour(t2_tour, version=self.version,
-                                            fast=self.fast)
+            other = TestETT.from_tour(t2_tour, version=self.version, fast=self.fast)
 
             # ET(T1) outer - is given by splicing out of ET the sequence
             # (o_b1, o_a2)
-            t1_splice = self.tour_tree[o_b1:o_a2 + 1]
+            t1_splice = self.tour_tree[o_b1 : o_a2 + 1]
             self.tour_tree.remove_items(t1_splice)
         return other
 
@@ -253,13 +261,12 @@ class TestETT(object):
         # assert o_b1 < o_b2
         assert o_b2 < o_a2
 
-        t2_list = self.tour[o_b1:o_b2 + 1]
-        other = TestETT.from_tour(t2_list, version=self.version,
-                                        fast=self.fast)
+        t2_list = self.tour[o_b1 : o_b2 + 1]
+        other = TestETT.from_tour(t2_list, version=self.version, fast=self.fast)
 
         # ET(T1) outer - is given by splicing out of ET the sequence
         # (o_b1, o_a2)
-        self.tour = self.tour[:o_b1] + self.tour[o_a2 + 1:]
+        self.tour = self.tour[:o_b1] + self.tour[o_a2 + 1 :]
         # need to recompute lookups O(n) style
         # maybe we can do better?
         # Keep old keys
@@ -284,14 +291,14 @@ class TestETT(object):
         # remove its first occurrence (or),
         o_s1 = self.first_lookup[s]
         splice1 = self.tour[1:o_s1]
-        rest = self.tour[o_s1 + 1:]
+        rest = self.tour[o_s1 + 1 :]
         new_tour = [s] + rest + splice1 + [s]
-        new_tree = TestETT.from_tour(new_tour, version=self.version,
-                                           fast=self.fast)
+        new_tree = TestETT.from_tour(new_tour, version=self.version, fast=self.fast)
         return new_tree
 
     def to_networkx(self):
         import utool as ut
+
         return nx.Graph(ut.itertwo(self.tour))
 
     def join_trees(self, t1, t2, e):
@@ -333,6 +340,7 @@ class EulerTourList(object):
 
     def __iter__(self):
         import itertools as it
+
         return it.chain.from_iterable(self._lists)
 
     def __repr__(self):
@@ -360,8 +368,8 @@ class EulerTourList(object):
 
     def split(self, pos, idx):
         (pos, idx) = self._pos(index)
-        left_part = self._lists[0:pos + 1]
-        right_part = self._lists[pos + 1:0]
+        left_part = self._lists[0 : pos + 1]
+        right_part = self._lists[pos + 1 : 0]
 
         left_last = left_part[-1][:idx]
         right_first = left_part[-1][idx:]
@@ -384,8 +392,7 @@ class EulerTourList(object):
         values = list(iterable)
 
         _load = self._load
-        _lists.extend(values[pos:(pos + _load)]
-                      for pos in range(0, len(values), _load))
+        _lists.extend(values[pos : (pos + _load)] for pos in range(0, len(values), _load))
         self._cumlen = ut.cumsum(map(len, _lists))
         self._len = len(values)
 
@@ -418,6 +425,7 @@ class EulerTourTree(object):
         >>> print(self.last_lookup)
         >>> ut.show_if_requested()
     """
+
     def __init__(self):
         # node attributes in reprsented graph
         self.first_lookup = {}
@@ -454,6 +462,7 @@ class EulerTourTree(object):
     @profile
     def from_tour(EulerTourTree, tour, fast=False, start=0):
         import bintrees
+
         self = EulerTourTree()
         self.fast = fast
 
@@ -533,7 +542,7 @@ class EulerTourTree(object):
         # remove its first occurrence (or),
         o_s1 = self.first_lookup[s]
         splice1 = self.tour[1:o_s1]
-        rest = self.tour[o_s1 + 1:]
+        rest = self.tour[o_s1 + 1 :]
         new_tour = [s] + rest + splice1 + [s]
         new_tree = TestETT.from_tour(new_tour, fast=self.fast)
         return new_tree
@@ -617,6 +626,7 @@ class DummyEulerTourForest(object):
 
     This is a bad implementation, but will let us use the DynConnGraph api
     """
+
     def __init__(self, nodes=None):
         # mapping from root node to tree
         self.trees = {}
@@ -676,8 +686,10 @@ class DummyEulerTourForest(object):
         if rv is None:
             self.add_node(v)
             rv = v
-        assert ru is not rv, (
-            'u=%r, v=%r not disjoint, can only join disjoint edges' % (u, v))
+        assert ru is not rv, 'u=%r, v=%r not disjoint, can only join disjoint edges' % (
+            u,
+            v,
+        )
         assert ru in self.trees, 'ru must be a root node'
         assert rv in self.trees, 'rv must be a root node'
         subtree1 = self.trees[ru]
@@ -771,12 +783,14 @@ class DynConnGraph(object):
 
     def show_internals(self, fnum=None):
         import wbia.plottool as pt
+
         pt.qtensure()
 
         pnum_ = pt.make_pnum_nextgen(nRows=1, nCols=len(self.forests))
         for level, forest in enumerate(self.forests):
-            pt.show_nx(forest.to_networkx(), title='level=%r' % (level,),
-                       fnum=fnum, pnum=pnum_())
+            pt.show_nx(
+                forest.to_networkx(), title='level=%r' % (level,), fnum=fnum, pnum=pnum_()
+            )
 
     def _init_forests():
         """
@@ -943,6 +957,8 @@ if __name__ == '__main__':
         python -m wbia.algo.hots.dynamic_connectivity --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function, unicode_literals
 from utool import util_inject
+
 print, rrr, profile = util_inject.inject2(__name__)
 
 
@@ -26,6 +27,7 @@ def is_local_port_open(port):
         >>> assert is_local_port_open(port) is True, 'maybe this port is actually used?'
     """
     import socket
+
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     result = s.connect_ex(('127.0.0.1', port))
     s.close()
@@ -41,6 +43,7 @@ def find_open_port(base=5000):
 
 def get_localhost():
     import socket
+
     try:
         return socket.gethostbyname(socket.gethostname())
     except socket.gaierror:
@@ -59,6 +62,7 @@ def _testping():
         >>> print(result)
     """
     import requests
+
     url = 'http://%s:%s' % (get_localhost(), 5832)
     requests.post(url, data={'hello': 'world'})
 
@@ -88,24 +92,27 @@ def start_simple_webserver(domain=None, port=5832):
     import tornado.httpserver
     import tornado.wsgi
     import flask
+
     app = flask.Flask('__simple__')
+
     @app.route('/', methods=['GET', 'POST', 'DELETE', 'PUT'])
     def echo_args(*args, **kwargs):
         from flask import request
+
         print('Simple server was pinged')
         print('args = %r' % (args,))
         print('kwargs = %r' % (kwargs,))
         print('request.args = %r' % (request.args,))
         print('request.form = %r' % (request.form,))
         return ''
+
     if domain is None:
         domain = get_localhost()
     app.server_domain = domain
     app.server_port = port
     app.server_url = 'http://%s:%s' % (app.server_domain, app.server_port)
     print('app.server_url = %s' % (app.server_url,))
-    http_server = tornado.httpserver.HTTPServer(
-        tornado.wsgi.WSGIContainer(app))
+    http_server = tornado.httpserver.HTTPServer(tornado.wsgi.WSGIContainer(app))
     http_server.listen(app.server_port)
     tornado.ioloop.IOLoop.instance().start()
 
@@ -137,6 +144,8 @@ if __name__ == '__main__':
         python -m utool.util_web --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

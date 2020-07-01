@@ -47,22 +47,30 @@ class _NoParamType(object):
         >>> #versions['post_reload1'] = ut.util_const.NoParam
         >>> #versions['post_reload2'] = ut.util_const.NoParam
     """
+
     def __new__(cls):
         return NoParam
+
     def __reduce__(self):
         return (_NoParamType, ())
+
     def __copy__(self):
         return NoParam
+
     def __deepcopy__(self, memo):
         return NoParam
+
     def __call__(self, default):
         pass
+
     def __str__(cls):
         return 'NoParam'
         # return "<type 'NoParamType'>"
+
     def __repr__(cls):
         return 'NoParam'
         # return "<type 'NoParamType'>"
+
 
 # Create the only instance of _NoParamType that should ever exist
 try:
@@ -132,6 +140,8 @@ if __name__ == '__main__':
         python -m utool.util_const --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

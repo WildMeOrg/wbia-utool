@@ -5,6 +5,7 @@ import os
 from os.path import split, exists, join, dirname
 from utool import util_inject
 from utool._internal import meta_util_arg
+
 print, rrr, profile = util_inject.inject2(__name__)
 
 
@@ -34,6 +35,7 @@ def in_virtual_env():
         >>> print(result)
     """
     import sys
+
     has_venv = False
     if hasattr(sys, 'real_prefix'):
         # For virtualenv module
@@ -55,6 +57,7 @@ def get_site_packages_dir():
         http://stackoverflow.com/questions/7335992/ipython-and-virtualenv-ignoring-site-packages
     """
     import distutils.sysconfig
+
     return distutils.sysconfig.get_python_lib()
 
 
@@ -64,6 +67,7 @@ def get_global_dist_packages_dir():
     Essentially this is implmenented as a lookuptable
     """
     import utool as ut
+
     if not ut.in_virtual_env():
         # Non venv case
         return get_site_packages_dir()
@@ -71,6 +75,7 @@ def get_global_dist_packages_dir():
         candidates = []
         if ut.LINUX:
             import sys
+
             candidates += [
                 '/usr/lib/python%s/dist-packages' % (sys.version[0:3],),
                 '/usr/lib/python%s/dist-packages' % (sys.version[0:1],),
@@ -88,6 +93,7 @@ def get_local_dist_packages_dir():
     Essentially this is implmenented as a lookuptable
     """
     import utool as ut
+
     if not ut.in_virtual_env():
         # Non venv case
         return get_site_packages_dir()
@@ -132,7 +138,7 @@ def locate_path(dname, recurse_down=True):
         if not recurse_down:
             break
     msg = 'Cannot locate dname=%r' % (dname,)
-    msg = ('\n[sysreq!] Checked: '.join(tried_fpaths))
+    msg = '\n[sysreq!] Checked: '.join(tried_fpaths)
     print(msg)
     raise ImportError(msg)
 
@@ -171,6 +177,7 @@ def total_purge_developed_repo(repodir):
     assert repodir is not None
     import utool as ut
     import os
+
     repo = ut.util_git.Repo(dpath=repodir)
 
     user = os.environ['USER']
@@ -185,26 +192,33 @@ def total_purge_developed_repo(repodir):
         venv_site_pkgs=ut.get_site_packages_dir(),
     )
 
-    commands = [_.format(**fmtdict) for _ in [
-        'pip uninstall {modname}',
-        'sudo -H pip uninstall {modname}',
-        'sudo pip uninstall {modname}',
-        'easy_install -m {modname}',
-        'cd {dpath} && python setup.py develop --uninstall',
-        # If they still exist try chowning to current user
-        'sudo chown -R {user}:{user} {dpath}',
-    ]]
+    commands = [
+        _.format(**fmtdict)
+        for _ in [
+            'pip uninstall {modname}',
+            'sudo -H pip uninstall {modname}',
+            'sudo pip uninstall {modname}',
+            'easy_install -m {modname}',
+            'cd {dpath} && python setup.py develop --uninstall',
+            # If they still exist try chowning to current user
+            'sudo chown -R {user}:{user} {dpath}',
+        ]
+    ]
     print('Normal uninstall commands')
     print('\n'.join(commands))
 
-    possible_link_paths = [_.format(**fmtdict) for _ in [
-        '{dpath}/{modname}.egg-info',
-        '{dpath}/build',
-        '{venv_site_pkgs}/{reponame}.egg-info',
-        '{local_site_pkgs}/{reponame}.egg-info',
-        '{venv_site_pkgs}/{reponame}.egg-info',
-    ]]
+    possible_link_paths = [
+        _.format(**fmtdict)
+        for _ in [
+            '{dpath}/{modname}.egg-info',
+            '{dpath}/build',
+            '{venv_site_pkgs}/{reponame}.egg-info',
+            '{local_site_pkgs}/{reponame}.egg-info',
+            '{venv_site_pkgs}/{reponame}.egg-info',
+        ]
+    ]
     from os.path import exists, basename
+
     existing_link_paths = [path for path in possible_link_paths]
     print('# Delete paths and eggs')
     for path in existing_link_paths:
@@ -213,14 +227,17 @@ def total_purge_developed_repo(repodir):
                 print('sudo /bin/rm -rf {path}'.format(path=path))
             else:
                 print('/bin/rm -rf {path}'.format(path=path))
-        #ut.delete(path)
+        # ut.delete(path)
 
     print('# Make sure nothing is in the easy install paths')
-    easyinstall_paths = [_.format(**fmtdict) for _ in [
-        '{venv_site_pkgs}/easy-install.pth',
-        '{local_site_pkgs}/easy-install.pth',
-        '{venv_site_pkgs}/easy-install.pth',
-    ]]
+    easyinstall_paths = [
+        _.format(**fmtdict)
+        for _ in [
+            '{venv_site_pkgs}/easy-install.pth',
+            '{local_site_pkgs}/easy-install.pth',
+            '{venv_site_pkgs}/easy-install.pth',
+        ]
+    ]
     for path in easyinstall_paths:
         if exists(path):
             easy_install_list = ut.readfrom(path, verbose=False).strip().split('\n')
@@ -234,15 +251,17 @@ def total_purge_developed_repo(repodir):
                 else:
                     print('gvim {path}'.format(path=path))
 
-    checkcmds = [_.format(**fmtdict) for _ in [
-        'python -c "import {modname}; print({modname}.__file__)"'
-    ]]
+    checkcmds = [
+        _.format(**fmtdict)
+        for _ in ['python -c "import {modname}; print({modname}.__file__)"']
+    ]
     import sys
+
     assert repo.modname not in sys.modules
     print('# CHECK STATUS')
     for cmd in checkcmds:
         print(cmd)
-        #ut.cmd(cmd, verbose=False)
+        # ut.cmd(cmd, verbose=False)
 
 
 if __name__ == '__main__':
@@ -252,6 +271,8 @@ if __name__ == '__main__':
         python -m utool.util_sysreq --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

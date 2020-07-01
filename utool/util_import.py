@@ -8,8 +8,10 @@ SeeAlso:
 """
 from __future__ import absolute_import, division, print_function, unicode_literals
 from utool import util_inject
+
 # from utool import util_arg
 import sys
+
 print, rrr, profile = util_inject.inject2(__name__)
 
 
@@ -81,6 +83,7 @@ def import_star(modname, parent=None):
     """
     import six
     from os.path import dirname
+
     if parent is None:
         parent_module = None
     else:
@@ -130,19 +133,20 @@ def import_star_execstr(modname, parent=None):
     print(ut.import_star_execstr('opengm.inference'))
     """
     from utool import util_str
+
     module_vars = import_star(modname, parent=parent)
     fromlist_str = ', '.join(sorted(module_vars.keys()))
     fromimport_prefix = 'from {modname} import ('.format(modname=modname)
 
-    newline_prefix = (' ' * len(fromimport_prefix))
+    newline_prefix = ' ' * len(fromimport_prefix)
     if fromlist_str:
         rawstr = fromimport_prefix + fromlist_str + ',)'
     else:
         rawstr = ''
     textwidth = 79 - 4
-    fromimport_str = util_str.pack_into(rawstr, textwidth=textwidth,
-                                        newline_prefix=newline_prefix,
-                                        break_words=False)
+    fromimport_str = util_str.pack_into(
+        rawstr, textwidth=textwidth, newline_prefix=newline_prefix, break_words=False
+    )
 
     # fromimport_str = ut.autopep8_format(fromimport_str, ignore={})
     return fromimport_str
@@ -190,8 +194,9 @@ def possible_import_patterns(modname):
     return patterns
 
 
-def package_contents(package, with_pkg=False, with_mod=True, ignore_prefix=[],
-                     ignore_suffix=[]):
+def package_contents(
+    package, with_pkg=False, with_mod=True, ignore_prefix=[], ignore_suffix=[]
+):
     r"""
     References:
         http://stackoverflow.com/questions/1707709/list-all-the-modules-that-are-part-of-a-python-package
@@ -220,13 +225,14 @@ def package_contents(package, with_pkg=False, with_mod=True, ignore_prefix=[],
         >>> print(ut.repr2(result))
     """
     import pkgutil
+
     if not hasattr(package, '__path__'):
         return [package.__name__]
     #    pass
     print('package = %r' % (package,))
-    walker = pkgutil.walk_packages(package.__path__,
-                                   prefix=package.__name__ + '.',
-                                   onerror=lambda x: None)
+    walker = pkgutil.walk_packages(
+        package.__path__, prefix=package.__name__ + '.', onerror=lambda x: None
+    )
     module_list = []
     for importer, modname, ispkg in walker:
         if any(modname.startswith(prefix) for prefix in ignore_prefix):
@@ -248,12 +254,14 @@ def get_modpath_from_modname(modname, prefer_pkg=False, prefer_main=False):
         get_modpath
     """
     from os.path import dirname, basename, join, exists
+
     initname = '__init__.py'
     mainname = '__main__.py'
     if modname in sys.modules:
         modpath = sys.modules[modname].__file__.replace('.pyc', '.py')
     else:
         import pkgutil
+
         loader = pkgutil.find_loader(modname)
         modpath = loader.filename.replace('.pyc', '.py')
         if '.' not in basename(modpath):
@@ -263,7 +271,7 @@ def get_modpath_from_modname(modname, prefer_pkg=False, prefer_main=False):
             modpath = dirname(modpath)
     if prefer_main:
         if modpath.endswith(initname):
-            main_modpath = modpath[:-len(initname)] + mainname
+            main_modpath = modpath[: -len(initname)] + mainname
             if exists(main_modpath):
                 modpath = main_modpath
     return modpath
@@ -300,6 +308,7 @@ def check_module_installed(modname):
         >>> assert 'this' not in sys.modules, 'module(this) should not have ever been imported'
     """
     import pkgutil
+
     if '.' in modname:
         # Prevent explicit import if possible
         parts = modname.split('.')
@@ -387,8 +396,9 @@ def tryimport(modname, pipiname=None, ensure=False):
         return module
     except ImportError as ex:
         import utool as ut
+
         base_pipcmd = 'pip install %s' % pipiname
-        sudo  = not ut.WIN32 and not ut.in_virtual_env()
+        sudo = not ut.WIN32 and not ut.in_virtual_env()
         if sudo:
             pipcmd = 'sudo ' + base_pipcmd
         else:
@@ -397,12 +407,16 @@ def tryimport(modname, pipiname=None, ensure=False):
         print(msg)
         ut.printex(ex, msg, iswarning=True)
         if ensure:
-            raise AssertionError('Ensure is dangerous behavior and is is no longer supported.')
-            #raise NotImplementedError('not ensuring')
+            raise AssertionError(
+                'Ensure is dangerous behavior and is is no longer supported.'
+            )
+            # raise NotImplementedError('not ensuring')
             ut.cmd(base_pipcmd, sudo=sudo)
             module = tryimport(modname, pipiname, ensure=False)
             if module is None:
-                raise AssertionError('Cannot ensure modname=%r please install using %r'  % (modname, pipcmd))
+                raise AssertionError(
+                    'Cannot ensure modname=%r please install using %r' % (modname, pipcmd)
+                )
             return module
         return None
 
@@ -580,12 +594,12 @@ def import_module_from_fpath(module_fpath):
     """
     from os.path import basename, splitext, isdir, join, exists, dirname, split
     import platform
+
     if isdir(module_fpath):
         module_fpath = join(module_fpath, '__init__.py')
     print('module_fpath = {!r}'.format(module_fpath))
     if not exists(module_fpath):
-        raise ImportError('module_fpath={!r} does not exist'.format(
-            module_fpath))
+        raise ImportError('module_fpath={!r} does not exist'.format(module_fpath))
     python_version = platform.python_version()
     modname = splitext(basename(module_fpath))[0]
     if modname == '__init__':
@@ -595,20 +609,21 @@ def import_module_from_fpath(module_fpath):
             util_inject.noinject(modname, N=2, via='ut.import_module_from_fpath')
     if python_version.startswith('2.7'):
         import imp
+
         module = imp.load_source(modname, module_fpath)
     elif python_version.startswith('3'):
         import importlib.machinery
+
         loader = importlib.machinery.SourceFileLoader(modname, module_fpath)
         module = loader.load_module()
         # module = loader.exec_module(modname)
     else:
-        raise AssertionError('invalid python version={!r}'.format(
-            python_version))
+        raise AssertionError('invalid python version={!r}'.format(python_version))
     return module
 
 
-#modname = 'theano'
-#theano = LazyModule(modname)
+# modname = 'theano'
+# theano = LazyModule(modname)
 if __name__ == '__main__':
     """
     CommandLine:
@@ -617,6 +632,8 @@ if __name__ == '__main__':
         python -m utool.util_import --allexamples --noface --nosrc
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

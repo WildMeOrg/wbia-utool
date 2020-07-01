@@ -7,8 +7,9 @@ from utool import util_path
 from six.moves import range, map, filter, zip  # NOQA
 
 
-def make_run_tests_script_text(test_headers, test_argvs, quick_tests=None,
-                               repodir=None, exclude_list=[]):
+def make_run_tests_script_text(
+    test_headers, test_argvs, quick_tests=None, repodir=None, exclude_list=[]
+):
     """
     Autogeneration function
 
@@ -28,7 +29,7 @@ def make_run_tests_script_text(test_headers, test_argvs, quick_tests=None,
     # General format of the testing script
 
     script_fmtstr = ut.codeblock(
-        r'''
+        r"""
         #!/bin/bash
         # Runs all tests
         # Win32 path hacks
@@ -131,10 +132,11 @@ def make_run_tests_script_text(test_headers, test_argvs, quick_tests=None,
         #---------------------------------------------
         # END TESTING
         END_TESTS
-        ''')
+        """
+    )
 
     testcmdline_fmtstr = ut.codeblock(
-        r'''
+        r"""
         case $i in --notest{header_lower})
             export {testflag}=OFF
             ;;
@@ -143,10 +145,11 @@ def make_run_tests_script_text(test_headers, test_argvs, quick_tests=None,
             export {testflag}=ON
             ;;
         esac
-        ''')
+        """
+    )
 
     header_test_block_fmstr = ut.codeblock(
-        r'''
+        r"""
 
         #---------------------------------------------
         #{header_text}
@@ -156,9 +159,10 @@ def make_run_tests_script_text(test_headers, test_argvs, quick_tests=None,
         EOF
         {testlines_block}
         fi
-        ''')
+        """
+    )
 
-    #specialargv = '--noshow'
+    # specialargv = '--noshow'
     specialargv = ''
     testline_fmtstr = 'RUN_TEST ${dirvar}/{fpath} {specialargv}'
     testline_fmtstr2 = 'RUN_TEST {fpath} {specialargv}'
@@ -167,7 +171,9 @@ def make_run_tests_script_text(test_headers, test_argvs, quick_tests=None,
         if dirvar is None:
             return testline_fmtstr2.format(fpath=fpath, specialargv=specialargv)
         else:
-            return testline_fmtstr.format(dirvar=dirvar, fpath=fpath, specialargv=specialargv)
+            return testline_fmtstr.format(
+                dirvar=dirvar, fpath=fpath, specialargv=specialargv
+            )
 
     default_flag_line_list = []
     defaulton_flag_line_list = []
@@ -180,8 +186,9 @@ def make_run_tests_script_text(test_headers, test_argvs, quick_tests=None,
     # Tests to always run
     if quick_tests is not None:
         quicktest_block = '\n'.join(
-            ['# Quick Tests (always run)'] +
-            ['RUN_TEST ' + testline for testline in quick_tests])
+            ['# Quick Tests (always run)']
+            + ['RUN_TEST ' + testline for testline in quick_tests]
+        )
     else:
         quicktest_block = '# No quick tests'
 
@@ -189,25 +196,28 @@ def make_run_tests_script_text(test_headers, test_argvs, quick_tests=None,
     for testdef_tup in test_headers:
         header, default, modname, dpath, pats, testcmds = testdef_tup
         # Build individual test type information
-        header_upper =  header.upper()
+        header_upper = header.upper()
         header_lower = header.lower()
         testflag = header_upper + '_TEST'
 
         if modname is not None:
             dirvar = header_upper + '_DIR'
-            dirdef = ''.join([
-                'export {dirvar}=$($PYEXE -c "',
-                'import os, {modname};',
-                'print(str(os.path.dirname(os.path.dirname({modname}.__file__))))',
-                '")']).format(dirvar=dirvar, modname=modname)
+            dirdef = ''.join(
+                [
+                    'export {dirvar}=$($PYEXE -c "',
+                    'import os, {modname};',
+                    'print(str(os.path.dirname(os.path.dirname({modname}.__file__))))',
+                    '")',
+                ]
+            ).format(dirvar=dirvar, modname=modname)
             dirdef_list.append(dirdef)
         else:
             dirvar = None
 
         # Build test dir
-        #dirvar = header_upper + '_DIR'
-        #dirdef = 'export {dirvar}={dirname}'.format(dirvar=dirvar, dirname=dirname)
-        #dirdef_list.append(dirdef)
+        # dirvar = header_upper + '_DIR'
+        # dirdef = 'export {dirvar}={dirname}'.format(dirvar=dirvar, dirname=dirname)
+        # dirdef_list.append(dirdef)
 
         # Build command line flags
         default_flag_line = 'export {testflag}=$DEFAULT'.format(testflag=testflag)
@@ -216,11 +226,10 @@ def make_run_tests_script_text(test_headers, test_argvs, quick_tests=None,
             defaulton_flag_line = 'export {testflag}=ON'.format(testflag=testflag)
             defaulton_flag_line_list.append(defaulton_flag_line)
 
-        testcmdline_fmtdict = dict(header_lower=header_lower,
-                                        testflag=testflag,)
+        testcmdline_fmtdict = dict(header_lower=header_lower, testflag=testflag,)
         testcmdline = testcmdline_fmtstr.format(**testcmdline_fmtdict)
 
-        #ut.ls(dpath)
+        # ut.ls(dpath)
 
         # VERY HACK BIT OF CODE
 
@@ -235,9 +244,11 @@ def make_run_tests_script_text(test_headers, test_argvs, quick_tests=None,
 
             if header_upper == 'OTHER':
                 # Hacky way to grab any other tests not explicitly seen in this directory
-                _testfpath_list = list(set(ut.glob(dpath_, '*.py')) - set(known_tests[dpath_]))
-                #_testfpath_list = ut.glob(dpath_, '*.py')
-                #set(known_tests[dpath_])
+                _testfpath_list = list(
+                    set(ut.glob(dpath_, '*.py')) - set(known_tests[dpath_])
+                )
+                # _testfpath_list = ut.glob(dpath_, '*.py')
+                # set(known_tests[dpath_])
             else:
                 _testfpath_list = ut.flatten([ut.glob(dpath_, pat) for pat in pats])
 
@@ -247,9 +258,11 @@ def make_run_tests_script_text(test_headers, test_argvs, quick_tests=None,
             _testfpath_list = list(filter(not_excluded, _testfpath_list))
 
             known_tests[dpath_].extend(_testfpath_list)
-            #print(_testfpath_list)
-            testfpath_list = [util_path.unixjoin(dpath, relpath(fpath, dpath_))
-                              for fpath in _testfpath_list]
+            # print(_testfpath_list)
+            testfpath_list = [
+                util_path.unixjoin(dpath, relpath(fpath, dpath_))
+                for fpath in _testfpath_list
+            ]
 
             testline_list = [format_testline(fpath, dirvar) for fpath in testfpath_list]
         else:
@@ -260,12 +273,13 @@ def make_run_tests_script_text(test_headers, test_argvs, quick_tests=None,
         # Construct test block for this type
         header_text = header_upper + ' TESTS'
         headerfont = 'cybermedium'
-        header_bubble_text =  ut.indent(ut.bubbletext(header_text, headerfont).strip())
+        header_bubble_text = ut.indent(ut.bubbletext(header_text, headerfont).strip())
         header_test_block_dict = dict(
             testflag=testflag,
             header_text=header_text,
             testlines_block=testlines_block,
-            header_bubble_text=header_bubble_text,)
+            header_bubble_text=header_bubble_text,
+        )
         header_test_block = header_test_block_fmstr.format(**header_test_block_dict)
 
         # Append to script lists
@@ -284,11 +298,13 @@ def make_run_tests_script_text(test_headers, test_argvs, quick_tests=None,
     script_fmtdict = dict(
         quicktest_block=quicktest_block,
         runtests_bubbletext=runtests_bubbletext,
-        test_argvs=test_argvs, dirdef_block=dirdef_block,
+        test_argvs=test_argvs,
+        dirdef_block=dirdef_block,
         testdefault_block=testdefault_block,
         testdefaulton_block=testdefaulton_block,
         testcmdline_block=testcmdline_block,
-        test_block=test_block,)
+        test_block=test_block,
+    )
     script_text = script_fmtstr.format(**script_fmtdict)
 
     return script_text
@@ -312,13 +328,11 @@ def autogen_wbia_runtest():
 
     """
 
-    quick_tests = [
-        'wbia/tests/assert_modules.py'
-    ]
+    quick_tests = ['wbia/tests/assert_modules.py']
 
-    #test_pattern = [
+    # test_pattern = [
     #    '~/code/ibeis/test_ibs*.py'
-    #]
+    # ]
 
     test_argvs = '--quiet --noshow'
 
@@ -332,12 +346,12 @@ def autogen_wbia_runtest():
     exclude_list = []
 
     # Verbosity to show which modules at least have some tests
-    #untested_modnames = ut.find_untested_modpaths(dpath_list, exclude_doctests_fnames, exclude_dirs)
-    #print('\nUNTESTED MODULES:' + ut.indentjoin(untested_modnames))
-    #print('\nTESTED MODULES:' + ut.indentjoin(doctest_modname_list))
+    # untested_modnames = ut.find_untested_modpaths(dpath_list, exclude_doctests_fnames, exclude_dirs)
+    # print('\nUNTESTED MODULES:' + ut.indentjoin(untested_modnames))
+    # print('\nTESTED MODULES:' + ut.indentjoin(doctest_modname_list))
 
     implicit_build_modlist_str = ut.codeblock(
-        '''
+        """
         import sys
         exclude_doctests_fnames = set(['__init__.py'])
 
@@ -357,7 +371,7 @@ def autogen_wbia_runtest():
         for modname in doctest_modname_list:
             exec('import ' + modname, globals(), locals())
         module_list = [sys.modules[name] for name in doctest_modname_list]
-        '''
+        """
     )
     globals_ = globals()
     locals_ = locals()
@@ -366,14 +380,16 @@ def autogen_wbia_runtest():
     doctest_modname_list = locals_['doctest_modname_list']
 
     import_str = '\n'.join(['import ' + modname for modname in doctest_modname_list])
-    modlist_str = ('module_list = [%s\n]' % ut.indentjoin([modname  + ',' for modname in doctest_modname_list]))
+    modlist_str = 'module_list = [%s\n]' % ut.indentjoin(
+        [modname + ',' for modname in doctest_modname_list]
+    )
     explicit_build_modlist_str = '\n\n'.join((import_str, modlist_str))
 
     build_modlist_str = implicit_build_modlist_str
-    #build_modlist_str = explicit_build_modlist_str
+    # build_modlist_str = explicit_build_modlist_str
 
     pyscript_fmtstr = ut.codeblock(
-        r'''
+        r"""
         #!/usr/bin/env python
         from __future__ import absolute_import, division, print_function
         import utool as ut
@@ -388,26 +404,35 @@ def autogen_wbia_runtest():
             import multiprocessing
             multiprocessing.freeze_support()
             run_tests()
-        '''
+        """
     )
 
-    pyscript_text = pyscript_fmtstr.format(build_modlist_str=ut.indent(build_modlist_str).strip())
+    pyscript_text = pyscript_fmtstr.format(
+        build_modlist_str=ut.indent(build_modlist_str).strip()
+    )
     pyscript_text = ut.autofix_codeblock(pyscript_text)
 
-    def def_test(header, pat=None, dpath=None, modname=None, default=False, testcmds=None):
+    def def_test(
+        header, pat=None, dpath=None, modname=None, default=False, testcmds=None
+    ):
         """ interface to make test tuple """
         return (header, default, modname, dpath, pat, testcmds)
 
     # BUILD OLD SHELL RUN TESTS HARNESS
-    testcmds = ut.get_module_testlines(module_list, remove_pyc=True, verbose=False, pythoncmd='RUN_TEST')
+    testcmds = ut.get_module_testlines(
+        module_list, remove_pyc=True, verbose=False, pythoncmd='RUN_TEST'
+    )
     test_headers = [
         # title, default, module, testpattern
         def_test('DOC', testcmds=testcmds, default=True)
     ]
 
-    shscript_text = ut.make_run_tests_script_text(test_headers, test_argvs, quick_tests, repodir, exclude_list)
+    shscript_text = ut.make_run_tests_script_text(
+        test_headers, test_argvs, quick_tests, repodir, exclude_list
+    )
 
     return shscript_text, pyscript_text
+
 
 if __name__ == '__main__':
     """

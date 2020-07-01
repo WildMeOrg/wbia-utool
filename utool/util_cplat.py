@@ -15,11 +15,13 @@ from utool import util_inject
 from utool._internal import meta_util_cplat
 from utool._internal.meta_util_path import unixpath, truepath
 from six.moves import zip
+
 print, rrr, profile = util_inject.inject2(__name__)
 print_ = util_inject.make_module_write_func(__name__)
 
 try:
     import pathlib
+
     HAVE_PATHLIB = True
 except ImportError:
     HAVE_PATHLIB = False
@@ -27,8 +29,8 @@ except ImportError:
 COMPUTER_NAME = platform.node()
 
 OS_TYPE = meta_util_cplat.OS_TYPE
-WIN32  = meta_util_cplat.WIN32
-LINUX  = meta_util_cplat.LINUX
+WIN32 = meta_util_cplat.WIN32
+LINUX = meta_util_cplat.LINUX
 DARWIN = meta_util_cplat.DARWIN
 UNIX = not WIN32
 
@@ -69,6 +71,7 @@ def get_plat_specifier():
     """
     import setuptools  # NOQA
     import distutils
+
     plat_name = distutils.util.get_platform()
     plat_specifier = '.%s-%s' % (plat_name, sys.version[0:3])
     if hasattr(sys, 'gettotalrefcount'):
@@ -92,10 +95,13 @@ def get_system_python_library():
     import os
     import utool as ut
     from os.path import basename, realpath
+
     pyname = basename(realpath(sys.executable))
     ld_library_path = os.environ['LD_LIBRARY_PATH']
     libdirs = [x for x in ld_library_path.split(os.pathsep) if x] + ['/usr/lib']
-    libfiles = ut.flatten([ut.glob(d, '*' + ut.get_lib_ext(), recursive=True) for d in libdirs])
+    libfiles = ut.flatten(
+        [ut.glob(d, '*' + ut.get_lib_ext(), recursive=True) for d in libdirs]
+    )
     python_libs = [realpath(f) for f in libfiles if 'lib' + pyname in basename(f)]
     python_libs = ut.unique_ordered(python_libs)
     assert len(python_libs) == 1, str(python_libs)
@@ -132,6 +138,7 @@ def get_free_diskbytes(dir_):
     """
     if WIN32:
         import ctypes
+
         free_bytes = ctypes.c_ulonglong(0)
         outvar = ctypes.pointer(free_bytes)
         dir_ptr = ctypes.c_wchar_p(dir_)
@@ -142,13 +149,14 @@ def get_free_diskbytes(dir_):
         st = os.statvfs(dir_)
         # blocks avaiable * block size
         bytes_ = st.f_bavail * st.f_frsize
-        #bytes_ = st.f_bfree * st.f_frsize  # includes root only space
+        # bytes_ = st.f_bfree * st.f_frsize  # includes root only space
         return bytes_
 
 
 def get_total_diskbytes(dir_):
     if WIN32:
         import ctypes
+
         total_bytes = ctypes.c_ulonglong(0)
         outvar = ctypes.pointer(total_bytes)
         dir_ptr = ctypes.c_wchar_p(dir_)
@@ -156,7 +164,7 @@ def get_total_diskbytes(dir_):
         bytes_ = total_bytes.value
         return bytes_
     else:
-        #raise NotImplementedError('')
+        # raise NotImplementedError('')
         st = os.statvfs(dir_)
         # blocks total * block size
         bytes_ = st.f_blocks * st.f_frsize
@@ -171,6 +179,7 @@ def chmod_add_executable(fpath, group=True, user=True):
         https://en.wikipedia.org/wiki/Chmod
     """
     import stat
+
     orig_mode = os.stat(fpath).st_mode
     new_mode = orig_mode
     if group:
@@ -183,6 +192,7 @@ def chmod_add_executable(fpath, group=True, user=True):
 
 def chmod(fpath, option):
     import stat
+
     orig_mode = os.stat(fpath).st_mode
     new_mode = orig_mode
     if option == '+x':
@@ -207,27 +217,31 @@ def get_file_info(fpath, with_fpath=False, nice=True):
     import os
     import time
     from collections import OrderedDict
+
     statbuf = os.stat(fpath)
 
     from pwd import getpwuid
+
     owner = getpwuid(os.stat(fpath).st_uid).pw_name
 
-    info = OrderedDict([
-        ('filesize', get_file_nBytes_str(fpath)),
-        ('last_modified', statbuf.st_mtime),
-        ('last_accessed', statbuf.st_atime),
-        ('created', statbuf.st_ctime),
-        ('owner', owner)
-    ])
+    info = OrderedDict(
+        [
+            ('filesize', get_file_nBytes_str(fpath)),
+            ('last_modified', statbuf.st_mtime),
+            ('last_accessed', statbuf.st_atime),
+            ('created', statbuf.st_ctime),
+            ('owner', owner),
+        ]
+    )
     if nice:
         for k in ['last_modified', 'last_accessed', 'created']:
             info[k] = util_time.unixtime_to_datetimestr(info[k], isutc=False)
-            info[k] += (' ' + time.tzname[0])
+            info[k] += ' ' + time.tzname[0]
 
     if with_fpath:
         info['fpath'] = fpath
     return info
-    #print "Modification time:",statbuf.st_mtime
+    # print "Modification time:",statbuf.st_mtime
 
 
 def get_file_nBytes(fpath):
@@ -236,6 +250,7 @@ def get_file_nBytes(fpath):
 
 def get_file_nBytes_str(fpath):
     from utool import util_str
+
     return util_str.byte_str2(os.path.getsize(fpath))
 
 
@@ -257,6 +272,7 @@ def get_disk_space(start_path='.'):
 
 def get_dir_diskspaces(dir_):
     from utool import util_path
+
     path_list = util_path.ls(dir_)
     nBytes_list = [get_disk_space(path) for path in path_list]
     spacetup_list = sorted(list(zip(nBytes_list, path_list)))
@@ -265,14 +281,17 @@ def get_dir_diskspaces(dir_):
 
 def print_dir_diskspace(dir_):
     import utool
+
     spacetup_list = sorted(get_dir_diskspaces(dir_))
     nBytes_list = [tup[0] for tup in spacetup_list]
-    path_list   = [tup[1] for tup in spacetup_list]
+    path_list = [tup[1] for tup in spacetup_list]
     space_list = map(utool.byte_str2, nBytes_list)
     n = max(map(len, space_list))
-    fmtstr = ('%' + str(n) + 's')
+    fmtstr = '%' + str(n) + 's'
     space_list2 = [fmtstr % space for space in space_list]
-    tupstr_list = ['%s %s' % (space2, path) for space2, path in zip(space_list2, path_list)]
+    tupstr_list = [
+        '%s %s' % (space2, path) for space2, path in zip(space_list2, path_list)
+    ]
     print('\n'.join(tupstr_list))
 
 
@@ -303,12 +322,12 @@ def python_executable(check=True, short=False):
         python_exe = 'python'
     else:
         from os.path import isdir
+
         python_exe_long = unixpath(sys.executable)
         python_exe = python_exe_long
         if short:
             python_exe_short = basename(python_exe_long)
-            found = search_env_paths(python_exe_short, key_list=['PATH'],
-                                     verbose=False)
+            found = search_env_paths(python_exe_short, key_list=['PATH'], verbose=False)
             found = [f for f in found if not isdir(f)]
             if len(found) > 0:
                 if found[0] == python_exe_long:
@@ -320,6 +339,7 @@ def python_executable(check=True, short=False):
 def ls_libs(dpath):
     from utool import util_list
     from utool import util_path
+
     lib_patterns = get_dynamic_lib_globstrs()
     libpaths_list = [util_path.ls(dpath, pat) for pat in lib_patterns]
     libpath_list = util_list.flatten(libpaths_list)
@@ -339,7 +359,7 @@ def get_dynlib_dependencies(lib_path):
         depend_out, depend_err, ret = cmd(otool_fpath, '-L', lib_path, verbose=False)
     elif WIN32:
         depend_out, depend_err, ret = cmd('objdump', '-p', lib_path, verbose=False)
-        #fnmatch.filter(depend_out.split('\n'), '*DLL*')
+        # fnmatch.filter(depend_out.split('\n'), '*DLL*')
         relevant_lines = [line for line in depend_out.splitlines() if 'DLL Name:' in line]
         depend_out = '\n'.join(relevant_lines)
     assert ret == 0, 'bad dependency check'
@@ -372,7 +392,7 @@ def get_dynlib_exports(lib_path):
         >>> print(result)
     """
     if LINUX:
-        '''
+        """
         nm_fpath = '/usr/bin/nm'
         exportssout, err, ret = cmd(nm_fpath, '-D', lib_path, '|', 'c++filt', verbose=False)
         lines = exportssout.split('\n')
@@ -417,17 +437,17 @@ def get_dynlib_exports(lib_path):
         len([line for line in lines if not line.endswith(')') and 'flann_' in line])
         # HACK: FIND A CORRECT PARSING
         return info2
-        '''
+        """
     elif DARWIN:
         otool_fpath = '/opt/local/bin/otool'
         exportssout, err, ret = cmd(otool_fpath, '-L', lib_path, verbose=False)
-        #TODO
+        # TODO
     elif WIN32:
         exportssout, err, ret = cmd('objdump', '-p', lib_path, verbose=False)
-        #TODO
-        #fnmatch.filter(depend_out.split('\n'), '*DLL*')
-        #relevant_lines = [line for line in depend_out.splitlines() if 'DLL Name:' in line]
-        #depend_out = '\n'.join(relevant_lines)
+        # TODO
+        # fnmatch.filter(depend_out.split('\n'), '*DLL*')
+        # relevant_lines = [line for line in depend_out.splitlines() if 'DLL Name:' in line]
+        # depend_out = '\n'.join(relevant_lines)
     assert ret == 0, 'bad dependency check'
     return exportssout
 
@@ -454,11 +474,7 @@ def get_install_dirs():
 
 
 def getroot():
-    root = {
-        'win32': 'C:\\',  # HACK
-        'linux': '/',
-        'darwin': '/',
-    }[OS_TYPE]
+    root = {'win32': 'C:\\', 'linux': '/', 'darwin': '/',}[OS_TYPE]  # HACK
     return root
 
 
@@ -474,14 +490,14 @@ def startfile(fpath, detatch=True, quote=False, verbose=False, quiet=True):
     # print('[cplat] fpath=%s' % fpath)
     if not exists(fpath):
         raise Exception('Cannot start nonexistant file: %r' % fpath)
-    #if quote:
+    # if quote:
     #    fpath = '"%s"' % (fpath,)
     if not WIN32:
         fpath = pipes.quote(fpath)
     if LINUX:
-        #out, err, ret = cmd(['xdg-open', fpath], detatch=True)
+        # out, err, ret = cmd(['xdg-open', fpath], detatch=True)
         outtup = cmd(('xdg-open', fpath), detatch=detatch, verbose=verbose, quiet=quiet)
-        #outtup = cmd('xdg-open', fpath, detatch=detatch)
+        # outtup = cmd('xdg-open', fpath, detatch=detatch)
     elif DARWIN:
         outtup = cmd(('open', fpath), detatch=detatch, verbose=verbose, quiet=quiet)
     elif WIN32:
@@ -503,11 +519,12 @@ def editfile(fpath):
     """ Runs gvim. Can also accept a module / class / function """
     if not isinstance(fpath, six.string_types):
         from six import types
+
         print('Rectify to module fpath = %r' % (fpath,))
         if isinstance(fpath, types.ModuleType):
             fpath = fpath.__file__
         else:
-            fpath =  sys.modules[fpath.__module__].__file__
+            fpath = sys.modules[fpath.__module__].__file__
         fpath_py = fpath.replace('.pyc', '.py')
         if exists(fpath_py):
             fpath = fpath_py
@@ -527,12 +544,13 @@ def editfile(fpath):
         out, err, ret = cmd(geteditor(), fpath, detatch=True)
         if not ret:
             raise Exception(out + ' -- ' + err)
-        #os.startfile(fpath)
+        # os.startfile(fpath)
     pass
 
 
 def view_file_in_directory(fpaths):
     import utool as ut
+
     fpaths = ut.ensure_iterable(fpaths)
     fnames = [basename(f) for f in fpaths]
     dpaths = [dirname(f) for f in fpaths]
@@ -587,6 +605,7 @@ def view_directory(dname=None, fname=None, verbose=True):
     """
     from utool.util_arg import STRICT
     from utool.util_path import checkpath
+
     # from utool.util_str import SINGLE_QUOTE, DOUBLE_QUOTE
 
     if HAVE_PATHLIB and isinstance(dname, pathlib.Path):
@@ -595,11 +614,7 @@ def view_directory(dname=None, fname=None, verbose=True):
     if verbose:
         print('[cplat] view_directory(%r) ' % dname)
     dname = os.getcwd() if dname is None else dname
-    open_prog = {
-        'win32': 'explorer.exe',
-        'linux': 'nautilus',
-        'darwin': 'open'
-    }[OS_TYPE]
+    open_prog = {'win32': 'explorer.exe', 'linux': 'nautilus', 'darwin': 'open'}[OS_TYPE]
     dname = normpath(dname)
     if STRICT:
         assert checkpath(dname, verbose=verbose), 'directory doesnt exit'
@@ -622,6 +637,7 @@ def view_directory(dname=None, fname=None, verbose=True):
     subprocess.Popen(args)
     # print('[cplat] exit view directory')
 
+
 # Alias
 vd = view_directory
 
@@ -640,7 +656,7 @@ def platform_cache_dir():
     elif LINUX:  # nocover
         dpath_ = '~/.cache'
     elif DARWIN:  # nocover
-        dpath_  = '~/Library/Caches'
+        dpath_ = '~/Library/Caches'
     else:  # nocover
         raise NotImplementedError('Unknown Platform  %r' % (sys.platform,))
     dpath = normpath(expanduser(dpath_))
@@ -673,6 +689,7 @@ def ensure_app_cache_dir(appname, *args):
         >>> assert exists(dpath)
     """
     import utool as ut
+
     dpath = get_app_cache_dir(appname, *args)
     ut.ensuredir(dpath)
     return dpath
@@ -680,6 +697,7 @@ def ensure_app_cache_dir(appname, *args):
 
 def ensure_app_resource_dir(*args, **kwargs):
     import utool as ut
+
     app_resource_dir = get_app_resource_dir(*args, **kwargs)
     ut.ensuredir(app_resource_dir)
     return app_resource_dir
@@ -696,18 +714,18 @@ def shell(*args, **kwargs):
 def __parse_cmd_kwargs(kwargs):
     verbose = kwargs.get('verbose', True)
     detatch = kwargs.get('detatch', False)
-    #shell   = kwargs.get('shell', False)
+    # shell   = kwargs.get('shell', False)
     # seems like linux needs the shell to work well
     # maybe thats because I'm a windows admin
     # FIXME: Turn shell off by default and fix __parse_cmd_args
-    shell   = kwargs.get('shell', LINUX or DARWIN)
+    shell = kwargs.get('shell', LINUX or DARWIN)
     # TODO: gksudo
-    sudo    = kwargs.get('sudo', False)
+    sudo = kwargs.get('sudo', False)
     # pads stdout of cmd before and after
     # TODO: rename separate to something else
-    silence    = kwargs.get('silence', False)
-    quiet    = kwargs.get('quiet', False)
-    pad_stdout    = kwargs.get('pad_stdout', not (silence or quiet))
+    silence = kwargs.get('silence', False)
+    quiet = kwargs.get('quiet', False)
+    pad_stdout = kwargs.get('pad_stdout', not (silence or quiet))
     return verbose, detatch, shell, sudo, pad_stdout
 
 
@@ -746,7 +764,7 @@ def __parse_cmd_args(args, sudo, shell):
         # When shell is True, ensure args is a string
         if isinstance(args, six.string_types):
             pass
-        elif  isinstance(args, (list, tuple)) and len(args) > 1:
+        elif isinstance(args, (list, tuple)) and len(args) > 1:
             args = ' '.join(args)
         elif isinstance(args, (list, tuple)) and len(args) == 1:
             if isinstance(args[0], (tuple, list)):
@@ -771,11 +789,11 @@ def __parse_cmd_args(args, sudo, shell):
                 args = 'sudo ' + args
             else:
                 args = tuple(['sudo']) + tuple(args)
-            #if isinstance(args, six.string_types):
+            # if isinstance(args, six.string_types):
             #    args = shlex.split(args)
-            #args = ['sudo'] + args
+            # args = ['sudo'] + args
             ## using sudo means we need to use a single string I believe
-            #args = ' '.join(args)
+            # args = ' '.join(args)
         else:
             # TODO: strip out sudos
             pass
@@ -791,8 +809,10 @@ def __parse_cmd_args(args, sudo, shell):
 
 
 def run_realtime_process(exe, shell=False):
-    proc = subprocess.Popen(exe, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=shell)
-    while(True):
+    proc = subprocess.Popen(
+        exe, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=shell
+    )
+    while True:
         # WARNING: this can cause deadlocks apparently if the OS pipe buffers
         # fill up.
         retcode = proc.poll()  # returns None while subprocess is running
@@ -820,7 +840,7 @@ def _run_process(proc):
 
 def quote_single_command(cmdstr):
     if ' ' in cmdstr:
-        return '\'' + cmdstr + '\''
+        return "'" + cmdstr + "'"
     return cmdstr
 
 
@@ -932,11 +952,14 @@ def cmd(*args, **kwargs):
         if kwargs.get('dryrun', False):
             print('[ut.cmd] Exiting because dryrun=True')
             return None, None, None
-        proc = subprocess.Popen(args, stdout=subprocess.PIPE,
-                                stderr=subprocess.STDOUT, shell=shell,
-                                universal_newlines=True
-                                # universal_newlines=False
-                                )
+        proc = subprocess.Popen(
+            args,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            shell=shell,
+            universal_newlines=True
+            # universal_newlines=False
+        )
         hack_use_stdout = True
         if detatch:
             if not quiet:
@@ -950,7 +973,7 @@ def cmd(*args, **kwargs):
                     print('[ut.cmd] RUNNING WITH VERBOSE OUTPUT')
                 logged_out = []
                 for line in _run_process(proc):
-                    #line_ = line if six.PY2 else line.decode('utf-8')
+                    # line_ = line if six.PY2 else line.decode('utf-8')
                     line_ = line if six.PY2 else line
                     if len(line_) > 0:
                         if not silence:
@@ -963,28 +986,31 @@ def cmd(*args, **kwargs):
                         logged_out.append(line)
                 try:
                     from utool import util_str  # NOQA
+
                     # logged_out = util_str.ensure_unicode_strlist(logged_out)
                     out = '\n'.join(logged_out)
                 except UnicodeDecodeError:
                     from utool import util_str  # NOQA
+
                     logged_out = util_str.ensure_unicode_strlist(logged_out)
                     out = '\n'.join(logged_out)
                     # print('logged_out = %r' % (logged_out,))
                     # raise
                 (out_, err) = proc.communicate()
-                #print('[ut.cmd] out: %s' % (out,))
+                # print('[ut.cmd] out: %s' % (out,))
                 if not quiet:
                     try:
                         print('[ut.cmd] stdout: %s' % (out_,))
                         print('[ut.cmd] stderr: %s' % (err,))
                     except UnicodeDecodeError:
                         from utool import util_str  # NOQA
+
                         print('[ut.cmd] stdout: %s' % (util_str.ensure_unicode(out_),))
                         print('[ut.cmd] stderr: %s' % (util_str.ensure_unicode(err),))
 
             else:
                 # Surpress output
-                #print('[ut.cmd] RUNNING WITH SUPRESSED OUTPUT')
+                # print('[ut.cmd] RUNNING WITH SUPRESSED OUTPUT')
                 (out, err) = proc.communicate()
             # Make sure process if finished
             ret = proc.wait()
@@ -995,13 +1021,17 @@ def cmd(*args, **kwargs):
             return out, err, ret
     except Exception as ex:
         import utool as ut
-        #if isinstance(args, tuple):
+
+        # if isinstance(args, tuple):
         #    print(ut.truepath(args[0]))
-        #elif isinstance(args, six.string_types):
+        # elif isinstance(args, six.string_types):
         #    print(ut.unixpath(args))
-        ut.printex(ex, 'Exception running ut.cmd',
-                   keys=['verbose', 'detatch', 'shell', 'sudo', 'pad_stdout'],
-                   tb=True)
+        ut.printex(
+            ex,
+            'Exception running ut.cmd',
+            keys=['verbose', 'detatch', 'shell', 'sudo', 'pad_stdout'],
+            tb=True,
+        )
 
 
 def cmd2(command, shell=False, detatch=False, verbose=False, verbout=None):
@@ -1020,6 +1050,7 @@ def cmd2(command, shell=False, detatch=False, verbose=False, verbout=None):
         dict: info - information about command status
     """
     import shlex
+
     if isinstance(command, (list, tuple)):
         raise ValueError('command tuple not supported yet')
     args = shlex.split(command, posix=not WIN32)
@@ -1034,9 +1065,13 @@ def cmd2(command, shell=False, detatch=False, verbose=False, verbout=None):
         if verbout:
             print('----')
             print('Stdout:')
-    proc = subprocess.Popen(args, stdout=subprocess.PIPE,
-                            stderr=subprocess.STDOUT, shell=shell,
-                            universal_newlines=True)
+    proc = subprocess.Popen(
+        args,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        shell=shell,
+        universal_newlines=True,
+    )
     if detatch:
         info = {'proc': proc}
     else:
@@ -1044,7 +1079,7 @@ def cmd2(command, shell=False, detatch=False, verbose=False, verbout=None):
         flush_fn = sys.stdout.flush
         logged_out = []
         for line in _run_process(proc):
-            #line_ = line if six.PY2 else line.decode('utf-8')
+            # line_ = line if six.PY2 else line.decode('utf-8')
             line_ = line if six.PY2 else line
             if len(line_) > 0:
                 if verbout:
@@ -1053,10 +1088,12 @@ def cmd2(command, shell=False, detatch=False, verbose=False, verbout=None):
                 logged_out.append(line)
         try:
             from utool import util_str  # NOQA
+
             # out = '\n'.join(logged_out)
             out = ''.join(logged_out)
         except UnicodeDecodeError:
             from utool import util_str  # NOQA
+
             logged_out = util_str.ensure_unicode_strlist(logged_out)
             # out = '\n'.join(logged_out)
             out = ''.join(logged_out)
@@ -1082,36 +1119,51 @@ def get_flops():
     filename = 'linpack.out'
     fpnum = r'\d+\.\d+E[+-]\d\d'
     fpnum_1 = fpnum + r' +'
-    pattern = compile(r'^ *' + fpnum_1 + fpnum_1 + fpnum_1 + r'(' + fpnum + r') +' + fpnum_1 + fpnum + r' *\n$')
+    pattern = compile(
+        r'^ *'
+        + fpnum_1
+        + fpnum_1
+        + fpnum_1
+        + r'('
+        + fpnum
+        + r') +'
+        + fpnum_1
+        + fpnum
+        + r' *\n$'
+    )
     speeds = [0.0, 1.0e75, 0.0]
 
     file = open(filename)
     count = 0
-    while file :
+    while file:
         line = file.readline()
-        if not line :
+        if not line:
             break
-        if pattern.match(line) :
+        if pattern.match(line):
             count = count + 1
             x = float(pattern.sub(r'\1', line))
-            if x < 1.0 :
+            if x < 1.0:
                 print(count)
             speeds[0] = speeds[0] + x
             speeds[1] = min(speeds[1], x)
             speeds[2] = max(speeds[2], x)
     file.close()
-    if count != 0 :
+    if count != 0:
         speeds[0] = speeds[0] / count
 
-    stdout.write('%6.1f MFlops (%d from %.1f to %.1f)\n' % (speeds[0], count, speeds[1], speeds[2]))
+    stdout.write(
+        '%6.1f MFlops (%d from %.1f to %.1f)\n' % (speeds[0], count, speeds[1], speeds[2])
+    )
 
 
 def set_process_title(title):
     try:
         import setproctitle
+
         setproctitle.setproctitle(title)
     except ImportError as ex:
         import utool
+
         utool.printex(ex, iswarning=True)
 
 
@@ -1120,12 +1172,12 @@ def is64bit_python():
     Returns:
         True if running 64 bit python and False if running on 32 bit
     """
-    #http://stackoverflow.com/questions/1405913/how-do-i-determine-if-my-python-shell-is-executing-in-32bit-or-64bit-mode-on-os
+    # http://stackoverflow.com/questions/1405913/how-do-i-determine-if-my-python-shell-is-executing-in-32bit-or-64bit-mode-on-os
     is64bit = sys.maxsize > 2 ** 32
-    #import platform
-    #platform.architecture()
-    #import ctypes
-    #(ctypes.sizeof(ctypes.c_voidp))
+    # import platform
+    # platform.architecture()
+    # import ctypes
+    # (ctypes.sizeof(ctypes.c_voidp))
     return is64bit
 
 
@@ -1147,6 +1199,7 @@ def get_python_dynlib():
         /usr/lib/x86_64-linux-gnu/libpython2.7.so
     """
     import sysconfig
+
     cfgvars = sysconfig.get_config_vars()
     dynlib = os.path.join(cfgvars['LIBDIR'], cfgvars['MULTIARCH'], cfgvars['LDLIBRARY'])
     if not exists(dynlib):
@@ -1214,6 +1267,7 @@ def search_env_paths(fname, key_list=None, verbose=None):
 
     """
     import utool as ut
+
     # from os.path import join
     if key_list is None:
         key_list = [key for key in os.environ if key.find('PATH') > -1]
@@ -1224,15 +1278,15 @@ def search_env_paths(fname, key_list=None, verbose=None):
     for key in key_list:
         dpath_list = os.environ[key].split(os.pathsep)
         for dpath in dpath_list:
-            #if verbose:
+            # if verbose:
             #    print('dpath = %r' % (dpath,))
             # testname = join(dpath, fname)
             matches = ut.glob(dpath, fname)
             found[key].extend(matches)
-            #import fnmatch
-            #import utool
-            #utool.embed()
-            #if ut.checkpath(testname, verbose=False):
+            # import fnmatch
+            # import utool
+            # utool.embed()
+            # if ut.checkpath(testname, verbose=False):
             #    if verbose:
             #        print('Found in key=%r' % (key,))
             #        ut.checkpath(testname, verbose=True, info=True)
@@ -1242,23 +1296,24 @@ def search_env_paths(fname, key_list=None, verbose=None):
 
 def __debug_win_msvcr():
     import utool as ut
+
     fname = 'msvcr*.dll'
     key_list = ['PATH']
     found = ut.search_env_paths(fname, key_list)
     fpaths = ut.unique(ut.flatten(found.values()))
     fpaths = ut.lmap(ut.ensure_unixslash, fpaths)
     from os.path import basename
+
     dllnames = [basename(x) for x in fpaths]
     grouped = dict(ut.group_items(fpaths, dllnames))
     print(ut.repr4(grouped, nl=4))
 
-    keytoid = {
-    }
+    keytoid = {}
 
     for key, vals in grouped.items():
         infos = ut.lmap(ut.get_file_nBytes, vals)
-        #infos = ut.lmap(ut.get_file_uuid, vals)
-        #uuids = [ut.get_file_uuid(val) for val in vals]
+        # infos = ut.lmap(ut.get_file_uuid, vals)
+        # uuids = [ut.get_file_uuid(val) for val in vals]
         keytoid[key] = list(zip(infos, vals))
     ut.print_dict(keytoid, nl=2)
 
@@ -1295,10 +1350,10 @@ def change_term_title(title):
         # Disabled
         return
     if not WIN32:
-        #print("CHANGE TERM TITLE to %r" % (title,))
+        # print("CHANGE TERM TITLE to %r" % (title,))
         if title:
-            #os.environ['PS1'] = os.environ['PS1'] + '''"\e]2;\"''' + title + '''\"\a"'''
-            cmd_str = r'''echo -en "\033]0;''' + title + '''\a"'''
+            # os.environ['PS1'] = os.environ['PS1'] + '''"\e]2;\"''' + title + '''\"\a"'''
+            cmd_str = r"""echo -en "\033]0;""" + title + '''\a"'''
             os.system(cmd_str)
 
 
@@ -1322,48 +1377,47 @@ def send_keyboard_input(text=None, key_list=None):
         >>> result = send_keyboard_input('%paste')
         >>> print(result)
     """
-    #key_mapping = {
+    # key_mapping = {
     #    'enter':
-    #}
+    # }
     if WIN32:
-        #raise NotImplementedError()
-        #import win32api
-        #import win32gui
-        #import win32con
-        #hwnd = win32gui.GetForegroundWindow()
-        #print('entering text into %r' % (win32gui.GetWindowText(hwnd ),))
-        #win32con.VK_RETURN
+        # raise NotImplementedError()
+        # import win32api
+        # import win32gui
+        # import win32con
+        # hwnd = win32gui.GetForegroundWindow()
+        # print('entering text into %r' % (win32gui.GetWindowText(hwnd ),))
+        # win32con.VK_RETURN
 
-        #def callback(hwnd, hwnds):
-            #if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd):
-                #hwnds[win32gui.GetClassName(hwnd)] = hwnd
-            #return True
-        #hwnds = {}
-        #win32gui.EnumChildWindows(hwnd, callback, hwnds)
+        # def callback(hwnd, hwnds):
+        # if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd):
+        # hwnds[win32gui.GetClassName(hwnd)] = hwnd
+        # return True
+        # hwnds = {}
+        # win32gui.EnumChildWindows(hwnd, callback, hwnds)
 
-        #for ord_char in map(ord, text):
-            #win32api.SendMessage(hwnd, win32con.WM_CHAR, ord_char, 0)
+        # for ord_char in map(ord, text):
+        # win32api.SendMessage(hwnd, win32con.WM_CHAR, ord_char, 0)
         from utool._internal import win32_send_keys
-        pause = float(.05)
+
+        pause = float(0.05)
         text = 'paste'
         keys = text
         kw = dict(with_spaces=False, with_tabs=True, with_newlines=False)
         win32_send_keys.SendKeys(keys, pause=pause, turn_off_numlock=True, **kw)
-        #win32_send_keys
-        #import time
-        #keys_ = win32_send_keys.parse_keys(keys, **kw)
-        #for k in keys_:
+        # win32_send_keys
+        # import time
+        # keys_ = win32_send_keys.parse_keys(keys, **kw)
+        # for k in keys_:
         #    k.Run()
         #    time.sleep(pause)
 
     else:
         if key_list is None:
-            char_map = {
-                '%': 'shift+5'
-            }
+            char_map = {'%': 'shift+5'}
             key_list = [char_map.get(char, char) for char in text]
         xdotool_args = ['xdotool', 'key'] + key_list
-        #, 'shift+5', 'p', 'a', 's', 't', 'e', 'enter']
+        # , 'shift+5', 'p', 'a', 's', 't', 'e', 'enter']
         cmd = ' '.join(xdotool_args)
         print('Running: cmd=%r' % (cmd,))
         print('+---')
@@ -1383,23 +1437,26 @@ def ipython_paste(*args, **kwargs):
         os.system(' '.join(args1))
         os.system(' '.join(args2))
 
-    #fallback_execute(args1)
-    #fallback_execute(args2)
+    # fallback_execute(args1)
+    # fallback_execute(args2)
 
 
 def spawn_delayed_ipython_paste():
     import utool as ut
+
     # Gonna be pasting
     def delayed_ipython_paste(delay):
         import time
         import utool as ut
-        #import os
+
+        # import os
         print('waiting')
         time.sleep(delay)
         ut.send_keyboard_input(text='%paste')
         ut.send_keyboard_input(key_list=['KP_Enter'])
-        #os.system(' '.join(['xdotool', 'key', 'shift+5', 'p', 'a', 's', 't', 'e', 'KP_Enter']))
-    ut.spawn_background_thread(delayed_ipython_paste, .1)
+        # os.system(' '.join(['xdotool', 'key', 'shift+5', 'p', 'a', 's', 't', 'e', 'KP_Enter']))
+
+    ut.spawn_background_thread(delayed_ipython_paste, 0.1)
 
 
 def print_system_users():
@@ -1420,10 +1477,11 @@ def print_system_users():
         >>> print(result)
     """
     import utool as ut
+
     text = ut.read_from('/etc/passwd')
     userinfo_text_list = text.splitlines()
     userinfo_list = [uitext.split(':') for uitext in userinfo_text_list]
-    #print(ut.repr4(sorted(userinfo_list)))
+    # print(ut.repr4(sorted(userinfo_list)))
     bash_users = [tup for tup in userinfo_list if tup[-1] == '/bin/bash']
     print(ut.repr4(sorted(bash_users)))
 
@@ -1434,19 +1492,23 @@ def check_installed_debian(pkgname):
         http://www.cyberciti.biz/faq/find-out-if-package-is-installed-in-linux/
     """
     import utool as ut
-    #pkgname = 'espeak'
-    #pkgname = 'sudo'
-    #ut.cmd('hash ' + pkgname + ' 2>/dev/null')
+
+    # pkgname = 'espeak'
+    # pkgname = 'sudo'
+    # ut.cmd('hash ' + pkgname + ' 2>/dev/null')
     tup = ut.cmd('hash ' + pkgname + ' 2>/dev/null', quiet=True, pad_stdout=False)
     out, err, ret = tup
-    is_installed = (ret == 0)
+    is_installed = ret == 0
     return is_installed
 
 
 def assert_installed_debian(pkgname):
     import utool as ut
+
     if not ut.check_installed_debian(pkgname):
-        raise AssertionError('espeak must be installed. run sudo apt-get install -y ' + pkgname)
+        raise AssertionError(
+            'espeak must be installed. run sudo apt-get install -y ' + pkgname
+        )
 
 
 def unload_module(modname):
@@ -1474,29 +1536,30 @@ def unload_module(modname):
     """
     import sys
     import gc
+
     if modname in sys.modules:
         referrer_list = gc.get_referrers(sys.modules[modname])
-        #module = sys.modules[modname]
+        # module = sys.modules[modname]
         for referer in referrer_list:
             if referer is not sys.modules:
                 referer[modname] = None
-            #del referer[modname]
-        #sys.modules[modname] = module
-        #del module
+            # del referer[modname]
+        # sys.modules[modname] = module
+        # del module
         refcount = sys.getrefcount(sys.modules[modname])
         print('%s refcount=%r' % (modname, refcount))
         del sys.modules[modname]
 
 
-#def get_ipython_config_file():
+# def get_ipython_config_file():
 #    """
 #    or to create an empty default profile, populated with default config files:
 #    ipython profile create
 #    """
 
-#from subprocess import check_output
-#http://stackoverflow.com/questions/8015163/how-to-check-screen-is-running
-#def screen_present(name):
+# from subprocess import check_output
+# http://stackoverflow.com/questions/8015163/how-to-check-screen-is-running
+# def screen_present(name):
 #        var = check_output(["screen -ls; true"],shell=True)
 #        if "."+name+"\t(" in var:
 #                print name+" is running"
@@ -1510,6 +1573,7 @@ def pip_install(package):
         http://stackoverflow.com/questions/15974100/ipython-install-new-modules
     """
     import pip
+
     pip.main(['install', package])
 
 
@@ -1522,6 +1586,8 @@ if __name__ == '__main__':
         python -m utool.util_cplat --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

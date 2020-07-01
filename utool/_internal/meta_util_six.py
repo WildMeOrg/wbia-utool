@@ -7,6 +7,7 @@ import codecs
 
 if six.PY2:
     import types
+
     __STR__ = unicode
 
     # TODO: use six.text_type
@@ -25,11 +26,11 @@ if six.PY2:
             return getattr(func, 'func_name')
         except AttributeError:
             builtin_function_name_dict = {
-                len:    'len',
-                zip:    'zip',
-                range:  'range',
-                map:    'map',
-                type:   'type',
+                len: 'len',
+                zip: 'zip',
+                range: 'range',
+                map: 'map',
+                type: 'type',
             }
             if func in builtin_function_name_dict:
                 return builtin_function_name_dict[func]
@@ -37,20 +38,21 @@ if six.PY2:
                 return get_funcname(func.func)
             elif isinstance(func, six.class_types):
                 return func.__name__
-                #return str(func).replace('<class \'', '').replace('\'>', '')
+                # return str(func).replace('<class \'', '').replace('\'>', '')
             elif hasattr(func, '__class__'):
                 return func.__class__.__name__
             else:
                 print('Error inspecting func type')
                 print(type(func))
                 raise
-        #except Exception as ex:
+        # except Exception as ex:
         #    import utool as ut
         #    with ut.embed_on_exception_context:
         #        raise
 
     def set_funcname(func, newname):
         return setattr(func, 'func_name', str(newname))
+
     #
     def get_funcglobals(func):
         """
@@ -67,16 +69,19 @@ if six.PY2:
         #         return {}
         #     else:
         #         raise
+
     #
     def get_funcdoc(func):
         return getattr(func, 'func_doc')
+
     #
     def set_funcdoc(func, newdoc):
         return setattr(func, 'func_doc', newdoc)
 
     def get_funccode(func):
         return getattr(func, 'func_code')
-    IntType  = types.IntType
+
+    IntType = types.IntType
     LongType = types.LongType
     BooleanType = types.BooleanType
     FloatType = types.FloatType
@@ -84,10 +89,11 @@ elif six.PY3:
     import types
 
     __STR__ = str
-    IntType  = int
+    IntType = int
     LongType = int
     BooleanType = bool
     FloatType = float
+
     def get_funcname(func):
         try:
             return getattr(func, '__name__')
@@ -96,26 +102,37 @@ elif six.PY3:
                 return get_funcname(func.func)
             if isinstance(func, types.BuiltinFunctionType):
                 # for cv2.imread
-                #return str(cv2.imread).replace('>', '').replace('<built-in function', '')
+                # return str(cv2.imread).replace('>', '').replace('<built-in function', '')
                 return str(func).replace('<built-in function', '<')
             else:
                 try:
-                    return str(getattr(func, '__class__')).strip("<class '").strip("'>").split('.')[-1]
+                    return (
+                        str(getattr(func, '__class__'))
+                        .strip("<class '")
+                        .strip("'>")
+                        .split('.')[-1]
+                    )
                 except Exception:
                     raise original
+
     def set_funcname(func, newname):
         return setattr(func, '__name__', newname)
+
     #
     def get_funcglobals(func):
         return getattr(func, '__globals__')
+
     #
     def get_funcdoc(func):
         return getattr(func, '__doc__')
+
     def set_funcdoc(func, newdoc):
         return setattr(func, '__doc__', newdoc)
 
     def get_funccode(func):
         return getattr(func, '__code__')
+
+
 else:
     raise AssertionError('python4 ?!!')
 
@@ -134,9 +151,9 @@ def ensure_unicode(str_):
             if str_.startswith(codecs.BOM_UTF8):
                 # Can safely remove the utf8 marker
                 # http://stackoverflow.com/questions/12561063/python-extract-data-from-file
-                str_ = str_[len(codecs.BOM_UTF8):]
+                str_ = str_[len(codecs.BOM_UTF8) :]
             return str_.decode('utf-8')
-    #if not isinstance(str_, __STR__) and is_byte_encoded_unicode(str_):
+    # if not isinstance(str_, __STR__) and is_byte_encoded_unicode(str_):
     #    return str_.decode('utf-8')
-    #else:
+    # else:
     #    return __STR__(str_)

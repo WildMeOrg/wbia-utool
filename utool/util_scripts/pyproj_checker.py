@@ -27,6 +27,7 @@ if __name__ == '__main__':
     """
     import utool as ut
     import re
+
     exclude_dirs = ['_broken', '_doc', 'build']
     fpath_list = ut.glob('.', '*.py', exclude_dirs=exclude_dirs, recursive=True)
 
@@ -52,7 +53,10 @@ if __name__ == '__main__':
             if len(found_lines) == 0:
                 need_encoding_fpaths.append(fpath)
 
-    print('The following fpaths need encoding lines: ' + ut.repr4(need_encoding_fpaths, strvals=True))
+    print(
+        'The following fpaths need encoding lines: '
+        + ut.repr4(need_encoding_fpaths, strvals=True)
+    )
 
     if do_write or show_diff:
         for fpath in need_encoding_fpaths:
@@ -60,8 +64,10 @@ if __name__ == '__main__':
             line_list = ut.read_lines_from(fpath)
             linenum = find_encoding_insert_position(line_list)
             if linenum is not None:
-                #print(' * linenum = %r' % (linenum,))
-                new_lines = line_list[:linenum] + [encoding_line + '\n'] + line_list[linenum:]
+                # print(' * linenum = %r' % (linenum,))
+                new_lines = (
+                    line_list[:linenum] + [encoding_line + '\n'] + line_list[linenum:]
+                )
                 new_text = ''.join(new_lines)
                 if show_diff:
                     old_text = ''.join(line_list)

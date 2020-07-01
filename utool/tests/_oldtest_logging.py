@@ -3,6 +3,7 @@
 from __future__ import absolute_import, division, print_function
 from six.moves import builtins
 import utool
+
 print, rrr, profile = utool.inject2(__name__)
 
 
@@ -21,6 +22,7 @@ def func2():
 
 def remove_timestamp(string):
     import re
+
     return re.sub(r'\[\d\d:\d\d:\d\d\]', '', string)
 
 
@@ -46,7 +48,8 @@ def test():
     log1 = utool.read_from(log_fpath1, verbose=False)
     log2 = utool.read_from(log_fpath2, verbose=False)
 
-    target1 = utool.unindent('''
+    target1 = utool.unindent(
+        """
     <__LOG_START__>
     logging to log_fpath=%r
     [test][func1]enter func1
@@ -55,13 +58,18 @@ def test():
     [test][func2][func1]enter func1
     [test][func2][func1]exit  func1
     [test][func2]exit  func2
-    <__LOG_STOP__>''' % log_fpath1).strip()
+    <__LOG_STOP__>"""
+        % log_fpath1
+    ).strip()
 
-    target2 = utool.unindent('''
+    target2 = utool.unindent(
+        """
     <__LOG_START__>
     logging to log_fpath=%r
     [test]This line is logged
-    <__LOG_STOP__>''' % log_fpath2).strip()
+    <__LOG_STOP__>"""
+        % log_fpath2
+    ).strip()
 
     output1 = remove_timestamp(log1).strip()
     output2 = remove_timestamp(log2).strip()

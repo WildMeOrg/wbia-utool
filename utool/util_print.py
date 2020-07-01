@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
+
 try:
     import numpy as np
 except ImportError:
@@ -11,20 +12,23 @@ from six.moves import builtins
 from utool._internal import meta_util_arg
 from utool import util_str
 from utool import util_inject
+
 print, rrr, profile = util_inject.inject2(__name__)
 
-QUIET        = meta_util_arg.QUIET
-VERBOSE      = meta_util_arg.VERBOSE
-NO_INDENT    = meta_util_arg.NO_INDENT
-SILENT       = meta_util_arg.SILENT
+QUIET = meta_util_arg.QUIET
+VERBOSE = meta_util_arg.VERBOSE
+NO_INDENT = meta_util_arg.NO_INDENT
+SILENT = meta_util_arg.SILENT
 
 
 def print_dict(dict_, dict_name=None, **kwargs):
     import utool as ut
+
     if dict_name is None:
         dict_name = ut.get_varname_from_stack(dict_, N=1)
     dict_repr = util_str.repr4(dict_, **kwargs)
     print(dict_name + ' = ' + dict_repr)
+
 
 printdict = print_dict
 dictprint = print_dict
@@ -32,6 +36,7 @@ dictprint = print_dict
 
 def print_list(list_, **kwargs):
     import utool as ut
+
     list_name = ut.get_varname_from_stack(list_, N=1)
     print(list_name + ' = ' + util_str.repr4(list_, **kwargs))
 
@@ -41,7 +46,7 @@ def horiz_print(*args):
     print(toprint)
 
 
-#def set_indenting_enabled(flag):
+# def set_indenting_enabled(flag):
 #    global NO_INDENT
 #    prev_flag = NO_INDENT
 #    NO_INDENT = not flag
@@ -51,6 +56,7 @@ def horiz_print(*args):
 def _test_indent_print():
     # Indent test code doesnt work in doctest blocks.
     import utool as ut
+
     flag = ut.ensure_logging()
     print('Checking indent. Should have none')
     with ut.Indenter('[INDENT] '):
@@ -66,10 +72,12 @@ def _test_indent_print():
         assert False, 'DEV ERROR. REMOVE FIRST LINE INSTEAD OF LAST'
         last_lines = last_lines[:-1]
 
-    #print('last_lines = %r' % (ut.repr3(last_lines)))
+    # print('last_lines = %r' % (ut.repr3(last_lines)))
     try:
         assert last_lines[0].find('[INDENT] ') == -1, last_lines[0]
-        assert last_lines[1].find('[INDENT] ') >= 0, 'did not indent %r' % (last_lines[1],)
+        assert last_lines[1].find('[INDENT] ') >= 0, 'did not indent %r' % (
+            last_lines[1],
+        )
         assert last_lines[2].find('[INDENT] ') == -1, last_lines[2]
     except AssertionError:
         print('Error. Last 3 lines')
@@ -100,18 +108,19 @@ class Indenter(object):
     def __init__(self, lbl='    ', enabled=True):
         self.enabled = enabled
         if not NO_INDENT or not self.enabled:
-            #self.modules = modules
+            # self.modules = modules
             self.modules = util_inject.get_injected_modules()
             self.old_print_dict = {}
-            #self.old_prints_ = {}
-            #self.old_printDBG_dict = {}
+            # self.old_prints_ = {}
+            # self.old_printDBG_dict = {}
             self.lbl = lbl
-            #self.INDENT_PRINT_ = False
+            # self.INDENT_PRINT_ = False
 
     def start(self):
         # Chain functions together rather than overwriting stdout
         if NO_INDENT or not self.enabled:
             return builtins.print
+
         def indent_msg(*args):
             mgs = ', '.join(map(six.text_type, args))
             return self.lbl + mgs.replace('\n', '\n' + self.lbl)
@@ -122,10 +131,16 @@ class Indenter(object):
                     dict_[mod] = getattr(mod, funcname)
                 except KeyError as ex:
                     print('[utool] KeyError: ' + six.text_type(ex))
-                    print('[utool] WARNING: module=%r was loaded between indent sessions' % mod)
+                    print(
+                        '[utool] WARNING: module=%r was loaded between indent sessions'
+                        % mod
+                    )
                 except AttributeError as ex:
                     print('[utool] AttributeError: ' + six.text_type(ex))
-                    print('[utool] WARNING: module=%r does not have injected utool prints' % mod)
+                    print(
+                        '[utool] WARNING: module=%r does not have injected utool prints'
+                        % mod
+                    )
 
         push_module_functions(self.old_print_dict, 'print')
         for mod in self.old_print_dict.keys():
@@ -133,11 +148,12 @@ class Indenter(object):
             @functools.wraps(self.old_print_dict[mod])
             def indent_print(*args):
                 self.old_print_dict[mod](indent_msg(', '.join(map(six.text_type, args))))
+
             setattr(mod, 'print', indent_print)
         return indent_print
 
-        #push_module_functions(self.old_printDBG_dict, 'printDBG')
-        #for mod in self.old_printDBG_dict.keys():
+        # push_module_functions(self.old_printDBG_dict, 'printDBG')
+        # for mod in self.old_printDBG_dict.keys():
         #    @functools.wraps(self.old_printDBG_dict[mod])
         #    def indent_printDBG(msg):
         #        self.old_printDBG_dict[mod](indent_msg(msg))
@@ -146,14 +162,16 @@ class Indenter(object):
     def stop(self):
         if NO_INDENT or not self.enabled:
             return
+
         def pop_module_functions(dict_, funcname):
             for mod in six.iterkeys(dict_):
                 setattr(mod, funcname, dict_[mod])
+
         pop_module_functions(self.old_print_dict, 'print')
-        #pop_module_functions(self.old_printDBG_dict, 'printDBG')
-        #for mod in six.iterkeys(self.old_print_dict):
+        # pop_module_functions(self.old_printDBG_dict, 'printDBG')
+        # for mod in six.iterkeys(self.old_print_dict):
         #    setattr(mod, 'print', self.old_print_dict[mod])
-        #for mod in six.iterkeys(self.old_printDBG_dict):
+        # for mod in six.iterkeys(self.old_printDBG_dict):
         #    setattr(mod, 'printDBG', self.old_printDBG_dict[mod])
         return builtins.print
 
@@ -177,7 +195,7 @@ def printshape(arr_name, locals_):
         print('len(%s) = %r' % (arr_name, len(arr)))
 
 
-#class NpPrintOpts(object):
+# class NpPrintOpts(object):
 #    def __init__(self, **kwargs):
 #        self.orig_opts = np.get_printoptions()
 #        self.new_opts = kwargs
@@ -190,7 +208,7 @@ def printshape(arr_name, locals_):
 #            return False
 
 
-#def full_numpy_repr(arr):
+# def full_numpy_repr(arr):
 #    with NpPrintOpts(threshold=np.uint64(-1)):
 #        arr_repr = repr(arr)
 #    return arr_repr
@@ -210,6 +228,7 @@ def printWARN(msg):
     try:
         import colorama
         from colorama import Fore, Style
+
         colorama.init()
         print(Fore.RED + msg + Style.RESET_ALL)
         colorama.deinit()
@@ -273,6 +292,7 @@ def print_difftext(text, other=None):
         print(colortext)
     except UnicodeEncodeError as ex:  # NOQA
         import unicodedata
+
         colortext = unicodedata.normalize('NFKD', colortext).encode('ascii', 'ignore')
         print(colortext)
 
@@ -339,6 +359,7 @@ def print_locals(*args, **kwargs):
     from utool import util_str
     from utool import util_dbg
     from utool import util_dict
+
     locals_ = util_dbg.get_parent_frame().f_locals
     keys = kwargs.get('keys', None if len(args) == 0 else [])
     to_print = {}
@@ -360,6 +381,8 @@ if __name__ == '__main__':
         python -m utool.util_print --allexamples
         python -m utool.util_print --allexamples --noface --nosrc """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()
