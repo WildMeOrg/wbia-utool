@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 def ipython_execstr2():
     return textwrap.dedent(r'''
     import sys

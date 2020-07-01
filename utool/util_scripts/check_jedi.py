@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 def check_jedi_can_read_googlestyle():
     import jedi
     import utool as ut
