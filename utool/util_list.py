@@ -3478,10 +3478,10 @@ def length_hint(obj, default=0):
         if hint is NotImplemented:
             return default
         if not isinstance(hint, int):
-            raise TypeError("Length hint must be an integer, not %r" %
+            raise TypeError('Length hint must be an integer, not %r' %
                             type(hint))
         if hint < 0:
-            raise ValueError("__length_hint__() should return >= 0")
+            raise ValueError('__length_hint__() should return >= 0')
         return hint
 
 

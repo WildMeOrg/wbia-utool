@@ -2548,7 +2548,7 @@ def win_shortcut(source, link_name):
     """
     if True:
         import ctypes
-        kdll = ctypes.windll.LoadLibrary("kernel32.dll")
+        kdll = ctypes.windll.LoadLibrary('kernel32.dll')
         code = 1 if isdir(source) else 0
         kdll.CreateSymbolicLinkA(source, link_name, code)
     else:
@@ -2627,7 +2627,7 @@ def symlink(real_path, link_path, overwrite=False, on_error='raise',
     if os.path.islink(link):
         if verbose:
             print('[util_path] symlink already exists')
-        os_readlink = getattr(os, "readlink", None)
+        os_readlink = getattr(os, 'readlink', None)
         if callable(os_readlink):
             if os_readlink(link) == path:
                 if verbose > 1:
@@ -2642,7 +2642,7 @@ def symlink(real_path, link_path, overwrite=False, on_error='raise',
         elif on_error == 'ignore':
             return False
     try:
-        os_symlink = getattr(os, "symlink", None)
+        os_symlink = getattr(os, 'symlink', None)
         if callable(os_symlink):
             os_symlink(path, link)
         else:

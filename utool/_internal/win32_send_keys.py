@@ -29,7 +29,7 @@ WORD = ctypes.c_ushort
 
 # C:/PROGRA~1/MICROS~4/VC98/Include/winuser.h 4283
 class MOUSEINPUT(ctypes.Structure):
-    "Needed for complete definition of INPUT structure - not used"
+    'Needed for complete definition of INPUT structure - not used'
     _pack_ = 2
     _fields_ = [
         # C:/PROGRA~1/MICROS~4/VC98/Include/winuser.h 4283
@@ -46,7 +46,7 @@ assert ctypes.alignment(MOUSEINPUT) == 2, ctypes.alignment(MOUSEINPUT)
 
 # C:/PROGRA~1/MICROS~4/VC98/Include/winuser.h 4292
 class KEYBDINPUT(ctypes.Structure):
-    "A particular keyboard event"
+    'A particular keyboard event'
     _pack_ = 2
     _fields_ = [
         # C:/PROGRA~1/MICROS~4/VC98/Include/winuser.h 4292
@@ -61,7 +61,7 @@ assert ctypes.alignment(KEYBDINPUT) == 2, ctypes.alignment(KEYBDINPUT)
 
 
 class HARDWAREINPUT(ctypes.Structure):
-    "Needed for complete definition of INPUT structure - not used"
+    'Needed for complete definition of INPUT structure - not used'
     _pack_ = 2
     _fields_ = [
         # C:/PROGRA~1/MICROS~4/VC98/Include/winuser.h 4300
@@ -75,7 +75,7 @@ assert ctypes.alignment(HARDWAREINPUT) == 2, ctypes.alignment(HARDWAREINPUT)
 
 # C:/PROGRA~1/MICROS~4/VC98/Include/winuser.h 4314
 class UNION_INPUT_STRUCTS(ctypes.Union):
-    "The C Union type representing a single Event of any type"
+    'The C Union type representing a single Event of any type'
     _fields_ = [
         # C:/PROGRA~1/MICROS~4/VC98/Include/winuser.h 4314
         ('mi', MOUSEINPUT),
@@ -90,7 +90,7 @@ assert ctypes.alignment(UNION_INPUT_STRUCTS) == 2, \
 
 # C:/PROGRA~1/MICROS~4/VC98/Include/winuser.h 4310
 class INPUT(ctypes.Structure):
-    "See: http://msdn.microsoft.com/en-us/library/ms646270%28VS.85%29.aspx"
+    'See: http://msdn.microsoft.com/en-us/library/ms646270%28VS.85%29.aspx'
     _pack_ = 2
     _fields_ = [
         # C:/PROGRA~1/MICROS~4/VC98/Include/winuser.h 4310
@@ -310,7 +310,7 @@ class KeyAction(object):
         return 0, ord(self.key), KEYEVENTF_UNICODE
 
     def GetInput(self):
-        "Build the INPUT structure for the action"
+        'Build the INPUT structure for the action'
         actions = 1
         # if both up and down
         if self.up and self.down:
@@ -334,7 +334,7 @@ class KeyAction(object):
         return inputs
 
     def Run(self):
-        "Execute the action"
+        'Execute the action'
         inputs = self.GetInput()
         return SendInput(
             len(inputs),
@@ -348,25 +348,25 @@ class KeyAction(object):
         return 'up' if the key is up only
         return '' if the key is up & down (as default)
         """
-        down_up = ""
+        down_up = ''
         if not (self.down and self.up):
             if self.down:
-                down_up = "down"
+                down_up = 'down'
             elif self.up:
-                down_up = "up"
+                down_up = 'up'
         return down_up
 
     def key_description(self):
-        "Return a description of the key"
+        'Return a description of the key'
         vk, scan, flags = self._get_key_info()
         desc = ''
         if vk:
             if vk in CODE_NAMES:
                 desc = CODE_NAMES[vk]
             else:
-                desc = "VK %d"% vk
+                desc = 'VK %d'% vk
         else:
-            desc = "%s"% self.key
+            desc = '%s'% self.key
 
         return desc
 
@@ -377,7 +377,7 @@ class KeyAction(object):
         if up_down:
             parts.append(up_down)
 
-        return "<%s>"% (" ".join(parts))
+        return '<%s>'% (' '.join(parts))
     __repr__ = __str__
 
 
@@ -387,7 +387,7 @@ class VirtualKeyAction(KeyAction):
     Overrides necessary methods of KeyAction"""
 
     def _get_key_info(self):
-        "Virtual keys have extended flag set"
+        'Virtual keys have extended flag set'
 
         # copied more or less verbatim from
         # http://www.pinvoke.net/default.aspx/user32.sendinput
@@ -417,23 +417,23 @@ class EscapedKeyAction(KeyAction):
         return (vkey_scan, MapVirtualKey(vkey_scan, 0), 0)
 
     def key_description(self):
-        "Return a description of the key"
+        'Return a description of the key'
 
-        return "KEsc %s"% self.key
+        return 'KEsc %s'% self.key
 
 
 class PauseAction(KeyAction):
-    "Represents a pause action"
+    'Represents a pause action'
 
     def __init__(self, how_long):
         self.how_long = how_long
 
     def Run(self):
-        "Pause for the lenght of time specified"
+        'Pause for the lenght of time specified'
         time.sleep(self.how_long)
 
     def __str__(self):
-        return "<PAUSE %1.2f>"% (self.how_long)
+        return '<PAUSE %1.2f>'% (self.how_long)
     __repr__ = __str__
 
     #def GetInput(self):
@@ -476,7 +476,7 @@ class PauseAction(KeyAction):
     #
 
 def handle_code(code):
-    "Handle a key or sequence of keys in braces"
+    'Handle a key or sequence of keys in braces'
 
     code_keys = []
     # it is a known code (e.g. {DOWN}, {ENTER}, etc)
@@ -490,7 +490,7 @@ def handle_code(code):
     # it is a repetition or a pause  {DOWN 5}, {PAUSE 1.3}
     elif ' ' in code:
         to_repeat, count = code.rsplit(None, 1)
-        if to_repeat == "PAUSE":
+        if to_repeat == 'PAUSE':
             try:
                 pause_time = float(count)
             except ValueError:
@@ -518,7 +518,7 @@ def handle_code(code):
                     keys = [to_repeat] * count
                 code_keys.extend(keys)
     else:
-        raise RuntimeError("Unknown code: %s"% code)
+        raise RuntimeError('Unknown code: %s'% code)
 
     return code_keys
 
@@ -528,7 +528,7 @@ def parse_keys(string,
                 with_tabs = False,
                 with_newlines = False,
                 modifiers = None):
-    "Return the parsed keys"
+    'Return the parsed keys'
 
     keys = []
     if not modifiers:
@@ -546,13 +546,13 @@ def parse_keys(string,
             # hold down the modifier key
             keys.append(VirtualKeyAction(modifier, up = False))
             if DEBUG:
-                print("MODS+", modifiers)
+                print('MODS+', modifiers)
             continue
 
         # Apply modifiers over a bunch of characters (not just one!)
-        elif c == "(":
+        elif c == '(':
             # find the end of the bracketed text
-            end_pos = string.find(")", index)
+            end_pos = string.find(')', index)
             if end_pos == -1:
                 raise KeySequenceError('`)` not found')
             keys.extend(
@@ -560,9 +560,9 @@ def parse_keys(string,
             index = end_pos + 1
 
         # Escape or named key
-        elif c == "{":
+        elif c == '{':
             # We start searching from index + 1 to account for the case {}}
-            end_pos = string.find("}", index + 1)
+            end_pos = string.find('}', index + 1)
             if end_pos == -1:
                 raise KeySequenceError('`}` not found')
 
@@ -588,7 +588,7 @@ def parse_keys(string,
 
             # output nuewline
             if c in ('~', '\n'):
-                keys.append(VirtualKeyAction(CODES["ENTER"]))
+                keys.append(VirtualKeyAction(CODES['ENTER']))
 
             # safest are the virtual keys - so if our key is a virtual key
             # use a VirtualKeyAction
@@ -604,7 +604,7 @@ def parse_keys(string,
         # as we have handled the text - release the modifiers
         while modifiers:
             if DEBUG:
-                print("MODS-", modifiers)
+                print('MODS-', modifiers)
             keys.append(VirtualKeyAction(modifiers.pop(), down = False))
 
     # just in case there were any modifiers left pressed - release them
@@ -614,11 +614,11 @@ def parse_keys(string,
     return keys
 
 def LoByte(val):
-    "Return the low byte of the value"
+    'Return the low byte of the value'
     return val & 0xff
 
 def HiByte(val):
-    "Return the high byte of the value"
+    'Return the high byte of the value'
     return (val & 0xff00) >> 8
 
 def SendKeys(keys,
@@ -627,7 +627,7 @@ def SendKeys(keys,
              with_tabs=False,
              with_newlines=False,
              turn_off_numlock=True):
-    "Parse the keys and type them"
+    'Parse the keys and type them'
     keys = parse_keys(keys, with_spaces, with_tabs, with_newlines)
 
     for k in keys:
@@ -636,7 +636,7 @@ def SendKeys(keys,
 
 
 def main():
-    "Send some test strings"
+    'Send some test strings'
 
     actions = """
         {LWIN}
@@ -660,21 +660,21 @@ def main():
         time.sleep(.1)
 
     test_strings = [
-        "\n"
-        "(aa)some text\n",
-        "(a)some{ }text\n",
-        "(b)some{{}text\n",
-        "(c)some{+}text\n",
-        "(d)so%me{ab 4}text",
-        "(e)so%me{LEFT 4}text",
-        "(f)so%me{ENTER 4}text",
-        "(g)so%me{^aa 4}text",
-        "(h)some +(asdf)text",
-        "(i)some %^+(asdf)text",
-        "(j)some %^+a text+",
-        "(k)some %^+a tex+{&}",
-        "(l)some %^+a tex+(dsf)",
-        "",
+        '\n'
+        '(aa)some text\n',
+        '(a)some{ }text\n',
+        '(b)some{{}text\n',
+        '(c)some{+}text\n',
+        '(d)so%me{ab 4}text',
+        '(e)so%me{LEFT 4}text',
+        '(f)so%me{ENTER 4}text',
+        '(g)so%me{^aa 4}text',
+        '(h)some +(asdf)text',
+        '(i)some %^+(asdf)text',
+        '(j)some %^+a text+',
+        '(k)some %^+a tex+{&}',
+        '(l)some %^+a tex+(dsf)',
+        '',
         ]
 
     for s in test_strings:
@@ -687,6 +687,6 @@ def main():
             time.sleep(.1)
         print()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     main()

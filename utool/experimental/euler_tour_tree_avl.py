@@ -1025,7 +1025,7 @@ def avl_split_old(root, key):
     # TODO: keep track of the size of the sets being avl_split if possible
     if root is None:
         if DEBUG_SPLIT:
-            print("Split Case None")
+            print('Split Case None')
         part1 = root
         part2 = root
         b = False

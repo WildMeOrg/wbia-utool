@@ -773,7 +773,7 @@ def setcover_ilp(candidate_sets_dict, items=None, set_weights=None, item_values=
     if False:
         # This is true set coer
         # Formulate integer program
-        prob = pulp.LpProblem("Set Cover", pulp.LpMinimize)
+        prob = pulp.LpProblem('Set Cover', pulp.LpMinimize)
         # Solution variable indicates if set it chosen or not
         set_indices = candidate_sets_dict.keys()
         x = pulp.LpVariable.dicts(name='x', indexs=set_indices,
@@ -798,7 +798,7 @@ def setcover_ilp(candidate_sets_dict, items=None, set_weights=None, item_values=
             print('\n'.join(['    %s = %s' % (x[i].name, x[i].varValue) for i in set_indices]))
             print('solution_cover = %r' % (solution_cover,))
     else:
-        prob = pulp.LpProblem("Maximum Cover", pulp.LpMaximize)
+        prob = pulp.LpProblem('Maximum Cover', pulp.LpMaximize)
         # Solution variable indicates if set it chosen or not
         item_indicies = items
         set_indices = candidate_sets_dict.keys()
@@ -1313,7 +1313,7 @@ def knapsack_ilp(items, maxweight, verbose=False):
     weights = [t[1] for t in items]
     indices = [t[2] for t in items]
     # Formulate integer program
-    prob = pulp.LpProblem("Knapsack", pulp.LpMaximize)
+    prob = pulp.LpProblem('Knapsack', pulp.LpMaximize)
     # Solution variables
     x = pulp.LpVariable.dicts(name='x', indexs=indices,
                               lowBound=0, upBound=1, cat=pulp.LpInteger)
@@ -1736,7 +1736,7 @@ def maximin_distance_subset1d(items, K=None, min_thresh=None, verbose=False):
     if False:
         import pulp
         # Formulate integer program
-        prob = pulp.LpProblem("MaxSizeLargeDistSubset", pulp.LpMaximize)
+        prob = pulp.LpProblem('MaxSizeLargeDistSubset', pulp.LpMaximize)
         # Solution variable indicates if set it chosen or not
         item_indices = list(range(len(items)))
         pair_indices = list(ut.combinations(item_indices, 2))
@@ -1905,7 +1905,7 @@ def maximum_distance_subset(items, K, verbose=False):
         Pick subset_idx of size k from sorted_points[:n] with maximum pairwise distance
         Dynamic programming solution
         """
-        "# FIXME BROKEN "
+        '# FIXME BROKEN '
         assert n <= len(sorted_points) and k <= len(sorted_points)
         if k < 2 or n < 2 or n < k:
             # BASE CASE

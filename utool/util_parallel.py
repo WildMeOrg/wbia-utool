@@ -733,7 +733,7 @@ def buffered_generator(source_gen, buffer_size=2, use_multiprocessing=False):
         >>> _test_buffered_generator2()
     """
     if buffer_size < 2:
-        raise RuntimeError("Minimal buffer_ size is 2!")
+        raise RuntimeError('Minimal buffer_ size is 2!')
 
     if use_multiprocessing:
         print('WARNING seems to freeze if passed in a generator')

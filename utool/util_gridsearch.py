@@ -458,7 +458,7 @@ def parse_nestings2(string, nesters=['()', '[]', '<>', "''", '""'], escape='\\')
             if parent._ParseResults__name:
                 parentTag = parent._ParseResults__name
         if not parentTag:
-            parentTag = "ITEM"
+            parentTag = 'ITEM'
         out = []
         for i, res in enumerate(parent._ParseResults__toklist):
             if isinstance(res, pp.ParseResults):
@@ -473,7 +473,7 @@ def parse_nestings2(string, nesters=['()', '[]', '<>', "''", '""'], escape='\\')
                 if i in namedItems:
                     resTag = namedItems[i]
                 if not resTag:
-                    resTag = "ITEM"
+                    resTag = 'ITEM'
                 child = (resTag, pp._ustr(res))
                 out += [child]
         return (parentTag, out)
@@ -608,7 +608,7 @@ def parse_nestings(string, only_curl=False):
             if parent._ParseResults__name:
                 parentTag = parent._ParseResults__name
         if not parentTag:
-            parentTag = "ITEM"
+            parentTag = 'ITEM'
         out = []
         for i, res in enumerate(parent._ParseResults__toklist):
             if isinstance(res, pp.ParseResults):
@@ -623,7 +623,7 @@ def parse_nestings(string, only_curl=False):
                 if i in namedItems:
                     resTag = namedItems[i]
                 if not resTag:
-                    resTag = "ITEM"
+                    resTag = 'ITEM'
                 child = (resTag, pp._ustr(res))
                 out += [child]
         return (parentTag, out)
@@ -743,9 +743,9 @@ def parse_cfgstr3(string, debug=None):
                 parentTag = parent._ParseResults__name
         if not parentTag:
             if namedItemsOnly:
-                return ""
+                return ''
             else:
-                parentTag = "ITEM"
+                parentTag = 'ITEM'
         out = []
         for i, res in enumerate(parent._ParseResults__toklist):
             if isinstance(res, pp.ParseResults):
@@ -765,7 +765,7 @@ def parse_cfgstr3(string, debug=None):
                     if namedItemsOnly:
                         continue
                     else:
-                        resTag = "ITEM"
+                        resTag = 'ITEM'
                 child = (resTag, pp._ustr(res))
                 out += [child]
         return (parentTag, out)

@@ -53,7 +53,7 @@ def get_profile_text(profile):
 
 def dump_profile_text():
     import utool as ut
-    print("Dumping Profile Information")
+    print('Dumping Profile Information')
     profile = ut.PROFILE_FUNC
     try:
         output_text, summary_text = get_profile_text(profile)

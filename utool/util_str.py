@@ -57,9 +57,9 @@ def ensure_ascii(str_):
     try:
         return str_.encode('ascii')
     except UnicodeDecodeError:
-        print("it was not a ascii-encoded unicode string")
+        print('it was not a ascii-encoded unicode string')
     else:
-        print("It may have been an ascii-encoded unicode string")
+        print('It may have been an ascii-encoded unicode string')
     return str_
 
 

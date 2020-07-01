@@ -315,7 +315,7 @@ class CustomStreamHandler(logging.Handler):
 
         If stream is not specified, sys.stderr is used.
         """
-        self.terminator = "\n"
+        self.terminator = '\n'
         logging.Handler.__init__(self)
         if stream is None:
             stream = sys.stderr
@@ -327,7 +327,7 @@ class CustomStreamHandler(logging.Handler):
         """
         self.acquire()
         try:
-            if self.stream and hasattr(self.stream, "flush"):
+            if self.stream and hasattr(self.stream, 'flush'):
                 self.stream.flush()
         finally:
             self.release()
@@ -346,7 +346,7 @@ class CustomStreamHandler(logging.Handler):
         try:
             msg = self.format(record)
             stream = self.stream
-            fs = "%s%s"
+            fs = '%s%s'
             if six.PY3 or not logging._unicode:  # if no unicode support...
                 stream.write(fs % (msg, self.terminator))
             else:
@@ -366,7 +366,7 @@ class CustomStreamHandler(logging.Handler):
                     else:
                         stream.write(fs % (msg, self.terminator))
                 except UnicodeError:
-                    stream.write(fs % (msg.encode("UTF-8"), self.terminator.encode("UTF-8")))
+                    stream.write(fs % (msg.encode('UTF-8'), self.terminator.encode('UTF-8')))
             #self.flush()
         except (KeyboardInterrupt, SystemExit):
             raise
