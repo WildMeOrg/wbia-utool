@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # TODO Licence:
 #
 # TODO:  move library intensive functions to vtool

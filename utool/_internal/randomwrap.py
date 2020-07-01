@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """This is a minimal Python client for Mads Haahr's random number generator at www.random.org
 
 # This tiny set of functions only implements a subset of the HTTP interface available. In particular it only uses the 'live'
