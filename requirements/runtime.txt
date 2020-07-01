@@ -1,16 +1,16 @@
-six >= 1.10.0
-parse >= 1.6.6
-requests
-numpy
-pyparsing
-pint
-gitpython
 delorean
-ubelt
-pandas
+futures >= 1.0.0 ; python_version<'3.0'
+gitpython
+
+lockfile >= 0.10.2 ; python_version<'3.0'
 
 networkx == 2.2 ; python_version<'3.0'
 networkx >= 2.2.0 ; python_version>'3.0'
-
-lockfile >= 0.10.2 ; python_version<'3.0'
-futures >= 1.0.0 ; python_version<'3.0'
+numpy
+pandas
+parse >= 1.6.6
+pint
+pyparsing
+requests
+six >= 1.10.0
+ubelt
