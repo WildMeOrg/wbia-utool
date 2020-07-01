@@ -9,12 +9,14 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import sys
 import multiprocessing
 import textwrap
-#import types
 
-#DEBUG_IMPORTS = '--debug-imports' in sys.argv
-#----------
+# import types
+
+# DEBUG_IMPORTS = '--debug-imports' in sys.argv
+# ----------
 # EXECUTORS
-#----------
+# ----------
+
 
 def __excecute_imports(module, modname, imports, verbose=False):
     """ Module Imports """
@@ -28,7 +30,9 @@ def __excecute_imports(module, modname, imports, verbose=False):
             tmp = __import__(name, globals(), locals(), fromlist=[], level=level)
         elif level == 0:
             # FIXME: should support unicode. Maybe just a python2 thing
-            tmp = __import__(modname, globals(), locals(), fromlist=[str(name)], level=level)
+            tmp = __import__(
+                modname, globals(), locals(), fromlist=[str(name)], level=level
+            )
 
 
 def __execute_fromimport(module, modname, import_tuples, verbose=False):
@@ -44,10 +48,17 @@ def __execute_fromimport(module, modname, import_tuples, verbose=False):
     return from_imports
 
 
-def __execute_fromimport_star(module, modname, import_tuples, ignore_list=[],
-                              ignore_startswith=[], ignore_endswith=[],
-                              check_not_imported=True, verbose=False,
-                              veryverbose=False):
+def __execute_fromimport_star(
+    module,
+    modname,
+    import_tuples,
+    ignore_list=[],
+    ignore_startswith=[],
+    ignore_endswith=[],
+    check_not_imported=True,
+    verbose=False,
+    veryverbose=False,
+):
     r"""
     Effectively import * statements
 
@@ -65,18 +76,44 @@ def __execute_fromimport_star(module, modname, import_tuples, ignore_list=[],
         print('[UTIL_IMPORT] EXECUTE %d FROMIMPORT STAR TUPLES.' % (len(import_tuples),))
     from_imports = []
     # Explicitly ignore these special functions (usually stdlib functions)
-    ignoreset = set(['print', 'print_', 'printDBG', 'rrr', 'profile',
-                     'print_function', 'absolute_import', 'division', 'zip',
-                     'map', 'range', 'list', 'zip_longest', 'filter', 'filterfalse',
-                     'dirname', 'realpath', 'join', 'exists', 'normpath',
-                     'splitext', 'expanduser', 'relpath', 'isabs',
-                     'commonprefix', 'basename', 'input', 'reduce',
-                     #'OrderedDict',
-                     #'product',
-                     ] + ignore_list)
-                     #'isdir', 'isfile', '
+    ignoreset = set(
+        [
+            'print',
+            'print_',
+            'printDBG',
+            'rrr',
+            'profile',
+            'print_function',
+            'absolute_import',
+            'division',
+            'zip',
+            'map',
+            'range',
+            'list',
+            'zip_longest',
+            'filter',
+            'filterfalse',
+            'dirname',
+            'realpath',
+            'join',
+            'exists',
+            'normpath',
+            'splitext',
+            'expanduser',
+            'relpath',
+            'isabs',
+            'commonprefix',
+            'basename',
+            'input',
+            'reduce',
+            #'OrderedDict',
+            #'product',
+        ]
+        + ignore_list
+    )
+    #'isdir', 'isfile', '
 
-    #def is_defined_by_module2(item, module):
+    # def is_defined_by_module2(item, module):
     #    belongs = False
     #    if hasattr(item, '__module__'):
     #        belongs = item.__module__ == module.__name__
@@ -85,31 +122,35 @@ def __execute_fromimport_star(module, modname, import_tuples, ignore_list=[],
     #    return belongs
 
     for name, fromlist in import_tuples:
-        #absname = modname + '.' + name
+        # absname = modname + '.' + name
         child_module = sys.modules[modname + '.' + name]
         # Check if the variable already belongs to the module
         varset = set(vars(module)) if check_not_imported else set()
         fromset = set(fromlist) if fromlist is not None else set()
+
         def valid_attrname(attrname):
             """
             Guess if the attrname is valid based on its name
             """
-            is_forced  = attrname in fromset
+            is_forced = attrname in fromset
             is_private = attrname.startswith('_')
             is_conflit = attrname in varset
-            is_module  = attrname in sys.modules  # Isn't fool proof (next step is)
+            is_module = attrname in sys.modules  # Isn't fool proof (next step is)
             is_ignore1 = attrname in ignoreset
-            is_ignore2 = any([attrname.startswith(prefix) for prefix in ignore_startswith])
+            is_ignore2 = any(
+                [attrname.startswith(prefix) for prefix in ignore_startswith]
+            )
             is_ignore3 = any([attrname.endswith(suffix) for suffix in ignore_endswith])
-            is_ignore  = any((is_ignore1, is_ignore2, is_ignore3))
+            is_ignore = any((is_ignore1, is_ignore2, is_ignore3))
             is_valid = not any((is_ignore, is_private, is_conflit, is_module))
-            #is_valid = is_valid and is_defined_by_module2(getattr(child_module, attrname), child_module)
-            return (is_forced or is_valid)
+            # is_valid = is_valid and is_defined_by_module2(getattr(child_module, attrname), child_module)
+            return is_forced or is_valid
+
         allattrs = dir(child_module)
         fromlist_ = [attrname for attrname in allattrs if valid_attrname(attrname)]
-        #if verbose:
+        # if verbose:
         #    print('[UTIL_IMPORT]     name=%r, len(allattrs)=%d' % (name, len(allattrs)))
-        #if verbose:
+        # if verbose:
         #    print('[UTIL_IMPORT]     name=%r, len(fromlist_)=%d' % (name, len(fromlist_)))
         valid_fromlist_ = []
         for attrname in fromlist_:
@@ -128,70 +169,93 @@ def __execute_fromimport_star(module, modname, import_tuples, ignore_list=[],
             valid_fromlist_.append(attrname)
             setattr(module, attrname, attrval)
         if verbose:
-            print('[UTIL_IMPORT]     name=%r, len(valid_fromlist_)=%d' % (name, len(valid_fromlist_)))
+            print(
+                '[UTIL_IMPORT]     name=%r, len(valid_fromlist_)=%d'
+                % (name, len(valid_fromlist_))
+            )
         from_imports.append((name, valid_fromlist_))
     return from_imports
 
-#----------
+
+# ----------
 # PARSERS
-#----------
+# ----------
+
 
 def __get_from_imports(import_tuples):
     """ Returns import names and fromlist
     import_tuples are specified as
     (name, fromlist, ispackage)
     """
-    from_imports = [(tup[0], tup[1]) for tup in import_tuples
-                    if tup[1] is not None and len(tup[1]) > 0]
+    from_imports = [
+        (tup[0], tup[1])
+        for tup in import_tuples
+        if tup[1] is not None and len(tup[1]) > 0
+    ]
     return from_imports
 
-#----------
+
+# ----------
 # STRING MAKERS
-#----------
+# ----------
+
 
 def _initstr(modname, imports, from_imports, inject_execstr, withheader=True):
     """ Calls the other string makers """
-    header         = _make_module_header() if withheader else ''
-    import_str     = _make_imports_str(imports, modname)
+    header = _make_module_header() if withheader else ''
+    import_str = _make_imports_str(imports, modname)
     fromimport_str = _make_fromimport_str(from_imports, modname)
-    initstr = '\n'.join([str_ for str_ in [
-        header,
-        import_str,
-        fromimport_str,
-        inject_execstr,
-    ] if len(str_) > 0])
+    initstr = '\n'.join(
+        [
+            str_
+            for str_ in [header, import_str, fromimport_str, inject_execstr,]
+            if len(str_) > 0
+        ]
+    )
     return initstr
 
+
 def _make_module_header():
-    return '\n'.join([
-        '# flake8: noqa',
-        'from __future__ import absolute_import, division, print_function, unicode_literals'])
+    return '\n'.join(
+        [
+            '# flake8: noqa',
+            'from __future__ import absolute_import, division, print_function, unicode_literals',
+        ]
+    )
+
 
 def _make_imports_str(imports, rootmodname='.'):
     imports_fmtstr = 'from {rootmodname} import %s'.format(rootmodname=rootmodname)
     return '\n'.join([imports_fmtstr % (name,) for name in imports])
 
+
 def _make_fromimport_str(from_imports, rootmodname='.'):
     from utool import util_str
+
     if rootmodname == '.':
         # dot is already taken care of in fmtstr
         rootmodname = ''
+
     def _pack_fromimport(tup):
         name, fromlist = tup[0], tup[1]
-        from_module_str = 'from {rootmodname}.{name} import ('.format(rootmodname=rootmodname, name=name)
-        newline_prefix = (' ' * len(from_module_str))
+        from_module_str = 'from {rootmodname}.{name} import ('.format(
+            rootmodname=rootmodname, name=name
+        )
+        newline_prefix = ' ' * len(from_module_str)
         if len(fromlist) > 0:
             rawstr = from_module_str + ', '.join(fromlist) + ',)'
         else:
             rawstr = ''
 
         # not sure why this isn't 76? >= maybe?
-        packstr = util_str.pack_into(rawstr, textwidth=75,
-                                     newline_prefix=newline_prefix,
-                                    break_words=False)
+        packstr = util_str.pack_into(
+            rawstr, textwidth=75, newline_prefix=newline_prefix, break_words=False
+        )
         return packstr
+
     from_str = '\n'.join(map(_pack_fromimport, from_imports))
     return from_str
+
 
 def _inject_execstr(modname, import_tuples):
     """ Injection and Reload String Defs """
@@ -266,10 +330,11 @@ def _inject_execstr(modname, import_tuples):
                 print(ex)
         rrrr = reload_subs
         # ENDBLOCK
-        ''')
+        '''
+    )
     injectstr_fmt = injectstr_fmt.replace('# STARTBLOCK', '')
     injectstr_fmt = injectstr_fmt.replace('# ENDBLOCK', '')
-    rrrdir_fmt  = '    get_reload_subs({modname})(verbose=verbose)'
+    rrrdir_fmt = '    get_reload_subs({modname})(verbose=verbose)'
     rrrfile_fmt = '    get_rrr({modname})(verbose > 1)'
 
     def _reload_command(tup):
@@ -277,6 +342,7 @@ def _inject_execstr(modname, import_tuples):
             return rrrdir_fmt.format(modname=tup[0])
         else:
             return rrrfile_fmt.format(modname=tup[0])
+
     reload_body = '\n'.join(map(_reload_command, import_tuples)).strip()
     format_dict = {
         'modname': modname,
@@ -287,14 +353,25 @@ def _inject_execstr(modname, import_tuples):
     inject_execstr = injectstr_fmt.format(**format_dict).strip()
     return inject_execstr
 
-#----------
-# PUBLIC FUNCTIONS
-#----------
 
-def dynamic_import(modname, import_tuples, developing=True, ignore_froms=[],
-                   dump=False, ignore_startswith=[], ignore_endswith=[],
-                   ignore_list=[], check_not_imported=True, return_initstr=False,
-                   verbose=False):
+# ----------
+# PUBLIC FUNCTIONS
+# ----------
+
+
+def dynamic_import(
+    modname,
+    import_tuples,
+    developing=True,
+    ignore_froms=[],
+    dump=False,
+    ignore_startswith=[],
+    ignore_endswith=[],
+    ignore_list=[],
+    check_not_imported=True,
+    return_initstr=False,
+    verbose=False,
+):
     """
     MAIN ENTRY POINT
 
@@ -332,20 +409,28 @@ def dynamic_import(modname, import_tuples, developing=True, ignore_froms=[],
     __excecute_imports(module, modname, imports, verbose=verbose)
     # If developing do explicit import stars
     if developing:
-        from_imports = __execute_fromimport_star(module, modname, import_tuples,
-                                                 ignore_list=ignore_list,
-                                                 ignore_startswith=ignore_startswith,
-                                                 ignore_endswith=ignore_endswith,
-                                                 check_not_imported=check_not_imported,
-                                                 verbose=verbose)
+        from_imports = __execute_fromimport_star(
+            module,
+            modname,
+            import_tuples,
+            ignore_list=ignore_list,
+            ignore_startswith=ignore_startswith,
+            ignore_endswith=ignore_endswith,
+            check_not_imported=check_not_imported,
+            verbose=verbose,
+        )
     else:
-        from_imports = __execute_fromimport(module, modname, import_tuples, verbose=verbose)
+        from_imports = __execute_fromimport(
+            module, modname, import_tuples, verbose=verbose
+        )
 
     inject_execstr = _inject_execstr(modname, import_tuples)
 
     # If requested: print what the __init__ module should look like
-    dump_requested = (('--dump-%s-init' % modname) in sys.argv or
-                      ('--print-%s-init' % modname) in sys.argv) or dump
+    dump_requested = (
+        ('--dump-%s-init' % modname) in sys.argv
+        or ('--print-%s-init' % modname) in sys.argv
+    ) or dump
     overwrite_requested = ('--update-%s-init' % modname) in sys.argv
     if verbose:
         print('[UTIL_IMPORT] Finished Dynamic Imports for modname=%r ' % modname)
@@ -354,6 +439,7 @@ def dynamic_import(modname, import_tuples, developing=True, ignore_froms=[],
         is_main_proc = multiprocessing.current_process().name == 'MainProcess'
         if is_main_proc:
             from utool import util_str
+
             initstr = _initstr(modname, imports, from_imports, inject_execstr)
             print(util_str.indent(initstr))
     # Overwrite the __init__.py file with new explicit imports
@@ -367,9 +453,12 @@ def dynamic_import(modname, import_tuples, developing=True, ignore_froms=[],
         if is_main_proc:
             from utool import util_str
             from os.path import join, exists
-            initstr = _initstr(modname, imports, from_imports, inject_execstr, withheader=False)
+
+            initstr = _initstr(
+                modname, imports, from_imports, inject_execstr, withheader=False
+            )
             new_else = util_str.indent(initstr)
-            #print(new_else)
+            # print(new_else)
             # Get path to init file so we can overwrite it
             init_fpath = join(module.__path__[0], '__init__.py')
             print('attempting to update: %r' % init_fpath)
@@ -377,10 +466,10 @@ def dynamic_import(modname, import_tuples, developing=True, ignore_froms=[],
             new_lines = []
             editing = False
             updated = False
-            #start_tag = '# <AUTOGEN_INIT>'
-            #end_tag = '# </AUTOGEN_INIT>'
+            # start_tag = '# <AUTOGEN_INIT>'
+            # end_tag = '# </AUTOGEN_INIT>'
             with open(init_fpath, 'r') as file_:
-                #text = file_.read()
+                # text = file_.read()
                 lines = file_.readlines()
                 for line in lines:
                     if not editing:
@@ -392,7 +481,7 @@ def dynamic_import(modname, import_tuples, developing=True, ignore_froms=[],
                     if line.strip().startswith('# </AUTOGEN_INIT>'):
                         editing = False
             # TODO:
-            #new_text = util_str.replace_between_tags(text, new_else, start_tag, end_tag)
+            # new_text = util_str.replace_between_tags(text, new_else, start_tag, end_tag)
             if updated:
                 print('writing updated file: %r' % init_fpath)
                 new_text = ''.join(new_lines)
@@ -420,13 +509,16 @@ def make_initstr(modname, import_tuples, verbose=False):
 def make_import_tuples(module_path, exclude_modnames=[]):
     """ Infer the import_tuples from a module_path """
     from utool import util_path
+
     kwargs = dict(private=False, full=False)
-    module_list  = util_path.ls_modulefiles(module_path, noext=True, **kwargs)
+    module_list = util_path.ls_modulefiles(module_path, noext=True, **kwargs)
     package_list = util_path.ls_moduledirs(module_path, **kwargs)
     exclude_set = set(exclude_modnames)
-    module_import_tuples = [(modname, None) for modname in module_list
-                            if modname not in exclude_set]
-    package_import_tuples = [(modname, None, True)  for modname in package_list
-                            if modname not in exclude_set]
-    import_tuples = (module_import_tuples + package_import_tuples)
+    module_import_tuples = [
+        (modname, None) for modname in module_list if modname not in exclude_set
+    ]
+    package_import_tuples = [
+        (modname, None, True) for modname in package_list if modname not in exclude_set
+    ]
+    import_tuples = module_import_tuples + package_import_tuples
     return import_tuples

@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
+
 try:
     import numpy as np
+
     HAVE_NUMPY = True
 except ImportError:
     HAVE_NUMPY = False
@@ -12,6 +14,7 @@ from six.moves import zip
 from utool import util_iter
 from utool import util_alg
 from utool import util_inject
+
 print, rrr, profile = util_inject.inject2(__name__)
 from utool import util_arg  # NOQA
 
@@ -48,8 +51,10 @@ def assert_raises(ex_type, func, *args, **kwargs):
     try:
         func(*args, **kwargs)
     except Exception as ex:
-        assert isinstance(ex, ex_type), (
-            'Raised %r but type should have been %r' % (ex, ex_type))
+        assert isinstance(ex, ex_type), 'Raised %r but type should have been %r' % (
+            ex,
+            ex_type,
+        )
         return True
     else:
         raise AssertionError('No error was raised')
@@ -57,12 +62,11 @@ def assert_raises(ex_type, func, *args, **kwargs):
 
 def assert_unique(item_list, ignore=[], name='list', verbose=None):
     import utool as ut
+
     dups = ut.find_duplicate_items(item_list)
     ut.delete_dict_keys(dups, ignore)
     if len(dups) > 0:
-        raise AssertionError(
-            'Found duplicate items in %s: %s' % (
-                name, ut.repr4(dups)))
+        raise AssertionError('Found duplicate items in %s: %s' % (name, ut.repr4(dups)))
     if verbose:
         print('No duplicates found in %s' % (name,))
 
@@ -72,8 +76,13 @@ def assert_all_in(key_list, valid_list, msg=''):
     assert len(missing_keys) == 0, 'missing_keys = %r. %s' % (missing_keys, msg)
 
 
-def assert_all_not_None(list_, list_name='some_list', key_list=[], verbose=not
-                        util_arg.QUIET, veryverbose=False):
+def assert_all_not_None(
+    list_,
+    list_name='some_list',
+    key_list=[],
+    verbose=not util_arg.QUIET,
+    veryverbose=False,
+):
     if util_arg.NO_ASSERTS:
         return
     try:
@@ -83,6 +92,7 @@ def assert_all_not_None(list_, list_name='some_list', key_list=[], verbose=not
             print('PASSED: %s has no Nones' % (list_name))
     except AssertionError as ex:
         from utool import util_dbg
+
         item = list_[index]
         msg = (list_name + '[%d] = %r') % (index, item)
         if verbose:
@@ -99,30 +109,37 @@ def assert_unflat_level(unflat_list, level=1, basetype=None):
         if level == 1:
             for x in item:
                 num_checked += 1
-                assert not isinstance(x, (tuple, list)), \
-                    'list is at an unexpected unflat level, x=%r' % (x,)
+                assert not isinstance(
+                    x, (tuple, list)
+                ), 'list is at an unexpected unflat level, x=%r' % (x,)
                 if basetype is not None:
-                    assert isinstance(x, basetype), \
-                        'x=%r, type(x)=%r is not basetype=%r' % (x, type(x), basetype)
+                    assert isinstance(
+                        x, basetype
+                    ), 'x=%r, type(x)=%r is not basetype=%r' % (x, type(x), basetype)
         else:
             assert_unflat_level(item, level - 1)
-    #print('checked %r' % num_checked)
-    #assert num_checked > 0, 'num_checked=%r' % num_checked
+    # print('checked %r' % num_checked)
+    # assert num_checked > 0, 'num_checked=%r' % num_checked
 
 
 def assert_scalar_list(list_):
     if util_arg.NO_ASSERTS:
         return
     for count, item in enumerate(list_):
-        assert not util_iter.isiterable(item), 'count=%r, item=%r is iterable!' % (count, item)
+        assert not util_iter.isiterable(item), 'count=%r, item=%r is iterable!' % (
+            count,
+            item,
+        )
 
 
 def assert_same_len(list1, list2, additional_msg=''):
     if util_arg.NO_ASSERTS:
         return
-    assert len(list1) == len(list2), (
-        'unequal lens. len(list1)=%r, len(list2)=%r%s' % (
-            len(list1), len(list2), additional_msg))
+    assert len(list1) == len(list2), 'unequal lens. len(list1)=%r, len(list2)=%r%s' % (
+        len(list1),
+        len(list2),
+        additional_msg,
+    )
 
 
 assert_eq_len = assert_same_len
@@ -147,7 +164,10 @@ def assert_lists_eq(list1, list2, failmsg='', verbose=False):
         return
     msg = ''
     if len(list1) != len(list2):
-        msg += ('LENGTHS ARE UNEQUAL: len(list1)=%r, len(list2)=%r\n' % (len(list1), len(list2)))
+        msg += 'LENGTHS ARE UNEQUAL: len(list1)=%r, len(list2)=%r\n' % (
+            len(list1),
+            len(list2),
+        )
 
     difflist = []
     for count, (item1, item2) in enumerate(zip(list1, list2)):
@@ -167,7 +187,10 @@ def assert_lists_eq(list1, list2, failmsg='', verbose=False):
         missing_items1 = set(list2).difference(intersecting_items)
         missing_items2 = set(list1).difference(intersecting_items)
         num_intersect = len(intersecting_items)
-        isect_msg = 'There are %d/%d intersecting unordered items' % (num_intersect, length)
+        isect_msg = 'There are %d/%d intersecting unordered items' % (
+            num_intersect,
+            length,
+        )
         msg = failmsg + '\n' + msg + isect_msg
         if len(missing_items1) > 0:
             msg += '\n %d items are missing from list1' % (len(missing_items1))
@@ -190,6 +213,7 @@ def assert_inbounds(num, low, high, msg='', eq=False, verbose=not util_arg.QUIET
         msg (str):
     """
     from utool import util_str
+
     if util_arg.NO_ASSERTS:
         return
     passed = util_alg.inbounds(num, low, high, eq=eq)
@@ -207,10 +231,14 @@ def assert_inbounds(num, low, high, msg='', eq=False, verbose=not util_arg.QUIET
         if verbose:
             op = '<=' if eq else '<'
             fmtstr = 'Passed assert_inbounds: {low} {op} {num} {op} {high}'
-            print(fmtstr.format(low=low, op=op, num=util_str.truncate_str(str(num)), high=high))
+            print(
+                fmtstr.format(
+                    low=low, op=op, num=util_str.truncate_str(str(num)), high=high
+                )
+            )
 
 
-def assert_almost_eq(arr_test, arr_target, thresh=1E-11):
+def assert_almost_eq(arr_test, arr_target, thresh=1e-11):
     r"""
     Args:
         arr_test (ndarray or list):
@@ -220,6 +248,7 @@ def assert_almost_eq(arr_test, arr_target, thresh=1E-11):
     if util_arg.NO_ASSERTS:
         return
     import utool as ut
+
     arr1 = np.array(arr_test)
     arr2 = np.array(arr_target)
     passed, error = ut.almost_eq(arr1, arr2, thresh, ret_error=True)
@@ -277,6 +306,7 @@ def assert_all_eq(item_list, eq_=operator.eq):
     if len(item_list) == 0:
         return True
     import six
+
     item_iter = iter(item_list)
     item0 = six.next(item_iter)
     for count, item in enumerate(item_iter, start=1):
@@ -290,9 +320,9 @@ def assert_all_eq(item_list, eq_=operator.eq):
             raise AssertionError(msg)
 
 
-def assert_eq(var1, var2, msg='', var1_name=None, var2_name=None,
-              verbose=None):
+def assert_eq(var1, var2, msg='', var1_name=None, var2_name=None, verbose=None):
     import utool as ut
+
     if verbose is None:
         verbose = not util_arg.QUIET
     failed = var1 != var2
@@ -305,9 +335,11 @@ def assert_eq(var1, var2, msg='', var1_name=None, var2_name=None,
         var1_name=var1_name,
         var2_name=var2_name,
         var1_repr=repr(var1),
-        var2_repr=repr(var2))
+        var2_repr=repr(var2),
+    )
     if failed:
-        msg_fmtstr = ut.codeblock('''
+        msg_fmtstr = ut.codeblock(
+            """
             +=====
             ERROR {var1_name} != {var2_name}
             msg = {msg}
@@ -316,12 +348,17 @@ def assert_eq(var1, var2, msg='', var1_name=None, var2_name=None,
             ---
             {var2_name} = {var2_repr}
             L_____
-            ''')
+            """
+        )
         msg = msg_fmtstr.format(**fmtdict)
         raise AssertionError(msg)
     else:
         if verbose:
-            print('ASSERT_EQ_PASSED: {var1_name} == {var2_name} == {var1_repr}'.format(**fmtdict))
+            print(
+                'ASSERT_EQ_PASSED: {var1_name} == {var2_name} == {var1_repr}'.format(
+                    **fmtdict
+                )
+            )
 
 
 if __name__ == '__main__':
@@ -332,6 +369,8 @@ if __name__ == '__main__':
         python -m utool.util_assert --allexamples --noface --nosrc
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

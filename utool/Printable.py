@@ -29,26 +29,33 @@ class AbstractPrintable(object):
     def printme3(self):
         print(self.get_printable())
 
-    def printme2(self,
-                 type_bit=True,
-                 print_exclude_aug=[],
-                 val_bit=True,
-                 max_valstr=MAX_VALSTR,
-                 justlength=True):
-        to_print = self.get_printable(type_bit=type_bit,
-                                      print_exclude_aug=print_exclude_aug,
-                                      val_bit=val_bit,
-                                      max_valstr=max_valstr,
-                                      justlength=justlength)
+    def printme2(
+        self,
+        type_bit=True,
+        print_exclude_aug=[],
+        val_bit=True,
+        max_valstr=MAX_VALSTR,
+        justlength=True,
+    ):
+        to_print = self.get_printable(
+            type_bit=type_bit,
+            print_exclude_aug=print_exclude_aug,
+            val_bit=val_bit,
+            max_valstr=max_valstr,
+            justlength=justlength,
+        )
         print(to_print)
 
-    def get_printable(self,
-                      type_bit=True,
-                      print_exclude_aug=[],
-                      val_bit=True,
-                      max_valstr=MAX_VALSTR,
-                      justlength=False):
+    def get_printable(
+        self,
+        type_bit=True,
+        print_exclude_aug=[],
+        val_bit=True,
+        max_valstr=MAX_VALSTR,
+        justlength=False,
+    ):
         from utool.util_str import truncate_str
+
         body = ''
         attri_list = []
         exclude_key_list = list(self._printable_exclude) + list(print_exclude_aug)
@@ -63,7 +70,7 @@ class AbstractPrintable(object):
                     continue
                 valstr = printableVal(val, type_bit=type_bit, justlength=justlength)
                 valstr = truncate_str(valstr, maxlen=max_valstr, truncmsg=' \n ~~~ \n ')
-                #if len(valstr) > max_valstr and max_valstr > 0:
+                # if len(valstr) > max_valstr and max_valstr > 0:
                 #    pos1 =  max_valstr // 2
                 #    pos2 = -max_valstr // 2
                 #    valstr = valstr[0:pos1] + ' \n ~~~ \n ' + valstr[pos2: - 1]
@@ -93,12 +100,14 @@ class AbstractPrintable(object):
 
 # - --------------
 
+
 def printableType(val, name=None, parent=None):
     """
     Tries to make a nice type string for a value.
     Can also pass in a Printable parent object
     """
     import numpy as np
+
     if parent is not None and hasattr(parent, 'customPrintableType'):
         # Hack for non - trivial preference types
         _typestr = parent.customPrintableType(name)
@@ -112,7 +121,7 @@ def printableType(val, name=None, parent=None):
     else:
         _typestr = str(type(val))
         _typestr = _typestr.replace('type', '')
-        _typestr = re.sub('[\'><]', '', _typestr)
+        _typestr = re.sub("['><]", '', _typestr)
         _typestr = re.sub('  *', ' ', _typestr)
         _typestr = _typestr.strip()
     return _typestr
@@ -124,9 +133,11 @@ def printableVal(val, type_bit=True, justlength=False):
     DEPRICATE
     """
     from utool import util_dev
+
     # Move to util_dev
     # NUMPY ARRAY
     import numpy as np
+
     if type(val) is np.ndarray:
         info = npArrInfo(val)
         if info.dtypestr.startswith('bool'):
@@ -135,10 +146,12 @@ def printableVal(val, type_bit=True, justlength=False):
         elif info.dtypestr.startswith('float'):
             _valstr = util_dev.get_stats_str(val)
         else:
-            _valstr = '{ shape:' + info.shapestr + ' mM:' + info.minmaxstr + ' }'  # + '\n  |_____'
+            _valstr = (
+                '{ shape:' + info.shapestr + ' mM:' + info.minmaxstr + ' }'
+            )  # + '\n  |_____'
     # String
     elif isinstance(val, (str, unicode)):  # NOQA
-        _valstr = '\'%s\'' % val
+        _valstr = "'%s'" % val
     # List
     elif isinstance(val, list):
         if justlength or len(val) > 30:
@@ -168,9 +181,10 @@ def npArrInfo(arr):
     OLD update and refactor
     """
     from utool.DynamicStruct import DynStruct
+
     info = DynStruct()
-    info.shapestr  = '[' + ' x '.join([str(x) for x in arr.shape]) + ']'
-    info.dtypestr  = str(arr.dtype)
+    info.shapestr = '[' + ' x '.join([str(x) for x in arr.shape]) + ']'
+    info.dtypestr = str(arr.dtype)
     if info.dtypestr == 'bool':
         info.bittotal = 'T=%d, F=%d' % (sum(arr), sum(1 - arr))
     elif info.dtypestr == 'object':

@@ -12,8 +12,10 @@ from utool import util_const
 from utool import util_iter
 import copy
 import six
+
 try:
     import numpy as np
+
     HAVE_NUMPY = True
 except ImportError:
     HAVE_NUMPY = False
@@ -71,8 +73,9 @@ def dzip(list1, list2):
     if len(list2) == 1 and len(list1) > 1:
         list2 = list2 * len(list1)
     if len(list1) != len(list2):
-        raise ValueError('out of alignment len(list1)=%r, len(list2)=%r' % (
-            len(list1), len(list2)))
+        raise ValueError(
+            'out of alignment len(list1)=%r, len(list2)=%r' % (len(list1), len(list2))
+        )
     return dict(zip(list1, list2))
 
 
@@ -141,8 +144,9 @@ def map_dict_keys(func, dict_):
     # newdict = type(dict_)(keyval_list)
     dictclass = OrderedDict if isinstance(dict_, OrderedDict) else dict
     newdict = dictclass(keyval_list)
-    assert len(newdict) == len(dict_), (
-        'multiple input keys were mapped to the same output key')
+    assert len(newdict) == len(
+        dict_
+    ), 'multiple input keys were mapped to the same output key'
     return newdict
 
 
@@ -169,6 +173,7 @@ class AutoVivification(dict):
         >>> print(result)
         dict_ = {0: {10: {100: None}}}
     """
+
     def __getitem__(self, key):
         try:
             # value = super(AutoVivification, self).__getitem__(key)
@@ -198,6 +203,7 @@ class OrderedAutoVivification(OrderedDict):
         >>> print(result)
         dict_ = {0: {10: {100: None, 1: None}}}
     """
+
     def __getitem__(self, key):
         try:
             # value = super(OrderedAutoVivification, self).__getitem__(key)
@@ -208,16 +214,20 @@ class OrderedAutoVivification(OrderedDict):
 
     def __repr__(self):
         import utool as ut
+
         return ut.repr2(self)
 
     __str__ = __repr__
+
 
 AutoDict = AutoVivification
 AutoOrderedDict = OrderedAutoVivification
 
 
 def count_dict_vals(dict_of_lists):
-    count_dict = {'len(%s)' % (key,): len(val) for key, val in six.iteritems(dict_of_lists)}
+    count_dict = {
+        'len(%s)' % (key,): len(val) for key, val in six.iteritems(dict_of_lists)
+    }
     return count_dict
 
 
@@ -256,12 +266,13 @@ def get_dict_hashid(dict_):
         oegknoalkrkojumi
     """
     import utool as ut
+
     raw_text = ut.repr4(dict_, sorted_=True, strvals=True, nl=2)
-    #print('raw_text = %r' % (raw_text,))
+    # print('raw_text = %r' % (raw_text,))
     hashid = ut.hashstr27(raw_text)
-    #from utool import util_hash
-    #hashid = hash(frozenset(dict_.items()))
-    #hashid = util_hash.make_hash(dict_)
+    # from utool import util_hash
+    # hashid = hash(frozenset(dict_.items()))
+    # hashid = util_hash.make_hash(dict_)
     return hashid
 
 
@@ -289,37 +300,54 @@ class hashdict(dict):
        http://stackoverflow.com/questions/1151658/python-hashable-dicts
        http://stackoverflow.com/questions/1151658/python-hashable-dicts
     """
+
     def __key(self):
         return tuple(sorted(self.items()))
 
     def __repr__(self):
-        return '{0}({1})'.format(self.__class__.__name__,
-                                 ', '.join('{0}={1}'.format(
-                                     str(i[0]), repr(i[1])) for i in self.__key()))
+        return '{0}({1})'.format(
+            self.__class__.__name__,
+            ', '.join('{0}={1}'.format(str(i[0]), repr(i[1])) for i in self.__key()),
+        )
 
     def __hash__(self):
         return hash(self.__key())
+
     def __setitem__(self, key, value):
-        raise TypeError('{0} does not support item assignment'
-                         .format(self.__class__.__name__))
+        raise TypeError(
+            '{0} does not support item assignment'.format(self.__class__.__name__)
+        )
+
     def __delitem__(self, key):
-        raise TypeError('{0} does not support item assignment'
-                         .format(self.__class__.__name__))
+        raise TypeError(
+            '{0} does not support item assignment'.format(self.__class__.__name__)
+        )
+
     def clear(self):
-        raise TypeError('{0} does not support item assignment'
-                         .format(self.__class__.__name__))
+        raise TypeError(
+            '{0} does not support item assignment'.format(self.__class__.__name__)
+        )
+
     def pop(self, *args, **kwargs):
-        raise TypeError('{0} does not support item assignment'
-                         .format(self.__class__.__name__))
+        raise TypeError(
+            '{0} does not support item assignment'.format(self.__class__.__name__)
+        )
+
     def popitem(self, *args, **kwargs):
-        raise TypeError('{0} does not support item assignment'
-                         .format(self.__class__.__name__))
+        raise TypeError(
+            '{0} does not support item assignment'.format(self.__class__.__name__)
+        )
+
     def setdefault(self, *args, **kwargs):
-        raise TypeError('{0} does not support item assignment'
-                         .format(self.__class__.__name__))
+        raise TypeError(
+            '{0} does not support item assignment'.format(self.__class__.__name__)
+        )
+
     def update(self, *args, **kwargs):
-        raise TypeError('{0} does not support item assignment'
-                         .format(self.__class__.__name__))
+        raise TypeError(
+            '{0} does not support item assignment'.format(self.__class__.__name__)
+        )
+
     # update is not ok because it mutates the object
     # __add__ is ok because it creates a new object
     # while the new object is under construction, it's ok to mutate it
@@ -484,8 +512,9 @@ def dict_stack2(dict_list, key_suffix=None, default=None):
         accum_ = dict_list_[0]
         for dict_ in dict_list_[1:]:
             default1.append(default)
-            accum_ = dict_union_combine(accum_, dict_, default=default1,
-                                        default2=default2)
+            accum_ = dict_union_combine(
+                accum_, dict_, default=default1, default2=default2
+            )
         stacked_dict = accum_
         # stacked_dict = reduce(partial(dict_union_combine, default=[default]), dict_list_)
     else:
@@ -554,8 +583,9 @@ def iter_all_dict_combinations_ordered(varied_dict):
     """
     Same as all_dict_combinations but preserves order
     """
-    tups_list = [[(key, val) for val in val_list]
-                 for (key, val_list) in six.iteritems(varied_dict)]
+    tups_list = [
+        [(key, val) for val in val_list] for (key, val_list) in six.iteritems(varied_dict)
+    ]
     dict_iter = (OrderedDict(tups) for tups in it.product(*tups_list))
     return dict_iter
 
@@ -598,23 +628,26 @@ def all_dict_combinations(varied_dict):
             {'logdist_weight': 1.0, 'pipeline_root': 'vsmany', 'sv_on': None},
         ]
     """
-    #tups_list = [[(key, val) for val in val_list]
+    # tups_list = [[(key, val) for val in val_list]
     #             if isinstance(val_list, (list, tuple))
     #             else [(key, val_list)]
     #             for (key, val_list) in six.iteritems(varied_dict)]
-    tups_list = [[(key, val) for val in val_list]
-                 if isinstance(val_list, (list))
-                 #if isinstance(val_list, (list, tuple))
-                 else [(key, val_list)]
-                 for (key, val_list) in iteritems_sorted(varied_dict)]
+    tups_list = [
+        [(key, val) for val in val_list] if isinstance(val_list, (list))
+        # if isinstance(val_list, (list, tuple))
+        else [(key, val_list)]
+        for (key, val_list) in iteritems_sorted(varied_dict)
+    ]
     dict_list = [dict(tups) for tups in it.product(*tups_list)]
-    #dict_list = [{key: val for (key, val) in tups} for tups in it.product(*tups_list)]
-    #from collections import OrderedDict
-    #dict_list = [OrderedDict([(key, val) for (key, val) in tups]) for tups in it.product(*tups_list)]
+    # dict_list = [{key: val for (key, val) in tups} for tups in it.product(*tups_list)]
+    # from collections import OrderedDict
+    # dict_list = [OrderedDict([(key, val) for (key, val) in tups]) for tups in it.product(*tups_list)]
     return dict_list
 
 
-def all_dict_combinations_lbls(varied_dict, remove_singles=True, allow_lone_singles=False):
+def all_dict_combinations_lbls(
+    varied_dict, remove_singles=True, allow_lone_singles=False
+):
     """
     returns a label for each variation in a varydict.
 
@@ -655,10 +688,12 @@ def all_dict_combinations_lbls(varied_dict, remove_singles=True, allow_lone_sing
             'logdist_weight=0.0,pipeline_root=vsmany,sv_on=True',
         ]
     """
-    is_lone_single = all([
-        isinstance(val_list, (list, tuple)) and len(val_list) == 1
-        for key, val_list in iteritems_sorted(varied_dict)
-    ])
+    is_lone_single = all(
+        [
+            isinstance(val_list, (list, tuple)) and len(val_list) == 1
+            for key, val_list in iteritems_sorted(varied_dict)
+        ]
+    )
     if not remove_singles or (allow_lone_singles and is_lone_single):
         # all entries have one length
         multitups_list = [
@@ -669,15 +704,21 @@ def all_dict_combinations_lbls(varied_dict, remove_singles=True, allow_lone_sing
         multitups_list = [
             [(key, val) for val in val_list]
             for key, val_list in iteritems_sorted(varied_dict)
-            if isinstance(val_list, (list, tuple)) and len(val_list) > 1]
+            if isinstance(val_list, (list, tuple)) and len(val_list) > 1
+        ]
     combtup_list = list(it.product(*multitups_list))
     combtup_list2 = [
-        [(key, val) if isinstance(val, six.string_types) else (key, repr(val))
-         for (key, val) in combtup]
-        for combtup in combtup_list]
-    comb_lbls = [','.join(['%s=%s' % (key, val) for (key, val) in combtup])
-                 for combtup in combtup_list2]
-    #comb_lbls = list(map(str, comb_pairs))
+        [
+            (key, val) if isinstance(val, six.string_types) else (key, repr(val))
+            for (key, val) in combtup
+        ]
+        for combtup in combtup_list
+    ]
+    comb_lbls = [
+        ','.join(['%s=%s' % (key, val) for (key, val) in combtup])
+        for combtup in combtup_list2
+    ]
+    # comb_lbls = list(map(str, comb_pairs))
     return comb_lbls
 
 
@@ -748,8 +789,9 @@ def augdict(dict1, dict2=None, **kwargs):
     return dict1_
 
 
-def update_existing(dict1, dict2, copy=False, assert_exists=False,
-                    iswarning=False, alias_dict=None):
+def update_existing(
+    dict1, dict2, copy=False, assert_exists=False, iswarning=False, alias_dict=None
+):
     r"""
     updates vals in dict1 using vals from dict2 only if the
     key is already in dict1.
@@ -782,6 +824,7 @@ def update_existing(dict1, dict2, copy=False, assert_exists=False,
             assert_keys_are_subset(dict1, dict2)
         except AssertionError as ex:
             from utool import util_dbg
+
             util_dbg.printex(ex, iswarning=iswarning, N=1)
             if not iswarning:
                 raise
@@ -817,6 +860,7 @@ def dict_update_newkeys(dict_, dict2):
 def is_dicteq(dict1_, dict2_, almosteq_ok=True, verbose_err=True):
     """ Checks to see if dicts are the same. Performs recursion. Handles numpy """
     import utool as ut
+
     assert len(dict1_) == len(dict2_), 'dicts are not of same length'
     try:
         for (key1, val1), (key2, val2) in zip(dict1_.items(), dict2_.items()):
@@ -824,9 +868,13 @@ def is_dicteq(dict1_, dict2_, almosteq_ok=True, verbose_err=True):
             assert type(val1) == type(val2), 'vals are not same type'
             if HAVE_NUMPY and np.iterable(val1):
                 if almosteq_ok and ut.is_float(val1):
-                    assert np.all(ut.almost_eq(val1, val2)), 'float vals are not within thresh'
+                    assert np.all(
+                        ut.almost_eq(val1, val2)
+                    ), 'float vals are not within thresh'
                 else:
-                    assert all([np.all(x1 == x2) for (x1, x2) in zip(val1, val2)]), 'np vals are different'
+                    assert all(
+                        [np.all(x1 == x2) for (x1, x2) in zip(val1, val2)]
+                    ), 'np vals are different'
             elif isinstance(val1, dict):
                 is_dicteq(val1, val2, almosteq_ok=almosteq_ok, verbose_err=verbose_err)
             else:
@@ -864,9 +912,9 @@ def dict_subset(dict_, keys, default=util_const.NoParam):
     else:
         items = dict_take(dict_, keys, default)
     subdict_ = OrderedDict(list(zip(keys, items)))
-    #item_sublist = [(key, dict_[key]) for key in keys]
+    # item_sublist = [(key, dict_[key]) for key in keys]
     ##subdict_ = type(dict_)(item_sublist)  # maintain old dict format
-    #subdict_ = OrderedDict(item_sublist)
+    # subdict_ = OrderedDict(item_sublist)
     return subdict_
 
 
@@ -882,8 +930,7 @@ def dict_setdiff(dict_, negative_keys):
         dict_ (dict):
         negative_keys (list):
     """
-    keys = [key for key in six.iterkeys(dict_)
-            if key not in set(negative_keys)]
+    keys = [key for key in six.iterkeys(dict_) if key not in set(negative_keys)]
     subdict_ = dict_subset(dict_, keys)
     return subdict_
 
@@ -985,10 +1032,11 @@ def dict_take(dict_, keys, *d):
         return list(dict_take_gen(dict_, keys, *d))
     except TypeError:
         return list(dict_take_gen(dict_, keys, *d))[0]
-    #return [dict_[key] for key in keys]
+    # return [dict_[key] for key in keys]
+
 
 dict_take_list = dict_take
-#def dict_take(dict_, keys, *d):
+# def dict_take(dict_, keys, *d):
 #    """ alias """
 #    try:
 #        return dict_take_list(dict_, keys, *d)
@@ -996,7 +1044,7 @@ dict_take_list = dict_take
 #        return dict_take_list(dict_, [keys], *d)[0]
 
 
-#def dict_unflat_take(dict_, unflat_key_list, *d):
+# def dict_unflat_take(dict_, unflat_key_list, *d):
 #    return [dict_unflat_take(dict_, xs, *d)
 #            if isinstance(xs, list) else
 #            dict_take(dict_, xs, *d)
@@ -1005,6 +1053,7 @@ dict_take_list = dict_take
 
 def dict_take_asnametup(dict_, keys, name='_NamedTup'):
     from collections import namedtuple
+
     values = dict_take(dict_, keys)
     _NamedTup = namedtuple(name, keys)
     tup = _NamedTup(*values)
@@ -1094,8 +1143,7 @@ def get_dict_column(dict_, colx):
         >>> print(result)
         {'a': [2, 0], 'b': [5, 3], 'c': [8, 6]}
     """
-    retdict_ = {key: util_list.list_take(val, colx)
-                for key, val in six.iteritems(dict_)}
+    retdict_ = {key: util_list.list_take(val, colx) for key, val in six.iteritems(dict_)}
     return retdict_
 
 
@@ -1128,20 +1176,25 @@ def dictinfo(dict_):
         >>> print(result)
     """
     import utool as ut
+
     if not isinstance(dict_, dict):
         return 'expected dict got %r' % type(dict_)
 
     keys = list(dict_.keys())
     vals = list(dict_.values())
-    num_keys  = len(keys)
+    num_keys = len(keys)
     key_types = list(set(map(type, keys)))
     val_types = list(set(map(type, vals)))
 
-    fmtstr_ = '\n' + ut.unindent('''
+    fmtstr_ = '\n' + ut.unindent(
+        """
     * num_keys  = {num_keys}
     * key_types = {key_types}
     * val_types = {val_types}
-    '''.strip('\n'))
+    """.strip(
+            '\n'
+        )
+    )
 
     if len(val_types) == 1:
         if val_types[0] == np.ndarray:
@@ -1149,33 +1202,53 @@ def dictinfo(dict_):
             val_shape_stats = ut.get_stats(set(map(np.shape, vals)), axis=0)
             val_shape_stats_str = ut.repr4(val_shape_stats, strvals=True, newlines=False)
             val_dtypes = list(set([val.dtype for val in vals]))
-            fmtstr_ += ut.unindent('''
+            fmtstr_ += ut.unindent(
+                """
             * val_shape_stats = {val_shape_stats_str}
             * val_dtypes = {val_dtypes}
-            '''.strip('\n'))
+            """.strip(
+                    '\n'
+                )
+            )
         elif val_types[0] == list:
             # each key holds a list
-            val_len_stats =  ut.get_stats(set(map(len, vals)))
+            val_len_stats = ut.get_stats(set(map(len, vals)))
             val_len_stats_str = ut.repr4(val_len_stats, strvals=True, newlines=False)
             depth = ut.list_depth(vals)
             deep_val_types = list(set(ut.list_deep_types(vals)))
-            fmtstr_ += ut.unindent('''
+            fmtstr_ += ut.unindent(
+                """
             * list_depth = {depth}
             * val_len_stats = {val_len_stats_str}
             * deep_types = {deep_val_types}
-            '''.strip('\n'))
+            """.strip(
+                    '\n'
+                )
+            )
             if len(deep_val_types) == 1:
                 if deep_val_types[0] == np.ndarray:
                     deep_val_dtypes = list(set([val.dtype for val in vals]))
-                    fmtstr_ += ut.unindent('''
+                    fmtstr_ += ut.unindent(
+                        """
                     * deep_val_dtypes = {deep_val_dtypes}
-                    ''').strip('\n')
-        elif val_types[0] in [np.uint8, np.int8, np.int32, np.int64, np.float16, np.float32, np.float64]:
+                    """
+                    ).strip('\n')
+        elif val_types[0] in [
+            np.uint8,
+            np.int8,
+            np.int32,
+            np.int64,
+            np.float16,
+            np.float32,
+            np.float64,
+        ]:
             # each key holds a scalar
             val_stats = ut.get_stats(vals)
-            fmtstr_ += ut.unindent('''
+            fmtstr_ += ut.unindent(
+                """
             * val_stats = {val_stats}
-            ''').strip('\n')
+            """
+            ).strip('\n')
 
     fmtstr = fmtstr_.format(**locals())
     return ut.indent(fmtstr)
@@ -1207,8 +1280,7 @@ def dict_find_keys(dict_, val_list):
         {1: ['default', 'kdtree']}
     """
     found_dict = {
-        search_val: [key for key, val in six.iteritems(dict_)
-                     if val == search_val]
+        search_val: [key for key, val in six.iteritems(dict_) if val == search_val]
         for search_val in val_list
     }
     return found_dict
@@ -1303,6 +1375,7 @@ def range_hist(items, bins):
 def dict_hist_cumsum(hist_, reverse=True):
     """ VERY HACKY """
     import utool as ut
+
     items = hist_.items()
     if reverse:
         items = sorted(items)[::-1]
@@ -1429,9 +1502,7 @@ def dict_intersection(dict1, dict2, combine=False, combine_op=op.add):
         else:
             isect_keys_ = isect_keys
             _dict_cls = dict
-        dict_isect = _dict_cls(
-            (k, dict1[k]) for k in isect_keys_ if dict1[k] == dict2[k]
-        )
+        dict_isect = _dict_cls((k, dict1[k]) for k in isect_keys_ if dict1[k] == dict2[k])
     return dict_isect
 
 
@@ -1442,9 +1513,13 @@ def dict_isect_combine(dict1, dict2, combine_op=op.add):
     return dict3
 
 
-def dict_union_combine(dict1, dict2, combine_op=op.add,
-                       default=util_const.NoParam,
-                       default2=util_const.NoParam):
+def dict_union_combine(
+    dict1,
+    dict2,
+    combine_op=op.add,
+    default=util_const.NoParam,
+    default2=util_const.NoParam,
+):
     """
     Combine of dict keys and uses dfault value when key does not exist
 
@@ -1456,8 +1531,10 @@ def dict_union_combine(dict1, dict2, combine_op=op.add,
     else:
         if default2 is util_const.NoParam:
             default2 = default
-        dict3 = {key: combine_op(dict1.get(key, default), dict2.get(key, default2))
-                 for key in keys3}
+        dict3 = {
+            key: combine_op(dict1.get(key, default), dict2.get(key, default2))
+            for key in keys3
+        }
     return dict3
 
 
@@ -1467,6 +1544,7 @@ def dict_accum(*dict_list):
         for key, val in dict_.items():
             accumulator[key].append(val)
     return accumulator
+
 
 dict_isect = dict_intersection
 
@@ -1496,11 +1574,7 @@ def dict_filter_nones(dict_):
         >>> print(result)
         {None: 'fun', 2: 'blue', 3: 'four'}
     """
-    dict2_ = {
-        key: val
-        for key, val in six.iteritems(dict_)
-        if val is not None
-    }
+    dict2_ = {key: val for key, val in six.iteritems(dict_) if val is not None}
     return dict2_
 
 
@@ -1553,8 +1627,7 @@ def groupby_tags(item_list, tags_list):
 
 
 def groupby_attr(item_list, attrname):
-    return group_items(item_list,
-                       map(op.attrgetter(attrname), item_list))
+    return group_items(item_list, map(op.attrgetter(attrname), item_list))
 
 
 def group_pairs(pair_list):
@@ -1730,7 +1803,7 @@ def iflatten_dict_values(node, depth=0):
         return node
 
 
-#def iflatten_dict_items(node, depth=0):
+# def iflatten_dict_items(node, depth=0):
 #    if isinstance(node, dict):
 #        six.iteritems(node)
 #        _iter = ((key, iflatten_dict_items(value)) for key, value in six.iteritems(node))
@@ -1739,7 +1812,7 @@ def iflatten_dict_values(node, depth=0):
 #        return node
 
 
-#def iflatten_dict_keys(node, depth=0):
+# def iflatten_dict_keys(node, depth=0):
 #    if isinstance(node, dict):
 #        _iter = (iflatten_dict_keys(value) for key, value in six.iteritems(node))
 #        return util_iter.iflatten(_iter)
@@ -1803,18 +1876,21 @@ def hierarchical_map_vals(func, node, max_depth=None, depth=0):
         >>> print(result)
 
     """
-    #if not isinstance(node, dict):
+    # if not isinstance(node, dict):
     if not hasattr(node, 'items'):
         return func(node)
     elif max_depth is not None and depth >= max_depth:
-        #return func(node)
+        # return func(node)
         return map_dict_vals(func, node)
-        #return {key: func(val) for key, val in six.iteritems(node)}
+        # return {key: func(val) for key, val in six.iteritems(node)}
     else:
         # recursion
-        #return {key: hierarchical_map_vals(func, val, max_depth, depth + 1) for key, val in six.iteritems(node)}
-        #keyval_list = [(key, hierarchical_map_vals(func, val, max_depth, depth + 1)) for key, val in six.iteritems(node)]
-        keyval_list = [(key, hierarchical_map_vals(func, val, max_depth, depth + 1)) for key, val in node.items()]
+        # return {key: hierarchical_map_vals(func, val, max_depth, depth + 1) for key, val in six.iteritems(node)}
+        # keyval_list = [(key, hierarchical_map_vals(func, val, max_depth, depth + 1)) for key, val in six.iteritems(node)]
+        keyval_list = [
+            (key, hierarchical_map_vals(func, val, max_depth, depth + 1))
+            for key, val in node.items()
+        ]
         if isinstance(node, OrderedDict):
             return OrderedDict(keyval_list)
         else:
@@ -1860,7 +1936,7 @@ def move_odict_item(odict, key, newpos):
 hmap_vals = hierarchical_map_vals
 
 
-#def hierarchical_map_nodes(func, node, max_depth=None, depth=0):
+# def hierarchical_map_nodes(func, node, max_depth=None, depth=0):
 #    """
 #    applies function to non-leaf nodes
 #    """
@@ -1996,8 +2072,10 @@ def sort_dict(dict_, part='keys', key=None, reverse=False):
     if key is None:
         _key = op.itemgetter(index)
     else:
+
         def _key(item):
             return key(item[index])
+
     sorted_items = sorted(six.iteritems(dict_), key=_key, reverse=reverse)
     sorted_dict = OrderedDict(sorted_items)
     return sorted_dict
@@ -2032,9 +2110,7 @@ def order_dict_by(dict_, key_order):
     dict_keys = set(dict_.keys())
     other_keys = dict_keys - set(key_order)
     key_order = it.chain(key_order, other_keys)
-    sorted_dict = OrderedDict(
-        (key, dict_[key]) for key in key_order if key in dict_keys
-    )
+    sorted_dict = OrderedDict((key, dict_[key]) for key in key_order if key in dict_keys)
     return sorted_dict
 
 
@@ -2056,11 +2132,13 @@ def flatten_dict_vals(dict_):
     Flattens only values in a heirarchical dictionary, keys are nested.
     """
     if isinstance(dict_, dict):
-        return dict([
-            ((key, augkey), augval)
-            for key, val in dict_.items()
-            for augkey, augval in flatten_dict_vals(val).items()
-        ])
+        return dict(
+            [
+                ((key, augkey), augval)
+                for key, val in dict_.items()
+                for augkey, augval in flatten_dict_vals(val).items()
+            ]
+        )
     else:
         return {None: dict_}
 
@@ -2087,9 +2165,11 @@ def flatten_dict_items(dict_):
         }
     """
     import utool as ut
+
     flat_dict = ut.flatten_dict_vals(dict_)
-    flatter_dict = dict([(tuple(ut.unpack_iterables(key)[:-1]), val)
-                         for key, val in flat_dict.items()])
+    flatter_dict = dict(
+        [(tuple(ut.unpack_iterables(key)[:-1]), val) for key, val in flat_dict.items()]
+    )
     return flatter_dict
 
 
@@ -2140,6 +2220,7 @@ class DefaultValueDict(dict):
         0
         4
     """
+
     def __init__(self, default, other=None, **kwargs):
         self.default = default
         if other:
@@ -2158,6 +2239,8 @@ if __name__ == '__main__':
         python -m utool.util_dict --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

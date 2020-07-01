@@ -8,11 +8,12 @@ bytes.decode: data -> text
 import utool
 import six
 from os.path import join
-#import uuid
+
+# import uuid
 
 
-lorium_text = '''
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. '''
+lorium_text = """
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. """
 
 
 def test_file_hash():
@@ -21,7 +22,9 @@ def test_file_hash():
     if not utool.checkpath(test_fpath, verbose=True, n=100):
         utool.write_to(test_fpath, lorium_text)
     hash_ = utool.get_file_hash(test_fpath)
-    target_hash_ = b'\xd1Y\xe5\xa2\xc1\xd8\xb8\nS\xb1?\x16\xfe\xc5\x88\xbd\x9e\xb4\xe3\xda'
+    target_hash_ = (
+        b'\xd1Y\xe5\xa2\xc1\xd8\xb8\nS\xb1?\x16\xfe\xc5\x88\xbd\x9e\xb4\xe3\xda'
+    )
     print(repr(hash_))
     print(repr(target_hash_))
     assert hash_ == target_hash_
@@ -38,6 +41,7 @@ def test_hashstr():
 def test_hashstr_components():
 
     import hashlib
+
     print('lorium_text = %r' % (lorium_text,))
     data = lorium_text.encode('utf-8')
     print('data = %r' % (data,))
@@ -45,20 +49,25 @@ def test_hashstr_components():
     print('hashobj = %r' % (hashobj,))
     hashstr = hashobj.hexdigest()
     print('hashstr = %r' % (hashstr,))
-    assert hashstr == ('c48e65cb600a078819bbfa227b8c02ee5e198cfe9ebc4eb6791f'
-                       '69103bb11bc4b2a685c67f9f09ca3a1f364732cef0b2f36a745b'
-                       'ae2b02bd1972592eeb402bd2')
+    assert hashstr == (
+        'c48e65cb600a078819bbfa227b8c02ee5e198cfe9ebc4eb6791f'
+        '69103bb11bc4b2a685c67f9f09ca3a1f364732cef0b2f36a745b'
+        'ae2b02bd1972592eeb402bd2'
+    )
     hashstr2 = utool.convert_hexstr_to_bigbase(hashstr)
     print('hashstr2 = %r' % (hashstr2,))
-    assert hashstr2 == 'yy7@rnyuhe&zhj0kd+g&22imak39piwuq47t06dinfer0j7ye&l4mr!gl89!uj8v0idfjqy0pry972pu@ety8f8n7b8%0ob6'
+    assert (
+        hashstr2
+        == 'yy7@rnyuhe&zhj0kd+g&22imak39piwuq47t06dinfer0j7ye&l4mr!gl89!uj8v0idfjqy0pry972pu@ety8f8n7b8%0ob6'
+    )
 
 
 def test_augment_uuid():
     # TODO: This is still divergent between python2 and python3
     uuid_ = utool.get_zero_uuid()
-    #uuid_ = uuid.uuid1()
+    # uuid_ = uuid.uuid1()
 
-    #uuidhex_data = uuid_.get_bytes()
+    # uuidhex_data = uuid_.get_bytes()
     uuidhex_data = uuid_.bytes
     print('uuidhex_data = %r' % uuidhex_data)
 
@@ -88,6 +97,7 @@ def test_augment_uuid():
 
     # Test what is capable of being augmented
     import numpy as np
+
     augmented_uuid_T1 = utool.augment_uuid(uuid_, hashable_data1)
     augmented_uuid_T2 = utool.augment_uuid(uuid_, hashable_data2)
     augmented_uuid_T3 = utool.augment_uuid(uuid_, hashable_data2, hashable_data1)
@@ -117,4 +127,5 @@ if __name__ == '__main__':
     test_byteslike()
     utool.run_test(test_augment_uuid)
     import sys
+
     print(sys.executable)

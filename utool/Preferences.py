@@ -9,6 +9,7 @@ FIXME:
 from __future__ import absolute_import, division, print_function, unicode_literals
 import six
 from six.moves import cPickle as pickle
+
 try:
     import numpy as np
 except ImportError as ex:
@@ -18,6 +19,7 @@ from utool import util_dbg
 from utool import util_arg
 from utool import util_type
 from utool import util_inject
+
 # print, rrr, profile = util_inject.inject(__name__, '[pref]')
 util_inject.noinject(__name__, '[pref]')
 
@@ -37,14 +39,14 @@ class PrefInternal(DynamicStruct.DynStruct):
     def __init__(_intern, name, doc, default, hidden, fpath, depeq, choices):
         super(PrefInternal, _intern).__init__(child_exclude_list=[])
         # self._intern describes this node
-        _intern.name    = name     # A node has a name
-        _intern.doc     = doc      # A node has a name
-        _intern.value   = default  # A node has a value
-        _intern.hidden  = hidden   # A node can be hidden
-        _intern.fpath   = fpath    # A node is cached to
-        _intern.depeq   = depeq    # A node depends on
-        _intern.editable = True    # A node can be uneditable
-        _intern._frozen_type = None     # A node's value type
+        _intern.name = name  # A node has a name
+        _intern.doc = doc  # A node has a name
+        _intern.value = default  # A node has a value
+        _intern.hidden = hidden  # A node can be hidden
+        _intern.fpath = fpath  # A node is cached to
+        _intern.depeq = depeq  # A node depends on
+        _intern.editable = True  # A node can be uneditable
+        _intern._frozen_type = None  # A node's value type
         # Some preferences are constrained to a list of choices
         if choices is not None:
             _intern.value = PrefChoice(choices, default)
@@ -64,12 +66,12 @@ class PrefTree(DynamicStruct.DynStruct):
         super(PrefTree, _tree).__init__(child_exclude_list=[])
         # self._tree describes node's children and the parents
         # relationship to them
-        _tree.parent               = parent  # Children have parents
-        _tree.hidden_children      = []  # Children can be hidden
-        _tree.child_list           = []  # There can be many children
-        _tree.child_names          = []  # Each child has a name
-        _tree.num_visible_children = 0   # Statistic
-        _tree.aschildx             = 0   # This node is the x-th child
+        _tree.parent = parent  # Children have parents
+        _tree.hidden_children = []  # Children can be hidden
+        _tree.child_list = []  # There can be many children
+        _tree.child_names = []  # Each child has a name
+        _tree.num_visible_children = 0  # Statistic
+        _tree.aschildx = 0  # This node is the x-th child
 
 
 class PrefChoice(DynamicStruct.DynStruct):
@@ -87,10 +89,11 @@ class PrefChoice(DynamicStruct.DynStruct):
         elif isinstance(new_val, six.string_types):
             self.sel = self.choices.index(new_val)
         else:
-            raise('Exception: Unknown newval=%r' % new_val)
+            raise ('Exception: Unknown newval=%r' % new_val)
         if self.sel < 0 or self.sel > len(self.choices):
-            raise Exception('self.sel=%r is not in the self.choices=%r '
-                            % (self.sel, self.choices))
+            raise Exception(
+                'self.sel=%r is not in the self.choices=%r ' % (self.sel, self.choices)
+            )
 
     def combo_val(self):
         return self.choices[self.sel]
@@ -108,25 +111,27 @@ class Pref(PrefNode):
     * Can be nested
     * Dynamically add/remove
     """
-    def __init__(self,
-                 default=PrefNode,  # Default value for a Pref is to be itself
-                 doc='empty docs',  # Documentation for a preference
-                 hidden=False,      # Is a hidden preference?
-                 choices=None,      # A list of choices
-                 depeq=None,        # List of tuples representing dependencies
-                 fpath='',          # Where to save to
-                 name='root',       # Name of this node
-                 parent=None):      # Reference to parent Pref
+
+    def __init__(
+        self,
+        default=PrefNode,  # Default value for a Pref is to be itself
+        doc='empty docs',  # Documentation for a preference
+        hidden=False,  # Is a hidden preference?
+        choices=None,  # A list of choices
+        depeq=None,  # List of tuples representing dependencies
+        fpath='',  # Where to save to
+        name='root',  # Name of this node
+        parent=None,
+    ):  # Reference to parent Pref
         """
         Creates a pref struct that will save itself to pref_fpath if
         available and have init all members of some dictionary
         """
         super(Pref, self).__init__(child_exclude_list=['_intern', '_tree'])
         # Private internal structure
-        self._intern = PrefInternal(name, doc, default, hidden, fpath, depeq,
-                                    choices)
+        self._intern = PrefInternal(name, doc, default, hidden, fpath, depeq, choices)
         self._tree = PrefTree(parent)
-        #if default is PrefNode:
+        # if default is PrefNode:
         #    print('----------')
         #    print('new Pref(default=PrefNode)')
 
@@ -159,7 +164,10 @@ class Pref(PrefNode):
         # FIXME: when setting string preference nodes to lists, it casts
         # the list to a string!
         if VERBOSE_PREF:
-            print('[pref.__overwrite_child_attr]: %s.%s = %r' % (self._intern.name, name, attr))
+            print(
+                '[pref.__overwrite_child_attr]: %s.%s = %r'
+                % (self._intern.name, name, attr)
+            )
         # get child node to "overwrite"
         row = self._tree.child_names.index(name)
         child = self._tree.child_list[row]
@@ -172,17 +180,19 @@ class Pref(PrefNode):
             else:
                 self.__overwrite_child_attr(name, attr.value())
         else:  # Main Leaf Logic:
-            #assert(not issubclass(child._intern.type, PrefNode), #(self.full_name() + ' Must be a leaf'))
+            # assert(not issubclass(child._intern.type, PrefNode), #(self.full_name() + ' Must be a leaf'))
             # Keep user-readonly map up to date with internals
             if isinstance(child._intern.value, PrefChoice):
                 child.change_combo_val(attr)
             else:
                 child_type = child._intern.get_type()
-                if isinstance(attr, six.string_types) and issubclass(child_type, six.string_types):
-                    #import utool as ut
-                    #ut.embed()
+                if isinstance(attr, six.string_types) and issubclass(
+                    child_type, six.string_types
+                ):
+                    # import utool as ut
+                    # ut.embed()
                     attr = child_type(attr)
-                attr_type  = type(attr)
+                attr_type = type(attr)
                 if attr is not None and child_type is not attr_type:
                     if util_arg.VERBOSE:
                         print('[pref] WARNING TYPE DIFFERENCE!')
@@ -203,11 +213,14 @@ class Pref(PrefNode):
         if isinstance(attr, Pref):
             # Child attribute already has a Pref wrapping
             if VERBOSE_PREF:
-                print('[pref.__new_attr]: %s.%s = %r' % (self._intern.name, name, attr.value()))
+                print(
+                    '[pref.__new_attr]: %s.%s = %r'
+                    % (self._intern.name, name, attr.value())
+                )
             new_childx = len(self._tree.child_names)
             # Children know about parents
-            attr._tree.parent = self     # Give child parent
-            attr._intern.name = name     # Give child name
+            attr._tree.parent = self  # Give child parent
+            attr._intern.name = name  # Give child name
             if attr._intern.depeq is None:
                 attr._intern.depeq = self._intern.depeq  # Give child parent dependencies
             if attr._intern.hidden:
@@ -218,7 +231,7 @@ class Pref(PrefNode):
             # Parents know about children
             self._tree.child_names.append(name)  # Add child to tree
             self._tree.child_list.append(attr)
-            self.__dict__[name] = attr.value()   # Add child value to dict
+            self.__dict__[name] = attr.value()  # Add child value to dict
         else:
             # The child attribute is not wrapped. Wrap with Pref and readd.
             pref_attr = Pref(default=attr)
@@ -281,24 +294,24 @@ class Pref(PrefNode):
             # internal names belong to the internal structure
             attrx = self._tree.child_names.index(name[:-9])
             return self._tree.child_list[attrx]
-        #print(self._internal.name)
-        #print(self._tree)
+        # print(self._internal.name)
+        # print(self._tree)
         try:
             if six.PY2:
                 return super(PrefNode, self).__getitem__[name]
             else:
                 try:
                     base_self1 = super(PrefNode, self)
-                    #base_self2 = super(DynStruct, self)
-                    #base_self3 = super()
-                    #import utool
-                    #utool.embed()
+                    # base_self2 = super(DynStruct, self)
+                    # base_self3 = super()
+                    # import utool
+                    # utool.embed()
                     return base_self1[name]
                 except Exception as ex:
                     print(ex)
                     print('base_self1 = %r' % (base_self1,))
-                    #print('base_self2 = %r' % (base_self2,))
-                    #print('base_self3 = %r' % (base_self3,))
+                    # print('base_self2 = %r' % (base_self2,))
+                    # print('base_self3 = %r' % (base_self3,))
                     print('name = %r' % (name,))
                     raise
         except Exception as ex:
@@ -307,15 +320,23 @@ class Pref(PrefNode):
                 pass
             else:
                 import utool as ut
+
                 if ut.DEBUG2 and ut.VERBOSE:
-                    ut.printex(ex, 'Pref object missing named attribute',
-                                  keys=['self._intern.name', 'name'],
-                                  iswarning=True)
+                    ut.printex(
+                        ex,
+                        'Pref object missing named attribute',
+                        keys=['self._intern.name', 'name'],
+                        iswarning=True,
+                    )
                 raise AttributeError(
-                    ('Pref object is missing named attribute: name=%r.'
-                     'You might try running wbia with --nocache-pref '
-                     'to see if that fixes things.')  % name)
-                #raise
+                    (
+                        'Pref object is missing named attribute: name=%r.'
+                        'You might try running wbia with --nocache-pref '
+                        'to see if that fixes things.'
+                    )
+                    % name
+                )
+                # raise
 
     def iteritems(self):
         """
@@ -337,7 +358,7 @@ class Pref(PrefNode):
                 continue
             yield (key, val)
 
-    #----------------
+    # ----------------
     # Disk caching
     def to_dict(self, split_structs_bit=False):
         """ Converts prefeters to a dictionary.
@@ -369,7 +390,9 @@ class Pref(PrefNode):
         with open(fpath, 'wb') as f:
             print('[pref] Saving to ' + fpath)
             pref_dict = self.to_dict()
-            pickle.dump(pref_dict, f, protocol=2)  # Use protocol 2 to support python2 and 3
+            pickle.dump(
+                pref_dict, f, protocol=2
+            )  # Use protocol 2 to support python2 and 3
         return True
 
     def get_fpath(self):
@@ -379,7 +402,7 @@ class Pref(PrefNode):
         """ Read pref dict stored on disk. Overwriting current values. """
         if VERBOSE_PREF:
             print('[pref.load()]')
-            #if not os.path.exists(self._intern.fpath):
+            # if not os.path.exists(self._intern.fpath):
             #    msg = '[pref] fpath=%r does not exist' % (self._intern.fpath)
             #    return msg
         fpath = self.get_fpath()
@@ -389,26 +412,30 @@ class Pref(PrefNode):
                     print('load: %r' % fpath)
                 pref_dict = pickle.load(f)
         except EOFError as ex1:
-            util_dbg.printex(ex1, 'did not load pref fpath=%r correctly' % fpath, iswarning=True)
-            #warnings.warn(msg)
+            util_dbg.printex(
+                ex1, 'did not load pref fpath=%r correctly' % fpath, iswarning=True
+            )
+            # warnings.warn(msg)
             raise
-            #return msg
+            # return msg
         except ImportError as ex2:
-            util_dbg.printex(ex2, 'did not load pref fpath=%r correctly' % fpath, iswarning=True)
-            #warnings.warn(msg)
+            util_dbg.printex(
+                ex2, 'did not load pref fpath=%r correctly' % fpath, iswarning=True
+            )
+            # warnings.warn(msg)
             raise
-            #return msg
+            # return msg
         if not util_type.is_dict(pref_dict):
             raise Exception('Preference file is corrupted')
         self.add_dict(pref_dict)
         return True
 
-    #----------------------
+    # ----------------------
     # String representation
     def __str__(self):
         if self._intern.value != PrefNode:
             ret = super(PrefNode, self).__str__()
-            #.replace('\n    ', '')
+            # .replace('\n    ', '')
             ret += '\nLEAF ' + repr(self._intern.name) + ':' + repr(self._intern.value)
             return ret
         else:
@@ -433,20 +460,22 @@ class Pref(PrefNode):
     def customPrintableType(self, name):
         if name in self._tree.child_names:
             row = self._tree.child_names.index(name)
-            #child = self._tree.child_list[row]  # child node to "overwrite"
+            # child = self._tree.child_list[row]  # child node to "overwrite"
             _typestr = type(self._tree.child_list[row]._intern.value)
             if util_type.is_str(_typestr):
                 return _typestr
 
     def pref_update(self, key, new_val):
         """ Changes a preference value and saves it to disk """
-        print('Update and save pref from: %s=%r, to: %s=%r' %
-              (key, six.text_type(self[key]), key, six.text_type(new_val)))
+        print(
+            'Update and save pref from: %s=%r, to: %s=%r'
+            % (key, six.text_type(self[key]), key, six.text_type(new_val))
+        )
         self.__setattr__(key, new_val)
         return self.save()
 
     def update(self, **kwargs):
-        #print('Updating Preference: kwargs = %r' % (kwargs))
+        # print('Updating Preference: kwargs = %r' % (kwargs))
         self_keys = set(self.__dict__.keys())
         for key, val in six.iteritems(kwargs):
             if key in self_keys:
@@ -456,7 +485,7 @@ class Pref(PrefNode):
     def createQWidget(self):
         # moving gui code away from utool
         try:
-            #from utool._internal.PreferenceWidget import EditPrefWidget
+            # from utool._internal.PreferenceWidget import EditPrefWidget
             try:
                 from wbia.guitool.PreferenceWidget import EditPrefWidget
             except ImportError:
@@ -465,7 +494,9 @@ class Pref(PrefNode):
             editpref_widget.show()
             return editpref_widget
         except ImportError as ex:
-            util_dbg.printex(ex, 'Cannot create preference widget. Is guitool and PyQt 4/5 Installed')
+            util_dbg.printex(
+                ex, 'Cannot create preference widget. Is guitool and PyQt 4/5 Installed'
+            )
             raise
 
     def qt_get_parent(self):
@@ -501,7 +532,7 @@ class Pref(PrefNode):
             return False
         if self._intern.depeq is not None:
             return self._intern.depeq[0].value() == self._intern.depeq[1]
-        #return self._intern.value is not None
+        # return self._intern.value is not None
         return self._intern.value != PrefNode
 
     def qt_set_leaf_data(self, qvar):
@@ -518,7 +549,7 @@ def _qt_set_leaf_data(self, qvar):
         print('[pref.qt_set_leaf_data] _intern.type_=%r' % self._intern.get_type())
         print('[pref.qt_set_leaf_data] type(_intern.value)=%r' % type(self._intern.value))
         print('[pref.qt_set_leaf_data] _intern.value=%r' % self._intern.value)
-        #print('[pref.qt_set_leaf_data] qvar.toString()=%s' % six.text_type(qvar.toString()))
+        # print('[pref.qt_set_leaf_data] qvar.toString()=%s' % six.text_type(qvar.toString()))
     if self._tree.parent is None:
         raise Exception('[Pref.qtleaf] Cannot set root preference')
     if self.qt_is_editable():
@@ -534,32 +565,33 @@ def _qt_set_leaf_data(self, qvar):
                         return ret
                     except Exception:
                         continue
+
             new_val = cast_order(six.text_type(qvar))
         self._intern.get_type()
         if isinstance(self._intern.value, bool):
-            #new_val = bool(qvar.toBool())
+            # new_val = bool(qvar.toBool())
             print('qvar = %r' % (qvar,))
             new_val = util_type.smart_cast(qvar, bool)
-            #new_val = bool(eval(qvar, {}, {}))
+            # new_val = bool(eval(qvar, {}, {}))
             print('new_val = %r' % (new_val,))
         elif isinstance(self._intern.value, int):
-            #new_val = int(qvar.toInt()[0])
+            # new_val = int(qvar.toInt()[0])
             new_val = int(qvar)
         # elif isinstance(self._intern.value, float):
         elif self._intern.get_type() in util_type.VALID_FLOAT_TYPES:
-            #new_val = float(qvar.toDouble()[0])
+            # new_val = float(qvar.toDouble()[0])
             new_val = float(qvar)
         elif isinstance(self._intern.value, six.string_types):
-            #new_val = six.text_type(qvar.toString())
+            # new_val = six.text_type(qvar.toString())
             new_val = six.text_type(qvar)
         elif isinstance(self._intern.value, PrefChoice):
-            #new_val = qvar.toString()
+            # new_val = qvar.toString()
             new_val = six.text_type(qvar)
             if new_val.upper() == 'NONE':
                 new_val = None
         else:
             try:
-                #new_val = six.text_type(qvar.toString())
+                # new_val = six.text_type(qvar.toString())
                 type_ = self._intern.get_type()
                 if type_ is not None:
                     new_val = type_(six.text_type(qvar))
@@ -567,10 +599,14 @@ def _qt_set_leaf_data(self, qvar):
                     new_val = six.text_type(qvar)
             except Exception:
                 raise NotImplementedError(
-                    ('[Pref.qtleaf] Unknown internal type. '
-                     'type(_intern.value) = %r, '
-                     '_intern.get_type() = %r, ')
-                    % type(self._intern.value), self._intern.get_type())
+                    (
+                        '[Pref.qtleaf] Unknown internal type. '
+                        'type(_intern.value) = %r, '
+                        '_intern.get_type() = %r, '
+                    )
+                    % type(self._intern.value),
+                    self._intern.get_type(),
+                )
         # Check for a set of None
         if isinstance(new_val, six.string_types):
             if new_val.lower() == 'none':
@@ -633,6 +669,8 @@ if __name__ == '__main__':
         python -m utool.Preferences --allexamples --noface --nosrc
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

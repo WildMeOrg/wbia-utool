@@ -17,6 +17,7 @@ import datetime
 from utool import util_inject
 from utool import util_cplat
 from utool import util_arg
+
 print, rrr, profile = util_inject.inject2(__name__)
 print_ = util_inject.make_module_write_func(__name__)
 
@@ -49,7 +50,7 @@ def toc(tt, return_msg=False, write_msg=True, verbose=None):
     if verbose is not None:
         write_msg = verbose
     (msg, start_time) = tt
-    ellapsed = (default_timer() - start_time)
+    ellapsed = default_timer() - start_time
     if (not return_msg) and write_msg and msg is not None:
         sys.stdout.write('...toc(%.4fs, ' % ellapsed + '"' + str(msg) + '"' + ')\n')
     if return_msg:
@@ -58,8 +59,9 @@ def toc(tt, return_msg=False, write_msg=True, verbose=None):
         return ellapsed
 
 
-def get_timestamp(format_='iso', use_second=False, delta_seconds=None,
-                  isutc=False, timezone=False):
+def get_timestamp(
+    format_='iso', use_second=False, delta_seconds=None, isutc=False, timezone=False
+):
     """
     get_timestamp
 
@@ -96,10 +98,14 @@ def get_timestamp(format_='iso', use_second=False, delta_seconds=None,
         now += datetime.timedelta(seconds=delta_seconds)
     if format_ == 'iso':
         # ISO 8601
-        #utcnow = datetime.datetime.utcnow()
-        #utcnow.isoformat()
+        # utcnow = datetime.datetime.utcnow()
+        # utcnow.isoformat()
         localOffsetHour = time.timezone // 3600
-        utc_offset = '-' + str(localOffsetHour) if localOffsetHour < 0 else '+' + str(localOffsetHour)
+        utc_offset = (
+            '-' + str(localOffsetHour)
+            if localOffsetHour < 0
+            else '+' + str(localOffsetHour)
+        )
         stamp = time.strftime('%Y-%m-%dT%H%M%S') + utc_offset
         return stamp
     if format_ == 'tag':
@@ -114,18 +120,21 @@ def get_timestamp(format_='iso', use_second=False, delta_seconds=None,
             time_tup = (now.year, now.month, now.day, now.hour, now.minute, now.second)
             time_formats = {
                 'filename': 'ymd_hms-%04d-%02d-%02d_%02d-%02d-%02d',
-                'comment': '# (yyyy-mm-dd hh:mm:ss) %04d-%02d-%02d %02d:%02d:%02d'}
+                'comment': '# (yyyy-mm-dd hh:mm:ss) %04d-%02d-%02d %02d:%02d:%02d',
+            }
         else:
             time_tup = (now.year, now.month, now.day, now.hour, now.minute)
             time_formats = {
                 'filename': 'ymd_hm-%04d-%02d-%02d_%02d-%02d',
-                'comment': '# (yyyy-mm-dd hh:mm) %04d-%02d-%02d %02d:%02d'}
+                'comment': '# (yyyy-mm-dd hh:mm) %04d-%02d-%02d %02d:%02d',
+            }
         stamp = time_formats[format_] % time_tup
     if timezone:
         if isutc:
             stamp += '_UTC'
         else:
             from pytz import reference
+
             localtime = reference.LocalTimezone()
             tzname = localtime.tzname(now)
             stamp += '_' + tzname
@@ -160,6 +169,7 @@ class Timer(object):
         >>>     prime = ut.get_nth_prime(400)
         >>> assert timer.ellapsed > 0
     """
+
     def __init__(self, msg='', verbose=True, newline=True):
         self.msg = msg
         self.verbose = verbose
@@ -177,7 +187,7 @@ class Timer(object):
         self.tstart = default_timer()
 
     def toc(self):
-        ellapsed = (default_timer() - self.tstart)
+        ellapsed = default_timer() - self.tstart
         if self.verbose:
             print_('...toc(%r)=%.4fs\n' % (self.msg, ellapsed))
             sys.stdout.flush()
@@ -270,6 +280,7 @@ class Timerit(object):
         >>>     with timer:
         >>>         ut.get_nth_prime_bruteforce(n)
     """
+
     def __init__(self, num, label=None, unit=None, verbose=1):
         self.num = num
         self.label = label
@@ -281,6 +292,7 @@ class Timerit(object):
 
     def __iter__(self):
         import utool as ut
+
         if self.verbose > 1:
             if self.label is None:
                 print('Timing for %d loops' % self.num)
@@ -289,8 +301,8 @@ class Timerit(object):
         self.n_loops = 0
         self.total_time = 0
         # Create a foreground and background timer
-        bg_timer = ut.Timer(verbose=0)   # (ideally this is unused)
-        fg_timer = ut.Timer(verbose=0)   # (used directly by user)
+        bg_timer = ut.Timer(verbose=0)  # (ideally this is unused)
+        fg_timer = ut.Timer(verbose=0)  # (used directly by user)
         # Core timing loop
         for i in range(self.num):
             # Start background timer (in case the user doesnt use fg_timer)
@@ -320,12 +332,12 @@ class Timerit(object):
 
     def _print_report(self, verbose=1):
         import utool as ut
+
         ave_secs = self.ave_secs
         if self.label is None:
             print('Timing complete, %d loops' % (self.n_loops,))
         else:
-            print('Timing complete for: %s, %d loops' % (self.label,
-                                                         self.n_loops))
+            print('Timing complete for: %s, %d loops' % (self.label, self.n_loops))
         if verbose > 2:
             body = ut.second_str(self.total_time, unit=self.unit, precision=4)
             print('    body took: %s' % body)
@@ -365,6 +377,7 @@ def determine_timestamp_format(datetime_str, warn=True):
         >>> print(result)
     """
     import re
+
     # try to determine the format
     clean_datetime_str = datetime_str.replace('\x00', ' ').strip(';').strip()
     if len(clean_datetime_str) == 25 and 'T' in clean_datetime_str:
@@ -372,18 +385,19 @@ def determine_timestamp_format(datetime_str, warn=True):
         # clean_datetime_str = clean_datetime_str[:-3] + clean_datetime_str[-2:]
         if True or six.PY2:
             if warn:
-                print('WARNING: Python 2.7 does not support %z directive '
-                      'in strptime, ignoring timezone in parsing: ' +
-                      clean_datetime_str)
+                print(
+                    'WARNING: Python 2.7 does not support %z directive '
+                    'in strptime, ignoring timezone in parsing: ' + clean_datetime_str
+                )
             clean_datetime_str = clean_datetime_str[:-6]
 
-    year_regex  = r'(\d\d)?\d\d'
+    year_regex = r'(\d\d)?\d\d'
     month_regex = '[0-1]?[0-9]'
-    day_regex   = '[0-3]?[0-9]'
+    day_regex = '[0-3]?[0-9]'
 
     time_regex = r'[0-6]?[0-9]:[0-6]?[0-9]:[0-6]?[0-9]'
 
-    #odd_time_regex = r'[0-6]?[0-9]:[0-6]?[0-9]:[0-6 ]?[0-9]'
+    # odd_time_regex = r'[0-6]?[0-9]:[0-6]?[0-9]:[0-6 ]?[0-9]'
 
     date_regex1 = '/'.join([year_regex, month_regex, day_regex])
     date_regex2 = ':'.join([year_regex, month_regex, day_regex])
@@ -406,7 +420,7 @@ def determine_timestamp_format(datetime_str, warn=True):
         # timefmt = '%Y-%m-%dT%H:%M:%S%z'
         timefmt = '%H:%M:%S %Y:%m:%d 1'
     # Just dont accept this bad format
-    #elif re.match(datetime_regex3, clean_datetime_str):
+    # elif re.match(datetime_regex3, clean_datetime_str):
     #    timefmt = '%Y:%m:%d %H:%M: %S'
     else:
         if isinstance(clean_datetime_str, six.string_types):
@@ -420,25 +434,27 @@ def determine_timestamp_format(datetime_str, warn=True):
                 return None
             elif clean_datetime_str == '0000:00:00 00:00:00':
                 return None
-            elif [ ord(_) >= 128 for _ in clean_datetime_str ].count(True) > 1:
+            elif [ord(_) >= 128 for _ in clean_datetime_str].count(True) > 1:
                 return None
-        #return -1
-        #import utool as ut
-        #ut.embed()
+        # return -1
+        # import utool as ut
+        # ut.embed()
         msg = 'Unknown format: datetime_str=%r' % (datetime_str,)
         print(msg)
         return None
-        #raise NotImplementedError(msg)
+        # raise NotImplementedError(msg)
     return timefmt
 
 
 def local_timezone():
     import time
+
     return time.tzname
 
 
 def utcnow_tz():
     import pytz
+
     dt = datetime.datetime.utcnow()
     dt = dt.replace(tzinfo=pytz.timezone('UTC'))
     return dt
@@ -494,11 +510,12 @@ def parse_timestamp(timestamp, zone='UTC', timestamp_format=None):
     use_delorean = True or six.PY2
     if use_delorean:
         import delorean
+
         ## customize delorean string method
-        #def __str__(self):
+        # def __str__(self):
         #    return str(self.datetime)
         #    #return str(self.datetime) + ' ' + str(self.timezone)
-        #delorean.Delorean.__str__ = __str__
+        # delorean.Delorean.__str__ = __str__
         ## method types must be injected into the class
         ##ut.inject_func_as_method(dn, __str__, '__repr__', override=True)
 
@@ -526,10 +543,10 @@ def parse_timestamp(timestamp, zone='UTC', timestamp_format=None):
 
     dt_ = datetime.datetime.strptime(timestamp_, timefmt)
     if use_delorean:
-        #if utc and utc_offset is not None:
-        #if utc:
+        # if utc and utc_offset is not None:
+        # if utc:
         #    dn_ = delorean.Delorean(dt_, 'UTC')
-        #else:
+        # else:
         if zone is None:
             zone = time.tzname[0]
         if zone == 'local':
@@ -548,6 +565,7 @@ def parse_timestamp(timestamp, zone='UTC', timestamp_format=None):
                 delta = sign * delta_
             else:
                 import pytz
+
                 tzname = utc_offset.strip()
                 delta = pytz.timezone(tzname).utcoffset(dt_)
             # Move back to utc
@@ -561,7 +579,7 @@ def parse_timestamp(timestamp, zone='UTC', timestamp_format=None):
         if not zone != 'UTC':
             dn.shift(zone)
         return dn.datetime
-    #return dn
+    # return dn
 
 
 def exiftime_to_unixtime(datetime_str, timestamp_format=None, strict=None):
@@ -623,13 +641,13 @@ def exiftime_to_unixtime(datetime_str, timestamp_format=None, strict=None):
         return None
 
     # TODO: use parse_timestamp to reduce duplicate code
-    #try:
+    # try:
     #    dt = parse_timestamp(datetime_str)
-    #except TypeError:
+    # except TypeError:
     #    #if datetime_str is None:
     #        #return -1
     #    return -1
-    #except ValueError as ex:
+    # except ValueError as ex:
     #    if strict is None:
     #        ...
 
@@ -647,7 +665,7 @@ def exiftime_to_unixtime(datetime_str, timestamp_format=None, strict=None):
     else:
         assert isinstance(timestamp_format, six.string_types)
         timefmt = timestamp_format
-        #raise AssertionError('unknown timestamp_format=%r' % (timestamp_format,))
+        # raise AssertionError('unknown timestamp_format=%r' % (timestamp_format,))
     try:
         if len(datetime_str) == 20 and '\x00' in datetime_str:
             datetime_str_ = datetime_str.replace('\x00', ' ').strip(';').strip()
@@ -655,23 +673,23 @@ def exiftime_to_unixtime(datetime_str, timestamp_format=None, strict=None):
             datetime_str_ = datetime_str[:19].strip(';').strip()
         else:
             datetime_str_ = datetime_str
-        #try:
+        # try:
         dt = datetime.datetime.strptime(datetime_str_, timefmt)
-        #except ValueError as ex:
+        # except ValueError as ex:
         #    import utool as ut
         #    ut.printex(ex, iswarning=True)
         #    return invalid_value
         return calendar.timegm(dt.timetuple())
-        #return time.mktime(dt.timetuple())
+        # return time.mktime(dt.timetuple())
     except TypeError:
-        #if datetime_str is None:
-            #return -1
+        # if datetime_str is None:
+        # return -1
         return -1
     except ValueError as ex:
         if strict is None:
             strict = util_arg.SUPER_STRICT
-        #strict = False
-        #from utool.util_arg import STRICT
+        # strict = False
+        # from utool.util_arg import STRICT
         if isinstance(datetime_str, six.string_types):
             if len(datetime_str_.strip()) == 0:
                 return invalid_value
@@ -693,8 +711,10 @@ def exiftime_to_unixtime(datetime_str, timestamp_format=None, strict=None):
 
         debug = True
         if debug:
+
             def find_offending_part(datetime_str_, timefmt, splitchar=' '):
                 import utool as ut
+
                 parts_list = datetime_str_.split(splitchar)
                 fmt_list = timefmt.split(splitchar)
                 if len(parts_list) == 1:
@@ -711,10 +731,11 @@ def exiftime_to_unixtime(datetime_str, timestamp_format=None, strict=None):
                             print('Failed')
                         else:
                             print('Passed')
+
             find_offending_part(datetime_str_, timefmt)
 
-        #import utool as ut
-        #ut.embed()
+        # import utool as ut
+        # ut.embed()
         if strict:
             raise
         else:
@@ -775,7 +796,7 @@ def unixtime_to_datetimestr(unixtime, timefmt='%Y/%m/%d %H:%M:%S', isutc=True):
             return datetime.datetime.fromtimestamp(unixtime).strftime(timefmt)
     except ValueError:
         raise
-        #return 'NA'
+        # return 'NA'
 
 
 def unixtime_to_datetimeobj(unixtime, isutc=True):
@@ -916,14 +937,15 @@ def get_posix_timedelta_str(posixtime, year=False, approx=True):
 
     """
     import numpy as np
+
     if np.isnan(posixtime):
         return 'NaN'
     sign, posixtime_ = (1, posixtime) if posixtime >= 0 else (-1, -posixtime)
     seconds_, subseconds = divmod(posixtime_, 1)
-    minutes_, seconds    = divmod(int(seconds_), 60)
-    hours_, minutes      = divmod(minutes_, 60)
-    days_, hours         = divmod(hours_, 24)
-    weeks_, days         = divmod(days_, 7)
+    minutes_, seconds = divmod(int(seconds_), 60)
+    hours_, minutes = divmod(minutes_, 60)
+    days_, hours = divmod(hours_, 24)
+    weeks_, days = divmod(days_, 7)
     if year:
         years, weeks = divmod(weeks_, 52)  # not accurate
     else:
@@ -934,6 +956,7 @@ def get_posix_timedelta_str(posixtime, year=False, approx=True):
         timedelta_parts += [('%.2f' % (subseconds,))[1:]]
     timedelta_parts += [':'.join(['%02d' % _ for _ in (hours, minutes, seconds)])]
     import utool as ut
+
     if days > 0:
         timedelta_parts += ['%d %s ' % (days, ut.pluralize('day', days))]
     if weeks > 0:
@@ -947,7 +970,7 @@ def get_posix_timedelta_str(posixtime, year=False, approx=True):
     if approx is not False:
         if approx is True:
             approx = 1
-        timedelta_str = ''.join(timedelta_parts[::-1][0:(approx + 1)]).strip()
+        timedelta_str = ''.join(timedelta_parts[::-1][0 : (approx + 1)]).strip()
     else:
         timedelta_str = ''.join(timedelta_parts[::-1])
     return timedelta_str
@@ -961,7 +984,7 @@ def get_posix_timedelta_str2(posixtime):
         return 'None'
 
 
-#def get_simple_posix_timedelta_str(posixtime):
+# def get_simple_posix_timedelta_str(posixtime):
 #    """
 #    get_timedelta_str
 
@@ -1000,15 +1023,15 @@ def get_posix_timedelta_str2(posixtime):
 #    return timedelta_str
 
 
-#def get_month():
+# def get_month():
 #    return datetime.datetime.now().month
 
 
-#def get_day():
+# def get_day():
 #    return datetime.datetime.now().day
 
 
-#def get_year():
+# def get_year():
 #    return datetime.datetime.now().year
 
 
@@ -1065,6 +1088,7 @@ def get_timestats_str(unixtime_list, newlines=1, full=True, isutc=True):
 
     """
     import utool as ut
+
     datetime_stats = get_timestats_dict(unixtime_list, full=full, isutc=isutc)
     timestat_str = ut.repr4(datetime_stats, newlines=newlines)
     return timestat_str
@@ -1072,6 +1096,7 @@ def get_timestats_str(unixtime_list, newlines=1, full=True, isutc=True):
 
 def get_timestats_dict(unixtime_list, full=True, isutc=True):
     import utool as ut
+
     unixtime_stats = ut.get_stats(unixtime_list, use_nan=True)
     datetime_stats = {}
     if unixtime_stats.get('empty_list', False):
@@ -1082,33 +1107,41 @@ def get_timestats_dict(unixtime_list, full=True, isutc=True):
     #     return datetime_stats
     for key in ['max', 'min', 'mean']:
         try:
-            datetime_stats[key] = ut.unixtime_to_datetimestr(unixtime_stats[key], isutc=isutc)
+            datetime_stats[key] = ut.unixtime_to_datetimestr(
+                unixtime_stats[key], isutc=isutc
+            )
         except KeyError:
             pass
         except (ValueError, OSError) as ex:
-            datetime_stats[key]  = 'NA'
+            datetime_stats[key] = 'NA'
         except Exception as ex:
             ut.printex(ex, keys=['key', 'unixtime_stats'])
             raise
     for key in ['std']:
         try:
-            datetime_stats[key] = str(ut.get_unix_timedelta(int(round(unixtime_stats[key]))))
+            datetime_stats[key] = str(
+                ut.get_unix_timedelta(int(round(unixtime_stats[key])))
+            )
         except KeyError:
             pass
         except (ValueError, OSError) as ex:
-            datetime_stats[key]  = 'NA'
+            datetime_stats[key] = 'NA'
     try:
-        datetime_stats['range'] = str(ut.get_unix_timedelta(int(round(unixtime_stats['max'] - unixtime_stats['min']))))
+        datetime_stats['range'] = str(
+            ut.get_unix_timedelta(
+                int(round(unixtime_stats['max'] - unixtime_stats['min']))
+            )
+        )
     except KeyError:
         pass
     except (ValueError, OSError) as ex:
-        datetime_stats['range']  = 'NA'
+        datetime_stats['range'] = 'NA'
 
     if full:
-        #unused_keys = (set(unixtime_stats.keys()) - set(datetime_stats.keys())
+        # unused_keys = (set(unixtime_stats.keys()) - set(datetime_stats.keys())
         for key in ['nMax', 'num_nan', 'shape', 'nMin']:
             datetime_stats[key] = unixtime_stats[key]
-    #print('Unused keys = %r' % (set(unixtime_stats.keys()) - set(datetime_stats.keys()),))
+    # print('Unused keys = %r' % (set(unixtime_stats.keys()) - set(datetime_stats.keys()),))
     return datetime_stats
 
 
@@ -1129,7 +1162,7 @@ def datetime_to_posixtime(dt):
     return posixtime
 
 
-#def datetime_to_posixtime(dt):
+# def datetime_to_posixtime(dt):
 #    return dt.toordinal()
 
 
@@ -1142,6 +1175,8 @@ if __name__ == '__main__':
         python -m utool.util_time --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

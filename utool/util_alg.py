@@ -15,8 +15,10 @@ from utool import util_list
 from utool import util_dict
 from utool import util_inject
 from utool import util_decor
+
 try:
     import numpy as np
+
     HAVE_NUMPY = True
 except ImportError:
     HAVE_NUMPY = False
@@ -24,6 +26,7 @@ except ImportError:
     pass
 try:
     import scipy.spatial.distance as spdist
+
     HAVE_SCIPY = True
 except ImportError:
     HAVE_SCIPY = False
@@ -32,7 +35,7 @@ print, rrr, profile = util_inject.inject2(__name__)
 
 # Constants
 PHI = 1.61803398875
-PHI_A = (1 / PHI)
+PHI_A = 1 / PHI
 PHI_B = 1 - PHI_A
 TAU = 2 * math.pi
 # Conversion factors
@@ -94,11 +97,14 @@ def find_group_differences(groups1, groups2):
         groups2 = [[1, 2, 11], [3, 4], [5, 6], [7], [8, 9], [10]]
     """
     import utool as ut
+
     # For each group, build mapping from each item to the members the group
-    item_to_others1 = {item: set(_group) - {item}
-                       for _group in groups1 for item in _group}
-    item_to_others2 = {item: set(_group) - {item}
-                       for _group in groups2 for item in _group}
+    item_to_others1 = {
+        item: set(_group) - {item} for _group in groups1 for item in _group
+    }
+    item_to_others2 = {
+        item: set(_group) - {item} for _group in groups2 for item in _group
+    }
 
     flat_items1 = ut.flatten(groups1)
     flat_items2 = ut.flatten(groups2)
@@ -178,6 +184,7 @@ def compare_groups(true_groups, pred_groups):
         }
     """
     import utool as ut
+
     true = {frozenset(_group) for _group in true_groups}
     pred = {frozenset(_group) for _group in pred_groups}
 
@@ -216,10 +223,12 @@ def compare_groups(true_groups, pred_groups):
     true_splits_flat = ut.flatten(true_splits)
 
     pred_hybrid = frozenset(map(frozenset, pred_sets)).difference(
-        set(pred_splits + pred_merges_flat))
+        set(pred_splits + pred_merges_flat)
+    )
 
     true_hybrid = frozenset(map(frozenset, true_sets)).difference(
-        set(true_merges + true_splits_flat))
+        set(true_merges + true_splits_flat)
+    )
 
     comparisons = {
         'common': common,
@@ -329,6 +338,7 @@ def grouping_delta(old, new, pure=True):
         }
     """
     import utool as ut
+
     _old = {frozenset(_group) for _group in old}
     _new = {frozenset(_group) for _group in new}
 
@@ -371,10 +381,12 @@ def grouping_delta(old, new, pure=True):
     new_splits_flat = ut.flatten(new_splits)
 
     old_hybrid = frozenset(map(frozenset, old_sets)).difference(
-        set(old_splits + old_merges_flat))
+        set(old_splits + old_merges_flat)
+    )
 
     new_hybrid = frozenset(map(frozenset, new_sets)).difference(
-        set(new_merges + new_splits_flat))
+        set(new_merges + new_splits_flat)
+    )
 
     breakup_hybrids = True
     if breakup_hybrids:
@@ -389,26 +401,23 @@ def grouping_delta(old, new, pure=True):
         # And then merge them into new groups
         hybrid_merge_parts = ut.flatten(hybrid_splits)
         part_nids = [lookup[next(iter(aids))] for aids in hybrid_merge_parts]
-        hybrid_merges = list(map(set, ut.group_items(hybrid_merge_parts,
-                                                     part_nids).values()))
+        hybrid_merges = list(
+            map(set, ut.group_items(hybrid_merge_parts, part_nids).values())
+        )
 
     if pure:
         delta = ut.odict()
         delta['unchanged'] = unchanged
-        delta['splits'] = ut.odict([
-            ('old', old_splits),
-            ('new', new_splits),
-        ])
-        delta['merges'] = ut.odict([
-            ('old', old_merges),
-            ('new', new_merges),
-        ])
-        delta['hybrid'] = ut.odict([
-            ('old', old_hybrid),
-            ('new', new_hybrid),
-            ('splits', hybrid_splits),
-            ('merges', hybrid_merges),
-        ])
+        delta['splits'] = ut.odict([('old', old_splits), ('new', new_splits),])
+        delta['merges'] = ut.odict([('old', old_merges), ('new', new_merges),])
+        delta['hybrid'] = ut.odict(
+            [
+                ('old', old_hybrid),
+                ('new', new_hybrid),
+                ('splits', hybrid_splits),
+                ('merges', hybrid_merges),
+            ]
+        )
     else:
         # Incorporate hybrid partial cases with pure splits and merges
         new_splits2 = [s for s in hybrid_splits if len(s) > 1]
@@ -466,6 +475,7 @@ def grouping_delta_stats(old, new):
     """
     import pandas as pd
     import utool as ut
+
     group_delta = ut.grouping_delta(old, new)
     stats = ut.odict()
     unchanged = group_delta['unchanged']
@@ -507,9 +517,12 @@ def upper_diag_self_prodx(list_):
         >>> print(result)
         [(1, 2), (1, 3), (2, 3)]
     """
-    return [(item1, item2)
-            for n1, item1 in enumerate(list_)
-            for n2, item2 in enumerate(list_) if n1 < n2]
+    return [
+        (item1, item2)
+        for n1, item1 in enumerate(list_)
+        for n2, item2 in enumerate(list_)
+        if n1 < n2
+    ]
 
 
 def diagonalized_iter(size):
@@ -579,23 +592,28 @@ def colwise_diag_idxs(size, num=2):
     # upper_diag_idxs = [(r, c) for r, c in diag_idxs if r < c]
     # # diag_idxs = list(diagonalized_iter(size))
     import utool as ut
+
     diag_idxs = ut.iprod(*[range(size) for _ in range(num)])
-    #diag_idxs = list(ut.iprod(range(size), range(size)))
+    # diag_idxs = list(ut.iprod(range(size), range(size)))
     # this is pretty much a simple c ordering
     upper_diag_idxs = [
-        tup[::-1] for tup in diag_idxs
+        tup[::-1]
+        for tup in diag_idxs
         if all([a > b for a, b in ut.itertwo(tup)])
-        #if all([a > b for a, b in ut.itertwo(tup[:2])])
+        # if all([a > b for a, b in ut.itertwo(tup[:2])])
     ]
-    #upper_diag_idxs = [(c, r) for r, c in diag_idxs if r > c]
+    # upper_diag_idxs = [(c, r) for r, c in diag_idxs if r > c]
     # # upper_diag_idxs = [(r, c) for r, c in diag_idxs if r > c]
     return upper_diag_idxs
 
 
 def self_prodx(list_):
-    return [(item1, item2)
-            for n1, item1 in enumerate(list_)
-            for n2, item2 in enumerate(list_) if n1 != n2]
+    return [
+        (item1, item2)
+        for n1, item1 in enumerate(list_)
+        for n2, item2 in enumerate(list_)
+        if n1 != n2
+    ]
 
 
 def product_nonsame(list1, list2):
@@ -660,7 +678,7 @@ def greedy_max_inden_setcover(candidate_sets_dict, items, max_covers=None):
         for key, candidate_items in six.iteritems(candidate_sets_dict):
             if key in rejected_keys or key in accepted_keys:
                 continue
-            #print('Checking %r' % (key,))
+            # print('Checking %r' % (key,))
             lenval = len(candidate_items)
             # len(uncovered_set.intersection(candidate_items)) == lenval:
             if uncovered_set.issuperset(candidate_items):
@@ -682,7 +700,9 @@ def greedy_max_inden_setcover(candidate_sets_dict, items, max_covers=None):
     return covertup
 
 
-def setcover_greedy(candidate_sets_dict, items=None, set_weights=None, item_values=None, max_weight=None):
+def setcover_greedy(
+    candidate_sets_dict, items=None, set_weights=None, item_values=None, max_weight=None
+):
     r"""
     Greedy algorithm for various covering problems.
     approximation gaurentees depending on specifications  like set_weights and item values
@@ -715,6 +735,7 @@ def setcover_greedy(candidate_sets_dict, items=None, set_weights=None, item_valu
         >>> print('exact_soln = %r' % (exact_soln,))
     """
     import utool as ut
+
     solution_cover = {}
     # If candset_weights or item_values not given use the length as defaults
     if items is None:
@@ -722,13 +743,17 @@ def setcover_greedy(candidate_sets_dict, items=None, set_weights=None, item_valu
     if set_weights is None:
         get_weight = len
     else:
+
         def get_weight(solution_cover):
             sum([set_weights[key] for key in solution_cover.keys()])
+
     if item_values is None:
         get_value = len
     else:
+
         def get_value(vals):
             sum([item_values[v] for v in vals])
+
     if max_weight is None:
         max_weight = get_weight(candidate_sets_dict)
     avail_covers = {key: set(val) for key, val in candidate_sets_dict.items()}
@@ -753,7 +778,14 @@ def setcover_greedy(candidate_sets_dict, items=None, set_weights=None, item_valu
     return solution_cover
 
 
-def setcover_ilp(candidate_sets_dict, items=None, set_weights=None, item_values=None, max_weight=None, verbose=False):
+def setcover_ilp(
+    candidate_sets_dict,
+    items=None,
+    set_weights=None,
+    item_values=None,
+    max_weight=None,
+    verbose=False,
+):
     """
     Set cover / Weighted Maximum Cover exact algorithm
 
@@ -761,6 +793,7 @@ def setcover_ilp(candidate_sets_dict, items=None, set_weights=None, item_values=
     """
     import utool as ut
     import pulp
+
     if items is None:
         items = ut.flatten(candidate_sets_dict.values())
     if set_weights is None:
@@ -777,8 +810,9 @@ def setcover_ilp(candidate_sets_dict, items=None, set_weights=None, item_values=
         prob = pulp.LpProblem('Set Cover', pulp.LpMinimize)
         # Solution variable indicates if set it chosen or not
         set_indices = candidate_sets_dict.keys()
-        x = pulp.LpVariable.dicts(name='x', indexs=set_indices,
-                                  lowBound=0, upBound=1, cat=pulp.LpInteger)
+        x = pulp.LpVariable.dicts(
+            name='x', indexs=set_indices, lowBound=0, upBound=1, cat=pulp.LpInteger
+        )
         # minimize the number of sets
         prob.objective = sum(x[i] for i in set_indices)
         # subject to
@@ -787,7 +821,7 @@ def setcover_ilp(candidate_sets_dict, items=None, set_weights=None, item_values=
             containing_sets = [i for i in set_indices if e in candidate_sets_dict[i]]
             prob.add(sum(x[i] for i in containing_sets) >= 1)
         # Solve using with solver like CPLEX, GLPK, or SCIP.
-        #pulp.CPLEX().solve(prob)
+        # pulp.CPLEX().solve(prob)
         pulp.PULP_CBC_CMD().solve(prob)
         # Read solution
         solution_keys = [i for i in set_indices if x[i].varValue]
@@ -796,17 +830,23 @@ def setcover_ilp(candidate_sets_dict, items=None, set_weights=None, item_values=
         if verbose:
             print(prob)
             print('OPT:')
-            print('\n'.join(['    %s = %s' % (x[i].name, x[i].varValue) for i in set_indices]))
+            print(
+                '\n'.join(
+                    ['    %s = %s' % (x[i].name, x[i].varValue) for i in set_indices]
+                )
+            )
             print('solution_cover = %r' % (solution_cover,))
     else:
         prob = pulp.LpProblem('Maximum Cover', pulp.LpMaximize)
         # Solution variable indicates if set it chosen or not
         item_indicies = items
         set_indices = candidate_sets_dict.keys()
-        x = pulp.LpVariable.dicts(name='x', indexs=set_indices,
-                                  lowBound=0, upBound=1, cat=pulp.LpInteger)
-        y = pulp.LpVariable.dicts(name='y', indexs=item_indicies,
-                                  lowBound=0, upBound=1, cat=pulp.LpInteger)
+        x = pulp.LpVariable.dicts(
+            name='x', indexs=set_indices, lowBound=0, upBound=1, cat=pulp.LpInteger
+        )
+        y = pulp.LpVariable.dicts(
+            name='y', indexs=item_indicies, lowBound=0, upBound=1, cat=pulp.LpInteger
+        )
         r = pulp.LpVariable.dicts(name='r', indexs=item_indicies)
         # maximize the value of the covered items
         primary_objective = sum(item_values[e] * y[e] for e in item_indicies)
@@ -829,7 +869,7 @@ def setcover_ilp(candidate_sets_dict, items=None, set_weights=None, item_values=
                 # record number of times each item is covered
                 prob.add(sum(x[i] for i in containing_sets) == r[e])
         # Solve using with solver like CPLEX, GLPK, or SCIP.
-        #pulp.CPLEX().solve(prob)
+        # pulp.CPLEX().solve(prob)
         pulp.PULP_CBC_CMD().solve(prob)
         # Read solution
         solution_keys = [i for i in set_indices if x[i].varValue]
@@ -838,8 +878,16 @@ def setcover_ilp(candidate_sets_dict, items=None, set_weights=None, item_values=
         if verbose:
             print(prob)
             print('OPT:')
-            print('\n'.join(['    %s = %s' % (x[i].name, x[i].varValue) for i in set_indices]))
-            print('\n'.join(['    %s = %s' % (y[i].name, y[i].varValue) for i in item_indicies]))
+            print(
+                '\n'.join(
+                    ['    %s = %s' % (x[i].name, x[i].varValue) for i in set_indices]
+                )
+            )
+            print(
+                '\n'.join(
+                    ['    %s = %s' % (y[i].name, y[i].varValue) for i in item_indicies]
+                )
+            )
             print('solution_cover = %r' % (solution_cover,))
     return solution_cover
 
@@ -887,9 +935,9 @@ def xywh_to_tlbr(bbox, img_wh):
         img_h = 1
         msg = '[cc2.1] Your csv tables have an invalid ANNOTATION.'
         print(msg)
-        #warnings.warn(msg)
-        #ht = 1
-        #wt = 1
+        # warnings.warn(msg)
+        # ht = 1
+        # wt = 1
     # Ensure ANNOTATION is within bounds
     (x, y, w, h) = bbox
     x1 = max(x, 0)
@@ -917,7 +965,7 @@ def flatten_membership_mapping(uid_list, members_list):
     count = 0
     for uid, members in zip(uid_list, members_list):
         for member in members:
-            flat_uids[count]    = uid
+            flat_uids[count] = uid
             flat_members[count] = member
             count += 1
     return flat_uids, flat_members
@@ -925,7 +973,7 @@ def flatten_membership_mapping(uid_list, members_list):
 
 def get_phi():
     """ Golden Ratio: phi = 1 / sqrt(5) / 2.0 = 1.61803398875 """
-    #phi = (1.0 + sqrt(5)) / 2.0 = 1.61803398875
+    # phi = (1.0 + sqrt(5)) / 2.0 = 1.61803398875
     # return phi
     return PHI
 
@@ -1039,6 +1087,7 @@ def fibonacci_approx(n):
     phi = (1 + sqrt_5) / 2
     return ((phi ** n) - (-phi) ** (-n)) / sqrt_5
 
+
 fibonacci = fibonacci_iterative
 
 
@@ -1051,15 +1100,108 @@ def get_nth_prime(n, max_prime=4100, safe=True):
     """ hacky but still brute force algorithm for finding nth prime for small tests """
     if n <= 100:
         first_100_primes = (
-            2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61,
-            67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137,
-            139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199,
-            211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277,
-            281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359,
-            367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439,
-            443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503, 509, 521,
-            523, 541, )
-        #print(len(first_100_primes))
+            2,
+            3,
+            5,
+            7,
+            11,
+            13,
+            17,
+            19,
+            23,
+            29,
+            31,
+            37,
+            41,
+            43,
+            47,
+            53,
+            59,
+            61,
+            67,
+            71,
+            73,
+            79,
+            83,
+            89,
+            97,
+            101,
+            103,
+            107,
+            109,
+            113,
+            127,
+            131,
+            137,
+            139,
+            149,
+            151,
+            157,
+            163,
+            167,
+            173,
+            179,
+            181,
+            191,
+            193,
+            197,
+            199,
+            211,
+            223,
+            227,
+            229,
+            233,
+            239,
+            241,
+            251,
+            257,
+            263,
+            269,
+            271,
+            277,
+            281,
+            283,
+            293,
+            307,
+            311,
+            313,
+            317,
+            331,
+            337,
+            347,
+            349,
+            353,
+            359,
+            367,
+            373,
+            379,
+            383,
+            389,
+            397,
+            401,
+            409,
+            419,
+            421,
+            431,
+            433,
+            439,
+            443,
+            449,
+            457,
+            461,
+            463,
+            467,
+            479,
+            487,
+            491,
+            499,
+            503,
+            509,
+            521,
+            523,
+            541,
+        )
+        # print(len(first_100_primes))
         nth_prime = first_100_primes[n - 1]
     else:
         if safe:
@@ -1116,7 +1258,10 @@ def get_prime_index(prime):
             if guess == prime:
                 return num_primes_found
         else:
-            assert guess != prime, 'input=%r is not prime. has %r primes less than it' % (prime, num_primes_found)
+            assert guess != prime, 'input=%r is not prime. has %r primes less than it' % (
+                prime,
+                num_primes_found,
+            )
         guess += 1
 
 
@@ -1281,7 +1426,7 @@ def knapsack(items, maxweight, method='recursive'):
         return knapsack_ilp(items, maxweight)
     else:
         raise NotImplementedError('[util_alg] knapsack method=%r' % (method,))
-        #return knapsack_iterative_numpy(items, maxweight)
+        # return knapsack_iterative_numpy(items, maxweight)
 
 
 def knapsack_ilp(items, maxweight, verbose=False):
@@ -1309,21 +1454,23 @@ def knapsack_ilp(items, maxweight, verbose=False):
         >>> print('items_subset = %s' % (ut.repr3(items_subset, nl=1),))
     """
     import pulp
+
     # Given Input
-    values  = [t[0] for t in items]
+    values = [t[0] for t in items]
     weights = [t[1] for t in items]
     indices = [t[2] for t in items]
     # Formulate integer program
     prob = pulp.LpProblem('Knapsack', pulp.LpMaximize)
     # Solution variables
-    x = pulp.LpVariable.dicts(name='x', indexs=indices,
-                              lowBound=0, upBound=1, cat=pulp.LpInteger)
+    x = pulp.LpVariable.dicts(
+        name='x', indexs=indices, lowBound=0, upBound=1, cat=pulp.LpInteger
+    )
     # maximize objective function
     prob.objective = sum(v * x[i] for v, i in zip(values, indices))
     # subject to
     prob.add(sum(w * x[i] for w, i in zip(weights, indices)) <= maxweight)
     # Solve using with solver like CPLEX, GLPK, or SCIP.
-    #pulp.CPLEX().solve(prob)
+    # pulp.CPLEX().solve(prob)
     pulp.PULP_CBC_CMD().solve(prob)
     # Read solution
     flags = [x[i].varValue for i in indices]
@@ -1349,8 +1496,7 @@ def knapsack_recursive(items, maxweight):
         if weight > j:
             return bestvalue(i - 1, j)
         else:
-            return max(bestvalue(i - 1, j),
-                       bestvalue(i - 1, j - weight) + value)
+            return max(bestvalue(i - 1, j), bestvalue(i - 1, j - weight) + value)
 
     j = maxweight
     items_subset = []
@@ -1436,7 +1582,7 @@ def knapsack_iterative_int(items, maxweight):
         DPMAT = [[dpmat[r][c] for c in range(maxweight)] for r in range(len(items))]
         KMAT  = [[kmat[r][c] for c in range(maxweight)] for r in range(len(items))]
     """
-    values  = [t[0] for t in items]
+    values = [t[0] for t in items]
     weights = [t[1] for t in items]
     maxsize = maxweight + 1
     # Sparse representation seems better
@@ -1490,7 +1636,7 @@ def knapsack_iterative_numpy(items, maxweight):
         dpmat[i, w] is the total value of the items with weight at most W
         T is the set of indicies in the optimal solution
     """
-    #import numpy as np
+    # import numpy as np
     items = np.array(items)
     weights = items.T[1]
     # Find maximum decimal place (this problem is in NP)
@@ -1498,7 +1644,7 @@ def knapsack_iterative_numpy(items, maxweight):
     coeff = 10 ** max_exp
     # Adjust weights to be integral
     weights = (weights * coeff).astype(np.int)
-    values  = items.T[0]
+    values = items.T[0]
     MAXWEIGHT = int(maxweight * coeff)
     W_SIZE = MAXWEIGHT + 1
 
@@ -1533,7 +1679,7 @@ def knapsack_iterative_numpy(items, maxweight):
     return total_value, items_subset
 
 
-#def knapsack_all_solns(items, maxweight):
+# def knapsack_all_solns(items, maxweight):
 #    """
 #    TODO: return all optimal solutions to the knapsack problem
 
@@ -1642,8 +1788,10 @@ def cumsum(item_list, initial=0):
         >>> assert result2 == [(1,), (1, 2), (1, 2, 3), (1, 2, 3, 4), (1, 2, 3, 4, 5)]
         >>> print(result2)
     """
+
     def accum(acc, itm):
         return op.iadd(acc, [acc[-1] + itm])
+
     return reduce(accum, item_list, [initial])[1:]
 
 
@@ -1659,6 +1807,7 @@ def choose(n, k):
     scipy.special.binom
     """
     import scipy.special
+
     return scipy.special.comb(n, k, exact=True, repetition=False)
 
 
@@ -1670,7 +1819,7 @@ def triangular_number(n):
     References:
         en.wikipedia.org/wiki/Triangular_number
     """
-    return ((n * (n + 1)) / 2)
+    return (n * (n + 1)) / 2
 
 
 # Functions using NUMPY / SCIPY (need to make python only or move to vtool)
@@ -1736,15 +1885,18 @@ def maximin_distance_subset1d(items, K=None, min_thresh=None, verbose=False):
     """
     if False:
         import pulp
+
         # Formulate integer program
         prob = pulp.LpProblem('MaxSizeLargeDistSubset', pulp.LpMaximize)
         # Solution variable indicates if set it chosen or not
         item_indices = list(range(len(items)))
         pair_indices = list(ut.combinations(item_indices, 2))
-        x = pulp.LpVariable.dicts(name='x', indexs=pair_indices,
-                                  lowBound=0, upBound=1, cat=pulp.LpInteger)
-        y = pulp.LpVariable.dicts(name='y', indexs=item_indices,
-                                  lowBound=0, upBound=1, cat=pulp.LpInteger)
+        x = pulp.LpVariable.dicts(
+            name='x', indexs=pair_indices, lowBound=0, upBound=1, cat=pulp.LpInteger
+        )
+        y = pulp.LpVariable.dicts(
+            name='y', indexs=item_indices, lowBound=0, upBound=1, cat=pulp.LpInteger
+        )
         # minimize the number of sets
         prob.objective = sum(y[i] for i in item_indices)
 
@@ -1774,6 +1926,7 @@ def maximin_distance_subset1d(items, K=None, min_thresh=None, verbose=False):
         # prob.add(sum(x[i] for i in containing_sets) >= 1)
 
     import utool as ut
+
     try:
         import vtool as vt
     except ImportError:
@@ -1816,11 +1969,11 @@ def maximin_distance_subset1d(items, K=None, min_thresh=None, verbose=False):
     chosen_items_mask = chosen_mask.take(initial_sortx.argsort())
     chosen_items_idxs = np.nonzero(chosen_items_mask)[0]
     chosen_items = ut.take(items, chosen_items_idxs)
-    #current_idx = np.nonzero(chosen_mask)[0]
+    # current_idx = np.nonzero(chosen_mask)[0]
     if verbose:
         print('Chose subset')
         chosen_points = points.compress(chosen_mask, axis=0)
-        distances = (spdist.pdist(chosen_points, distfunc))
+        distances = spdist.pdist(chosen_points, distfunc)
         print('chosen_items_idxs = %r' % (chosen_items_idxs,))
         print('chosen_items = %r' % (chosen_items,))
         print('distances = %r' % (distances,))
@@ -1860,6 +2013,7 @@ def maximum_distance_subset(items, K, verbose=False):
         (42.0, array([4, 3, 0]), array([22, 21,  1]))
     """
     from utool import util_decor
+
     if verbose:
         print('maximum_distance_subset len(items)=%r, K=%r' % (len(items), K,))
 
@@ -1879,12 +2033,12 @@ def maximum_distance_subset(items, K, verbose=False):
         subset_idx = remaining_idxs.tolist()
         value, subset_idx
         subset = points.take(subset_idx)
-        #print((value, subset_idx, subset))
+        # print((value, subset_idx, subset))
 
     sortx = points.T[0].argsort()[::-1]
     sorted_points = points.take(sortx, axis=0)
     pairwise_distance = spdist.pdist(sorted_points, lambda x, y: np.abs(x - y))
-    distmat = (spdist.squareform(pairwise_distance))
+    distmat = spdist.squareform(pairwise_distance)
 
     def condensed_idx(i, j):
         if i >= len(sorted_points) or j >= len(sorted_points):
@@ -1910,7 +2064,7 @@ def maximum_distance_subset(items, K, verbose=False):
         assert n <= len(sorted_points) and k <= len(sorted_points)
         if k < 2 or n < 2 or n < k:
             # BASE CASE
-            value, subset_idx =  0, []
+            value, subset_idx = 0, []
         elif k == 2:
             # BASE CASE
             # when k==2 we choose the maximum pairwise pair
@@ -1940,17 +2094,17 @@ def maximum_distance_subset(items, K, verbose=False):
     value, sorted_subset_idx = optimal_solution(len(points), K)
     subset_idx = sortx.take(sorted_subset_idx)
     subset = points.take(subset_idx)
-    #print((value, subset_idx, subset))
+    # print((value, subset_idx, subset))
     return value, subset_idx, subset
-    #np.array([[dist(i, k) if k < i else 0 for k in range(len(A))] for i in range(len(A))])
-    #raise NotImplementedError('unfinished')
+    # np.array([[dist(i, k) if k < i else 0 for k in range(len(A))] for i in range(len(A))])
+    # raise NotImplementedError('unfinished')
 
 
-#def safe_max(arr):
+# def safe_max(arr):
 #    return np.nan if arr is None or len(arr) == 0 else arr.max()
 
 
-#def safe_min(arr):
+# def safe_min(arr):
 #    return np.nan if arr is None or len(arr) == 0 else arr.min()
 
 
@@ -1996,14 +2150,14 @@ def inbounds(num, low, high, eq=False):
                   [ True,  True,  True]], dtype=bool)
 
     """
-    less    = op.le if eq else op.lt
+    less = op.le if eq else op.lt
     greater = op.ge if eq else op.gt
     and_ = np.logical_and if isinstance(num, np.ndarray) else op.and_
     is_inbounds = and_(greater(num, low), less(num, high))
     return is_inbounds
 
 
-def almost_eq(arr1, arr2, thresh=1E-11, ret_error=False):
+def almost_eq(arr1, arr2, thresh=1e-11, ret_error=False):
     """ checks if floating point number are equal to a threshold
     """
     error = np.abs(arr1 - arr2)
@@ -2043,7 +2197,7 @@ def unixtime_hourdiff(x, y):
         >>> import wbia.plottool as pt
         >>> ut.show_if_requested()
     """
-    return np.abs((x - y)) / (60. ** 2)
+    return np.abs((x - y)) / (60.0 ** 2)
 
 
 def absdiff(x, y):
@@ -2110,8 +2264,8 @@ def norm_zero_one(array, dim=None):
     """
     if not util_type.is_float(array):
         array = array.astype(np.float32)
-    array_max  = array.max(dim)
-    array_min  = array.min(dim)
+    array_max = array.max(dim)
+    array_min = array.min(dim)
     array_exnt = np.subtract(array_max, array_min)
     array_norm = np.divide(np.subtract(array, array_min), array_exnt)
     return array_norm
@@ -2149,13 +2303,15 @@ def max_size_max_distance_subset(items, min_thresh=0, Kstart=2, verbose=False):
         >>> print(result)
     """
     import utool as ut
+
     assert Kstart >= 2, 'must start with group of size 2'
     best_idxs = []
     for K in range(Kstart, len(items)):
         if verbose:
             print('Running subset chooser')
-        value, subset_idx, subset = ut.maximum_distance_subset(items, K=K,
-                                                               verbose=verbose)
+        value, subset_idx, subset = ut.maximum_distance_subset(
+            items, K=K, verbose=verbose
+        )
         if verbose:
             print('subset = %r' % (subset,))
             print('subset_idx = %r' % (subset_idx,))
@@ -2357,9 +2513,10 @@ def ungroup_gen(grouped_items, groupxs, fill=None):
         %timeit ungroup(grouped_items, groupxs)
     """
     import utool as ut
+
     # Determine the number of items if unknown
-    #maxpergroup = [max(xs) if len(xs) else 0 for xs in groupxs]
-    #maxval = max(maxpergroup) if len(maxpergroup) else 0
+    # maxpergroup = [max(xs) if len(xs) else 0 for xs in groupxs]
+    # maxval = max(maxpergroup) if len(maxpergroup) else 0
 
     minpergroup = [min(xs) if len(xs) else 0 for xs in groupxs]
     minval = min(minpergroup) if len(minpergroup) else 0
@@ -2482,23 +2639,22 @@ def edit_distance(string1, string2):
     """
 
     import utool as ut
+
     try:
         import Levenshtein
     except ImportError as ex:
         ut.printex(ex, 'pip install python-Levenshtein')
         raise
-    #np.vectorize(Levenshtein.distance, [np.int])
-    #vec_lev = np.frompyfunc(Levenshtein.distance, 2, 1)
-    #return vec_lev(string1, string2)
+    # np.vectorize(Levenshtein.distance, [np.int])
+    # vec_lev = np.frompyfunc(Levenshtein.distance, 2, 1)
+    # return vec_lev(string1, string2)
     import utool as ut
+
     isiter1 = ut.isiterable(string1)
     isiter2 = ut.isiterable(string2)
     strs1 = string1 if isiter1 else [string1]
     strs2 = string2 if isiter2 else [string2]
-    distmat = [
-        [Levenshtein.distance(str1, str2) for str2 in strs2]
-        for str1 in strs1
-    ]
+    distmat = [[Levenshtein.distance(str1, str2) for str2 in strs2] for str1 in strs1]
     # broadcast
     if not isiter2:
         distmat = ut.take_column(distmat, 0)
@@ -2534,6 +2690,7 @@ def get_nth_bell_number(n):
     """
     import utool as ut
     import scipy.special
+
     @ut.memoize
     def bell_(n):
         if n < 2:
@@ -2542,6 +2699,7 @@ def get_nth_bell_number(n):
         for k in range(1, n + 1):
             sum_ = sum_ + scipy.special.binom(n - 1, k - 1) * bell_(k - 1)
         return sum_
+
     nth_bell = bell_(n)
     return nth_bell
 
@@ -2575,6 +2733,7 @@ def standardize_boolexpr(boolexpr_, parens=False):
     """
     import utool as ut
     import re
+
     onlyvars = boolexpr_
     onlyvars = re.sub('\\bnot\\b', '', onlyvars)
     onlyvars = re.sub('\\band\\b', '', onlyvars)
@@ -2591,13 +2750,15 @@ def standardize_boolexpr(boolexpr_, parens=False):
 
     # Convert to binary
     ones_bin = [int(x, 2) for x in true_cases]
-    #ones_str = [str(x) for x in true_cases]
+    # ones_str = [str(x) for x in true_cases]
     from quine_mccluskey.qm import QuineMcCluskey
+
     qm = QuineMcCluskey()
     result = qm.simplify(ones=ones_bin, num_bits=len(varnames))
-    #result = qm.simplify_los(ones=ones_str, num_bits=len(varnames))
+    # result = qm.simplify_los(ones=ones_str, num_bits=len(varnames))
 
     grouped_terms = [dict(ut.group_items(varnames, rs)) for rs in result]
+
     def parenjoin(char, list_):
         if len(list_) == 0:
             return ''
@@ -2610,24 +2771,26 @@ def standardize_boolexpr(boolexpr_, parens=False):
     if parens:
         expanded_terms = [
             (
-                term.get('1', []) +
-                ['(not ' + b + ')' for b in term.get('0', [])] +
-                [
+                term.get('1', [])
+                + ['(not ' + b + ')' for b in term.get('0', [])]
+                + [
                     parenjoin(' ^ ', term.get('^', [])),
                     parenjoin(' ~ ', term.get('~', [])),
                 ]
-            ) for term in grouped_terms
+            )
+            for term in grouped_terms
         ]
     else:
         expanded_terms = [
             (
-                term.get('1', []) +
-                ['not ' + b  for b in term.get('0', [])] +
-                [
+                term.get('1', [])
+                + ['not ' + b for b in term.get('0', [])]
+                + [
                     parenjoin(' ^ ', term.get('^', [])),
                     parenjoin(' ~ ', term.get('~', [])),
                 ]
-            ) for term in grouped_terms
+            )
+            for term in grouped_terms
         ]
 
     final_terms = [[t for t in term if t] for term in expanded_terms]
@@ -2664,45 +2827,46 @@ def solve_boolexpr():
         >>> print(result)
 
     """
-    #false_cases = [
+    # false_cases = [
     #    int('111', 2),
     #    int('011', 2),
     #    int('001', 2),
-    #]
-    #true_cases = list(set(range(2 ** 3)) - set(false_cases))
+    # ]
+    # true_cases = list(set(range(2 ** 3)) - set(false_cases))
     varnames = ['sa', 'said', 'aid']
 
-    #import utool as ut
+    # import utool as ut
     truth_table = [
-        dict(sa=True,  said=True,  aid=True,  output=False),
-        dict(sa=True,  said=True,  aid=False, output=True),
-        dict(sa=True,  said=False, aid=True,  output=True),
-        dict(sa=True,  said=False, aid=False, output=True),
-        dict(sa=False, said=True,  aid=True,  output=False),
-        dict(sa=False, said=True,  aid=False, output=True),
-        dict(sa=False, said=False, aid=True,  output=False),
+        dict(sa=True, said=True, aid=True, output=False),
+        dict(sa=True, said=True, aid=False, output=True),
+        dict(sa=True, said=False, aid=True, output=True),
+        dict(sa=True, said=False, aid=False, output=True),
+        dict(sa=False, said=True, aid=True, output=False),
+        dict(sa=False, said=True, aid=False, output=True),
+        dict(sa=False, said=False, aid=True, output=False),
         dict(sa=False, said=False, aid=False, output=True),
     ]
     truth_tuples = [ut.dict_take(d, varnames) for d in truth_table]
     outputs = [d['output'] for d in truth_table]
     true_tuples = ut.compress(truth_tuples, outputs)
-    #false_tuples = ut.compress(truth_tuples, ut.not_list(outputs))
+    # false_tuples = ut.compress(truth_tuples, ut.not_list(outputs))
     true_cases = [''.join([str(int(t)) for t in tup]) for tup in true_tuples]
     true_cases = [''.join([str(int(t)) for t in tup]) for tup in true_tuples]
-    #truth_nums = [int(s, 2) for s in true_cases]
+    # truth_nums = [int(s, 2) for s in true_cases]
 
     from quine_mccluskey.qm import QuineMcCluskey
+
     qm = QuineMcCluskey(use_xor=False)
     result = qm.simplify_los(true_cases, num_bits=len(varnames))
     print(result)
-    #ut.chr_range(3)
+    # ut.chr_range(3)
 
-    #symbol_map = {
+    # symbol_map = {
     #    '-': '',
     #    '1': '{v}',
     #    '0': 'not {v}',
     #    '^': '^',
-    #}
+    # }
 
     #'-' don't care: this bit can be either zero or one.
     #'1' the bit must be one.
@@ -2710,8 +2874,9 @@ def solve_boolexpr():
     #'^' all bits with the caret are XOR-ed together.
     #'~' all bits with the tilde are XNOR-ed together.
 
-    #formulas = [[symbol_map[r].format(v=v) for v, r in zip(varnames, rs)] for rs in result]
+    # formulas = [[symbol_map[r].format(v=v) for v, r in zip(varnames, rs)] for rs in result]
     grouped_terms = [dict(ut.group_items(varnames, rs)) for rs in result]
+
     def parenjoin(char, list_):
         if len(list_) == 0:
             return ''
@@ -2720,13 +2885,11 @@ def solve_boolexpr():
 
     expanded_terms = [
         (
-            term.get('1', []) +
-            ['(not ' + b + ')' for b in term.get('0', [])] +
-            [
-                parenjoin(' ^ ', term.get('^', [])),
-                parenjoin(' ~ ', term.get('~', [])),
-            ]
-        ) for term in grouped_terms
+            term.get('1', [])
+            + ['(not ' + b + ')' for b in term.get('0', [])]
+            + [parenjoin(' ^ ', term.get('^', [])), parenjoin(' ~ ', term.get('~', [])),]
+        )
+        for term in grouped_terms
     ]
 
     final_terms = [[t for t in term if t] for term in expanded_terms]
@@ -2752,7 +2915,7 @@ def longest_common_substring(s1, s2):
                     x_longest = x
             else:
                 m[x][y] = 0
-    return s1[x_longest - longest: x_longest]
+    return s1[x_longest - longest : x_longest]
 
 
 @profile
@@ -2796,14 +2959,15 @@ def expensive_task_gen(num=8700):
         >>> ut.show_if_requested()
     """
     import utool as ut
-    #time_list = []
+
+    # time_list = []
     for x in range(0, num):
         with ut.Timer(verbose=False) as t:
             ut.is_prime(x)
         yield t.ellapsed
-        #time_list.append(t.ellapsed)
-        #print('t.ellapsed = %r' % (t.ellapsed,))
-    #return time_list
+        # time_list.append(t.ellapsed)
+        # print('t.ellapsed = %r' % (t.ellapsed,))
+    # return time_list
 
 
 def factors(n):
@@ -2821,8 +2985,11 @@ def factors(n):
     References:
         http://stackoverflow.com/questions/6800193/finding-all-the-factors
     """
-    return set(reduce(list.__add__,
-                      ([i, n // i] for i in range(1, int(n ** 0.5) + 1) if n % i == 0)))
+    return set(
+        reduce(
+            list.__add__, ([i, n // i] for i in range(1, int(n ** 0.5) + 1) if n % i == 0)
+        )
+    )
 
 
 if __name__ == '__main__':
@@ -2832,6 +2999,8 @@ if __name__ == '__main__':
         python -m utool.util_alg --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

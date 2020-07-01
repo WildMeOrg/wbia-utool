@@ -18,6 +18,7 @@ from utool import util_arg
 from utool import util_inject
 from utool import util_class
 from utool._internal import meta_util_six
+
 print, rrr, profile = util_inject.inject2(__name__)
 
 
@@ -27,7 +28,7 @@ VERBOSE_INSPECT, VERYVERB_INSPECT = util_arg.get_module_verbosity_flags('inspect
 LIB_PATH = dirname(os.__file__)
 
 
-#def check_dynamic_member_vars(self):
+# def check_dynamic_member_vars(self):
 #    return {name: attr for name, attr in self.__dict__.items()
 #            if not name.startswith("__") and not callable(attr) and not type(attr) is staticmethod}
 
@@ -37,11 +38,13 @@ class BaronWraper(object):
     def __init__(self, sourcecode):
         import redbaron
         import utool as ut
+
         with ut.Timer('building baron'):
             self.baron = redbaron.RedBaron(sourcecode)
 
     def print_diff(self, fpath=None):
         import utool as ut
+
         fpath = getattr(self, 'fpath', fpath)
         assert fpath is not None, 'specify original file'
         old_text = ut.readfrom(fpath)
@@ -52,6 +55,7 @@ class BaronWraper(object):
 
     def write(self, fpath=None):
         import utool as ut
+
         fpath = getattr(self, 'fpath', fpath)
         assert fpath is not None, 'specify original file'
         new_text = self.to_string()
@@ -60,6 +64,7 @@ class BaronWraper(object):
     @classmethod
     def from_fpath(cls, fpath):
         import utool as ut
+
         sourcecode = ut.readfrom(fpath)
         self = cls(sourcecode)
         self.fpath = fpath
@@ -72,8 +77,8 @@ class BaronWraper(object):
     def defined_functions(self, recursive=True):
         found = self.baron.find_all('def', recursive=recursive)
         return found
-        #name_list = [node.name for node in found]
-        #return name_list
+        # name_list = [node.name for node in found]
+        # return name_list
 
     def find_usage(self, name):
         found = self.baron.find_all('NameNode', value=name, recursive=True)
@@ -107,6 +112,7 @@ class BaronWraper(object):
         """
         import utool as ut
         import networkx as nx
+
         G = nx.DiGraph()
         with ut.Timer('finding defed funcs'):
             functions = self.defined_functions()
@@ -133,13 +139,16 @@ class BaronWraper(object):
         with ut.Timer('building function call graph'):
             func_names = [func.name for func in functions]
             for callee in func_names:
-                #G.nodes[callee]['color'] = '0x000000'
+                # G.nodes[callee]['color'] = '0x000000'
                 G.add_node(six.text_type(callee))
             import re
+
             pat = re.compile(ut.regex_or(func_names))
             found = self.baron.find_all('NameNode', value=pat, recursive=True)
 
-        for node in ut.ProgIter(found, 'Searching for parent funcs', adjust=False, freq=1):
+        for node in ut.ProgIter(
+            found, 'Searching for parent funcs', adjust=False, freq=1
+        ):
             parent_func = self.find_root_function(node)
             caller = parent_func.name
             callee = node.name
@@ -150,7 +159,7 @@ class BaronWraper(object):
                 # Check for usage in doctests
                 for caller, doctest in doc_nodes.items():
                     if func.name in doctest:
-                        #G.add_edge(caller, callee)
+                        # G.add_edge(caller, callee)
                         G.add_edge(callee, caller)
             return G
 
@@ -177,6 +186,7 @@ def get_internal_call_graph(fpath, with_doctests=False):
         >>> ut.show_if_requested()
     """
     import utool as ut
+
     fpath = ut.truepath(fpath)
     sourcecode = ut.readfrom(fpath)
     self = ut.BaronWraper(sourcecode)
@@ -195,8 +205,8 @@ def check_static_member_vars(class_, fpath=None, only_init=True):
     # fpath = ut.truepath('~/code/ibeis/ibeis/viz/viz_graph2.py')
     # classname = 'AnnotGraphWidget'
     """
-    #import ast
-    #import astor
+    # import ast
+    # import astor
     import utool as ut
 
     if isinstance(class_, six.string_types):
@@ -217,6 +227,7 @@ def check_static_member_vars(class_, fpath=None, only_init=True):
     sourcecode = ut.readfrom(fpath)
 
     import redbaron
+
     # Pares a FULL syntax tree that keeps blockcomments
     baron = redbaron.RedBaron(sourcecode)
 
@@ -234,7 +245,7 @@ def check_static_member_vars(class_, fpath=None, only_init=True):
                 return find_parent_method(par)
 
     # TODO: Find inherited attrs
-    #classnode.inherit_from
+    # classnode.inherit_from
     # inhertied_attrs = ['parent']
     # inhertied_attrs = []
 
@@ -267,7 +278,8 @@ def check_static_member_vars(class_, fpath=None, only_init=True):
         complex_cases = []
         simple_cases = []
         all_self_ref = classnode.find_all(
-            'name_', value=re.compile('.*' + self_var + '\\.*'))
+            'name_', value=re.compile('.*' + self_var + '\\.*')
+        )
         for x in all_self_ref:
             if x.parent.type == 'def_argument':
                 continue
@@ -277,10 +289,10 @@ def check_static_member_vars(class_, fpath=None, only_init=True):
                     simple_cases.append(atom)
                 else:
                     complex_cases.append(atom)
-                #print(ut.depth(atom.value.data))
-                #print(atom.value)
-                #print(atom.dumps())
-                #if len(atom.dumps()) > 200:
+                # print(ut.depth(atom.value.data))
+                # print(atom.value)
+                # print(atom.dumps())
+                # if len(atom.dumps()) > 200:
                 #    break
 
         accessed_attrs = []
@@ -293,16 +305,16 @@ def check_static_member_vars(class_, fpath=None, only_init=True):
         ut.setdiff(accessed_attrs, class_vars)
 
         # print('Missing Attrs: ' + str(ut.setdiff(accessed_attrs, class_members)))
-        #fst = baron.fst()
-        #node = (baron.node_list[54])  # NOQA
-        #[n.type for n in baron.node_list]
-        #generator = astor.codegen.SourceGenerator(' ' * 4)
-        #generator.visit(pt)
-        #resturctured_source = (''.join(generator.result))
-        #print(resturctured_source)
-        #visitor = ast.NodeVisitor()
-        #visitor.visit(pt)
-        #class SpecialVisitor(ast.NodeVisitor):
+        # fst = baron.fst()
+        # node = (baron.node_list[54])  # NOQA
+        # [n.type for n in baron.node_list]
+        # generator = astor.codegen.SourceGenerator(' ' * 4)
+        # generator.visit(pt)
+        # resturctured_source = (''.join(generator.result))
+        # print(resturctured_source)
+        # visitor = ast.NodeVisitor()
+        # visitor.visit(pt)
+        # class SpecialVisitor(ast.NodeVisitor):
 
 
 def get_funcnames_from_modpath(modpath, include_methods=True):
@@ -310,28 +322,45 @@ def get_funcnames_from_modpath(modpath, include_methods=True):
     Get all functions defined in module
     """
     import utool as ut
+
     if True:
         import jedi
+
         source = ut.read_from(modpath)
-        #script = jedi.Script(source=source, source_path=modpath, line=source.count('\n') + 1)
+        # script = jedi.Script(source=source, source_path=modpath, line=source.count('\n') + 1)
         definition_list = jedi.names(source)
-        funcname_list = [definition.name for definition in definition_list if definition.type == 'function']
+        funcname_list = [
+            definition.name
+            for definition in definition_list
+            if definition.type == 'function'
+        ]
         if include_methods:
-            classdef_list = [definition for definition in definition_list if definition.type == 'class']
-            defined_methods = ut.flatten([definition.defined_names() for definition in classdef_list])
-            funcname_list += [method.name for method in defined_methods
-                              if method.type == 'function' and not method.name.startswith('_')]
+            classdef_list = [
+                definition for definition in definition_list if definition.type == 'class'
+            ]
+            defined_methods = ut.flatten(
+                [definition.defined_names() for definition in classdef_list]
+            )
+            funcname_list += [
+                method.name
+                for method in defined_methods
+                if method.type == 'function' and not method.name.startswith('_')
+            ]
     else:
         import redbaron
+
         # Pares a FULL syntax tree that keeps blockcomments
         sourcecode = ut.read_from(modpath)
         baron = redbaron.RedBaron(sourcecode)
-        funcname_list = [node.name for node in baron.find_all('def', recursive=include_methods)
-                         if not node.name.startswith('_')]
+        funcname_list = [
+            node.name
+            for node in baron.find_all('def', recursive=include_methods)
+            if not node.name.startswith('_')
+        ]
     return funcname_list
 
 
-#@profile
+# @profile
 def check_module_usage(modpath_patterns):
     """
     FIXME: not fully implmented
@@ -371,7 +400,8 @@ def check_module_usage(modpath_patterns):
         >>> print(result)
     """
     import utool as ut
-    #dpath = '~/code/ibeis/ibeis/algo/hots'
+
+    # dpath = '~/code/ibeis/ibeis/algo/hots'
     modpaths = ut.flatten([ut.glob_projects(pat) for pat in modpath_patterns])
     modpaths = ut.unique(modpaths)
     modnames = ut.lmap(ut.get_modname_from_modpath, modpaths)
@@ -391,11 +421,11 @@ def check_module_usage(modpath_patterns):
 
     def find_function_callers(funcname, importing_modpaths):
         """ searches for places where a function is used """
-        pattern = '\\b' + funcname + '\\b',
+        pattern = ('\\b' + funcname + '\\b',)
         # Search which module uses each public member
         grepres = ut.grep_projects(
-            pattern, new=True, verbose=False, cache=cache,
-            fpath_list=importing_modpaths)
+            pattern, new=True, verbose=False, cache=cache, fpath_list=importing_modpaths
+        )
         # Exclude places where function is defined or call is commented out
         nohit_patterns = [
             r'^\s*def',
@@ -415,18 +445,21 @@ def check_module_usage(modpath_patterns):
         # import copy
         # grepres_ = copy.deepcopy(grepres)
         grepres.inplace_filter_results(filter_pat)
-        grepres.found_modnames = ut.lmap(ut.get_modname_from_modpath,
-                                         grepres.found_fpath_list)
+        grepres.found_modnames = ut.lmap(
+            ut.get_modname_from_modpath, grepres.found_fpath_list
+        )
         parent_numlines = ut.lmap(len, grepres.found_lines_list)
 
         numcall_graph_ = dict(zip(grepres.found_modnames, parent_numlines))
         # Remove self references
-        #ut.delete_keys(numcall_graph_, modnames)
+        # ut.delete_keys(numcall_graph_, modnames)
         return numcall_graph_, grepres
 
     print('Find modules that use this the query modules')
     # Note: only works for explicit imports
-    importing_modpaths_list = [find_where_module_is_imported(modname) for modname in modnames]
+    importing_modpaths_list = [
+        find_where_module_is_imported(modname) for modname in modnames
+    ]
     print('Find members of the query modules')
     funcnames_list = [get_funcnames_from_modpath(modpath) for modpath in modpaths]
 
@@ -454,8 +487,12 @@ def check_module_usage(modpath_patterns):
     # Sort by incidence cardinality
     # func_numcall_graph = ut.odict([(key, ut.sort_dict(val, 'vals', len)) for key, val in func_numcall_graph.items()])
     # Sort by weighted degree
-    func_numcall_graph = ut.odict([(key, ut.sort_dict(val, 'vals', lambda x: sum(x.values())))
-                                   for key, val in func_numcall_graph.items()])
+    func_numcall_graph = ut.odict(
+        [
+            (key, ut.sort_dict(val, 'vals', lambda x: sum(x.values())))
+            for key, val in func_numcall_graph.items()
+        ]
+    )
     # Print out grep results in order
     print('PRINTING GREP RESULTS IN ORDER')
     for modname, num_callgraph in func_numcall_graph.items():
@@ -558,6 +595,7 @@ def get_object_methods(obj):
         >>> assert ut.get_object_methods in methods2
     """
     import utool as ut
+
     attr_list = (getattr(obj, attrname) for attrname in dir(obj))
     methods = [attr for attr in attr_list if ut.is_method(attr)]
     return methods
@@ -582,13 +620,14 @@ def help_members(obj, use_other=False):
         >>> print(result)
     """
     import utool as ut
+
     attrnames = dir(obj)
     attr_list = [getattr(obj, attrname) for attrname in attrnames]
     attr_types = ut.lmap(ut.type_str, map(type, attr_list))
     unique_types, groupxs = ut.group_indices(attr_types)
     type_to_items = ut.dzip(unique_types, ut.apply_grouping(attr_list, groupxs))
     type_to_itemname = ut.dzip(unique_types, ut.apply_grouping(attrnames, groupxs))
-    #if memtypes is None:
+    # if memtypes is None:
     #    memtypes = list(type_to_items.keys())
     memtypes = ['instancemethod']  # , 'method-wrapper']
     func_mems = ut.dict_subset(type_to_items, memtypes, [])
@@ -598,7 +637,7 @@ def help_members(obj, use_other=False):
     num_unbound_args_list = []
     num_args_list = []
     for func in func_list:
-        #args = ut.get_func_argspec(func).args
+        # args = ut.get_func_argspec(func).args
         argspec = ut.get_func_argspec(func)
         args = argspec.args
         unbound_args = get_unbound_args(argspec)
@@ -607,14 +646,18 @@ def help_members(obj, use_other=False):
         num_unbound_args_list.append(len(unbound_args))
         num_args_list.append(len(args))
 
-    group = ut.hierarchical_group_items(defsig_list, [num_unbound_args_list, num_args_list])
+    group = ut.hierarchical_group_items(
+        defsig_list, [num_unbound_args_list, num_args_list]
+    )
     print(repr(obj))
     print(ut.repr3(group, strvals=True))
 
     if use_other:
         other_mems = ut.delete_keys(type_to_items.copy(), memtypes)
         other_mems_attrnames = ut.dict_subset(type_to_itemname, other_mems.keys())
-        named_other_attrs = ut.dict_union_combine(other_mems_attrnames, other_mems, lambda x, y: list(zip(x, y)))
+        named_other_attrs = ut.dict_union_combine(
+            other_mems_attrnames, other_mems, lambda x, y: list(zip(x, y))
+        )
         print(ut.repr4(named_other_attrs, nl=2, strvals=True))
 
 
@@ -622,161 +665,186 @@ def get_dev_hints():
     VAL_FIELD = util_regex.named_field('val', '.*')
     VAL_BREF = util_regex.bref_field('val')
 
-    registered_hints = OrderedDict([
-        # General IBEIS hints
-        ('ibs.*'   , ('wbia.IBEISController', 'image analysis api')),
-        ('testres', ('wbia.TestResult', 'test result object')),
-        ('qreq_'   , ('wbia.QueryRequest', 'query request object with hyper-parameters')),
-        ('cm'  , ('wbia.ChipMatch', 'object of feature correspondences and scores')),
-        ('qparams*', ('wbia.QueryParams', 'query hyper-parameters')),
-        ('qaid2_cm.*'   , ('dict', 'dict of ``ChipMatch`` objects')),
-        ('vecs'    , ('ndarray[uint8_t, ndim=2]', 'descriptor vectors')),
-        ('maws'    , ('ndarray[float32_t, ndim=1]', 'multiple assignment weights')),
-        ('words'   , ('ndarray[uint8_t, ndim=2]', 'aggregate descriptor cluster centers')),
-        ('word'    , ('ndarray[uint8_t, ndim=1]', 'aggregate descriptor cluster center')),
-        ('rvecs'   , ('ndarray[uint8_t, ndim=2]', 'residual vector')),
-        ('fm', ('list', 'list of feature matches as tuples (qfx, dfx)')),
-        ('fs', ('list', 'list of feature scores')),
-        ('aid_list' , ('list', 'list of annotation rowids')),
-        ('aids' ,     ('list', 'list of annotation rowids')),
-        ('aid_list[0-9]' , ('list', 'list of annotation ids')),
-        ('ensure' , ('bool', 'eager evaluation if True')),
-        ('qaid'    , ('int', 'query annotation id')),
-        ('aid[0-9]?', ('int', 'annotation id')),
-        ('daids'   , ('list', 'database annotation ids')),
-        ('qaids'   , ('list', 'query annotation ids')),
-        ('use_cache', ('bool', 'turns on disk based caching')),
-        ('qreq_vsmany_', ('QueryRequest', 'persistant vsmany query request')),
-        ('qnid'    , ('int', 'query name id')),
-        #
-        ('gfpath[0-9]?' , ('str', 'image file path string')),
-        ('path[0-9]?' , ('str', 'path to file or directory')),
-        ('n'    , ('int', '')),
-        ('ext'    , ('str', 'extension')),
-        ('_path' , ('str', 'path string')),
-        ('path_' , ('str', 'path string')),
-        ('.*_dpath' , ('str', 'directory path string')),
-        ('.*_fpath' , ('str', 'file path string')),
-        ('bbox' , ('tuple', 'bounding box in the format (x, y, w, h)')),
-        ('theta' , ('float', 'angle in radians')),
-        ('ori_thresh' , ('float', 'angle in radians')),
-        ('xy_thresh_sqrd' , ('float', '')),
-        ('xy_thresh' , ('float', '')),
-        ('scale_thresh' , ('float', '')),
-
-        # Pipeline hints
-        ('qaid2_nns',
-         ('dict', 'maps query annotid to (qfx2_idx, qfx2_dist)')),
-
-        ('qaid2_nnvalid0',
-         ('dict',
-          'maps query annotid to qfx2_valid0')),
-
-        ('qfx2_valid0',
-         ('ndarray',
-          'maps query feature index to K matches non-impossibility flags')),
-
-        ('filt2_weights',
-         ('dict', 'maps filter names to qfx2_weight ndarray')),
-
-        ('qaid2_filtweights',
-         ('dict',
-          'mapping to weights computed by filters like lnnbnn and ratio')),
-
-        ('qaid2_nnfiltagg',
-         ('dict',
-          'maps to nnfiltagg - tuple(qfx2_score, qfx2_valid)')),
-
-        ('qaid2_nnfilts',
-         ('dict', 'nonaggregate feature scores and validities for each feature NEW')),
-
-        ('nnfiltagg', ('tuple', '(qfx2_score_agg, qfx2_valid_agg)')),
-        ('nnfilts', ('tuple', '(filt_list, qfx2_score_list, qfx2_valid_list)')),
-
-        ('qfx2_idx', ('ndarray[int32_t, ndims=2]', 'mapping from query feature index to db neighbor index')),
-
-        ('K'       , ('int', None)),
-        ('Knorm'   , ('int', None)),
-
-        # SMK Hints
-        ('smk_alpha',  ('float', 'selectivity power')),
-        ('smk_thresh', ('float', 'selectivity threshold')),
-        ('query_sccw', ('float', 'query self-consistency-criterion')),
-        ('data_sccw', ('float', 'data self-consistency-criterion')),
-        ('invindex', ('InvertedIndex', 'object for fast vocab lookup')),
-
-        # Plotting hints
-        ('[qd]?rchip[0-9]?', ('ndarray[uint8_t, ndim=2]', 'rotated annotation image data')),
-        ('[qd]?chip[0-9]?', ('ndarray[uint8_t, ndim=2]', 'annotation image data')),
-        ('kp', ('ndarray[float32_t, ndim=1]', 'a single keypoint')),
-        ('[qd]?kpts[0-9]?', ('ndarray[float32_t, ndim=2]', 'keypoints')),
-        ('[qd]?vecs[0-9]?', ('ndarray[uint8_t, ndim=2]', 'descriptor vectors')),
-        ('H', ('ndarray[float64_t, ndim=2]', 'homography/perspective matrix')),
-        ('invV_mats2x2', ('ndarray[float32_t, ndim=3]',  'keypoint shapes')),
-        ('invVR_mats2x2', ('ndarray[float32_t, ndim=3]', 'keypoint shape and rotations')),
-        ('invV_mats', ('ndarray[float32_t, ndim=3]',  'keypoint shapes (possibly translation)')),
-        ('invVR_mats', ('ndarray[float32_t, ndim=3]', 'keypoint shape and rotations (possibly translation)')),
-        # ('img\d*', ('ndarray[uint8_t, ndim=2]', 'image data')),
-        ('img_in', ('ndarray[uint8_t, ndim=2]', 'image data')),
-        ('arr', ('ndarray', '')),
-        ('arr_', ('ndarray', '')),
-        ('X', ('ndarray', 'data')),
-        ('y', ('ndarray', 'labels')),
-        ('imgBGR', ('ndarray[uint8_t, ndim=2]', 'image data in opencv format (blue, green, red)')),
-        ('pnum', ('tuple', 'plot number')),
-        ('fnum', ('int', 'figure number')),
-        ('title', ('str', '')),
-        ('text', ('str', '')),
-        ('text_', ('str', '')),
-
-        # Matching Hints
-        ('ratio_thresh'       , ('float', None)),
-
-        # utool hints
-        ('func'           , ('function', 'live python function')),
-        ('funcname'       , ('str', 'function name')),
-        ('modname'        , ('str', 'module name')),
-        ('argname_list'   , ('str', 'list of argument names')),
-        ('return_name'    , ('str', 'return variable name')),
-        ('dict_'          , ('dict_', 'a dictionary')),
-        ('examplecode'    , ('str', None)),
-
-        # Numpy Hints
-        ('shape'    , ('tuple', 'array dimensions')),
-        ('chipshape'    , ('tuple', 'height, width')),
-        ('rng'    , ('RandomState', 'random number generator')),
-
-        # Opencv hings
-        ('dsize'    , ('tuple', 'width, height')),
-        ('chipsize'    , ('tuple', 'width, height')),
-
-        # Standard Python Hints for my coding style
-        ('.*_fn' , ('func', None)),
-        ('str_' , ('str', None)),
-        ('num_.*' , ('int', None)),
-        ('.*_str' , ('str', None)),
-        ('.*_?list_?' , ('list', None)),
-        ('.*_?dict_?' , ('dict', None)),
-        # ('dict_?\d?' , ('dict', None)),
-        ('.*_tup' , ('tuple', None)),
-        ('.*_sublist' , ('list', None)),
-        ('fpath[0-9]?' , ('str', 'file path string')),
-        ('chip[A-Z]*' , ('ndarray', 'cropped image')),
-        ('verbose', ('bool', 'verbosity flag')),
-
-        # Other hints for my coding style
-        ('wx2_'    , ('dict', None)),
-        ('qfx2_' + VAL_FIELD,
-         ('ndarray',
-          'mapping from query feature index to ' + VAL_BREF)),
-        ('.*x2_.*' , ('ndarray', None)),
-        ('.+[^3]2_.*'  , ('dict', None)),
-        ('dpath'  , ('str', 'directory path')),
-        ('dname'  , ('str', 'directory name')),
-        ('fpath'  , ('str', 'file path')),
-        ('fname'  , ('str', 'file name')),
-        ('pattern'  , ('str', '')),
-    ])
+    registered_hints = OrderedDict(
+        [
+            # General IBEIS hints
+            ('ibs.*', ('wbia.IBEISController', 'image analysis api')),
+            ('testres', ('wbia.TestResult', 'test result object')),
+            (
+                'qreq_',
+                ('wbia.QueryRequest', 'query request object with hyper-parameters'),
+            ),
+            ('cm', ('wbia.ChipMatch', 'object of feature correspondences and scores')),
+            ('qparams*', ('wbia.QueryParams', 'query hyper-parameters')),
+            ('qaid2_cm.*', ('dict', 'dict of ``ChipMatch`` objects')),
+            ('vecs', ('ndarray[uint8_t, ndim=2]', 'descriptor vectors')),
+            ('maws', ('ndarray[float32_t, ndim=1]', 'multiple assignment weights')),
+            (
+                'words',
+                ('ndarray[uint8_t, ndim=2]', 'aggregate descriptor cluster centers'),
+            ),
+            ('word', ('ndarray[uint8_t, ndim=1]', 'aggregate descriptor cluster center')),
+            ('rvecs', ('ndarray[uint8_t, ndim=2]', 'residual vector')),
+            ('fm', ('list', 'list of feature matches as tuples (qfx, dfx)')),
+            ('fs', ('list', 'list of feature scores')),
+            ('aid_list', ('list', 'list of annotation rowids')),
+            ('aids', ('list', 'list of annotation rowids')),
+            ('aid_list[0-9]', ('list', 'list of annotation ids')),
+            ('ensure', ('bool', 'eager evaluation if True')),
+            ('qaid', ('int', 'query annotation id')),
+            ('aid[0-9]?', ('int', 'annotation id')),
+            ('daids', ('list', 'database annotation ids')),
+            ('qaids', ('list', 'query annotation ids')),
+            ('use_cache', ('bool', 'turns on disk based caching')),
+            ('qreq_vsmany_', ('QueryRequest', 'persistant vsmany query request')),
+            ('qnid', ('int', 'query name id')),
+            #
+            ('gfpath[0-9]?', ('str', 'image file path string')),
+            ('path[0-9]?', ('str', 'path to file or directory')),
+            ('n', ('int', '')),
+            ('ext', ('str', 'extension')),
+            ('_path', ('str', 'path string')),
+            ('path_', ('str', 'path string')),
+            ('.*_dpath', ('str', 'directory path string')),
+            ('.*_fpath', ('str', 'file path string')),
+            ('bbox', ('tuple', 'bounding box in the format (x, y, w, h)')),
+            ('theta', ('float', 'angle in radians')),
+            ('ori_thresh', ('float', 'angle in radians')),
+            ('xy_thresh_sqrd', ('float', '')),
+            ('xy_thresh', ('float', '')),
+            ('scale_thresh', ('float', '')),
+            # Pipeline hints
+            ('qaid2_nns', ('dict', 'maps query annotid to (qfx2_idx, qfx2_dist)')),
+            ('qaid2_nnvalid0', ('dict', 'maps query annotid to qfx2_valid0')),
+            (
+                'qfx2_valid0',
+                (
+                    'ndarray',
+                    'maps query feature index to K matches non-impossibility flags',
+                ),
+            ),
+            ('filt2_weights', ('dict', 'maps filter names to qfx2_weight ndarray')),
+            (
+                'qaid2_filtweights',
+                ('dict', 'mapping to weights computed by filters like lnnbnn and ratio'),
+            ),
+            (
+                'qaid2_nnfiltagg',
+                ('dict', 'maps to nnfiltagg - tuple(qfx2_score, qfx2_valid)'),
+            ),
+            (
+                'qaid2_nnfilts',
+                (
+                    'dict',
+                    'nonaggregate feature scores and validities for each feature NEW',
+                ),
+            ),
+            ('nnfiltagg', ('tuple', '(qfx2_score_agg, qfx2_valid_agg)')),
+            ('nnfilts', ('tuple', '(filt_list, qfx2_score_list, qfx2_valid_list)')),
+            (
+                'qfx2_idx',
+                (
+                    'ndarray[int32_t, ndims=2]',
+                    'mapping from query feature index to db neighbor index',
+                ),
+            ),
+            ('K', ('int', None)),
+            ('Knorm', ('int', None)),
+            # SMK Hints
+            ('smk_alpha', ('float', 'selectivity power')),
+            ('smk_thresh', ('float', 'selectivity threshold')),
+            ('query_sccw', ('float', 'query self-consistency-criterion')),
+            ('data_sccw', ('float', 'data self-consistency-criterion')),
+            ('invindex', ('InvertedIndex', 'object for fast vocab lookup')),
+            # Plotting hints
+            (
+                '[qd]?rchip[0-9]?',
+                ('ndarray[uint8_t, ndim=2]', 'rotated annotation image data'),
+            ),
+            ('[qd]?chip[0-9]?', ('ndarray[uint8_t, ndim=2]', 'annotation image data')),
+            ('kp', ('ndarray[float32_t, ndim=1]', 'a single keypoint')),
+            ('[qd]?kpts[0-9]?', ('ndarray[float32_t, ndim=2]', 'keypoints')),
+            ('[qd]?vecs[0-9]?', ('ndarray[uint8_t, ndim=2]', 'descriptor vectors')),
+            ('H', ('ndarray[float64_t, ndim=2]', 'homography/perspective matrix')),
+            ('invV_mats2x2', ('ndarray[float32_t, ndim=3]', 'keypoint shapes')),
+            (
+                'invVR_mats2x2',
+                ('ndarray[float32_t, ndim=3]', 'keypoint shape and rotations'),
+            ),
+            (
+                'invV_mats',
+                ('ndarray[float32_t, ndim=3]', 'keypoint shapes (possibly translation)'),
+            ),
+            (
+                'invVR_mats',
+                (
+                    'ndarray[float32_t, ndim=3]',
+                    'keypoint shape and rotations (possibly translation)',
+                ),
+            ),
+            # ('img\d*', ('ndarray[uint8_t, ndim=2]', 'image data')),
+            ('img_in', ('ndarray[uint8_t, ndim=2]', 'image data')),
+            ('arr', ('ndarray', '')),
+            ('arr_', ('ndarray', '')),
+            ('X', ('ndarray', 'data')),
+            ('y', ('ndarray', 'labels')),
+            (
+                'imgBGR',
+                (
+                    'ndarray[uint8_t, ndim=2]',
+                    'image data in opencv format (blue, green, red)',
+                ),
+            ),
+            ('pnum', ('tuple', 'plot number')),
+            ('fnum', ('int', 'figure number')),
+            ('title', ('str', '')),
+            ('text', ('str', '')),
+            ('text_', ('str', '')),
+            # Matching Hints
+            ('ratio_thresh', ('float', None)),
+            # utool hints
+            ('func', ('function', 'live python function')),
+            ('funcname', ('str', 'function name')),
+            ('modname', ('str', 'module name')),
+            ('argname_list', ('str', 'list of argument names')),
+            ('return_name', ('str', 'return variable name')),
+            ('dict_', ('dict_', 'a dictionary')),
+            ('examplecode', ('str', None)),
+            # Numpy Hints
+            ('shape', ('tuple', 'array dimensions')),
+            ('chipshape', ('tuple', 'height, width')),
+            ('rng', ('RandomState', 'random number generator')),
+            # Opencv hings
+            ('dsize', ('tuple', 'width, height')),
+            ('chipsize', ('tuple', 'width, height')),
+            # Standard Python Hints for my coding style
+            ('.*_fn', ('func', None)),
+            ('str_', ('str', None)),
+            ('num_.*', ('int', None)),
+            ('.*_str', ('str', None)),
+            ('.*_?list_?', ('list', None)),
+            ('.*_?dict_?', ('dict', None)),
+            # ('dict_?\d?' , ('dict', None)),
+            ('.*_tup', ('tuple', None)),
+            ('.*_sublist', ('list', None)),
+            ('fpath[0-9]?', ('str', 'file path string')),
+            ('chip[A-Z]*', ('ndarray', 'cropped image')),
+            ('verbose', ('bool', 'verbosity flag')),
+            # Other hints for my coding style
+            ('wx2_', ('dict', None)),
+            (
+                'qfx2_' + VAL_FIELD,
+                ('ndarray', 'mapping from query feature index to ' + VAL_BREF),
+            ),
+            ('.*x2_.*', ('ndarray', None)),
+            ('.+[^3]2_.*', ('dict', None)),
+            ('dpath', ('str', 'directory path')),
+            ('dname', ('str', 'directory name')),
+            ('fpath', ('str', 'file path')),
+            ('fname', ('str', 'file name')),
+            ('pattern', ('str', '')),
+        ]
+    )
     return registered_hints
 
 
@@ -804,7 +872,7 @@ def infer_arg_types_and_descriptions(argname_list, defaults):
         >>> tup = utool.infer_arg_types_and_descriptions(argname_list, defaults)
         >>> argtype_list, argdesc_list, argdefault_list, hasdefault_list = tup
     """
-    #import utool as ut
+    # import utool as ut
     from utool import util_dev
 
     # hacks for IBEIS
@@ -827,13 +895,15 @@ def infer_arg_types_and_descriptions(argname_list, defaults):
 
     # use hints to build better docstrs
     for argx in range(len(argname_list)):
-        #if argtype_list[argx] == '?' or argtype_list[argx] == 'None':
+        # if argtype_list[argx] == '?' or argtype_list[argx] == 'None':
         argname = argname_list[argx]
         if argname is None:
-            #print('warning argname is None')
+            # print('warning argname is None')
             continue
         for regex, hint in six.iteritems(registered_hints):
-            matchobj = re.match('^' + regex + '$', argname, flags=re.MULTILINE | re.DOTALL)
+            matchobj = re.match(
+                '^' + regex + '$', argname, flags=re.MULTILINE | re.DOTALL
+            )
             if matchobj is not None:
                 type_ = hint[0]
                 desc_ = hint[1]
@@ -851,8 +921,8 @@ def infer_arg_types_and_descriptions(argname_list, defaults):
                 defaultrepr = argdefault_list[argx].__name__
             else:
                 defaultrepr = repr(argdefault_list[argx])
-            #import utool as ut
-            #ut.embed()
+            # import utool as ut
+            # ut.embed()
             argdesc_list[argx] += '(default = %s)' % (defaultrepr,)
     return argtype_list, argdesc_list, argdefault_list, hasdefault_list
 
@@ -865,6 +935,7 @@ def get_module_owned_functions(module):
     module = vtool.distance
     """
     import utool as ut
+
     list_ = []
     for key, val in ut.iter_module_doctestable(module):
         belongs = False
@@ -886,11 +957,15 @@ def zzz_profiled_is_yes():
     pass
 
 
-def iter_module_doctestable(module, include_funcs=True, include_classes=True,
-                            include_methods=True,
-                            include_builtin=True,
-                            include_inherited=False,
-                            debug_key=None):
+def iter_module_doctestable(
+    module,
+    include_funcs=True,
+    include_classes=True,
+    include_methods=True,
+    include_builtin=True,
+    include_inherited=False,
+    debug_key=None,
+):
     r"""
     Yeilds doctestable live object form a modules
 
@@ -943,33 +1018,36 @@ def iter_module_doctestable(module, include_funcs=True, include_classes=True,
 
     types.BuiltinFunctionType
     valid_func_types = [
-        types.FunctionType, types.BuiltinFunctionType, classmethod,
+        types.FunctionType,
+        types.BuiltinFunctionType,
+        classmethod,
         staticmethod,
         types.MethodType,  # handles classmethod
         # types.BuiltinMethodType,
     ]
     if include_builtin:
-        valid_func_types += [
-            types.BuiltinFunctionType
-        ]
+        valid_func_types += [types.BuiltinFunctionType]
 
     if six.PY2:
-        valid_class_types = (types.ClassType,  types.TypeType,)
+        valid_class_types = (
+            types.ClassType,
+            types.TypeType,
+        )
     else:
         valid_class_types = six.class_types
 
-    scalar_types = ([dict, list, tuple, set, frozenset, bool, float, int] +
-                    list(six.string_types))
+    scalar_types = [dict, list, tuple, set, frozenset, bool, float, int] + list(
+        six.string_types
+    )
     scalar_types += list(six.string_types)
-    other_types = [functools.partial, types.ModuleType,
-                   ctypes.CDLL]
+    other_types = [functools.partial, types.ModuleType, ctypes.CDLL]
     if six.PY2:
         other_types += [types.InstanceType]
 
     invalid_types = tuple(scalar_types + other_types)
     valid_func_types = tuple(valid_func_types)
 
-    #modpath = ut.get_modname_from_modpath(module.__file__)
+    # modpath = ut.get_modname_from_modpath(module.__file__)
 
     for key, val in six.iteritems(module.__dict__):
         # <DEBUG>
@@ -1006,15 +1084,20 @@ def iter_module_doctestable(module, include_funcs=True, include_classes=True,
                     # <DEBUG>
                     if debug_key is not None and subkey == debug_key:
                         import utool as ut
+
                         ut.embed()
                     # </DEBUG>
                     # Unbound methods are still typed as functions
                     if isinstance(subval, valid_func_types):
-                        if not include_inherited and not is_defined_by_module(subval, module, parent=val):
+                        if not include_inherited and not is_defined_by_module(
+                            subval, module, parent=val
+                        ):
                             continue
                         if isinstance(subval, (staticmethod)):
                             subval.__func__.__ut_parent_class__ = class_
-                        if not isinstance(subval, types.BuiltinFunctionType) and not isinstance(subval, (classmethod, staticmethod)):
+                        if not isinstance(
+                            subval, types.BuiltinFunctionType
+                        ) and not isinstance(subval, (classmethod, staticmethod)):
                             # HACK: __ut_parent_class__ lets util_test have
                             # more info on the func should return extra info
                             # instead
@@ -1024,13 +1107,16 @@ def iter_module_doctestable(module, include_funcs=True, include_classes=True,
                         pass
                     else:
                         if util_arg.VERBOSE:
-                            print('[util_inspect] WARNING module %r class %r:' % (module, class_,))
+                            print(
+                                '[util_inspect] WARNING module %r class %r:'
+                                % (module, class_,)
+                            )
                             print(' * Unknown if testable val=%r' % (val))
                             print(' * Unknown if testable type(val)=%r' % type(val))
         elif isinstance(val, invalid_types):
             pass
         else:
-            #import utool as ut
+            # import utool as ut
             if util_arg.VERBOSE:
                 print('[util_inspect] WARNING in module %r:' % (module,))
                 print(' * Unknown if testable val=%r' % (val))
@@ -1057,6 +1143,7 @@ def is_defined_by_module(item, module, parent=None):
             try:
                 # hack for cv2 and xfeatures2d
                 import utool as ut
+
                 name = ut.get_modname_from_modpath(module.__file__)
                 flag = name in str(item)
             except Exception:
@@ -1087,12 +1174,12 @@ def is_defined_by_module(item, module, parent=None):
                     valid_names += dir(parent)
                 if item.func_name in valid_names:
                     # hack to prevent small names
-                    #if len(item.func_name) > 8:
+                    # if len(item.func_name) > 8:
                     if len(item.func_name) > 6:
                         flag = True
             elif func_module_name == module.__name__:
                 flag = True
-        except  AttributeError:
+        except AttributeError:
             if hasattr(item, '__module__'):
                 flag = item.__module__ == module.__name__
     return flag
@@ -1103,13 +1190,13 @@ def get_func_modname(func):
         # Capture case where there is a utool wrapper
         orig_func = func._utinfo['orig_func']
         return get_func_modname(orig_func)
-    #try:
+    # try:
     func_globals = meta_util_six.get_funcglobals(func)
     modname = func_globals['__name__']
     return modname
-    #except  AttributeError:
+    # except  AttributeError:
     #    pass
-    #pass
+    # pass
 
 
 def is_bateries_included(item):
@@ -1170,16 +1257,16 @@ def list_class_funcnames(fname, blank_pats=['    #']):
         lines = file_.readlines()
     funcname_list = []
 
-    #full_line_ = ''
+    # full_line_ = ''
     for lx, line in enumerate(lines):
-        #full_line_ += line
+        # full_line_ += line
         if any([line.startswith(pat) for pat in blank_pats]):
             funcname_list.append('')
         if line.startswith('    def '):
-            def_x    = line.find('def')
+            def_x = line.find('def')
             rparen_x = line.find('(')
-            funcname = line[(def_x + 3):rparen_x]
-            #print(funcname)
+            funcname = line[(def_x + 3) : rparen_x]
+            # print(funcname)
             funcname_list.append(funcname)
     return funcname_list
 
@@ -1207,16 +1294,16 @@ def list_global_funcnames(fname, blank_pats=['    #']):
         lines = file_.readlines()
     funcname_list = []
 
-    #full_line_ = ''
+    # full_line_ = ''
     for lx, line in enumerate(lines):
-        #full_line_ += line
+        # full_line_ += line
         if any([line.startswith(pat) for pat in blank_pats]):
             funcname_list.append('')
         if line.startswith('def '):
-            def_x    = line.find('def')
+            def_x = line.find('def')
             rparen_x = line.find('(')
-            funcname = line[(def_x + 3):rparen_x]
-            #print(funcname)
+            funcname = line[(def_x + 3) : rparen_x]
+            # print(funcname)
             funcname_list.append(funcname)
     return funcname_list
 
@@ -1228,12 +1315,13 @@ def inherit_kwargs(inherit_func):
     func = encoder.visualize.im_func
     """
     import utool as ut
+
     keys, is_arbitrary = ut.get_kwargs(inherit_func)
     if is_arbitrary:
         keys += ['**kwargs']
     kwargs_append = '\n'.join(keys)
-    #from six.moves import builtins
-    #builtins.print(kwargs_block)
+    # from six.moves import builtins
+    # builtins.print(kwargs_block)
     def _wrp(func):
         if func.__doc__ is None:
             func.__doc__ = ''
@@ -1241,11 +1329,13 @@ def inherit_kwargs(inherit_func):
         kwargs_block = 'Kwargs:\n' + ut.indent(kwargs_append)
         func.__doc__ += kwargs_block
         return func
+
     return _wrp
 
 
 def filter_valid_kwargs(func, dict_):
     import utool as ut
+
     keys, is_arbitrary = ut.get_kwargs(func)
     if is_arbitrary:
         valid_dict_ = dict_
@@ -1290,8 +1380,8 @@ def get_kwdefaults(func, parse_source=False):
         >>> kwdefaults = get_kwdefaults(func, parse_source)
         >>> print('kwdefaults = %s' % (ut.repr4(kwdefaults),))
     """
-    #import utool as ut
-    #with ut.embed_on_exception_context:
+    # import utool as ut
+    # with ut.embed_on_exception_context:
     argspec = inspect.getargspec(func)
     kwdefaults = {}
     if argspec.args is None or argspec.defaults is None:
@@ -1299,7 +1389,7 @@ def get_kwdefaults(func, parse_source=False):
     else:
         args = argspec.args
         defaults = argspec.defaults
-        #kwdefaults = OrderedDict(zip(argspec.args[::-1], argspec.defaults[::-1]))
+        # kwdefaults = OrderedDict(zip(argspec.args[::-1], argspec.defaults[::-1]))
         kwpos = len(args) - len(defaults)
         kwdefaults = OrderedDict(zip(args[kwpos:], defaults))
     if parse_source and argspec.keywords:
@@ -1351,6 +1441,7 @@ def set_funcdoc(func, newdoc):
 def get_docstr(func_or_class):
     """  Get the docstring from a live object """
     import utool as ut
+
     try:
         docstr_ = func_or_class.func_doc
     except AttributeError:
@@ -1363,6 +1454,7 @@ def get_docstr(func_or_class):
 
 def get_func_docblocks(func_or_class):
     import utool as ut
+
     docstr = ut.get_docstr(func_or_class)
     docblocks = ut.parse_docblocks_from_docstr(docstr)
     return docblocks
@@ -1373,12 +1465,13 @@ def prettyprint_parsetree(pt):
     pip install astdump
     pip install codegen
     """
-    #import astdump
+    # import astdump
     import astor
-    #import codegen
-    #import ast
-    #astdump.indented(pt)
-    #print(ast.dump(pt, include_attributes=True))
+
+    # import codegen
+    # import ast
+    # astdump.indented(pt)
+    # print(ast.dump(pt, include_attributes=True))
     print(astor.dump(pt))
 
 
@@ -1400,26 +1493,28 @@ def special_parse_process_python_code(sourcecode):
     """
     import ast
     import astor
-    #sourcecode = 'from __future__ import print_function\n' + sourcecode
+
+    # sourcecode = 'from __future__ import print_function\n' + sourcecode
     sourcecode_ = sourcecode.encode('utf8')
     pt = ast.parse(sourcecode_, 'testfile')
 
     generator = astor.codegen.SourceGenerator(' ' * 4)
     generator.visit(pt)
-    resturctured_source = (''.join(generator.result))
+    resturctured_source = ''.join(generator.result)
     print(resturctured_source)
 
     visitor = ast.NodeVisitor()
     visitor.visit(pt)
 
     import redbaron
+
     # Pares a FULL syntax tree that keeps blockcomments
     baron = redbaron.RedBaron(sourcecode)
-    #fst = baron.fst()
-    node = (baron.node_list[54])  # NOQA
+    # fst = baron.fst()
+    node = baron.node_list[54]  # NOQA
     [n.type for n in baron.node_list]
 
-    #class SpecialVisitor(ast.NodeVisitor):
+    # class SpecialVisitor(ast.NodeVisitor):
 
 
 def parse_function_names(sourcecode, top_level=True, ignore_condition=1):
@@ -1448,6 +1543,7 @@ def parse_function_names(sourcecode, top_level=True, ignore_condition=1):
     """
     import ast
     import utool as ut
+
     func_names = []
     if six.PY2:
         sourcecode = ut.ensure_unicode(sourcecode)
@@ -1457,7 +1553,6 @@ def parse_function_names(sourcecode, top_level=True, ignore_condition=1):
         pt = ast.parse(sourcecode)
 
     class FuncVisitor(ast.NodeVisitor):
-
         def __init__(self):
             super(FuncVisitor, self).__init__()
             self.condition_names = None
@@ -1516,6 +1611,7 @@ def parse_function_names(sourcecode, top_level=True, ignore_condition=1):
         def visit_ClassDef(self, node):
             if not top_level:
                 ast.NodeVisitor.generic_visit(self, node)
+
     try:
         FuncVisitor().visit(pt)
     except Exception:
@@ -1527,11 +1623,13 @@ def parse_function_names(sourcecode, top_level=True, ignore_condition=1):
 def _node_is_main_if(node):
     if isinstance(node.test, ast.Compare):
         try:
-            if all([
-                isinstance(node.test.ops[0], ast.Eq),
-                node.test.left.id == '__name__',
-                node.test.comparators[0].s == '__main__',
-            ]):
+            if all(
+                [
+                    isinstance(node.test.ops[0], ast.Eq),
+                    node.test.left.id == '__name__',
+                    node.test.comparators[0].s == '__main__',
+                ]
+            ):
                 return True
         except Exception as ex:
             pass
@@ -1550,6 +1648,7 @@ def parse_project_imports(dpath):
     import ubelt as ub
     import glob
     from os.path import join, exists
+
     package_modules = set()
     for fpath in glob.glob(join(dpath, '**/*.py'), recursive=True):
         try:
@@ -1564,7 +1663,9 @@ def parse_project_imports(dpath):
             print('encountered SyntaxError in fpath = {!r}'.format(fpath))
     import warnings
     import inspect
+
     stdlibs = [dirname(warnings.__file__), dirname(inspect.__file__)]
+
     def is_module_batteries_included(m):
         if m in sys.builtin_module_names:
             return True
@@ -1573,7 +1674,10 @@ def parse_project_imports(dpath):
                 return True
             if exists(join(p, m)):
                 return True
-    used_modules = sorted([m for m in package_modules if not is_module_batteries_included(m)])
+
+    used_modules = sorted(
+        [m for m in package_modules if not is_module_batteries_included(m)]
+    )
     print('used_modules non-buildin modules = {}'.format(ub.repr2(used_modules)))
 
 
@@ -1605,9 +1709,11 @@ def parse_import_names(sourcecode, top_level=True, fpath=None, branch=False):
         >>> print(result)
     """
     import ast
+
     import_names = []
     if six.PY2:
         import utool as ut
+
         sourcecode = ut.ensure_unicode(sourcecode)
         encoded = sourcecode.encode('utf8')
         pt = ast.parse(encoded)
@@ -1617,7 +1723,6 @@ def parse_import_names(sourcecode, top_level=True, fpath=None, branch=False):
     modules = []
 
     class ImportVisitor(ast.NodeVisitor):
-
         def _parse_alias_list(self, aliases):
             for alias in aliases:
                 if alias.asname is not None:
@@ -1642,8 +1747,13 @@ def parse_import_names(sourcecode, top_level=True, fpath=None, branch=False):
                 if node.level:
                     if fpath is not None:
                         from xdoctest import static_analysis as static
-                        modparts = static.split_modpath(os.path.abspath(fpath))[1].replace('\\', '/').split('/')
-                        parts = modparts[:-node.level]
+
+                        modparts = (
+                            static.split_modpath(os.path.abspath(fpath))[1]
+                            .replace('\\', '/')
+                            .split('/')
+                        )
+                        parts = modparts[: -node.level]
                         # parts = os.path.split(static.split_modpath(os.path.abspath(fpath))[1])[:-node.level]
                         prefix = '.'.join(parts) + '.'
                         # prefix = '.'.join(os.path.split(fpath)[-node.level:]) + '.'
@@ -1670,6 +1780,7 @@ def parse_import_names(sourcecode, top_level=True, fpath=None, branch=False):
                 if not _node_is_main_if(node):
                     # Ignore the main statement
                     self.generic_visit(node)
+
     try:
         ImportVisitor().visit(pt)
     except Exception:
@@ -1706,6 +1817,7 @@ def find_funcs_called_with_kwargs(sourcecode, target_kwargs_name='kwargs'):
         >>> assert 'bar' in child_funcnamess, 'bar should be found'
     """
     import ast
+
     sourcecode = 'from __future__ import print_function\n' + sourcecode
     pt = ast.parse(sourcecode)
     child_funcnamess = []
@@ -1717,6 +1829,7 @@ def find_funcs_called_with_kwargs(sourcecode, target_kwargs_name='kwargs'):
         print('\nSource:')
         print(sourcecode)
         import astor
+
         print('\nParse:')
         print(astor.dump(pt))
 
@@ -1727,6 +1840,7 @@ def find_funcs_called_with_kwargs(sourcecode, target_kwargs_name='kwargs'):
         then look assume the object that was updated is a dictionary
         and check wherever that is passed to kwargs as well.
         """
+
         def visit_FunctionDef(self, node):
             if debug:
                 print('\nVISIT FunctionDef node = %r' % (node,))
@@ -1738,8 +1852,8 @@ def find_funcs_called_with_kwargs(sourcecode, target_kwargs_name='kwargs'):
                     kwarg_name = None
                 else:
                     kwarg_name = node.args.kwarg.arg
-                #import utool as ut
-                #ut.embed()
+                # import utool as ut
+                # ut.embed()
             if kwarg_name != target_kwargs_name:
                 # target kwargs is still in scope
                 ast.NodeVisitor.generic_visit(self, node)
@@ -1747,7 +1861,7 @@ def find_funcs_called_with_kwargs(sourcecode, target_kwargs_name='kwargs'):
         def visit_Call(self, node):
             if debug:
                 print('\nVISIT Call node = %r' % (node,))
-                #print(ut.repr4(node.__dict__,))
+                # print(ut.repr4(node.__dict__,))
             if isinstance(node.func, ast.Attribute):
                 try:
                     funcname = node.func.value.id + '.' + node.func.attr
@@ -1757,7 +1871,8 @@ def find_funcs_called_with_kwargs(sourcecode, target_kwargs_name='kwargs'):
                 funcname = node.func.id
             else:
                 raise NotImplementedError(
-                    'do not know how to parse: node.func = %r' % (node.func,))
+                    'do not know how to parse: node.func = %r' % (node.func,)
+                )
             if six.PY2:
                 kwargs = node.kwargs
                 kwargs_name = None if kwargs is None else kwargs.id
@@ -1772,22 +1887,26 @@ def find_funcs_called_with_kwargs(sourcecode, target_kwargs_name='kwargs'):
                         if kwargs.arg is None:
                             if hasattr(kwargs.value, 'id'):
                                 kwargs_name = kwargs.value.id
-                                if funcname is not None and kwargs_name == target_kwargs_name:
+                                if (
+                                    funcname is not None
+                                    and kwargs_name == target_kwargs_name
+                                ):
                                     child_funcnamess.append(funcname)
                                 if debug:
                                     print('funcname = %r' % (funcname,))
                                     print('kwargs_name = %r' % (kwargs_name,))
             ast.NodeVisitor.generic_visit(self, node)
+
     try:
         KwargParseVisitor().visit(pt)
     except Exception:
         raise
         pass
-        #import utool as ut
-        #if ut.SUPER_STRICT:
+        # import utool as ut
+        # if ut.SUPER_STRICT:
         #    raise
     return child_funcnamess
-    #print('child_funcnamess = %r' % (child_funcnamess,))
+    # print('child_funcnamess = %r' % (child_funcnamess,))
 
 
 def is_valid_python(code, reraise=True, ipy_magic_workaround=False):
@@ -1796,13 +1915,20 @@ def is_valid_python(code, reraise=True, ipy_magic_workaround=False):
         http://stackoverflow.com/questions/23576681/python-check-syntax
     """
     import ast
+
     try:
         if ipy_magic_workaround:
-            code = '\n'.join(['pass' if re.match(r'\s*%[a-z]*', line) else line for line in code.split('\n')])
+            code = '\n'.join(
+                [
+                    'pass' if re.match(r'\s*%[a-z]*', line) else line
+                    for line in code.split('\n')
+                ]
+            )
         ast.parse(code)
     except SyntaxError:
         if reraise:
             import utool as ut
+
             print('Syntax Error')
             ut.print_python_code(code)
             raise
@@ -1891,6 +2017,7 @@ def parse_return_type(sourcecode):
         ('tuple', '(True, False)', 'Returns', '')
     """
     import ast
+
     return_type, return_name, return_header = (None, None, None)
 
     if sourcecode is None:
@@ -1900,11 +2027,13 @@ def parse_return_type(sourcecode):
 
     pt = ast.parse(sourcecode)
     import utool as ut
+
     debug = ut.get_argflag('--debug-parse-return')
-    #debug = True
+    # debug = True
 
     if debug:
         import astor
+
         print('\nSource:')
         print(sourcecode)
         print('\nParse:')
@@ -1914,6 +2043,7 @@ def parse_return_type(sourcecode):
     def print_visit(type_, node):
         if debug:
             import utool as ut
+
             print('+---')
             print('\nVISIT %s node = %r' % (type_, node,))
             print('node.__dict__ = ' + ut.repr2(node.__dict__, nl=True))
@@ -1922,7 +2052,11 @@ def parse_return_type(sourcecode):
     def get_node_name_and_type(node):
         if isinstance(node, ast.Tuple):
             tupnode_list = node.elts
-            tupleid = '(%s)' % (', '.join([str(get_node_name_and_type(tupnode)[1]) for tupnode in tupnode_list]))
+            tupleid = '(%s)' % (
+                ', '.join(
+                    [str(get_node_name_and_type(tupnode)[1]) for tupnode in tupnode_list]
+                )
+            )
             node_type = 'tuple'
             node_name = tupleid
         elif isinstance(node, ast.Dict):
@@ -1945,7 +2079,7 @@ def parse_return_type(sourcecode):
         else:
             node_name = None
             node_type = '?'
-            #node_type = 'ADD_TO_GET_NODE_NAME_AND_TYPE: ' + str(type(node.value))
+            # node_type = 'ADD_TO_GET_NODE_NAME_AND_TYPE: ' + str(type(node.value))
         return node_type, node_name
 
     class ReturnVisitor(ast.NodeVisitor):
@@ -1973,6 +2107,7 @@ def parse_return_type(sourcecode):
             print_visit('YieldValue', return_value)
             self.found_nodes.append(return_value)
             self.return_header = 'Yields'
+
     try:
         self = ReturnVisitor()
         self.init()
@@ -2001,7 +2136,7 @@ def parse_return_type(sourcecode):
     return return_type, return_name, return_header, return_desc
 
 
-#def parse_return_type_OLD(sourcecode):
+# def parse_return_type_OLD(sourcecode):
 #    import utool as ut
 #    import ast
 #    if ut.VERBOSE:
@@ -2111,9 +2246,18 @@ def parse_return_type(sourcecode):
 #    return return_type, return_name, return_header, return_desc
 
 
-def exec_func_src(func, globals_=None, locals_=None, key_list=None,
-                  sentinal=None, update=None, keys=None, verbose=False,
-                  start=None, stop=None):
+def exec_func_src(
+    func,
+    globals_=None,
+    locals_=None,
+    key_list=None,
+    sentinal=None,
+    update=None,
+    keys=None,
+    verbose=False,
+    start=None,
+    stop=None,
+):
     """
     execs a func and returns requested local vars.
 
@@ -2125,6 +2269,7 @@ def exec_func_src(func, globals_=None, locals_=None, key_list=None,
     if keys is None:
         keys = key_list
     import utool as ut
+
     sourcecode = ut.get_func_sourcecode(func, stripdef=True, stripret=True)
     if update is None:
         update = ut.inIPython()
@@ -2142,13 +2287,13 @@ def exec_func_src(func, globals_=None, locals_=None, key_list=None,
         # globals_new.update({k: v for k, v in locals_.items()
         #                     if k not in globals_new})
     orig_globals = globals_new.copy()
-    #six.exec_(sourcecode, globals_new, locals_)
+    # six.exec_(sourcecode, globals_new, locals_)
     if verbose:
         print(ut.color_text(sourcecode, 'python'))
     six.exec_(sourcecode, globals_new)
     # Draw intermediate steps
     if keys is None:
-        #return locals_
+        # return locals_
         # Remove keys created in function execution
         ut.delete_keys(globals_new, orig_globals.keys())
         if update:
@@ -2160,13 +2305,14 @@ def exec_func_src(func, globals_=None, locals_=None, key_list=None,
         if update:
             # update input globals?
             globals_.update(globals_new)
-        #var_list = ut.dict_take(locals_, keys)
+        # var_list = ut.dict_take(locals_, keys)
         var_list = ut.dict_take(globals_new, keys)
         return var_list
 
 
-def exec_func_src2(func, globals_=None, locals_=None, sentinal=None,
-                   verbose=False, start=None, stop=None):
+def exec_func_src2(
+    func, globals_=None, locals_=None, sentinal=None, verbose=False, start=None, stop=None
+):
     """
     execs a func and returns requested local vars.
 
@@ -2176,6 +2322,7 @@ def exec_func_src2(func, globals_=None, locals_=None, sentinal=None,
         ut.execstr_funckw
     """
     import utool as ut
+
     sourcecode = ut.get_func_sourcecode(func, stripdef=True, stripret=True)
     if globals_ is None:
         globals_ = ut.get_parent_frame().f_globals
@@ -2195,8 +2342,7 @@ def exec_func_src2(func, globals_=None, locals_=None, sentinal=None,
     return locals2_
 
 
-def exec_func_src3(func, globals_, sentinal=None, verbose=False,
-                   start=None, stop=None):
+def exec_func_src3(func, globals_, sentinal=None, verbose=False, start=None, stop=None):
     """
     execs a func and returns requested local vars.
 
@@ -2206,6 +2352,7 @@ def exec_func_src3(func, globals_, sentinal=None, verbose=False,
         ut.execstr_funckw
     """
     import utool as ut
+
     sourcecode = ut.get_func_sourcecode(func, stripdef=True, stripret=True)
     if sentinal is not None:
         sourcecode = ut.replace_between_tags(sourcecode, '', sentinal)
@@ -2227,6 +2374,7 @@ def execstr_func_doctest(func, num=0, start_sentinal=None, end_sentinal=None):
     end_sentinal = 'pnum_ = pt.make_pnum_nextgen'
     """
     import utool as ut
+
     docsrc = ut.get_doctest_examples(func)[num][0]
     lines = docsrc.split('\n')
     if start_sentinal is None:
@@ -2241,7 +2389,9 @@ def execstr_func_doctest(func, num=0, start_sentinal=None, end_sentinal=None):
     return docsrc_part
 
 
-def exec_func_doctest(func, start_sentinal=None, end_sentinal=None, num=0, globals_=None, locals_=None):
+def exec_func_doctest(
+    func, start_sentinal=None, end_sentinal=None, num=0, globals_=None, locals_=None
+):
     """
     execs a func doctest and returns requested local vars.
 
@@ -2251,6 +2401,7 @@ def exec_func_doctest(func, start_sentinal=None, end_sentinal=None, num=0, globa
     end_sentinal = 'pnum_ = pt.make_pnum_nextgen'
     """
     import utool as ut
+
     docsrc_part = execstr_func_doctest(func, num, start_sentinal, end_sentinal)
     if globals_ is None:
         globals_ = ut.get_parent_frame().f_globals
@@ -2264,9 +2415,14 @@ def exec_func_doctest(func, start_sentinal=None, end_sentinal=None, num=0, globa
     six.exec_(docsrc_part, globals_new)
 
 
-def get_func_sourcecode(func, stripdef=False, stripret=False,
-                        strip_docstr=False, strip_comments=False,
-                        remove_linenums=None):
+def get_func_sourcecode(
+    func,
+    stripdef=False,
+    stripret=False,
+    strip_docstr=False,
+    strip_comments=False,
+    remove_linenums=None,
+):
     """
     wrapper around inspect.getsource but takes into account utool decorators
     strip flags are very hacky as of now
@@ -2294,33 +2450,34 @@ def get_func_sourcecode(func, stripdef=False, stripret=False,
         >>> print(result)
     """
     import utool as ut
-    #try:
+
+    # try:
     inspect.linecache.clearcache()  # HACK: fix inspect bug
     sourcefile = inspect.getsourcefile(func)
-    #except IOError:
+    # except IOError:
     #    sourcefile = None
     if hasattr(func, '_utinfo'):
-        #if 'src' in func._utinfo:
+        # if 'src' in func._utinfo:
         #    sourcecode = func._utinfo['src']
-        #else:
+        # else:
         func2 = func._utinfo['orig_func']
         sourcecode = get_func_sourcecode(func2)
     elif sourcefile is not None and (sourcefile != '<string>'):
         try_limit = 2
         for num_tries in range(try_limit):
             try:
-                #print(func)
+                # print(func)
                 sourcecode = inspect.getsource(func)
                 if not isinstance(sourcecode, six.text_type):
                     sourcecode = sourcecode.decode('utf-8')
-                #print(sourcecode)
+                # print(sourcecode)
             except (IndexError, OSError, SyntaxError) as ex:
-                ut.printex(ex, 'Error getting source',
-                           keys=['sourcefile', 'func'])
+                ut.printex(ex, 'Error getting source', keys=['sourcefile', 'func'])
                 if False:
                     # VERY HACK: try to reload the module and get a redefined
                     # version of the function
                     import imp
+
                     modname = get_func_modname(func)
                     funcname = ut.get_funcname(func)
                     module = sys.modules[modname]
@@ -2337,19 +2494,19 @@ def get_func_sourcecode(func, stripdef=False, stripret=False,
                     raise
     else:
         sourcecode = None
-    #orig_source = sourcecode
-    #print(orig_source)
+    # orig_source = sourcecode
+    # print(orig_source)
     if stripdef:
         # hacky
         sourcecode = ut.unindent(sourcecode)
-        #sourcecode = ut.unindent(ut.regex_replace('def [^)]*\\):\n', '', sourcecode))
-        #nodef_source = ut.regex_replace('def [^:]*\\):\n', '', sourcecode)
+        # sourcecode = ut.unindent(ut.regex_replace('def [^)]*\\):\n', '', sourcecode))
+        # nodef_source = ut.regex_replace('def [^:]*\\):\n', '', sourcecode)
         regex_decor = '^@.' + ut.REGEX_NONGREEDY
         regex_defline = '^def [^:]*\\):\n'
         patern = '(' + regex_decor + ')?' + regex_defline
         nodef_source = ut.regex_replace(patern, '', sourcecode)
         sourcecode = ut.unindent(nodef_source)
-        #print(sourcecode)
+        # print(sourcecode)
         pass
     if stripret:
         r""" \s is a whitespace char """
@@ -2359,24 +2516,25 @@ def get_func_sourcecode(func, stripdef=False, stripret=False,
         prereturn_bref = ut.bref_field('prereturn')
         regex = prereturn + return_
         repl = prereturn_bref + 'pass  # ' + return_bref
-        #import re
-        #print(re.search(regex, sourcecode, flags=re.MULTILINE ))
-        #print(re.search('return', sourcecode, flags=re.MULTILINE | re.DOTALL ))
-        #print(re.search(regex, sourcecode))
+        # import re
+        # print(re.search(regex, sourcecode, flags=re.MULTILINE ))
+        # print(re.search('return', sourcecode, flags=re.MULTILINE | re.DOTALL ))
+        # print(re.search(regex, sourcecode))
         sourcecode_ = re.sub(regex, repl, sourcecode, flags=re.MULTILINE)
-        #print(sourcecode_)
+        # print(sourcecode_)
         sourcecode = sourcecode_
         pass
     if strip_docstr or strip_comments:
         # pip install pyminifier
         # References: http://code.activestate.com/recipes/576704/
-        #from pyminifier import minification, token_utils
+        # from pyminifier import minification, token_utils
         def remove_docstrings_or_comments(source):
             """
             TODO: commit clean version to pyminifier
             """
             import tokenize
             from six.moves import StringIO
+
             io_obj = StringIO(source)
             out = ''
             prev_toktype = tokenize.INDENT
@@ -2390,7 +2548,7 @@ def get_func_sourcecode(func, stripdef=False, stripret=False,
                 if start_line > last_lineno:
                     last_col = 0
                 if start_col > last_col:
-                    out += (' ' * (start_col - last_col))
+                    out += ' ' * (start_col - last_col)
                 # Remove comments:
                 if strip_comments and token_type == tokenize.COMMENT:
                     pass
@@ -2406,20 +2564,21 @@ def get_func_sourcecode(func, stripdef=False, stripret=False,
                 last_col = end_col
                 last_lineno = end_line
             return out
+
         sourcecode = remove_docstrings_or_comments(sourcecode)
-        #sourcecode = minification.remove_comments_and_docstrings(sourcecode)
-        #tokens = token_utils.listified_tokenizer(sourcecode)
-        #minification.remove_comments(tokens)
-        #minification.remove_docstrings(tokens)
-        #token_utils.untokenize(tokens)
+        # sourcecode = minification.remove_comments_and_docstrings(sourcecode)
+        # tokens = token_utils.listified_tokenizer(sourcecode)
+        # minification.remove_comments(tokens)
+        # minification.remove_docstrings(tokens)
+        # token_utils.untokenize(tokens)
 
     if remove_linenums is not None:
         source_lines = sourcecode.strip('\n').split('\n')
         ut.delete_items_by_index(source_lines, remove_linenums)
         sourcecode = '\n'.join(source_lines)
     return sourcecode
-    #else:
-    #return get_func_sourcecode(func._utinfo['src'])
+    # else:
+    # return get_func_sourcecode(func._utinfo['src'])
 
 
 def get_unbound_args(argspec):
@@ -2495,8 +2654,9 @@ def get_kwargs(func):
         >>> # verify results
         >>> print(result)
     """
-    #if argspec.keywords is None:
+    # if argspec.keywords is None:
     import utool as ut
+
     argspec = inspect.getargspec(func)
     if argspec.defaults is not None:
         num_args = len(argspec.args)
@@ -2525,7 +2685,7 @@ def lookup_attribute_chain(attrname, namespace):
         >>> globals_ = ut.util_inspect.__dict__
         >>> attrname = 'KWReg.print_defaultkw'
     """
-    #subdict = meta_util_six.get_funcglobals(root_func)
+    # subdict = meta_util_six.get_funcglobals(root_func)
     subtup = attrname.split('.')
     subdict = namespace
     for attr in subtup[:-1]:
@@ -2618,6 +2778,7 @@ def recursive_parse_kwargs(root_func, path_=None, verbose=None):
         print('[inspect] recursive parse kwargs root_func = %r ' % (root_func,))
 
     import utool as ut
+
     if path_ is None:
         path_ = []
     if root_func in path_:
@@ -2632,13 +2793,10 @@ def recursive_parse_kwargs(root_func, path_=None, verbose=None):
     if verbose:
         print('[inspect] * Found explicit %r' % (found_explicit,))
 
-    #kwargs_list = [(kw,) for kw in  ut.get_kwargs(root_func)[0]]
-    sourcecode = ut.get_func_sourcecode(root_func, strip_docstr=True,
-                                        stripdef=True)
-    sourcecode1 = ut.get_func_sourcecode(root_func, strip_docstr=True,
-                                         stripdef=False)
-    found_implicit = ut.parse_kwarg_keys(sourcecode1, spec.keywords,
-                                         with_vals=True)
+    # kwargs_list = [(kw,) for kw in  ut.get_kwargs(root_func)[0]]
+    sourcecode = ut.get_func_sourcecode(root_func, strip_docstr=True, stripdef=True)
+    sourcecode1 = ut.get_func_sourcecode(root_func, strip_docstr=True, stripdef=False)
+    found_implicit = ut.parse_kwarg_keys(sourcecode1, spec.keywords, with_vals=True)
     if verbose:
         print('[inspect] * Found found_implicit %r' % (found_implicit,))
     kwargs_list = found_explicit + found_implicit
@@ -2653,6 +2811,7 @@ def recursive_parse_kwargs(root_func, path_=None, verbose=None):
             subdict = ut.__dict__
         elif attr == 'pt':
             import wbia.plottool as pt
+
             subdict = pt.__dict__
         else:
             subdict = None
@@ -2660,7 +2819,7 @@ def recursive_parse_kwargs(root_func, path_=None, verbose=None):
 
     def resolve_attr_subfunc(subfunc_name):
         # look up attriute chain
-        #subdict = root_func.func_globals
+        # subdict = root_func.func_globals
         subdict = meta_util_six.get_funcglobals(root_func)
         subtup = subfunc_name.split('.')
         try:
@@ -2703,8 +2862,9 @@ def recursive_parse_kwargs(root_func, path_=None, verbose=None):
             try:
                 subfunc = func_globals[subfunc_name]
             except KeyError:
-                print('Unable to find function definition subfunc_name=%r' %
-                      (subfunc_name,))
+                print(
+                    'Unable to find function definition subfunc_name=%r' % (subfunc_name,)
+                )
                 if ut.SUPER_STRICT:
                     raise
                 subfunc = None
@@ -2723,7 +2883,11 @@ def recursive_parse_kwargs(root_func, path_=None, verbose=None):
             print('[inspect] Checking spec.keywords=%r' % (spec.keywords,))
         subfunc_name_list = ut.find_funcs_called_with_kwargs(sourcecode, spec.keywords)
         if verbose:
-            print('[inspect] Checking subfunc_name_list with len {}'.format(len(subfunc_name_list)))
+            print(
+                '[inspect] Checking subfunc_name_list with len {}'.format(
+                    len(subfunc_name_list)
+                )
+            )
         for subfunc_name in subfunc_name_list:
             try:
                 new_subkw = check_subfunc_name(subfunc_name)
@@ -2731,12 +2895,15 @@ def recursive_parse_kwargs(root_func, path_=None, verbose=None):
                     print('[inspect] * Found %r' % (new_subkw,))
                 kwargs_list.extend(new_subkw)
             except (TypeError, Exception):
-                print('warning: unable to recursivley parse type of : %r' % (subfunc_name,))
+                print(
+                    'warning: unable to recursivley parse type of : %r' % (subfunc_name,)
+                )
     return kwargs_list
 
 
 def get_funckw(func, recursive=True):
     import utool as ut
+
     funckw_ = ut.get_func_kwargs(func, recursive=recursive)
     # if recursive:
     #     funckw_.update(dict(ut.recursive_parse_kwargs(func)))
@@ -2754,10 +2921,9 @@ def parse_func_kwarg_keys(func, with_vals=False):
         get_func_kwargs
 
     """
-    sourcecode = get_func_sourcecode(func, strip_docstr=True,
-                                     strip_comments=True)
+    sourcecode = get_func_sourcecode(func, strip_docstr=True, strip_comments=True)
     kwkeys = parse_kwarg_keys(sourcecode, with_vals=with_vals)
-    #ut.get_func_kwargs  TODO
+    # ut.get_func_kwargs  TODO
     return kwkeys
 
 
@@ -2773,6 +2939,7 @@ def get_func_kwargs(func, recursive=True):
         get_func_kwargs
     """
     import utool as ut
+
     argspec = ut.get_func_argspec(func)
     if argspec.defaults is None:
         header_kw = {}
@@ -2844,7 +3011,10 @@ def parse_kwarg_keys(source, keywords='kwargs', with_vals=False):
     """
     import utool as ut
     import ast
-    sourcecode = 'from __future__ import print_function, unicode_literals\n' + ut.unindent(source)
+
+    sourcecode = (
+        'from __future__ import print_function, unicode_literals\n' + ut.unindent(source)
+    )
     pt = ast.parse(sourcecode)
     kwargs_items = []
     debug = VERYVERB_INSPECT
@@ -2852,6 +3022,7 @@ def parse_kwarg_keys(source, keywords='kwargs', with_vals=False):
 
     if debug:
         import astor
+
         print('\nInput:')
         print('target_kwargs_name = %r' % (target_kwargs_name,))
         print('\nSource:')
@@ -2869,6 +3040,7 @@ def parse_kwarg_keys(source, keywords='kwargs', with_vals=False):
         Other visit_<classname> values:
             http://greentreesnakes.readthedocs.io/en/latest/nodes.html
         """
+
         def __init__(self):
             super(KwargParseVisitor, self).__init__()
             self.const_lookup = {}
@@ -2928,10 +3100,20 @@ def parse_kwarg_keys(source, keywords='kwargs', with_vals=False):
             # Can we handle this more intelligently?
             val_value = None
             if isinstance(val.op, ast.Or):
-                if any([isinstance(x, ast.NameConstant) and x.value is True for x in val.values]):
+                if any(
+                    [
+                        isinstance(x, ast.NameConstant) and x.value is True
+                        for x in val.values
+                    ]
+                ):
                     val_value = True
             elif isinstance(val.op, ast.And):
-                if any([isinstance(x, ast.NameConstant) and x.value is False for x in val.values]):
+                if any(
+                    [
+                        isinstance(x, ast.NameConstant) and x.value is False
+                        for x in val.values
+                    ]
+                ):
                     val_value = False
             return val_value
 
@@ -2955,7 +3137,7 @@ def parse_kwarg_keys(source, keywords='kwargs', with_vals=False):
                             pass
                         elif isinstance(key, ast.Str):
                             key_value = key.s
-                            val_value = None   # ut.NoParam
+                            val_value = None  # ut.NoParam
                             if isinstance(val, ast.Str):
                                 val_value = val.s
                             elif isinstance(val, ast.Num):
@@ -2964,8 +3146,7 @@ def parse_kwarg_keys(source, keywords='kwargs', with_vals=False):
                                 if val.id == 'None':
                                     val_value = None
                                 else:
-                                    val_value = self.const_lookup.get(
-                                            val.id, None)
+                                    val_value = self.const_lookup.get(val.id, None)
                                     # val_value = 'TODO lookup const'
                                     # TODO: lookup constants?
                                     pass
@@ -2983,10 +3164,15 @@ def parse_kwarg_keys(source, keywords='kwargs', with_vals=False):
                                         val_value = {}
                                     # val_value = callable
                                 else:
-                                    print('Warning: util_inspect doent know how to parse {}'.format(repr(val)))
+                                    print(
+                                        'Warning: util_inspect doent know how to parse {}'.format(
+                                            repr(val)
+                                        )
+                                    )
                             item = (key_value, val_value)
                             kwargs_items.append(item)
             ast.NodeVisitor.generic_visit(self, node)
+
     try:
         KwargParseVisitor().visit(pt)
     except Exception:
@@ -3002,6 +3188,7 @@ class KWReg(object):
     """
     Helper to register keywords for complex keyword parsers
     """
+
     def __init__(kwreg, enabled=False):
         kwreg.keys = []
         kwreg.defaults = []
@@ -3028,7 +3215,9 @@ def get_instance_attrnames(obj, default=True, **kwargs):
         unbound_attr = getattr(cls, a, None)
         if kwargs.get('with_properties', default) and isinstance(unbound_attr, property):
             out.append(a)
-        if kwargs.get('with_methods', default) and isinstance(unbound_attr, types.MethodType):
+        if kwargs.get('with_methods', default) and isinstance(
+            unbound_attr, types.MethodType
+        ):
             out.append(a)
     return out
 
@@ -3069,6 +3258,7 @@ def argparse_funckw(func, defaults={}, **kwargs):
         }
     """
     import utool as ut
+
     funckw_ = ut.get_funckw(func, recursive=True)
     funckw_.update(defaults)
     funckw = ut.argparse_dict(funckw_, **kwargs)
@@ -3121,9 +3311,12 @@ def infer_function_info(func):
     # TODO: allow a jedi argument
     if False:
         from jedi.evaluate import docstrings
+
         script = func.script
         argname_list = [p.name.value for p in func.params]
-        argtype_list = [docstrings.follow_param(script._evaluator, p) for p in func.params]
+        argtype_list = [
+            docstrings.follow_param(script._evaluator, p) for p in func.params
+        ]
 
     if isinstance(func, property):
         func = func.fget
@@ -3136,8 +3329,9 @@ def infer_function_info(func):
         current_doc = inspect.getdoc(func)
         docstr_blocks = ut.parse_docblocks_from_docstr(current_doc)
         docblock_types = ut.take_column(docstr_blocks, 0)
-        docblock_types = [re.sub('Example[0-9]', 'Example', type_)
-                          for type_ in docblock_types]
+        docblock_types = [
+            re.sub('Example[0-9]', 'Example', type_) for type_ in docblock_types
+        ]
         docblock_dict = ut.group_items(docstr_blocks, docblock_types)
 
         if '' in docblock_dict:
@@ -3155,21 +3349,21 @@ def infer_function_info(func):
                 argblock = argblocks[0][1]
 
                 assert argblock.startswith('Args:\n')
-                argsblock_ = argblock[len('Args:\n'):]
+                argsblock_ = argblock[len('Args:\n') :]
                 arglines = re.split(r'^    \b', argsblock_, flags=re.MULTILINE)
                 arglines = [line for line in arglines if len(line) > 0]
 
                 esc = re.escape
 
                 def escparen(pat):
-                    return esc('(')  + pat + esc(')')
+                    return esc('(') + pat + esc(')')
+
                 argname = ut.named_field('argname', ut.REGEX_VARNAME)
                 argtype_ = ut.named_field('argtype', '.' + ut.REGEX_NONGREEDY)
                 argtype = escparen(argtype_)
                 argdesc = ut.named_field('argdesc', '.*')
                 WS = ut.REGEX_WHITESPACE
-                argpattern = (
-                    WS + argname + WS + argtype + WS + ':' + WS + argdesc)
+                argpattern = WS + argname + WS + argtype + WS + ':' + WS + argdesc
 
                 for argline in arglines:
                     m = re.match(argpattern, argline, flags=re.MULTILINE | re.DOTALL)
@@ -3180,7 +3374,7 @@ def infer_function_info(func):
                         print('argline = \n%s' % (argline,))
                         print('---')
                         raise Exception('Unable to parse argline=%s' % (argline,))
-                    #print('groupdict_ = %s' % (ut.repr4(groupdict_),))
+                    # print('groupdict_ = %s' % (ut.repr4(groupdict_),))
                     argname = groupdict_['argname']
                     known_arginfo[argname]['argdesc'] = groupdict_['argdesc'].rstrip('\n')
                     # TODO: record these in a file for future reference
@@ -3214,12 +3408,12 @@ def infer_function_info(func):
         if not is_class:
             # Move source down to base indentation, but remember original indentation
             sourcecode = get_func_sourcecode(func)
-            #kwarg_keys = ut.parse_kwarg_keys(sourcecode)
+            # kwarg_keys = ut.parse_kwarg_keys(sourcecode)
             kwarg_items = ut.recursive_parse_kwargs(func)
             flags = ut.unique_flags(ut.take_column(kwarg_items, 0))
             kwarg_items = ut.compress(kwarg_items, flags)
             kwarg_keys = ut.take_column(kwarg_items, 0)
-            #kwarg_keys = ut.unique_ordered(kwarg_keys)
+            # kwarg_keys = ut.unique_ordered(kwarg_keys)
             kwarg_keys = ut.setdiff_ordered(kwarg_keys, argname_list)
         else:
             sourcecode = None
@@ -3237,20 +3431,21 @@ def infer_function_info(func):
         modname = func.__module__
         funcname = ut.get_funcname(func)
     except Exception as ex:
-        #print('dealing with infer function error')
-        #print('has utinfo? ' + str(hasattr(func, '_utinfo')))
-        #sourcefile = inspect.getsourcefile(func)  # NOQA
-        ut.printex(ex, 'Error Infering Function Info', keys=[
-            'func',
-            'sourcefile',
-            'sourcecode',
-            'argspec',
-        ], tb=True)
+        # print('dealing with infer function error')
+        # print('has utinfo? ' + str(hasattr(func, '_utinfo')))
+        # sourcefile = inspect.getsourcefile(func)  # NOQA
+        ut.printex(
+            ex,
+            'Error Infering Function Info',
+            keys=['func', 'sourcefile', 'sourcecode', 'argspec',],
+            tb=True,
+        )
         raise
 
     class FunctionInfo(object):
         def __init__(self):
             pass
+
     funcinfo = FunctionInfo()
     funcinfo.needs_surround = needs_surround
     funcinfo.argname_list = argname_list
@@ -3288,6 +3483,8 @@ if __name__ == '__main__':
         python -m utool.util_inspect --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

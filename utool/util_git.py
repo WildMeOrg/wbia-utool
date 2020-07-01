@@ -19,6 +19,7 @@ from utool import util_class
 from utool import util_path
 from utool import util_decor
 from utool import util_list
+
 print, rrr, profile = util_inject.inject2(__name__)
 
 
@@ -38,8 +39,16 @@ class RepoManager(util_dev.NiceRepr):
     """
     Batch git operations on multiple repos
     """
-    def __init__(rman, repo_urls=None, code_dir=None, userid=None,
-                 permitted_repos=None, label='', pythoncmd=None):
+
+    def __init__(
+        rman,
+        repo_urls=None,
+        code_dir=None,
+        userid=None,
+        permitted_repos=None,
+        label='',
+        pythoncmd=None,
+    ):
         if userid is None:
             userid = None
         if permitted_repos is None:
@@ -93,8 +102,7 @@ class RepoManager(util_dev.NiceRepr):
         if code_dir is None:
             code_dir = rman.code_dir
         assert code_dir is not None, 'Must specify the checkout code_dir'
-        repos = [Repo(url, code_dir, pythoncmd=rman.pythoncmd)
-                 for url in repo_urls]
+        repos = [Repo(url, code_dir, pythoncmd=rman.pythoncmd) for url in repo_urls]
         for repo in repos:
             repo._fix_url(rman.userid, rman.permitted_repos)
         rman.repos.extend(repos)
@@ -113,6 +121,7 @@ class RepoManager(util_dev.NiceRepr):
 
     def check_importable(rman):
         import utool as ut
+
         label = ' %s' % rman.label if rman.label else rman.label
         missing = []
         print('Checking if%s modules are importable' % (label,))
@@ -121,7 +130,9 @@ class RepoManager(util_dev.NiceRepr):
         for repo in rman.repos:
             flag, msg, errors = repo.check_importable()
             if not flag:
-                msg_list.append('  * !!!%s REPO %s HAS IMPORT ISSUES' % (label.upper(), repo,))
+                msg_list.append(
+                    '  * !!!%s REPO %s HAS IMPORT ISSUES' % (label.upper(), repo,)
+                )
                 if any([str(ex).find('undefined symbol') > -1 for ex in errors]):
                     recommended_fixes.append('rebuild')
                 else:
@@ -138,6 +149,7 @@ class RepoManager(util_dev.NiceRepr):
 
     def check_installed(rman):
         import utool as ut
+
         label = ' %s' % rman.label if rman.label else rman.label
         missing = []
         msg_list = []
@@ -145,7 +157,9 @@ class RepoManager(util_dev.NiceRepr):
         for repo in rman.repos:
             flag, msg = repo.check_installed()
             if not flag:
-                msg_list.append('  * !!!%s REPO %s NEEDS TO BE INSTALLED' % (label.upper(), repo,))
+                msg_list.append(
+                    '  * !!!%s REPO %s NEEDS TO BE INSTALLED' % (label.upper(), repo,)
+                )
                 if ut.VERBOSE:
                     msg_list.append(ut.indent(msg, '    '))
                 missing.append(repo)
@@ -156,6 +170,7 @@ class RepoManager(util_dev.NiceRepr):
 
     def check_cpp_build(rman):
         import utool as ut
+
         label = ' %s' % rman.label if rman.label else rman.label
         missing = []
         print('Checking if%s modules are built' % (label,))
@@ -189,7 +204,11 @@ class RepoManager(util_dev.NiceRepr):
         rman2.code_dir = rman.code_dir
         rman2.userid = rman.userid
         rman2.label = rman.label
-        rman2.repos = [repo for repo in rman.repos if repo.dpath and exists(join(repo.dpath, 'setup.py'))]
+        rman2.repos = [
+            repo
+            for repo in rman.repos
+            if repo.dpath and exists(join(repo.dpath, 'setup.py'))
+        ]
         return rman2
 
 
@@ -198,10 +217,11 @@ class Repo(util_dev.NiceRepr):
     """
     Handles a Python module repository
     """
-    def __init__(repo, url=None, code_dir=None, dpath=None,
-                 modname=None, pythoncmd=None):
+
+    def __init__(repo, url=None, code_dir=None, dpath=None, modname=None, pythoncmd=None):
         # modname might need to be called egg?
         import utool as ut
+
         if url is not None and '.git@' in url:
             # parse out specific branch
             repo.default_branch = url.split('@')[-1]
@@ -217,6 +237,7 @@ class Repo(util_dev.NiceRepr):
         repo.scripts = {}
         if pythoncmd is None:
             import sys
+
             pythoncmd = sys.executable
         repo.pythoncmd = pythoncmd
 
@@ -235,6 +256,7 @@ class Repo(util_dev.NiceRepr):
     def as_gitpython(repo):
         """ pip install gitpython """
         import git
+
         gitrepo = git.Repo(repo.dpath)
         return gitrepo
 
@@ -297,9 +319,13 @@ class Repo(util_dev.NiceRepr):
             wildme_remote_ = remotes[remote_url]
             wildme_url_ = wildme_remote_['url']
             is_ssh = '@' in wildme_url_
-            incorrect_version = (is_ssh and fmt == 'https') or (not is_ssh and fmt == 'ssh')
+            incorrect_version = (is_ssh and fmt == 'https') or (
+                not is_ssh and fmt == 'ssh'
+            )
             if incorrect_version:
-                print('  * Deleting bad version remote %r: %r' % (remote_name, remote_url))
+                print(
+                    '  * Deleting bad version remote %r: %r' % (remote_name, remote_url)
+                )
                 gitrepo.delete_remote(remote_name)
 
         # Ensure there is a remote under the wildme name
@@ -310,6 +336,7 @@ class Repo(util_dev.NiceRepr):
 
     def _new_remote_url(repo, host=None, user=None, reponame=None, fmt=None):
         import utool as ut
+
         if reponame is None:
             reponame = repo.reponame
         if host is None:
@@ -320,7 +347,7 @@ class Repo(util_dev.NiceRepr):
             assert user is not None, 'github needs a user'
         url_fmts = {
             'https': ('https://', '/'),
-            'ssh':   ('git@', ':'),
+            'ssh': ('git@', ':'),
         }
         prefix, sep = url_fmts[fmt]
         user_ = '' if user is None else user + '/'
@@ -349,8 +376,7 @@ class Repo(util_dev.NiceRepr):
         if remote_branch is None:
             remote_branch = branch
         fmt = 'git branch --set-upstream-to={remote}/{remote_branch} {branch} '
-        cmd = fmt.format(branch=branch, remote=remote,
-                         remote_branch=remote_branch)
+        cmd = fmt.format(branch=branch, remote=remote, remote_branch=remote_branch)
         repo.issue(cmd)
 
     @property
@@ -401,6 +427,7 @@ class Repo(util_dev.NiceRepr):
         aliases.append(repo.reponame)
         aliases.append(repo.reponame.lower())
         import utool as ut
+
         aliases = ut.unique(aliases)
         return aliases
 
@@ -441,8 +468,10 @@ class Repo(util_dev.NiceRepr):
 
     def _find_modname_from_repo(repo):
         import utool as ut
-        packages = ut.get_submodules_from_dpath(repo.dpath, only_packages=True,
-                                                recursive=False)
+
+        packages = ut.get_submodules_from_dpath(
+            repo.dpath, only_packages=True, recursive=False
+        )
         if len(packages) == 1:
             modname = ut.get_modname_from_modpath(packages[0])
             return modname
@@ -484,7 +513,7 @@ class Repo(util_dev.NiceRepr):
         in_type = url_parts[0]
         url_fmts = {
             'https': ('.com/', 'https://'),
-            'ssh':   ('.com:', 'git@'),
+            'ssh': ('.com:', 'git@'),
         }
         url_fmts['git'] = url_fmts['ssh']
         new_repo_url = url
@@ -496,6 +525,7 @@ class Repo(util_dev.NiceRepr):
 
     def check_importable(repo):
         import utool as ut
+
         # import utool as ut
         found = False
         tried = []
@@ -521,11 +551,13 @@ class Repo(util_dev.NiceRepr):
 
     def is_cloned(repo):
         from os.path import exists
+
         if not exists(repo.dpath):
             return False
 
     def check_installed(repo):
         import utool as ut
+
         found = None
         tried = []
         for modname in repo.aliases:
@@ -538,6 +570,7 @@ class Repo(util_dev.NiceRepr):
 
     def check_cpp_build(repo):
         import utool as ut
+
         script = repo.get_script('build')
         if script.is_fpath_valid():
             if repo.modname == 'pyflann':
@@ -568,6 +601,7 @@ class Repo(util_dev.NiceRepr):
 
             def exec_(script):
                 import utool as ut
+
                 print('+**** exec %s script *******' % (script.type_))
                 print('repo = %r' % (repo,))
                 with ut.ChdirContext(repo.dpath):
@@ -583,17 +617,24 @@ class Repo(util_dev.NiceRepr):
                             ut.print_code(script.text, 'bash')
                             if ut.are_you_sure('execute above script?'):
                                 from os.path import join
-                                scriptdir = ut.ensure_app_resource_dir('utool',
-                                                                       'build_scripts')
-                                script_path = join(scriptdir,
-                                                   'script_' + script.type_ + '_' +
-                                                   ut.hashstr27(script.text) + '.sh')
+
+                                scriptdir = ut.ensure_app_resource_dir(
+                                    'utool', 'build_scripts'
+                                )
+                                script_path = join(
+                                    scriptdir,
+                                    'script_'
+                                    + script.type_
+                                    + '_'
+                                    + ut.hashstr27(script.text)
+                                    + '.sh',
+                                )
                                 ut.writeto(script_path, script.text)
                                 _ = ut.cmd('bash ', script_path)  # NOQA
                         else:
                             print('CANT QUITE EXECUTE THIS YET')
                             ut.print_code(script.text, 'bash')
-                #os.system(scriptname)
+                # os.system(scriptname)
                 print('L**** exec %s script *******' % (script.type_))
 
         script = Script()
@@ -602,7 +643,7 @@ class Repo(util_dev.NiceRepr):
         if script.text is None and type_ == 'build' and repo.dpath:
             if sys.platform.startswith('win32'):
                 # vtool --rebuild-sver didnt work with this line
-                #scriptname = './mingw_build.bat'
+                # scriptname = './mingw_build.bat'
                 fpath = join(repo.dpath, 'mingw_build.bat')
             else:
                 fpath = join(repo.dpath, 'unix_build.sh')
@@ -649,6 +690,7 @@ class Repo(util_dev.NiceRepr):
             >>> print(result)
         """
         import utool as ut
+
         if ut.WIN32:
             assert not sudo, 'cant sudo on windows'
         if command == 'short_status':
@@ -688,6 +730,7 @@ class Repo(util_dev.NiceRepr):
 
     def chdir_context(repo, verbose=False):
         import utool as ut
+
         return ut.ChdirContext(repo.dpath, verbose=verbose)
 
     def pull2(repo, overwrite=True):
@@ -719,7 +762,7 @@ class Repo(util_dev.NiceRepr):
             for line in out.split('\n'):
                 pref = 'CONFLICT (content): Merge conflict in '
                 if line.startswith(pref):
-                    fpaths.append(join(repo.dpath, line[len(pref):]))
+                    fpaths.append(join(repo.dpath, line[len(pref) :]))
         return fpaths
 
     def _handle_abort_merge_rebase(repo, out):
@@ -735,8 +778,11 @@ class Repo(util_dev.NiceRepr):
 
     def _handle_overwrite_error(repo, out):
         import utool as ut
+
         # parse stdout to handle the error
-        if out.startswith('error: The following untracked working tree files would be overwritten'):
+        if out.startswith(
+            'error: The following untracked working tree files would be overwritten'
+        ):
             print('[ut.git] handling overwrite error')
             lines = out.split('\n')[1:]
             fpaths = []
@@ -760,6 +806,7 @@ class Repo(util_dev.NiceRepr):
             >>> print(result)
         """
         import utool as ut
+
         prefix = repo.dpath
         with ut.ChdirContext(repo.dpath, verbose=False):
             out, err, ret = ut.cmd('git status', verbose=False, quiet=True)
@@ -788,9 +835,13 @@ class Repo(util_dev.NiceRepr):
 
     def python_develop(repo):
         import utool as ut
-        repo.issue('{pythoncmd} -m pip install -e {dpath}'.format(
-            pythoncmd=repo.pythoncmd, dpath=repo.dpath),
-            sudo=not ut.in_virtual_env())
+
+        repo.issue(
+            '{pythoncmd} -m pip install -e {dpath}'.format(
+                pythoncmd=repo.pythoncmd, dpath=repo.dpath
+            ),
+            sudo=not ut.in_virtual_env(),
+        )
 
     def is_gitrepo(repo):
         gitdir = join(repo.dpath, '.git')
@@ -825,9 +876,11 @@ class Repo(util_dev.NiceRepr):
             >>> rename_branch(old_branch_name, new_branch_name, repo, remote)
         """
         assert repo.is_gitrepo(), 'cannot pull a nongit repo'
-        fmtdict = dict(remote=remote,
-                       old_branch_name=old_branch_name,
-                       new_branch_name=new_branch_name)
+        fmtdict = dict(
+            remote=remote,
+            old_branch_name=old_branch_name,
+            new_branch_name=new_branch_name,
+        )
         command_list = [
             'git checkout {old_branch_name}'.format(**fmtdict),
             # rename branch
@@ -846,6 +899,7 @@ class Repo(util_dev.NiceRepr):
         """
         import utool as ut
         import re
+
         top_pat = re.escape('<' * 7)
         mid_pat = re.escape('=' * 7)
         bot_pat = re.escape('>' * 7)
@@ -854,8 +908,8 @@ class Repo(util_dev.NiceRepr):
         theirs_pat1 = re.compile('^%s.*?%s.*?$\n' % (top_pat, mid_pat), flags=flags)
         theirs_pat2 = re.compile('^%s.*?$\n' % (bot_pat), flags=flags)
         # Pattern to remove the bottom part
-        ours_pat1   = re.compile('^%s.*?%s.*?$\n' % (mid_pat, bot_pat), flags=flags)
-        ours_pat2   = re.compile('^%s.*?$\n' % (top_pat), flags=flags)
+        ours_pat1 = re.compile('^%s.*?%s.*?$\n' % (mid_pat, bot_pat), flags=flags)
+        ours_pat2 = re.compile('^%s.*?$\n' % (top_pat), flags=flags)
         strat_pats = {
             'theirs': [theirs_pat1, theirs_pat2],
             'ours': [ours_pat1, ours_pat2],
@@ -945,6 +999,7 @@ def git_sequence_editor_squash(fpath):
     """
     # print(sys.argv)
     import utool as ut
+
     text = ut.read_from(fpath)
     # print('fpath = %r' % (fpath,))
     print(text)
@@ -960,9 +1015,15 @@ def git_sequence_editor_squash(fpath):
     new_lines = []
 
     def get_commit_date(hashid):
-        out, err, ret = ut.cmd('git show -s --format=%ci ' + hashid, verbose=False, quiet=True, pad_stdout=False)
+        out, err, ret = ut.cmd(
+            'git show -s --format=%ci ' + hashid,
+            verbose=False,
+            quiet=True,
+            pad_stdout=False,
+        )
         # from datetime import datetime
         from dateutil import parser
+
         # print('out = %r' % (out,))
         stamp = out.strip('\n')
         # print('stamp = %r' % (stamp,))
@@ -980,7 +1041,7 @@ def git_sequence_editor_squash(fpath):
             continue
         action = commit_line[0]
         hashid = commit_line[1]
-        msg = ' ' .join(commit_line[2:])
+        msg = ' '.join(commit_line[2:])
         try:
             dt = get_commit_date(hashid)
         except ValueError:
@@ -994,12 +1055,12 @@ def git_sequence_editor_squash(fpath):
             tdelta = dt - prev_dt
             # Only squash closely consecutive commits
             threshold_minutes = 45
-            td_min = (tdelta.total_seconds() / 60.)
+            td_min = tdelta.total_seconds() / 60.0
             # print(tdelta)
             can_squash &= td_min < threshold_minutes
             msg = msg + ' -- tdelta=%r' % (ut.get_timedelta_str(tdelta),)
         if can_squash:
-            new_line = ' ' .join(['squash', hashid, msg])
+            new_line = ' '.join(['squash', hashid, msg])
             new_lines += [new_line]
         else:
             new_lines += [line]
@@ -1025,11 +1086,12 @@ def std_build_command(repo='.'):
     Calls mingw_build.bat on windows and unix_build.sh  on unix
     """
     import utool as ut
+
     print('+**** stdbuild *******')
     print('repo = %r' % (repo,))
     if sys.platform.startswith('win32'):
         # vtool --rebuild-sver didnt work with this line
-        #scriptname = './mingw_build.bat'
+        # scriptname = './mingw_build.bat'
         scriptname = 'mingw_build.bat'
     else:
         scriptname = './unix_build.sh'
@@ -1044,7 +1106,7 @@ def std_build_command(repo='.'):
         scriptname += ' ' + normbuild_flag
     # Execute build
     ut.cmd(scriptname)
-    #os.system(scriptname)
+    # os.system(scriptname)
     print('L**** stdbuild *******')
 
 
@@ -1055,6 +1117,8 @@ if __name__ == '__main__':
         python -m utool.util_git --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

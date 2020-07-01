@@ -21,6 +21,7 @@ from utool import util_inject
 from utool import util_set
 from utool import util_arg
 from utool._internal.meta_util_six import get_funcname, get_funcglobals
+
 print, rrr, profile = util_inject.inject2(__name__)
 
 
@@ -32,8 +33,8 @@ __CLASSTYPE_POSTINJECT_FUNCS__ = defaultdict(util_set.oset)
 __CLASSNAME_CLASSKEY_REGISTER__ = defaultdict(util_set.oset)
 
 
-#_rrr = rrr
-#def rrr(verbose=True):
+# _rrr = rrr
+# def rrr(verbose=True):
 #    """ keep registered functions through reloads ? """
 #    global __CLASSTYPE_ATTRIBUTES__
 #    global __CLASSTYPE_POSTINJECT_FUNCS__
@@ -45,13 +46,14 @@ __CLASSNAME_CLASSKEY_REGISTER__ = defaultdict(util_set.oset)
 
 
 QUIET_CLASS = util_arg.get_argflag(('--quiet-class', '--quietclass'))
-VERBOSE_CLASS = (
-    util_arg.get_argflag(('--verbose-class', '--verbclass')) or
-    (not QUIET_CLASS and util_arg.VERYVERBOSE))
+VERBOSE_CLASS = util_arg.get_argflag(('--verbose-class', '--verbclass')) or (
+    not QUIET_CLASS and util_arg.VERYVERBOSE
+)
 
 
-def inject_instance(self, classkey=None, allow_override=False,
-                    verbose=VERBOSE_CLASS, strict=True):
+def inject_instance(
+    self, classkey=None, allow_override=False, verbose=VERBOSE_CLASS, strict=True
+):
     """
     Injects an instance (self) of type (classkey)
     with all functions registered to (classkey)
@@ -73,6 +75,7 @@ def inject_instance(self, classkey=None, allow_override=False,
         >>> utool.inject_instance(invindex)
     """
     import utool as ut
+
     if verbose:
         print('[util_class] begin inject_instance')
     try:
@@ -88,11 +91,15 @@ def inject_instance(self, classkey=None, allow_override=False,
                     from guitool.__PYQT__ import QtWidgets  # NOQA
                 classkey = QtWidgets.QAbstractItemView
             if len(__CLASSTYPE_ATTRIBUTES__[classkey]) == 0:
-                print('[utool] Warning: no classes of type %r are registered' % (classkey,))
+                print(
+                    '[utool] Warning: no classes of type %r are registered' % (classkey,)
+                )
                 print('[utool] type(self)=%r, self=%r' % (type(self), self)),
                 print('[utool] Checking to see if anybody else was registered...')
-                print('[utool] __CLASSTYPE_ATTRIBUTES__ = ' +
-                      ut.repr4(__CLASSTYPE_ATTRIBUTES__.keys()))
+                print(
+                    '[utool] __CLASSTYPE_ATTRIBUTES__ = '
+                    + ut.repr4(__CLASSTYPE_ATTRIBUTES__.keys())
+                )
                 for classtype_, _ in six.iteritems(__CLASSTYPE_ATTRIBUTES__):
                     isinstance(self, classtype_)
                     classkey = classtype_
@@ -100,8 +107,10 @@ def inject_instance(self, classkey=None, allow_override=False,
                     break
         func_list = __CLASSTYPE_ATTRIBUTES__[classkey]
         if verbose:
-            print('[util_class] injecting %d methods\n   with classkey=%r\n   into %r'
-                  % (len(func_list), classkey, self,))
+            print(
+                '[util_class] injecting %d methods\n   with classkey=%r\n   into %r'
+                % (len(func_list), classkey, self,)
+            )
         for func in func_list:
             if VERBOSE_CLASS:
                 print('[util_class] * injecting %r' % (func,))
@@ -109,11 +118,15 @@ def inject_instance(self, classkey=None, allow_override=False,
             # Allow user to register tuples for aliases
             if isinstance(func, tuple):
                 func, method_name = func
-            inject_func_as_method(self, func, method_name=method_name,
-                                  allow_override=allow_override, verbose=verbose)
+            inject_func_as_method(
+                self,
+                func,
+                method_name=method_name,
+                allow_override=allow_override,
+                verbose=verbose,
+            )
     except Exception as ex:
-        ut.printex(ex, 'ISSUE WHEN INJECTING %r' % (classkey,),
-                      iswarning=not strict)
+        ut.printex(ex, 'ISSUE WHEN INJECTING %r' % (classkey,), iswarning=not strict)
         if strict:
             raise
 
@@ -127,39 +140,36 @@ def postinject_instance(self, classkey, verbose=VERBOSE_CLASS):
         print('[util_class] Finished injecting instance self=%r' % (self,))
 
 
-def inject_all_external_modules(self, classname=None,
-                                allow_override='override+warn',
-                                strict=True):
+def inject_all_external_modules(
+    self, classname=None, allow_override='override+warn', strict=True
+):
     """
     dynamically injects registered module methods into a class instance
 
     FIXME: naming convention and use this in all places where this clas is used
     """
-    #import utool as ut
+    # import utool as ut
     if classname is None:
         classname = self.__class__.__name__
-    #import utool as ut
-    #ut.embed()
+    # import utool as ut
+    # ut.embed()
 
     NEW = True
     if NEW:
-        classkey_list = [key for key in __CLASSTYPE_ATTRIBUTES__
-                         if key[0] == classname]
+        classkey_list = [key for key in __CLASSTYPE_ATTRIBUTES__ if key[0] == classname]
     else:
         injected_modules = get_injected_modules(classname)
         # the variable must be named CLASS_INJECT_KEY
         # and only one class can be specified per module.
-        classkey_list = [module.CLASS_INJECT_KEY
-                         for module in injected_modules]
+        classkey_list = [module.CLASS_INJECT_KEY for module in injected_modules]
 
     for classkey in classkey_list:
         inject_instance(
-            self, classkey=classkey,
-            allow_override=allow_override, strict=False)
+            self, classkey=classkey, allow_override=allow_override, strict=False
+        )
 
     for classkey in classkey_list:
-        postinject_instance(
-            self, classkey=classkey)
+        postinject_instance(self, classkey=classkey)
 
 
 def reload_injected_modules(classname):
@@ -169,6 +179,7 @@ def reload_injected_modules(classname):
             module.rrr()
         else:
             import imp
+
             print('rrr not defined in module=%r' % (module,))
             imp.reload(module)
 
@@ -187,18 +198,19 @@ def get_injected_modules(classname):
         pkgname = '.'.join(parts[:-1])
         modname = parts[-1]
         try:
-            exec('from %s import %s' % (pkgname, modname, ), globals(), locals())
+            exec('from %s import %s' % (pkgname, modname,), globals(), locals())
             module = eval(modname)
             injected_modules.append(module)
         except ImportError as ex:
-            ut.printex(ex, 'Cannot load package=%r, module=%r' % (pkgname, modname, ))
+            ut.printex(ex, 'Cannot load package=%r, module=%r' % (pkgname, modname,))
     return injected_modules
 
 
 def autogen_import_list(classname, conditional_imports=None):
     import utool as ut
-    #ut.embed()
-    #line_list = []
+
+    # ut.embed()
+    # line_list = []
     line_list = ['import sys  # NOQA']
     for modname in __CLASSNAME_CLASSKEY_REGISTER__[classname]:
         # <super hacky>
@@ -210,23 +222,24 @@ def autogen_import_list(classname, conditional_imports=None):
         parts = modname.split('.')
         frompart = '.'.join(parts[:-1])
         imppart = parts[-1]
-        #line = 'from %s import %s  # NOQA' % (frompart, imppart)
+        # line = 'from %s import %s  # NOQA' % (frompart, imppart)
         if condition is None:
             line = 'from %s import %s' % (frompart, imppart)
         else:
             line = ut.codeblock(
-                '''
+                """
                 if not ut.get_argflag({condition}) or '{frompart}' in sys.modules:
                     from {frompart} import {imppart}
-                ''').format(condition=condition, frompart=frompart,
-                            imppart=imppart)
+                """
+            ).format(condition=condition, frompart=frompart, imppart=imppart)
         line_list.append(line)
     src = '\n'.join(line_list)
     return src
 
 
-def autogen_explicit_injectable_metaclass(classname, regen_command=None,
-                                          conditional_imports=None):
+def autogen_explicit_injectable_metaclass(
+    classname, regen_command=None, conditional_imports=None
+):
     r"""
     Args:
         classname (?):
@@ -248,6 +261,7 @@ def autogen_explicit_injectable_metaclass(classname, regen_command=None,
         >>> print(result)
     """
     import utool as ut
+
     vals_list = []
 
     def make_redirect(func):
@@ -258,20 +272,27 @@ def autogen_explicit_injectable_metaclass(classname, regen_command=None,
             return {orig_funcname}{callsig}
         '''
         from utool._internal import meta_util_six
+
         orig_docstr = meta_util_six.get_funcdoc(func)
         funcname = meta_util_six.get_funcname(func)
         orig_funcname = modname.split('.')[-1] + '.' + funcname
         orig_docstr = '' if orig_docstr is None else orig_docstr
         import textwrap
+
         # Put wrapped function into a scope
         import inspect
+
         argspec = inspect.getargspec(func)
         (args, varargs, varkw, defaults) = argspec
         defsig = inspect.formatargspec(*argspec)
         callsig = inspect.formatargspec(*argspec[0:3])
-        src_fmtdict = dict(funcname=funcname, orig_funcname=orig_funcname,
-                           defsig=defsig, callsig=callsig,
-                           orig_docstr=orig_docstr)
+        src_fmtdict = dict(
+            funcname=funcname,
+            orig_funcname=orig_funcname,
+            defsig=defsig,
+            callsig=callsig,
+            orig_docstr=orig_docstr,
+        )
         src = textwrap.dedent(src_fmt).format(**src_fmtdict)
         return src
 
@@ -293,25 +314,31 @@ def autogen_explicit_injectable_metaclass(classname, regen_command=None,
     module_header = ut.codeblock(
         """
         # -*- coding: utf-8 -*-
-        """ + ut.TRIPLE_DOUBLE_QUOTE + """
+        """
+        + ut.TRIPLE_DOUBLE_QUOTE
+        + """
         Static file containing autogenerated functions for {classname}
         Autogenerated on {autogen_time}
 
         RegenCommand:
             {regen_command}
-        """ + ut.TRIPLE_DOUBLE_QUOTE + """
+        """
+        + ut.TRIPLE_DOUBLE_QUOTE
+        + """
 
         from __future__ import absolute_import, division, print_function
         import utool as ut
 
-        """).format(
-            autogen_time=ut.get_timestamp(),
-            regen_command=regen_command,
-            classname=classname)
+        """
+    ).format(
+        autogen_time=ut.get_timestamp(), regen_command=regen_command, classname=classname
+    )
 
     depends_module_block = autogen_import_list(classname, conditional_imports)
-    inject_statement_fmt = ('print, rrr, profile = '
-                            "ut.inject2(__name__, '[autogen_explicit_inject_{classname}]')")
+    inject_statement_fmt = (
+        'print, rrr, profile = '
+        "ut.inject2(__name__, '[autogen_explicit_inject_{classname}]')"
+    )
     inject_statement = inject_statement_fmt.format(classname=classname)
 
     source_block_lines = [
@@ -358,10 +385,12 @@ def make_class_method_decorator(classkey, modname=None):
         >>> print('Cheese shop does not have cheese. All is well.')
     """
     global __APP_MODNAME_REGISTER__
-    #if util_arg.VERBOSE or VERBOSE_CLASS:
+    # if util_arg.VERBOSE or VERBOSE_CLASS:
     if VERBOSE_CLASS:
-        print('[util_class] register via make_class_method_decorator classkey=%r, modname=%r'
-              % (classkey, modname))
+        print(
+            '[util_class] register via make_class_method_decorator classkey=%r, modname=%r'
+            % (classkey, modname)
+        )
     if modname == '__main__':
         # skips reinjects into main
         print('WARNING: cannot register classkey=%r functions as __main__' % (classkey,))
@@ -374,8 +403,9 @@ def make_class_method_decorator(classkey, modname=None):
         classname = classkey.__name__
         if modname is not None:
             assert modname == classkey.__module__, (
-                'modname=%r does not agree with __module__=%r' % (
-                    modname, classkey.__module__))
+                'modname=%r does not agree with __module__=%r'
+                % (modname, classkey.__module__)
+            )
         modname = classkey.__module__
         # Convert to new classkey format
         classkey = (classname, modname)
@@ -383,8 +413,9 @@ def make_class_method_decorator(classkey, modname=None):
     else:
         print('Warning not using classkey for %r %r' % (classkey, modname))
         raise AssertionError('classkey no longer supported. Use class_inject_key instead')
-    closure_decorate_class_method = functools.partial(decorate_class_method,
-                                                      classkey=classkey)
+    closure_decorate_class_method = functools.partial(
+        decorate_class_method, classkey=classkey
+    )
     return closure_decorate_class_method
 
 
@@ -401,14 +432,17 @@ def make_class_postinject_decorator(classkey, modname=None):
         make_class_method_decorator
     """
     if util_arg.VERBOSE or VERBOSE_CLASS:
-        print('[util_class] register class_postinject classkey=%r, modname=%r'
-              % (classkey, modname))
+        print(
+            '[util_class] register class_postinject classkey=%r, modname=%r'
+            % (classkey, modname)
+        )
     if modname == '__main__':
         print('WARNING: cannot register class functions as __main__')
         # skips reinjects into main
         return lambda func: func
-    closure_decorate_postinject = functools.partial(decorate_postinject,
-                                                    classkey=classkey)
+    closure_decorate_postinject = functools.partial(
+        decorate_postinject, classkey=classkey
+    )
     return closure_decorate_postinject
 
 
@@ -420,10 +454,10 @@ def decorate_class_method(func, classkey=None, skipmain=False):
 
     func can also be a tuple
     """
-    #import utool as ut
+    # import utool as ut
     global __CLASSTYPE_ATTRIBUTES__
     assert classkey is not None, 'must specify classkey'
-    #if not (skipmain and ut.get_caller_modname() == '__main__'):
+    # if not (skipmain and ut.get_caller_modname() == '__main__'):
     __CLASSTYPE_ATTRIBUTES__[classkey].append(func)
     return func
 
@@ -434,10 +468,10 @@ def decorate_postinject(func, classkey=None, skipmain=False):
 
     classkey is some identifying string, tuple, or object
     """
-    #import utool as ut
+    # import utool as ut
     global __CLASSTYPE_POSTINJECT_FUNCS__
     assert classkey is not None, 'must specify classkey'
-    #if not (skipmain and ut.get_caller_modname() == '__main__'):
+    # if not (skipmain and ut.get_caller_modname() == '__main__'):
     __CLASSTYPE_POSTINJECT_FUNCS__[classkey].append(func)
     return func
 
@@ -453,9 +487,17 @@ def get_method_func(method):
         raise
 
 
-def inject_func_as_method(self, func, method_name=None, class_=None,
-                          allow_override=False, allow_main=False,
-                          verbose=True, override=None, force=False):
+def inject_func_as_method(
+    self,
+    func,
+    method_name=None,
+    class_=None,
+    allow_override=False,
+    allow_main=False,
+    verbose=True,
+    override=None,
+    force=False,
+):
     """ Injects a function into an object as a method
 
     Wraps func as a bound method of self. Then injects func into self
@@ -481,38 +523,46 @@ def inject_func_as_method(self, func, method_name=None, class_=None,
         allow_main = True
     old_method = getattr(self, method_name, None)
     # Bind function to the class instance
-    #new_method = types.MethodType(func, self, self.__class__)
+    # new_method = types.MethodType(func, self, self.__class__)
     new_method = func.__get__(self, self.__class__)
-    #new_method = profile(func.__get__(self, self.__class__))
+    # new_method = profile(func.__get__(self, self.__class__))
 
     if old_method is not None:
         old_im_func = get_method_func(old_method)
         new_im_func = get_method_func(new_method)
-        if not allow_main and old_im_func is not None and (
-                get_funcglobals(old_im_func)['__name__'] != '__main__' and
-                get_funcglobals(new_im_func)['__name__'] == '__main__'):
+        if (
+            not allow_main
+            and old_im_func is not None
+            and (
+                get_funcglobals(old_im_func)['__name__'] != '__main__'
+                and get_funcglobals(new_im_func)['__name__'] == '__main__'
+            )
+        ):
             if True or VERBOSE_CLASS:
                 print('[util_class] skipping re-inject of %r from __main__' % method_name)
             return
         if old_method is new_method or old_im_func is new_im_func:
-            #if verbose and util_arg.NOT_QUIET:
+            # if verbose and util_arg.NOT_QUIET:
             #    print('WARNING: Skipping injecting the same function twice: %r' % new_method)
-                #print('WARNING: Injecting the same function twice: %r' % new_method)
+            # print('WARNING: Injecting the same function twice: %r' % new_method)
             return
         elif allow_override is False:
             raise AssertionError(
-                'Overrides are not allowed. Already have method_name=%r' %
-                (method_name))
+                'Overrides are not allowed. Already have method_name=%r' % (method_name)
+            )
         elif allow_override == 'warn':
             print(
-                'WARNING: Overrides are not allowed. Already have method_name=%r. Skipping' %
-                (method_name))
+                'WARNING: Overrides are not allowed. Already have method_name=%r. Skipping'
+                % (method_name)
+            )
             return
         elif allow_override == 'override+warn':
-            #import utool as ut
-            #ut.embed()
-            print('WARNING: Overrides are allowed, but dangerous. method_name=%r.' %
-                  (method_name))
+            # import utool as ut
+            # ut.embed()
+            print(
+                'WARNING: Overrides are allowed, but dangerous. method_name=%r.'
+                % (method_name)
+            )
             print('old_method = %r, im_func=%s' % (old_method, str(old_im_func)))
             print('new_method = %r, im_func=%s' % (new_method, str(new_im_func)))
             print(get_funcglobals(old_im_func)['__name__'])
@@ -532,7 +582,7 @@ def inject_func_as_property(self, func, method_name=None, class_=None):
     """
     if method_name is None:
         method_name = get_funcname(func)
-    #new_method = func.__get__(self, self.__class__)
+    # new_method = func.__get__(self, self.__class__)
     new_property = property(func)
     setattr(self.__class__, method_name, new_property)
 
@@ -549,6 +599,7 @@ def makeForwardingMetaclass(forwarding_dest_getter, whitelist, base_class=object
     makes a metaclass that overrides __getattr__ and __setattr__ to forward some
     specific attribute references to a specified instance variable
     """
+
     class ForwardingMetaclass(base_class.__class__):
         def __init__(metaself, name, bases, dct):
             # print('ForwardingMetaclass.__init__():
@@ -556,9 +607,10 @@ def makeForwardingMetaclass(forwarding_dest_getter, whitelist, base_class=object
             super(ForwardingMetaclass, metaself).__init__(name, bases, dct)
             old_getattr = metaself.__getattribute__
             old_setattr = metaself.__setattr__
+
             def new_getattr(self, item):
                 if item in whitelist:
-                    #dest = old_getattr(self, forwarding_dest_name)
+                    # dest = old_getattr(self, forwarding_dest_name)
                     dest = forwarding_dest_getter(self)
                     try:
                         val = dest.__class__.__getattribute__(dest, item)
@@ -567,15 +619,18 @@ def makeForwardingMetaclass(forwarding_dest_getter, whitelist, base_class=object
                 else:
                     val = old_getattr(self, item)
                 return val
+
             def new_setattr(self, name, val):
                 if name in whitelist:
-                    #dest = old_getattr(self, forwarding_dest_name)
+                    # dest = old_getattr(self, forwarding_dest_name)
                     dest = forwarding_dest_getter(self)
                     dest.__class__.__setattr__(dest, name, val)
                 else:
                     old_setattr(self, name, val)
+
             metaself.__getattribute__ = new_getattr
             metaself.__setattr__ = new_setattr
+
     return ForwardingMetaclass
 
 
@@ -594,13 +649,14 @@ def test_reloading_metaclass():
         >>> print(result)
     """
     import utool as ut
+
     testdir = ut.ensure_app_cache_dir('utool', 'metaclass_tests')
     testfoo_fpath = ut.unixjoin(testdir, 'testfoo.py')
     # os.chdir(testdir)
-    #with ut.ChdirContext(testdir, stay=ut.inIPython()):
+    # with ut.ChdirContext(testdir, stay=ut.inIPython()):
     with ut.ChdirContext(testdir):
         foo_code1 = ut.codeblock(
-            r'''
+            r"""
             # STARTBLOCK
             import utool as ut
             import six
@@ -613,10 +669,10 @@ def test_reloading_metaclass():
 
             spamattr = 'version1'
             # ENDBLOCK
-            '''
+            """
         )
         foo_code2 = ut.codeblock(
-            r'''
+            r"""
             # STARTBLOCK
             import utool as ut
             import six
@@ -632,17 +688,19 @@ def test_reloading_metaclass():
 
             eggsattr = 'version2'
             # ENDBLOCK
-            '''
+            """
         )
         # Write a testclass to disk
         ut.delete(testfoo_fpath)
         ut.write_to(testfoo_fpath, foo_code1, verbose=True)
         testfoo = ut.import_module_from_fpath(testfoo_fpath)
-        #import testfoo
+        # import testfoo
         foo = testfoo.Foo()
         print('foo = %r' % (foo,))
         assert not hasattr(foo, 'bar'), 'foo should not have a bar attr'
-        ut.delete(testfoo_fpath + 'c')  # remove the pyc file because of the identical creation time
+        ut.delete(
+            testfoo_fpath + 'c'
+        )  # remove the pyc file because of the identical creation time
         ut.write_to(testfoo_fpath, foo_code2, verbose=True)
         assert not hasattr(foo, 'bar'), 'foo should still not have a bar attr'
         foo.rrr()
@@ -689,6 +747,7 @@ class ReloadingMetaclass(type):
         >>> print(result)
         spam
     """
+
     def __init__(metaself, name, bases, dct):
         super(ReloadingMetaclass, metaself).__init__(name, bases, dct)
         metaself.rrr = reload_class
@@ -696,11 +755,13 @@ class ReloadingMetaclass(type):
 
 def reloading_meta_metaclass_factory(BASE_TYPE=type):
     """ hack for pyqt """
+
     class ReloadingMetaclass2(BASE_TYPE):
         def __init__(metaself, name, bases, dct):
             super(ReloadingMetaclass2, metaself).__init__(name, bases, dct)
-            #print('Making rrr for %r' % (name,))
+            # print('Making rrr for %r' % (name,))
             metaself.rrr = reload_class
+
     return ReloadingMetaclass2
 
 
@@ -710,6 +771,7 @@ def reload_class(self, verbose=True, reload_module=True):
     This function is often injected as rrr of classes
     """
     import utool as ut
+
     verbose = verbose or VERBOSE_CLASS
     classname = self.__class__.__name__
     try:
@@ -739,12 +801,15 @@ def reload_class(self, verbose=True, reload_module=True):
         class_list = find_base_clases(head_class, find_base_clases)
         # HACK
         ignore = {HashComparable2}
-        class_list = [_class for _class in class_list
-                      if _class not in ignore]
+        class_list = [_class for _class in class_list if _class not in ignore]
         for _class in class_list:
             if verbose:
-                print('[class] reloading parent ' + _class.__name__ +
-                      ' from ' + _class.__module__)
+                print(
+                    '[class] reloading parent '
+                    + _class.__name__
+                    + ' from '
+                    + _class.__module__
+                )
             if _class.__module__ == '__main__':
                 # Attempt to find the module that is the main module
                 # This may be very hacky and potentially break
@@ -759,13 +824,17 @@ def reload_class(self, verbose=True, reload_module=True):
             else:
                 if reload_module:
                     import imp
+
                     if verbose:
                         print('[class] reloading ' + _class.__module__ + ' with imp')
                     try:
                         imp.reload(module_)
                     except (ImportError, AttributeError):
-                        print('[class] fallback reloading ' + _class.__module__ +
-                              ' with imp')
+                        print(
+                            '[class] fallback reloading '
+                            + _class.__module__
+                            + ' with imp'
+                        )
                         # one last thing to try. probably used ut.import_module_from_fpath
                         # when importing this module
                         imp.load_source(module_.__name__, module_.__file__)
@@ -782,8 +851,11 @@ def reload_class(self, verbose=True, reload_module=True):
         elif verbose > 1:
             print('[class] ' + classname + ' does not have an _initialize_self function')
     except Exception as ex:
-        ut.printex(ex, 'Error Reloading Class', keys=[
-            'modname', 'module', 'class_', 'class_list', 'self', ])
+        ut.printex(
+            ex,
+            'Error Reloading Class',
+            keys=['modname', 'module', 'class_', 'class_list', 'self',],
+        )
         raise
 
 
@@ -811,9 +883,9 @@ def reload_class_methods(self, class_, verbose=True):
         func = getattr(class_, key)
         if isinstance(func, types.MethodType):
             # inject it into the old instance
-            inject_func_as_method(self, func, class_=class_,
-                                  allow_override=True,
-                                  verbose=verbose)
+            inject_func_as_method(
+                self, func, class_=class_, allow_override=True, verbose=verbose
+            )
 
 
 def compare_instance(op, self, other):
@@ -826,6 +898,7 @@ def compare_instance(op, self, other):
         return op(hash1, hash2)
     except Exception as ex:
         import utool as ut
+
         ut.printex(ex, 'could not compare hash1 to hash2', keys=['hash1', 'hash2'])
         raise
 
@@ -833,6 +906,7 @@ def compare_instance(op, self, other):
 def get_comparison_methods():
     """ makes methods for >, <, =, etc... """
     method_list = []
+
     def _register(func):
         method_list.append(func)
         return func
@@ -867,6 +941,7 @@ def get_comparison_methods():
 
 def get_comparison_operators():
     import operator
+
     opdict = {
         'not': operator.not_,
         'is': operator.is_,
@@ -897,6 +972,7 @@ class HashComparableMetaclass(type):
 
     https://docs.python.org/3.6/reference/datamodel.html#object.__hash__
     """
+
     def __new__(cls, name, bases, dct):
         """
         Args:
@@ -913,7 +989,7 @@ class HashComparableMetaclass(type):
             else:
                 funcname = get_funcname(func)
                 dct['meta_' + funcname] = func
-            #ut.inject_func_as_method(metaself, func)
+            # ut.inject_func_as_method(metaself, func)
         return type.__new__(cls, name, bases, dct)
 
 
@@ -954,6 +1030,7 @@ class KwargsWrapper(collections.Mapping):
     Allows an arbitrary object attributes to be passed as a **kwargs
     argument
     """
+
     def __init__(self, obj):
         self.obj = obj
 
@@ -1014,6 +1091,8 @@ if __name__ == '__main__':
     python -m utool.util_class --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()
     import utool as ut
+
     ut.doctest_funcs()

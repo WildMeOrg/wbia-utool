@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 def ipython_execstr2():
-    return textwrap.dedent(r'''
+    return textwrap.dedent(
+        r"""
     import sys
     embedded = False
 
@@ -32,10 +33,12 @@ def ipython_execstr2():
                 embedded = False
         else:
             print('[utool.dbg] IPython is not installed')
-    ''')
+    """
+    )
+
 
 # --- Exec Strings ---
-IPYTHON_EMBED_STR = r'''
+IPYTHON_EMBED_STR = r"""
 try:
     import IPython
     print('Presenting in new ipython shell.')
@@ -44,16 +47,15 @@ try:
 except Exception as ex:
     warnings.warn(repr(ex)+'\n!!!!!!!!')
     embedded = False
-'''
-
+"""
 
 
 def roundrobin(*iterables):
     """roundrobin('ABC', 'D', 'EF') --> A D E B F C"""
     raise NotImplementedError('not sure if this implementation is correct')
     # http://stackoverflow.com/questions/11125212/interleaving-lists-in-python
-    #sentinel = object()
-    #return (x for x in chain(*zip_longest(fillvalue=sentinel, *iterables)) if x is not sentinel)
+    # sentinel = object()
+    # return (x for x in chain(*zip_longest(fillvalue=sentinel, *iterables)) if x is not sentinel)
     pending = len(iterables)
     if six.PY2:
         nexts = cycle(iter(it).next for it in iterables)
@@ -68,10 +70,9 @@ def roundrobin(*iterables):
             nexts = cycle(islice(nexts, pending))
 
 
-
 def interleave2(*iterables):
-    #from six.moves import izip_longest
-    #izip_longest(args)
+    # from six.moves import izip_longest
+    # izip_longest(args)
     raise NotImplementedError('not sure if this implementation is correct')
     return chain.from_iterable(zip(*iterables))
 
@@ -89,12 +90,12 @@ def interleave3(*args):
 
 def commas(num, n=8):
     if util_type.is_float(num):
-        #ret = sigfig_str(num, n=2)
+        # ret = sigfig_str(num, n=2)
         ret = '%.3f' % num
         return ret
-        #return fewest_digits_float_str(num, n)
+        # return fewest_digits_float_str(num, n)
     return '%d' % num
-    #return int_comma_str(num)
+    # return int_comma_str(num)
 
 
 def fewest_digits_float_str(num, n=8):
@@ -109,7 +110,7 @@ def fewest_digits_float_str(num, n=8):
     sig_dec = int(dec_part * 10 ** (nonzero_pos + 1))
     float_str = int_comma_str(int_part) + '.' + str(sig_dec)
     return float_str
-    #x.as_tuple()[n]
+    # x.as_tuple()[n]
 
 
 def format_(num, n=8):
@@ -122,8 +123,8 @@ def format_(num, n=8):
         return 'None'
     if util_type.is_float(num):
         ret = ('%.' + str(n) + 'E') % num
-        exp_pos  = ret.find('E')
-        exp_part = ret[(exp_pos + 1):]
+        exp_pos = ret.find('E')
+        exp_part = ret[(exp_pos + 1) :]
         exp_part = exp_part.replace('+', '')
         if exp_part.find('-') == 0:
             exp_part = '-' + exp_part[1:].strip('0')

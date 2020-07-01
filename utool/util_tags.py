@@ -4,13 +4,21 @@ import six
 import re
 import operator
 from utool import util_inject
+
 print, rrr, profile = util_inject.inject2(__name__)
 
 
-def modify_tags(tags_list, direct_map=None, regex_map=None, regex_aug=None,
-                delete_unmapped=False, return_unmapped=False,
-                return_map=False):
+def modify_tags(
+    tags_list,
+    direct_map=None,
+    regex_map=None,
+    regex_aug=None,
+    delete_unmapped=False,
+    return_unmapped=False,
+    return_map=False,
+):
     import utool as ut
+
     tag_vocab = ut.unique(ut.flatten(tags_list))
     alias_map = ut.odict()
     if regex_map is not None:
@@ -24,7 +32,9 @@ def modify_tags(tags_list, direct_map=None, regex_map=None, regex_aug=None,
     if regex_aug is not None:
         alias_aug = ut.build_alias_map(regex_aug, tag_vocab)
         aug_tags_list = ut.alias_tags(new_tags_list, alias_aug)
-        new_tags_list = [ut.unique(t1 + t2) for t1, t2 in zip(new_tags_list, aug_tags_list)]
+        new_tags_list = [
+            ut.unique(t1 + t2) for t1, t2 in zip(new_tags_list, aug_tags_list)
+        ]
 
     unmapped = list(set(tag_vocab) - set(alias_map.keys()))
     if delete_unmapped:
@@ -46,6 +56,7 @@ def modify_tags(tags_list, direct_map=None, regex_map=None, regex_aug=None,
 
 def tag_coocurrence(tags_list):
     import utool as ut
+
     co_occur_list = []
     for tags in tags_list:
         for combo in ut.combinations(tags, 2):
@@ -53,12 +64,13 @@ def tag_coocurrence(tags_list):
             co_occur_list.append(key)
     co_occur = ut.dict_hist(co_occur_list, ordered=True)
     #        co_occur[key] += 1
-    #co_occur = ut.odict(co_occur)
+    # co_occur = ut.odict(co_occur)
     return co_occur
 
 
 def tag_hist(tags_list):
     import utool as ut
+
     return ut.dict_hist(ut.flatten(tags_list), ordered=True)
 
 
@@ -76,6 +88,7 @@ def build_alias_map(regex_map, tag_vocab):
     """
     import utool as ut
     import re
+
     alias_map = ut.odict([])
     for pats, new_tag in reversed(regex_map):
         pats = ut.ensure_iterable(pats)
@@ -112,9 +125,11 @@ def alias_tags(tags_list, alias_map):
         >>> result = alias_tags(tags_list, alias_map)
         >>> print(result)
     """
+
     def _alias_dict(tags):
         tags_ = [alias_map.get(t, t) for t in tags]
         return list(set([t for t in tags_ if t is not None]))
+
     tags_list_ = [_alias_dict(tags) for tags in tags_list]
     return tags_list_
     # def _fix_tags(tags):
@@ -138,11 +153,21 @@ def alias_tags(tags_list, alias_map):
     # return tags_list_
 
 
-def filterflags_general_tags(tags_list, has_any=None, has_all=None,
-                             has_none=None, min_num=None, max_num=None,
-                             any_startswith=None, any_endswith=None,
-                             in_any=None, any_match=None, none_match=None,
-                             logic='and', ignore_case=True):
+def filterflags_general_tags(
+    tags_list,
+    has_any=None,
+    has_all=None,
+    has_none=None,
+    min_num=None,
+    max_num=None,
+    any_startswith=None,
+    any_endswith=None,
+    in_any=None,
+    any_match=None,
+    none_match=None,
+    logic='and',
+    ignore_case=True,
+):
     r"""
     maybe integrate into utool? Seems pretty general
 
@@ -223,15 +248,9 @@ def filterflags_general_tags(tags_list, has_any=None, has_all=None,
     if logic is None:
         logic = 'and'
 
-    logic_func = {
-        'and': np.logical_and,
-        'or': np.logical_or,
-    }[logic]
+    logic_func = {'and': np.logical_and, 'or': np.logical_or,}[logic]
 
-    default_func = {
-        'and': np.ones,
-        'or': np.zeros,
-    }[logic]
+    default_func = {'and': np.ones, 'or': np.zeros,}[logic]
 
     tags_list_ = [_fix_tags(tags_) for tags_ in tags_list]
     flags = default_func(len(tags_list_), dtype=np.bool)
@@ -256,7 +275,9 @@ def filterflags_general_tags(tags_list, has_any=None, has_all=None,
 
     if has_all is not None:
         has_all = _fix_tags(set(ut.ensure_iterable(has_all)))
-        flags_ = [len(has_all.intersection(tags_)) == len(has_all) for tags_ in tags_list_]
+        flags_ = [
+            len(has_all.intersection(tags_)) == len(has_all) for tags_ in tags_list_
+        ]
         logic_func(flags, flags_, out=flags)
 
     def _test_item(tags_, fields, op, compare):
@@ -279,24 +300,22 @@ def filterflags_general_tags(tags_list, has_any=None, has_all=None,
         return flags
 
     flags = _exec_filter(
-        flags, tags_list, any_startswith,
-        operator.gt, six.text_type.startswith)
+        flags, tags_list, any_startswith, operator.gt, six.text_type.startswith
+    )
+
+    flags = _exec_filter(flags, tags_list, in_any, operator.gt, operator.contains)
 
     flags = _exec_filter(
-        flags, tags_list, in_any,
-        operator.gt, operator.contains)
+        flags, tags_list, any_endswith, operator.gt, six.text_type.endswith
+    )
 
     flags = _exec_filter(
-        flags, tags_list, any_endswith,
-        operator.gt, six.text_type.endswith)
+        flags, tags_list, any_match, operator.gt, lambda t, f: re.match(f, t)
+    )
 
     flags = _exec_filter(
-        flags, tags_list, any_match,
-        operator.gt, lambda t, f: re.match(f, t))
-
-    flags = _exec_filter(
-        flags, tags_list, none_match,
-        operator.eq, lambda t, f: re.match(f, t))
+        flags, tags_list, none_match, operator.eq, lambda t, f: re.match(f, t)
+    )
     return flags
 
 
@@ -307,6 +326,8 @@ if __name__ == '__main__':
         python -m utool.util_tags --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

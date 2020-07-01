@@ -8,8 +8,8 @@ OS_TYPE = sys.platform
 if six.PY2 and OS_TYPE == 'linux2':
     OS_TYPE = 'linux'  # python2 fix
 
-WIN32  = sys.platform.startswith('win32')
-LINUX  = sys.platform.startswith('linux')
+WIN32 = sys.platform.startswith('win32')
+LINUX = sys.platform.startswith('linux')
 DARWIN = sys.platform.startswith('darwin')
 
 
@@ -17,13 +17,13 @@ def get_resource_dir():
     """
     Returns a directory which should be writable for any application
     """
-    #resource_prefix = '~'
+    # resource_prefix = '~'
     if WIN32:
         dpath_ = '~/AppData/Roaming'
     elif LINUX:
         dpath_ = '~/.config'
     elif DARWIN:
-        dpath_  = '~/Library/Application Support'
+        dpath_ = '~/Library/Application Support'
     else:
         raise AssertionError('unknown os')
     dpath = normpath(expanduser(dpath_))
@@ -36,6 +36,7 @@ def get_app_resource_dir(*args, **kwargs):
            *args, - any other subdirectories may be specified
     """
     if len(args) == 0:
-        raise AssertionError('Missing appname. The first argument the '
-                             'application name')
+        raise AssertionError(
+            'Missing appname. The first argument the ' 'application name'
+        )
     return join(get_resource_dir(), *args)

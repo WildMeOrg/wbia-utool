@@ -7,15 +7,16 @@ from utool import Printable
 
 class DynStruct(Printable.AbstractPrintable):
     """ dynamically add and remove members """
+
     def __init__(self, child_exclude_list=[], copy_dict=None, copy_class=None):
         super(DynStruct, self).__init__(child_print_exclude=child_exclude_list)
         if isinstance(copy_dict, dict):
             self.add_dict(copy_dict)
 
-    #def dynget(self, *prop_list):
+    # def dynget(self, *prop_list):
     #    return tuple([self.__dict__[prop_name] for prop_name in prop_list])
 
-    #def dynset(self, *propval_list):
+    # def dynset(self, *propval_list):
     #    offset = len(propval_list) / 2
     #    for i in range(offset):
     #        self.__dict__[propval_list[i]] = propval_list[i + offset]
@@ -52,8 +53,11 @@ class DynStruct(Printable.AbstractPrintable):
     def add_dict(self, dyn_dict):
         'Adds a dictionary to the prefs'
         if not isinstance(dyn_dict, dict):
-            raise Exception('DynStruct.add_dict expects a dictionary.' +
-                            'Recieved: ' + six.text_type(type(dyn_dict)))
+            raise Exception(
+                'DynStruct.add_dict expects a dictionary.'
+                + 'Recieved: '
+                + six.text_type(type(dyn_dict))
+            )
         for (key, val) in six.iteritems(dyn_dict):
             self[key] = val
 

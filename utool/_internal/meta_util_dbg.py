@@ -20,7 +20,7 @@ def get_stack_frame(N=0, strict=True):
 
 def get_caller_lineno(N=0, strict=True):
     parent_frame = get_stack_frame(N=N + 1, strict=strict)
-    lineno =  parent_frame.f_lineno
+    lineno = parent_frame.f_lineno
     return lineno
 
 

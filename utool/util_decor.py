@@ -15,6 +15,7 @@ from utool import util_arg
 from utool import util_type
 from utool import util_inject
 from utool._internal import meta_util_six
+
 (print, rrr, profile) = util_inject.inject2(__name__, '[decor]')
 
 if util_type.HAVE_NUMPY:
@@ -22,12 +23,12 @@ if util_type.HAVE_NUMPY:
 
 # Commandline to toggle certain convinience decorators
 SIG_PRESERVE = util_arg.get_argflag('--sigpreserve')
-#SIG_PRESERVE = not util_arg.SAFE or util_arg.get_argflag('--sigpreserve')
+# SIG_PRESERVE = not util_arg.SAFE or util_arg.get_argflag('--sigpreserve')
 ONEX_REPORT_INPUT = '--onex-report-input' in sys.argv
-#IGNORE_TRACEBACK = '--smalltb' in sys.argv or '--ignoretb' in sys.argv
+# IGNORE_TRACEBACK = '--smalltb' in sys.argv or '--ignoretb' in sys.argv
 # FIXME: dupliated in _internal/py2_syntax_funcs
 IGNORE_TRACEBACK = not ('--nosmalltb' in sys.argv or '--noignoretb' in sys.argv)
-#if util_arg.STRICT:
+# if util_arg.STRICT:
 #    IGNORE_TRACEBACK = False
 
 # do not ignore traceback when profiling
@@ -35,9 +36,9 @@ PROFILING = hasattr(builtins, 'profile')
 UNIQUE_NUMPY = True
 NOINDENT_DECOR = False
 
-#os.environ.get('UTOOL_AUTOGEN_SPHINX_RUNNING', 'OFF')
+# os.environ.get('UTOOL_AUTOGEN_SPHINX_RUNNING', 'OFF')
 
-#def composed(*decs):
+# def composed(*decs):
 #    """ combines multiple decorators """
 #    def deco(f):
 #        for dec in reversed(decs):
@@ -58,6 +59,7 @@ def test_ignore_exec_traceback():
         >>> print(result)
     """
     import utool as ut
+
     @ut.indent_func
     def foobar():
         print('foobar')
@@ -67,9 +69,9 @@ def test_ignore_exec_traceback():
         print('printing foobar')
         foobar()
     except AssertionError as ex:
-        #import sys
-        #exc_type, exc_value, exc_traceback = sys.exc_info()
-        #print(exc_traceback)
+        # import sys
+        # exc_type, exc_value, exc_traceback = sys.exc_info()
+        # print(exc_traceback)
         # TODO: ensure decorators are not printed in stack trace
         ut.printex(ex, 'There is no error. This is a test', tb=True)
 
@@ -78,8 +80,10 @@ if six.PY2:
     # Use version that has special python2 only syntax.
     # can not include it here for that reason
     from utool._internal import py2_syntax_funcs
+
     ignores_exc_tb = py2_syntax_funcs.ignores_exc_tb
 else:
+
     def ignores_exc_tb(*args, **kwargs):
         """
         PYTHON 3 VERSION
@@ -98,6 +102,7 @@ else:
             http://legacy.python.org/dev/peps/pep-3109/
         """
         outer_wrapper = kwargs.get('outer_wrapper', True)
+
         def ignores_exc_tb_closure(func):
             # HACK JUST TURN THIS OFF
             return func
@@ -106,11 +111,11 @@ else:
                 # if the global enforces that we should not ignore anytracebacks
                 # then just return the original function without any modifcation
                 return func
-            #@wraps(func)
+            # @wraps(func)
             def wrp_noexectb(*args, **kwargs):
                 try:
-                    #import utool
-                    #if utool.DEBUG:
+                    # import utool
+                    # if utool.DEBUG:
                     #    print('[IN IGNORETB] args=%r' % (args,))
                     #    print('[IN IGNORETB] kwargs=%r' % (kwargs,))
                     return func(*args, **kwargs)
@@ -128,9 +133,11 @@ else:
                     ex = exc_type(exc_value)
                     ex.__traceback__ = exc_traceback
                     raise ex
+
             if outer_wrapper:
                 wrp_noexectb = preserve_sig(wrp_noexectb, func)
             return wrp_noexectb
+
         if len(args) == 1:
             # called with one arg means its a function call
             func = args[0]
@@ -141,7 +148,7 @@ else:
 
 
 # NEW PYTHON 2.7/3 VERSION
-#def ignores_exc_tb(*args, **kwargs):
+# def ignores_exc_tb(*args, **kwargs):
 #    """
 #    ignore_exc_tb decorates a function and remove both itself
 #    and the function from any exception traceback that occurs.
@@ -214,25 +221,29 @@ def on_exception_report_input(func_=None, force=False, keys=None):
     decorated function name and the arguments passed to it will be printed to
     the utool print function.
     """
+
     def _closure_onexceptreport(func):
         if not ONEX_REPORT_INPUT and not force:
             return func
+
         @ignores_exc_tb(outer_wrapper=False)
-        #@wraps(func)
+        # @wraps(func)
         def wrp_onexceptreport(*args, **kwargs):
             try:
-                #import utool
-                #if utool.DEBUG:
+                # import utool
+                # if utool.DEBUG:
                 #    print('[IN EXCPRPT] args=%r' % (args,))
                 #    print('[IN EXCPRPT] kwargs=%r' % (kwargs,))
                 return func(*args, **kwargs)
             except Exception as ex:
                 from utool import util_str
+
                 print('ERROR occured! Reporting input to function')
                 if keys is not None:
                     from utool import util_inspect
                     from utool import util_list
                     from utool import util_dict
+
                     argspec = util_inspect.get_func_argspec(func)
                     in_kwargs_flags = [key in kwargs for key in keys]
                     kwarg_keys = util_list.compress(keys, in_kwargs_flags)
@@ -241,29 +252,42 @@ def on_exception_report_input(func_=None, force=False, keys=None):
                     arg_keys = util_list.compress(keys, flags)
                     arg_idxs = [argspec.args.index(key) for key in arg_keys]
                     num_nodefault = len(argspec.args) - len(argspec.defaults)
-                    default_vals = (([None] * (num_nodefault)) +
-                                    list(argspec.defaults))
-                    args_ = list(args) + default_vals[len(args) + 1:]
+                    default_vals = ([None] * (num_nodefault)) + list(argspec.defaults)
+                    args_ = list(args) + default_vals[len(args) + 1 :]
                     arg_vals = util_list.take(args_, arg_idxs)
-                    requested_dict = dict(util_list.flatten(
-                        [zip(kwarg_keys, kwarg_vals), zip(arg_keys, arg_vals)]))
-                    print('input dict = ' + util_str.repr4(
-                        util_dict.dict_subset(requested_dict, keys)))
+                    requested_dict = dict(
+                        util_list.flatten(
+                            [zip(kwarg_keys, kwarg_vals), zip(arg_keys, arg_vals)]
+                        )
+                    )
+                    print(
+                        'input dict = '
+                        + util_str.repr4(util_dict.dict_subset(requested_dict, keys))
+                    )
                     # (print out specific keys only)
                     pass
-                arg_strs = ', '.join([repr(util_str.truncate_str(str(arg)))
-                                      for arg in args])
-                kwarg_strs = ', '.join([
-                    util_str.truncate_str('%s=%r' % (key, val))
-                    for key, val in six.iteritems(kwargs)])
-                msg = ('\nERROR: funcname=%r,\n * args=%s,\n * kwargs=%r\n' % (
-                    meta_util_six.get_funcname(func), arg_strs, kwarg_strs))
+                arg_strs = ', '.join(
+                    [repr(util_str.truncate_str(str(arg))) for arg in args]
+                )
+                kwarg_strs = ', '.join(
+                    [
+                        util_str.truncate_str('%s=%r' % (key, val))
+                        for key, val in six.iteritems(kwargs)
+                    ]
+                )
+                msg = '\nERROR: funcname=%r,\n * args=%s,\n * kwargs=%r\n' % (
+                    meta_util_six.get_funcname(func),
+                    arg_strs,
+                    kwarg_strs,
+                )
                 msg += ' * len(args) = %r\n' % len(args)
                 msg += ' * len(kwargs) = %r\n' % len(kwargs)
                 util_dbg.printex(ex, msg, pad_stdout=True)
                 raise
+
         wrp_onexceptreport = preserve_sig(wrp_onexceptreport, func)
         return wrp_onexceptreport
+
     if func_ is None:
         return _closure_onexceptreport
     else:
@@ -276,26 +300,30 @@ def debug_function_exceptions(func):
             return func(*args, **kwargs)
         except Exception as ex:
             import utool as ut
+
             ut.printex(ex)
             import inspect  # NOQA
+
             trace = inspect.trace()
             locals_ = trace[-1][0].f_locals
             print('-- <TRACE LOCALS> --')
             for level, t in enumerate(trace[1:]):
                 frame = t[0]
                 locals_ = frame.f_locals
-                local_repr_dict = {key: ut.trunc_repr(val)
-                                   for key, val in locals_.items()}
+                local_repr_dict = {
+                    key: ut.trunc_repr(val) for key, val in locals_.items()
+                }
                 print('LOCALS LEVEL %d' % (level,))
                 print(ut.repr3(local_repr_dict, strvals=True, nl=1))
             print('-- </TRACE LOCALS> --')
-            #import utool
-            #utool.embed()
+            # import utool
+            # utool.embed()
             raise
+
     return _wrapper
 
 
-#class DebugContext(object):
+# class DebugContext(object):
 #    def __enter__():
 #        pass
 #    def __exit__(self, exc_type, exc_value, exc_traceback):
@@ -306,26 +334,32 @@ def _indent_decor(lbl):
     """
     does the actual work of indent_func
     """
+
     def closure_indent(func):
         if util_arg.TRACE:
+
             @ignores_exc_tb(outer_wrapper=False)
-            #@wraps(func)
+            # @wraps(func)
             def wrp_indent(*args, **kwargs):
                 with util_print.Indenter(lbl):
                     print('    ...trace[in]')
                     ret = func(*args, **kwargs)
                     print('    ...trace[out]')
                     return ret
+
         else:
+
             @ignores_exc_tb(outer_wrapper=False)
-            #@wraps(func)
+            # @wraps(func)
             def wrp_indent(*args, **kwargs):
                 with util_print.Indenter(lbl):
                     ret = func(*args, **kwargs)
                     return ret
+
         wrp_indent_ = ignores_exc_tb(wrp_indent)
         wrp_indent_ = preserve_sig(wrp_indent, func)
         return wrp_indent_
+
     return closure_indent
 
 
@@ -353,6 +387,7 @@ def tracefunc_xml(func):
     Causes output of function to be printed in an XML style block
     """
     funcname = meta_util_six.get_funcname(func)
+
     def wrp_tracefunc2(*args, **kwargs):
         verbose = kwargs.get('verbose', True)
         if verbose:
@@ -362,11 +397,13 @@ def tracefunc_xml(func):
         if verbose:
             print('</%s>' % (funcname,))
         return ret
+
     wrp_tracefunc2_ = ignores_exc_tb(wrp_tracefunc2)
     wrp_tracefunc2_ = preserve_sig(wrp_tracefunc2_, func)
     return wrp_tracefunc2_
 
-#----------
+
+# ----------
 
 
 def accepts_scalar_input(func):
@@ -398,11 +435,11 @@ def accepts_scalar_input(func):
         >>> assert 2 == foobar(self, 1)
         >>> assert [2, 3] == foobar(self, [1, 2])
     """
-    #@on_exception_report_input
+    # @on_exception_report_input
     @ignores_exc_tb(outer_wrapper=False)
-    #@wraps(func)
+    # @wraps(func)
     def wrp_asi(self, input_, *args, **kwargs):
-        #if HAVE_PANDAS:
+        # if HAVE_PANDAS:
         #    if isinstance(input_, (pd.DataFrame, pd.Series)):
         #        input_ = input_.values
         if util_iter.isiterable(input_):
@@ -410,10 +447,11 @@ def accepts_scalar_input(func):
             return func(self, input_, *args, **kwargs)
         else:
             # If input is scalar, wrap input, execute, and unpack result
-            #ret = func(self, (input_,), *args, **kwargs)
+            # ret = func(self, (input_,), *args, **kwargs)
             ret = func(self, [input_], *args, **kwargs)
             if ret is not None:
                 return ret[0]
+
     wrp_asi = preserve_sig(wrp_asi, func)
     return wrp_asi
 
@@ -434,11 +472,12 @@ def accepts_scalar_input2(argx_list=[0], outer_wrapper=True):
             code that operates on lists. Ensures that decorated function gets
             the argument as an iterable.
     """
-    assert isinstance(argx_list, (list, tuple)), (
-        'accepts_scalar_input2 must be called with argument positions')
+    assert isinstance(
+        argx_list, (list, tuple)
+    ), 'accepts_scalar_input2 must be called with argument positions'
 
     def closure_asi2(func):
-        #@on_exception_report_input
+        # @on_exception_report_input
         @ignores_exc_tb(outer_wrapper=False)
         def wrp_asi2(self, *args, **kwargs):
             # Hack in case wrapping a function with varargs
@@ -449,14 +488,17 @@ def accepts_scalar_input2(argx_list=[0], outer_wrapper=True):
                 return func(self, *args, **kwargs)
             else:
                 # If input is scalar, wrap input, execute, and unpack result
-                args_wrapped = [(arg,) if ix in argx_list_ else arg
-                                for ix, arg in enumerate(args)]
+                args_wrapped = [
+                    (arg,) if ix in argx_list_ else arg for ix, arg in enumerate(args)
+                ]
                 ret = func(self, *args_wrapped, **kwargs)
                 if ret is not None:
                     return ret[0]
+
         if outer_wrapper:
             wrp_asi2 = on_exception_report_input(preserve_sig(wrp_asi2, func))
         return wrp_asi2
+
     return closure_asi2
 
 
@@ -471,8 +513,9 @@ def __assert_param_consistency(args, argx_list_):
         return True
     argx_flags = [util_iter.isiterable(args[argx]) for argx in argx_list_]
     try:
-        assert all([argx_flags[0] == flag for flag in argx_flags]), (
-            'invalid mixing of iterable and scalar inputs')
+        assert all(
+            [argx_flags[0] == flag for flag in argx_flags]
+        ), 'invalid mixing of iterable and scalar inputs'
     except AssertionError as ex:
         print('!!! ASSERTION ERROR IN UTIL_DECOR !!!')
         for argx in argx_list_:
@@ -499,11 +542,12 @@ def accepts_scalar_input_vector_output(func):
         something where when you couln't unpack it becuase it was already
         empty...
     """
+
     @ignores_exc_tb(outer_wrapper=False)
-    #@wraps(func)
+    # @wraps(func)
     def wrp_asivo(self, input_, *args, **kwargs):
-        #import utool
-        #if utool.DEBUG:
+        # import utool
+        # if utool.DEBUG:
         #    print('[IN SIVO] args=%r' % (args,))
         #    print('[IN SIVO] kwargs=%r' % (kwargs,))
         if util_iter.isiterable(input_):
@@ -518,18 +562,20 @@ def accepts_scalar_input_vector_output(func):
             else:
                 assert len(result) == 1, 'error in asivo'
                 return result[0]
+
     return wrp_asivo
+
 
 # TODO: Rename to listget_1to1 1toM etc...
 getter_1to1 = accepts_scalar_input
 getter_1toM = accepts_scalar_input_vector_output
-#----------
+# ----------
 
 
 def accepts_numpy(func):
     """ Allows the first input to be a numpy array and get result in numpy form """
-    #@ignores_exc_tb
-    #@wraps(func)
+    # @ignores_exc_tb
+    # @wraps(func)
     def wrp_accepts_numpy(self, input_, *args, **kwargs):
         if not (util_type.HAVE_NUMPY and isinstance(input_, np.ndarray)):
             # If the input is not numpy, just call the function
@@ -555,6 +601,7 @@ def accepts_numpy(func):
                 return np.array(output_arr).reshape(output_shape)
             else:
                 return np.array(output_list).reshape(input_.shape)
+
     wrp_accepts_numpy = preserve_sig(wrp_accepts_numpy, func)
     return wrp_accepts_numpy
 
@@ -566,14 +613,18 @@ def memoize_nonzero(func):
     References:
         http://code.activestate.com/recipes/578231-fastest-memoization-decorator
     """
+
     class _memorizer(dict):
         def __init__(self, func):
             self.func = func
+
         def __call__(self, *args):
             return self[args]
+
         def __missing__(self, key):
             ret = self[key] = self.func(*key)
             return ret
+
     return _memorizer(func)
 
 
@@ -583,18 +634,22 @@ def memoize_single(func):
     References:
         http://code.activestate.com/recipes/578231-fastest-memoization-decorator
     """
+
     class memodict_single(dict):
         def __missing__(self, key):
             ret = self[key] = func(key)
             return ret
+
     return memodict_single().__getitem__
 
 
 def memoize_zero(func):
     """ Memoization decorator for a function taking no arguments """
     wrp_memoize_single = memoize_single(func)
+
     def wrp_memoize_zero():
         return wrp_memoize_single(None)
+
     return wrp_memoize_zero
 
 
@@ -646,6 +701,7 @@ def memoize(func):
         if key not in cache:
             cache[key] = func(*args, **kwargs)
         return cache[key]
+
     memoizer = preserve_sig(memoizer, func)
     memoizer.cache = cache
     return memoizer
@@ -653,55 +709,60 @@ def memoize(func):
 
 def interested(func):
     @indent_func
-    #@ignores_exc_tb
-    #@wraps(func)
+    # @ignores_exc_tb
+    # @wraps(func)
     def wrp_interested(*args, **kwargs):
         sys.stdout.write('#\n')
         sys.stdout.write('#\n')
-        sys.stdout.write(
-            '<!INTERESTED>: ' + meta_util_six.get_funcname(func) + '\n')
+        sys.stdout.write('<!INTERESTED>: ' + meta_util_six.get_funcname(func) + '\n')
         print('INTERESTING... ' + (' ' * 30) + ' <----')
         return func(*args, **kwargs)
+
     return wrp_interested
 
 
 def tracefunc(func):
     lbl = '[trace.' + meta_util_six.get_funcname(func) + ']'
+
     def wrp_tracefunc(*args, **kwargs):
         print(lbl + ' +--- ENTER ---')
         with util_print.Indenter(lbl + ' |'):
             ret = func(*args, **kwargs)
         print(lbl + ' L___ EXIT ____')
         return ret
+
     return wrp_tracefunc
 
 
 def show_return_value(func):
     from utool.util_str import func_str
-    #@wraps(func)
+
+    # @wraps(func)
     def wrp_show_return_value(*args, **kwargs):
         ret = func(*args, **kwargs)
-        #print('%s(*%r, **%r) returns %r' % (meta_util_six.get_funcname(func), args, kwargs, rv))
-        print(func_str(func, args, kwargs)  + ' -> ret=%r' % (ret,))
+        # print('%s(*%r, **%r) returns %r' % (meta_util_six.get_funcname(func), args, kwargs, rv))
+        print(func_str(func, args, kwargs) + ' -> ret=%r' % (ret,))
         return ret
+
     return wrp_show_return_value
 
 
 def time_func(func):
-    #@wraps(func)
+    # @wraps(func)
     def wrp_time(*args, **kwargs):
         with util_time.Timer(meta_util_six.get_funcname(func)):
             return func(*args, **kwargs)
+
     wrp_time = preserve_sig(wrp_time, func)
     return wrp_time
 
 
-#def rename_func(newname):
+# def rename_func(newname):
 #    import utool as ut
 #    return ut.partial(ut.set_funcname, newname=newname)
 
 
-#class copy_argspec(object):
+# class copy_argspec(object):
 #    """
 #    copy_argspec is a signature modifying decorator.
 #    Specifically, it copies the signature from `source_func` to the wrapper, and
@@ -754,6 +815,7 @@ def lazyfunc(func):
     Returns a memcached version of a function
     """
     closuremem_ = [{}]
+
     def wrapper(*args, **kwargs):
         mem = closuremem_[0]
         key = (repr(args), repr(kwargs))
@@ -762,6 +824,7 @@ def lazyfunc(func):
         except KeyError:
             mem[key] = func(*args, **kwargs)
         return mem[key]
+
     return wrapper
 
 
@@ -769,9 +832,10 @@ def apply_docstr(docstr_func):
     """
     Changes docstr of one functio to that of another
     """
+
     def docstr_applier(func):
-        #docstr = meta_util_six.get_funcdoc(docstr_func)
-        #meta_util_six.set_funcdoc(func, docstr)
+        # docstr = meta_util_six.get_funcdoc(docstr_func)
+        # meta_util_six.set_funcdoc(func, docstr)
         if isinstance(docstr_func, six.string_types):
             olddoc = meta_util_six.get_funcdoc(func)
             if olddoc is None:
@@ -782,6 +846,7 @@ def apply_docstr(docstr_func):
         else:
             preserved_func = preserve_sig(func, docstr_func)
             return preserved_func
+
     return docstr_applier
 
 
@@ -826,7 +891,7 @@ def preserve_sig(wrapper, orig_func, force=False):
         >>> result = str(_wrp_preserve1)
         >>> print(result)
     """
-    #if True:
+    # if True:
     #    import functools
     #    return functools.wraps(orig_func)(wrapper)
     from utool._internal import meta_util_six
@@ -874,7 +939,7 @@ def preserve_sig(wrapper, orig_func, force=False):
                 raise
         '''
         # Put wrapped function into a scope
-        globals_ =  {'wrapper': wrapper}
+        globals_ = {'wrapper': wrapper}
         locals_ = {}
         # argspec is :ArgSpec(args=['bar', 'baz'], varargs=None, keywords=None,
         # defaults=(True,))
@@ -893,16 +958,16 @@ def preserve_sig(wrapper, orig_func, force=False):
         src = textwrap.dedent(src_fmt).format(**src_fmtdict)
         # Define the new function on the fly
         # (I wish there was a non exec / eval way to do this)
-        #print(src)
+        # print(src)
         code = compile(src, '<string>', 'exec')
         six.exec_(code, globals_, locals_)
-        #six.exec_(src, globals_, locals_)
+        # six.exec_(src, globals_, locals_)
         # Use functools.update_wapper to complete preservation
         _wrp_preserve = functools.update_wrapper(locals_['_wrp_preserve'], orig_func)
         # Keep debug info
         _utinfo['src'] = src
         # Set an internal sig variable that we may use
-        #_wrp_preserve.__sig__ = defsig
+        # _wrp_preserve.__sig__ = defsig
     else:
         # PRESERVES SOME SIGNATURES NO EXEC
         # signature preservation is turned off. just preserve the name.
@@ -913,23 +978,26 @@ def preserve_sig(wrapper, orig_func, force=False):
     DEBUG_WRAPPED_DOCSTRING = False
     if DEBUG_WRAPPED_DOCSTRING:
         new_docstr_fmtstr = util_str.codeblock(
-            '''
+            """
             Wrapped function {wrap_name}({orig_name})
 
             orig_argspec = {orig_argspec}
 
             orig_docstr = {orig_docstr}
-            '''
+            """
         )
     else:
         new_docstr_fmtstr = util_str.codeblock(
-            '''
+            """
             {orig_docstr}
-            '''
+            """
         )
     new_docstr = new_docstr_fmtstr.format(
-        wrap_name=wrap_name, orig_name=orig_name, orig_docstr=orig_docstr,
-        orig_argspec=orig_argspec)
+        wrap_name=wrap_name,
+        orig_name=orig_name,
+        orig_docstr=orig_docstr,
+        orig_argspec=orig_argspec,
+    )
     meta_util_six.set_funcdoc(_wrp_preserve, new_docstr)
     _wrp_preserve._utinfo = _utinfo
     return _wrp_preserve
@@ -938,6 +1006,7 @@ def preserve_sig(wrapper, orig_func, force=False):
 def dummy_args_decor(*args, **kwargs):
     def dummy_args_closure(func):
         return func
+
     return dummy_args_closure
 
 
@@ -948,6 +1017,7 @@ class classproperty(property):
     References:
         https://stackoverflow.com/questions/1697501/python-staticmethod-with-property
     """
+
     def __get__(self, cls, owner):
         return classmethod(self.fget).__get__(None, owner)()
 
@@ -960,6 +1030,8 @@ if __name__ == '__main__':
         python -m utool.util_decor --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

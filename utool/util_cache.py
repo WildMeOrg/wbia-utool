@@ -9,10 +9,11 @@ import uuid
 import json
 import codecs
 import os
-#import lru
-#git+https://github.com/amitdev/lru-dict
-#import atexit
-#import inspect
+
+# import lru
+# git+https://github.com/amitdev/lru-dict
+# import atexit
+# import inspect
 import contextlib
 import collections
 from six.moves import cPickle as pickle
@@ -35,6 +36,7 @@ from utool import util_type
 from utool import util_decor
 from utool import util_dict
 from utool._internal import meta_util_constants
+
 print, rrr, profile = util_inject.inject2(__name__)
 
 
@@ -51,11 +53,12 @@ class CacheMissException(Exception):
     pass
 
 
-#class YACacher(object):
+# class YACacher(object):
 # @six.add_metaclass(util_class.ReloadingMetaclass)
 @util_class.reloadable_class
 class ShelfCacher(object):
     """ yet another cacher """
+
     def __init__(self, fpath, enabled=True):
         self.verbose = True
         if self.verbose:
@@ -82,7 +85,8 @@ class ShelfCacher(object):
         cachekey = cachekey.encode('ascii')
         if self.shelf is None or cachekey not in self.shelf:
             raise CacheMissException(
-                'Cache miss cachekey=%r self.fpath=%r' % (cachekey, self.fpath))
+                'Cache miss cachekey=%r self.fpath=%r' % (cachekey, self.fpath)
+            )
         else:
             return self.shelf[cachekey]
 
@@ -123,6 +127,7 @@ def text_dict_read(fpath):
         dict_ = eval(dict_text, {}, {})
     except SyntaxError as ex:
         import utool as ut
+
         print(dict_text)
         ut.printex(ex, 'Bad Syntax', keys=['dict_text'])
         dict_ = {}
@@ -137,8 +142,8 @@ def text_dict_write(fpath, dict_):
     FIXME: This broke on RoseMary's big dataset. Not sure why. It gave bad
     syntax. And the SyntaxError did not seem to be excepted.
     """
-    #dict_ = text_dict_read(fpath)
-    #dict_[key] = val
+    # dict_ = text_dict_read(fpath)
+    # dict_[key] = val
     dict_text2 = util_str.repr4(dict_, strvals=False)
     if VERBOSE:
         print('[cache] ' + str(dict_text2))
@@ -200,8 +205,9 @@ def _args2_fpath(dpath, fname, cfgstr, ext):
     # should hashlen be larger?
     cfgstr_hashlen = 16
     prefix = fname
-    fname_cfgstr = consensed_cfgstr(prefix, cfgstr, max_len=max_len,
-                                    cfgstr_hashlen=cfgstr_hashlen)
+    fname_cfgstr = consensed_cfgstr(
+        prefix, cfgstr, max_len=max_len, cfgstr_hashlen=cfgstr_hashlen
+    )
     fpath = join(dpath, fname_cfgstr + ext)
     fpath = normpath(fpath)
     return fpath
@@ -224,22 +230,29 @@ def load_cache(dpath, fname, cfgstr, ext='.cPkl', verbose=None, enabled=True):
         verbose = VERBOSE_CACHE
     if not USE_CACHE or not enabled:
         if verbose > 1:
-            print('[util_cache] ... cache disabled: dpath=%s cfgstr=%r' %
-                    (basename(dpath), cfgstr,))
+            print(
+                '[util_cache] ... cache disabled: dpath=%s cfgstr=%r'
+                % (basename(dpath), cfgstr,)
+            )
         raise IOError(3, 'Cache Loading Is Disabled')
     fpath = _args2_fpath(dpath, fname, cfgstr, ext)
     if not exists(fpath):
         if verbose > 0:
-            print('[util_cache] ... cache does not exist: dpath=%r fname=%r cfgstr=%r' % (
-                basename(dpath), fname, cfgstr,))
+            print(
+                '[util_cache] ... cache does not exist: dpath=%r fname=%r cfgstr=%r'
+                % (basename(dpath), fname, cfgstr,)
+            )
         raise IOError(2, 'No such file or directory: %r' % (fpath,))
     else:
         if verbose > 2:
-            print('[util_cache] ... cache exists: dpath=%r fname=%r cfgstr=%r' % (
-                basename(dpath), fname, cfgstr,))
+            print(
+                '[util_cache] ... cache exists: dpath=%r fname=%r cfgstr=%r'
+                % (basename(dpath), fname, cfgstr,)
+            )
         import utool as ut
+
         nbytes = ut.get_file_nBytes(fpath)
-        big_verbose = (nbytes > 1E6 and verbose > 2) or verbose > 2
+        big_verbose = (nbytes > 1e6 and verbose > 2) or verbose > 2
         if big_verbose:
             print('[util_cache] About to read file of size %s' % (ut.byte_str2(nbytes),))
     try:
@@ -248,8 +261,10 @@ def load_cache(dpath, fname, cfgstr, ext='.cPkl', verbose=None, enabled=True):
     except (EOFError, IOError, ImportError) as ex:
         print('CORRUPTED? fpath = %s' % (fpath,))
         if verbose > 1:
-            print('[util_cache] ... cache miss dpath=%s cfgstr=%r' % (
-                basename(dpath), cfgstr,))
+            print(
+                '[util_cache] ... cache miss dpath=%s cfgstr=%r'
+                % (basename(dpath), cfgstr,)
+            )
         raise IOError(str(ex))
     except Exception:
         print('CORRUPTED? fpath = %s' % (fpath,))
@@ -281,8 +296,9 @@ def tryload_cache_list(dpath, fname, cfgstr_list, verbose=False):
 
 
 @profile
-def tryload_cache_list_with_compute(use_cache, dpath, fname, cfgstr_list,
-                                    compute_fn, *args):
+def tryload_cache_list_with_compute(
+    use_cache, dpath, fname, cfgstr_list, compute_fn, *args
+):
     """
     tries to load data, but computes it if it can't give a compute function
     """
@@ -294,18 +310,19 @@ def tryload_cache_list_with_compute(use_cache, dpath, fname, cfgstr_list,
         data_list = compute_fn(ismiss_list, *args)
         return data_list
     else:
-        data_list, ismiss_list = tryload_cache_list(dpath, fname, cfgstr_list,
-                                                    verbose=False)
+        data_list, ismiss_list = tryload_cache_list(
+            dpath, fname, cfgstr_list, verbose=False
+        )
     num_total = len(cfgstr_list)
     if any(ismiss_list):
         # Compute missing values
         newdata_list = compute_fn(ismiss_list, *args)
         newcfgstr_list = util_list.compress(cfgstr_list, ismiss_list)
         index_list = util_list.list_where(ismiss_list)
-        print('[cache] %d/%d cache hits for %s in %s' % (num_total -
-                                                         len(index_list),
-                                                         num_total, fname,
-                                                         util_path.tail(dpath)))
+        print(
+            '[cache] %d/%d cache hits for %s in %s'
+            % (num_total - len(index_list), num_total, fname, util_path.tail(dpath))
+        )
         # Cache write
         for newcfgstr, newdata in zip(newcfgstr_list, newdata_list):
             save_cache(dpath, fname, newcfgstr, newdata, verbose=False)
@@ -313,9 +330,10 @@ def tryload_cache_list_with_compute(use_cache, dpath, fname, cfgstr_list,
         for index, newdata in zip(index_list, newdata_list):
             data_list[index] = newdata
     else:
-        print('[cache] %d/%d cache hits for %s in %s' % (num_total, num_total,
-                                                         fname,
-                                                         util_path.tail(dpath)))
+        print(
+            '[cache] %d/%d cache hits for %s in %s'
+            % (num_total, num_total, fname, util_path.tail(dpath))
+        )
     return data_list
 
 
@@ -323,9 +341,17 @@ class Cacher(object):
     """
     old non inhertable version of cachable
     """
-    def __init__(self, fname, cfgstr=None, cache_dir='default',
-                 appname='utool', ext='.cPkl', verbose=None,
-                 enabled=True):
+
+    def __init__(
+        self,
+        fname,
+        cfgstr=None,
+        cache_dir='default',
+        appname='utool',
+        ext='.cPkl',
+        verbose=None,
+        enabled=True,
+    ):
         if verbose is None:
             verbose = VERBOSE
         if cache_dir == 'default':
@@ -348,6 +374,7 @@ class Cacher(object):
         with this cacher.
         """
         import glob
+
         pattern = self.fname + '_*' + self.ext
         for fname in glob.glob1(self.dpath, pattern):
             fpath = join(self.dpath, fname)
@@ -361,13 +388,20 @@ class Cacher(object):
         # assert cfgstr is not None, 'must specify cfgstr in constructor or call'
         if cfgstr is None:
             import warnings
+
             warnings.warn('No cfgstr given in Cacher constructor or call')
             cfgstr = ''
         assert self.fname is not None, 'no fname'
         assert self.dpath is not None, 'no dpath'
         # TODO: use the computed fpath from this object instead
-        data = load_cache(self.dpath, self.fname, cfgstr, self.ext,
-                          verbose=self.verbose, enabled=self.enabled)
+        data = load_cache(
+            self.dpath,
+            self.fname,
+            cfgstr,
+            self.ext,
+            verbose=self.verbose,
+            enabled=self.enabled,
+        )
         if self.verbose > 1:
             print('[cache] ... ' + self.fname + ' Cacher hit')
         return data
@@ -380,6 +414,7 @@ class Cacher(object):
             cfgstr = self.cfgstr
         if cfgstr is None:
             import warnings
+
             warnings.warn('No cfgstr given in Cacher constructor or call')
             cfgstr = ''
         # assert cfgstr is not None, (
@@ -412,6 +447,7 @@ class Cacher(object):
         # assert cfgstr is not None, 'must specify cfgstr in constructor or call'
         if cfgstr is None:
             import warnings
+
             warnings.warn('No cfgstr given in Cacher constructor or call')
             cfgstr = ''
         assert self.fname is not None, 'no fname'
@@ -421,7 +457,7 @@ class Cacher(object):
         save_cache(self.dpath, self.fname, cfgstr, data, self.ext)
 
 
-#@util_decor.memoize
+# @util_decor.memoize
 def make_utool_json_encoder(allow_pickle=False):
     """
     References:
@@ -432,6 +468,7 @@ def make_utool_json_encoder(allow_pickle=False):
         http://stackoverflow.com/questions/30469575/how-to-pickle
     """
     import utool as ut
+
     PYOBJECT_TAG = '__PYTHON_OBJECT__'
     UUID_TAG = '__UUID__'
     SLICE_TAG = '__SLICE__'
@@ -450,11 +487,9 @@ def make_utool_json_encoder(allow_pickle=False):
         text = codecs.encode(pickle_bytes, 'base64').decode()
         return text
 
-    type_to_tag = collections.OrderedDict([
-        (slice, SLICE_TAG),
-        (uuid.UUID, UUID_TAG),
-        (object, PYOBJECT_TAG),
-    ])
+    type_to_tag = collections.OrderedDict(
+        [(slice, SLICE_TAG), (uuid.UUID, UUID_TAG), (object, PYOBJECT_TAG),]
+    )
 
     tag_to_type = {tag: type_ for type_, tag in type_to_tag.items()}
 
@@ -499,14 +534,14 @@ def make_utool_json_encoder(allow_pickle=False):
                 # return [json.JSONEncoder.default(o) for o in obj]
             elif isinstance(obj, util_type.PRIMATIVE_TYPES):
                 return json.JSONEncoder.default(self, obj)
-            elif  hasattr(obj, '__getstate__') and not isinstance(obj, uuid.UUID):
+            elif hasattr(obj, '__getstate__') and not isinstance(obj, uuid.UUID):
                 return obj.__getstate__()
             else:
                 for type_, tag in type_to_tag.items():
                     if isinstance(obj, type_):
-                        #print('----')
-                        #print('encoder obj = %r' % (obj,))
-                        #print('encoder type_ = %r' % (type_,))
+                        # print('----')
+                        # print('encoder obj = %r' % (obj,))
+                        # print('encoder type_ = %r' % (type_,))
                         func = encoders[tag]
                         text = func(obj)
                         return {tag: text}
@@ -517,15 +552,16 @@ def make_utool_json_encoder(allow_pickle=False):
             if len(value) == 1:
                 tag, text = list(value.items())[0]
                 if tag in decoders:
-                    #print('----')
-                    #print('decoder tag = %r' % (tag,))
+                    # print('----')
+                    # print('decoder tag = %r' % (tag,))
                     func = decoders[tag]
                     obj = func(text)
-                    #print('decoder obj = %r' % (obj,))
+                    # print('decoder obj = %r' % (obj,))
                     return obj
             else:
                 return value
             return value
+
     return UtoolJSONEncoder
 
 
@@ -648,6 +684,7 @@ def get_func_result_cachekey(func_, args_=tuple(), kwargs_={}):
     args = ([],)
     """
     import utool as ut
+
     # Rectify partials and whatnot
     true_args = args_
     true_kwargs = kwargs_
@@ -668,16 +705,16 @@ def get_func_result_cachekey(func_, args_=tuple(), kwargs_={}):
     # Build up cachekey
     funcname = ut.get_funcname(true_func)
     kwdefaults = ut.get_kwdefaults(true_func, parse_source=False)
-    #kwdefaults = ut.get_kwdefaults(true_func, parse_source=True)
-    argnames   = ut.get_argnames(true_func)
+    # kwdefaults = ut.get_kwdefaults(true_func, parse_source=True)
+    argnames = ut.get_argnames(true_func)
     key_argx = None
     key_kwds = None
     func = true_func  # NOQA
     args = true_args  # NOQA
     kwargs = true_kwargs  # NOQA
-    args_key = ut.get_cfgstr_from_args(true_func, true_args, true_kwargs,
-                                       key_argx, key_kwds, kwdefaults,
-                                       argnames)
+    args_key = ut.get_cfgstr_from_args(
+        true_func, true_args, true_kwargs, key_argx, key_kwds, kwdefaults, argnames
+    )
     cachekey = funcname + '(' + args_key + ')'
     return cachekey
 
@@ -694,12 +731,16 @@ def cachestr_repr(val):
             return to_json(val)
         except Exception:
             # SUPER HACK
-            if repr(val.__class__) == "<class 'wbia.control.IBEISControl.IBEISController'>":
+            if (
+                repr(val.__class__)
+                == "<class 'wbia.control.IBEISControl.IBEISController'>"
+            ):
                 return val.get_dbname()
 
 
-def get_cfgstr_from_args(func, args, kwargs, key_argx, key_kwds, kwdefaults,
-                         argnames, use_hash=None):
+def get_cfgstr_from_args(
+    func, args, kwargs, key_argx, key_kwds, kwdefaults, argnames, use_hash=None
+):
     """
     Dev:
         argx = ['fdsf', '432443432432', 43423432, 'fdsfsd', 3.2, True]
@@ -743,47 +784,59 @@ def get_cfgstr_from_args(func, args, kwargs, key_argx, key_kwds, kwdefaults,
         >>> argnames   = ut.util_inspect.get_argnames(func)
         >>> get_cfgstr_from_args(func, args, kwargs, key_argx, key_kwds, kwdefaults, argnames)
     """
-    #try:
-    #fmt_str = '%s(%s)'
+    # try:
+    # fmt_str = '%s(%s)'
     import utool as ut
+
     hashstr_ = util_hash.hashstr27
     if key_argx is None:
         key_argx = list(range(len(args)))
     if key_kwds is None:
         key_kwds = ut.unique_ordered(list(kwdefaults.keys()) + list(kwargs.keys()))
 
-    #def kwdval(key):
+    # def kwdval(key):
     #    return kwargs.get(key, kwdefaults.get(key, None))
     given_kwargs = ut.merge_dicts(kwdefaults, kwargs)
 
     arg_hashfmtstr = [argnames[argx] + '=(%s)' for argx in key_argx]
-    #kw_hashfmtstr = [kwdefaults.get(key, '???') + '(%s)' for key in key_kwds]
+    # kw_hashfmtstr = [kwdefaults.get(key, '???') + '(%s)' for key in key_kwds]
     kw_hashfmtstr = [key + '=(%s)' for key in key_kwds]
     cfgstr_fmt = '_'.join(chain(arg_hashfmtstr, kw_hashfmtstr))
-    #print('cfgstr_fmt = %r' % cfgstr_fmt)
+    # print('cfgstr_fmt = %r' % cfgstr_fmt)
     argrepr_iter = (cachestr_repr(args[argx]) for argx in key_argx)
     kwdrepr_iter = (cachestr_repr(given_kwargs[key]) for key in key_kwds)
     if use_hash is None:
-        #print('conditional hashing args')
-        argcfg_list = [hashstr_(argrepr) if len(argrepr) > 16 else argrepr
-                       for argrepr in argrepr_iter]
-        kwdcfg_list =  [hashstr_(kwdrepr) if len(kwdrepr) > 16 else kwdrepr
-                        for kwdrepr in kwdrepr_iter]
+        # print('conditional hashing args')
+        argcfg_list = [
+            hashstr_(argrepr) if len(argrepr) > 16 else argrepr
+            for argrepr in argrepr_iter
+        ]
+        kwdcfg_list = [
+            hashstr_(kwdrepr) if len(kwdrepr) > 16 else kwdrepr
+            for kwdrepr in kwdrepr_iter
+        ]
     elif use_hash is True:
-        #print('hashing args')
+        # print('hashing args')
         argcfg_list = [hashstr_(argrepr) for argrepr in argrepr_iter]
-        kwdcfg_list =  [hashstr_(kwdrepr) for kwdrepr in kwdrepr_iter]
+        kwdcfg_list = [hashstr_(kwdrepr) for kwdrepr in kwdrepr_iter]
     else:
         argcfg_list = list(argrepr_iter)
         kwdcfg_list = list(kwdrepr_iter)
-    #print('formating args and kwargs')
+    # print('formating args and kwargs')
     cfgstr = cfgstr_fmt % tuple(chain(argcfg_list, kwdcfg_list))
-    #print('made cfgstr = %r' % cfgstr)
+    # print('made cfgstr = %r' % cfgstr)
     return cfgstr
 
 
-def cached_func(fname=None, cache_dir='default', appname='utool', key_argx=None,
-                key_kwds=None, use_cache=None, verbose=None):
+def cached_func(
+    fname=None,
+    cache_dir='default',
+    appname='utool',
+    key_argx=None,
+    key_kwds=None,
+    use_cache=None,
+    verbose=None,
+):
     r"""
     Wraps a function with a Cacher object
 
@@ -822,24 +875,25 @@ def cached_func(fname=None, cache_dir='default', appname='utool', key_argx=None,
     """
     if verbose is None:
         verbose = VERBOSE_CACHE
+
     def cached_closure(func):
         from utool import util_decor
         import utool as ut
+
         fname_ = util_inspect.get_funcname(func) if fname is None else fname
         kwdefaults = util_inspect.get_kwdefaults(func)
-        argnames   = util_inspect.get_argnames(func)
+        argnames = util_inspect.get_argnames(func)
         if ut.is_method(func):
             # ignore self for methods
             argnames = argnames[1:]
-        cacher = Cacher(fname_, cache_dir=cache_dir, appname=appname,
-                        verbose=verbose)
+        cacher = Cacher(fname_, cache_dir=cache_dir, appname=appname, verbose=verbose)
         if use_cache is None:
             use_cache_ = not util_arg.get_argflag('--nocache-' + fname_)
         else:
             use_cache_ = use_cache
-        #_dbgdict = dict(fname_=fname_, key_kwds=key_kwds, appname=appname,
+        # _dbgdict = dict(fname_=fname_, key_kwds=key_kwds, appname=appname,
         #                key_argx=key_argx, use_cache_=use_cache_)
-        #@functools.wraps(func)
+        # @functools.wraps(func)
         def cached_wraper(*args, **kwargs):
             """
             Cached Wrapper Function
@@ -849,11 +903,11 @@ def cached_func(fname=None, cache_dir='default', appname='utool', key_argx=None,
             """
             try:
                 if verbose > 2:
-                    print('[util_cache] computing cached function fname_=%s' %
-                          ( fname_,))
+                    print('[util_cache] computing cached function fname_=%s' % (fname_,))
                 # Implicitly adds use_cache to kwargs
-                cfgstr = get_cfgstr_from_args(func, args, kwargs, key_argx,
-                                              key_kwds, kwdefaults, argnames)
+                cfgstr = get_cfgstr_from_args(
+                    func, args, kwargs, key_argx, key_kwds, kwdefaults, argnames
+                )
                 if util_cplat.WIN32:
                     # remove potentially invalid chars
                     cfgstr = '_' + util_hash.hashstr27(cfgstr)
@@ -867,44 +921,51 @@ def cached_func(fname=None, cache_dir='default', appname='utool', key_argx=None,
                 # Cached missed compute function
                 data = func(*args, **kwargs)
                 # Cache save
-                #if use_cache__:
+                # if use_cache__:
                 # TODO: save_cache
                 cacher.save(data, cfgstr)
                 return data
-            #except ValueError as ex:
+            # except ValueError as ex:
             # handle protocal error
             except Exception as ex:
                 from utool import util_dbg
-                _dbgdict2 = dict(key_argx=key_argx, lenargs=len(args),
-                                 lenkw=len(kwargs),)
-                msg = '\n'.join([
-                    '+--- UTOOL --- ERROR IN CACHED FUNCTION',
-                    #'dbgdict = ' + utool.repr4(_dbgdict),
-                    'dbgdict2 = ' + util_str.repr4(_dbgdict2),
-                ])
+
+                _dbgdict2 = dict(key_argx=key_argx, lenargs=len(args), lenkw=len(kwargs),)
+                msg = '\n'.join(
+                    [
+                        '+--- UTOOL --- ERROR IN CACHED FUNCTION',
+                        #'dbgdict = ' + utool.repr4(_dbgdict),
+                        'dbgdict2 = ' + util_str.repr4(_dbgdict2),
+                    ]
+                )
                 util_dbg.printex(ex, msg)
                 raise
+
         # Give function a handle to the cacher object
         cached_wraper = util_decor.preserve_sig(cached_wraper, func)
         cached_wraper.cacher = cacher
         return cached_wraper
+
     return cached_closure
 
 
 # --- Global Cache ---
 
+
 def view_global_cache_dir(appname='default'):
     import utool
+
     dir_ = utool.get_global_cache_dir(appname=appname)
     utool.view_directory(dir_)
 
 
 def get_global_cache_dir(appname='default', ensure=False):
     """ Returns (usually) writable directory for an application cache """
-    if appname is None or  appname == 'default':
+    if appname is None or appname == 'default':
         appname = get_default_appname()
-    global_cache_dir = util_cplat.get_app_resource_dir(appname,
-                                                       meta_util_constants.global_cache_dname)
+    global_cache_dir = util_cplat.get_app_resource_dir(
+        appname, meta_util_constants.global_cache_dname
+    )
     if ensure:
         util_path.ensuredir(global_cache_dir)
     return global_cache_dir
@@ -938,7 +999,7 @@ def shelf_open(fpath):
     return contextlib.closing(shelve.open(fpath))
 
 
-#class YAWShelf(object):
+# class YAWShelf(object):
 #    def __init__(self, shelf_fpath):
 #        self.shelf_fpath = shelf_fpath
 #        import shelve
@@ -947,14 +1008,16 @@ def shelf_open(fpath):
 
 class GlobalShelfContext(object):
     """ older class. might need update """
+
     def __init__(self, appname):
         self.appname = appname
 
     def __enter__(self):
-        #self.shelf = get_global_shelf(self.appname)
+        # self.shelf = get_global_shelf(self.appname)
 
         try:
             import dbm
+
             DBMError = dbm.error
         except Exception:
             DBMError = OSError
@@ -966,15 +1029,20 @@ class GlobalShelfContext(object):
             self.shelf = shelve.open(shelf_fpath)
         except DBMError as ex:
             from utool import util_dbg
-            util_dbg.printex(ex, 'Failed opening shelf_fpath due to bad version, remove and retry',
-                             key_list=['shelf_fpath'])
+
+            util_dbg.printex(
+                ex,
+                'Failed opening shelf_fpath due to bad version, remove and retry',
+                key_list=['shelf_fpath'],
+            )
             import utool as ut
+
             ut.delete(shelf_fpath)
             self.shelf = shelve.open(shelf_fpath)
         except Exception as ex:
             from utool import util_dbg
-            util_dbg.printex(ex, 'Failed opening shelf_fpath',
-                             key_list=['shelf_fpath'])
+
+            util_dbg.printex(ex, 'Failed opening shelf_fpath', key_list=['shelf_fpath'])
             raise
         return self.shelf
 
@@ -983,7 +1051,7 @@ class GlobalShelfContext(object):
         if trace is not None:
             print('[cache] Error under GlobalShelfContext!: ' + str(value))
             return False  # return a falsey value on error
-        #close_global_shelf(self.appname)
+        # close_global_shelf(self.appname)
 
 
 def global_cache_read(key, appname='default', **kwargs):
@@ -1009,15 +1077,16 @@ def global_cache_write(key, val, appname='default'):
 
 def delete_global_cache(appname='default'):
     """ Reads cache files to a safe place in each operating system """
-    #close_global_shelf(appname)
+    # close_global_shelf(appname)
     shelf_fpath = get_global_shelf_fpath(appname)
     util_path.remove_file(shelf_fpath, verbose=True, dryrun=False)
 
-#import abc  # abstract base class
-#import six
+
+# import abc  # abstract base class
+# import six
 
 
-#@six.add_metaclass(abc.ABCMeta)
+# @six.add_metaclass(abc.ABCMeta)
 class Cachable(object):
     """
     Abstract base class.
@@ -1027,15 +1096,16 @@ class Cachable(object):
     must implement get_cfgstr()
 
     """
+
     ext = '.cPkl'  # TODO: Capt'n Proto backend to replace pickle backend
 
-    #@abc.abstractmethod
+    # @abc.abstractmethod
     def get_cfgstr(self):
         return getattr(self, 'cfgstr', 'DEFAULT')
         # return 'DEFAULT'
         # raise NotImplementedError('abstract method')
 
-    #@abc.abstractmethod
+    # @abc.abstractmethod
     def get_prefix(self):
         # import utool as ut
         return self.__class__.__name__ + '_'
@@ -1063,11 +1133,13 @@ class Cachable(object):
         _dpath = self.get_cachedir(cachedir)
         _fname = self.get_prefix()
         _cfgstr = self.get_cfgstr() if cfgstr is None else cfgstr
-        _ext =   self.ext if ext is None else ext
+        _ext = self.ext if ext is None else ext
         fpath = _args2_fpath(_dpath, _fname, _cfgstr, _ext)
         return fpath
 
-    def delete(self, cachedir=None, cfgstr=None, verbose=True or VERBOSE or util_arg.VERBOSE):
+    def delete(
+        self, cachedir=None, cfgstr=None, verbose=True or VERBOSE or util_arg.VERBOSE
+    ):
         """
         saves query result to directory
         """
@@ -1077,8 +1149,9 @@ class Cachable(object):
         os.remove(fpath)
 
     @profile
-    def save(self, cachedir=None, cfgstr=None, verbose=VERBOSE, quiet=QUIET,
-             ignore_keys=None):
+    def save(
+        self, cachedir=None, cfgstr=None, verbose=VERBOSE, quiet=QUIET, ignore_keys=None
+    ):
         """
         saves query result to directory
         """
@@ -1094,14 +1167,16 @@ class Cachable(object):
         if ignore_keys is None:
             save_dict = statedict
         else:
-            save_dict = {key: val
-                         for (key, val) in six.iteritems(statedict)
-                         if key not in ignore_keys}
+            save_dict = {
+                key: val
+                for (key, val) in six.iteritems(statedict)
+                if key not in ignore_keys
+            }
 
         util_io.save_data(fpath, save_dict)
         return fpath
-        #save_cache(cachedir, '', cfgstr, self.__dict__)
-        #with open(fpath, 'wb') as file_:
+        # save_cache(cachedir, '', cfgstr, self.__dict__)
+        # with open(fpath, 'wb') as file_:
         #    pickle.dump(self.__dict__, file_)
 
     def _unsafe_load(self, fpath, ignore_keys=None):
@@ -1114,12 +1189,13 @@ class Cachable(object):
             self.__setstate__(loaded_dict)
         else:
             self.__dict__.update(loaded_dict)
-        #with open(fpath, 'rb') as file_:
+        # with open(fpath, 'rb') as file_:
         #    loaded_dict = pickle.load(file_)
         #    self.__dict__.update(loaded_dict)
 
     def glob_valid_targets(self, cachedir=None, partial_cfgstr=''):
         from utool import util_path
+
         prefix = self.get_prefix()
         pattern = prefix + '*' + partial_cfgstr + '*' + self.ext
         cachedir = self.get_cachedir(cachedir)
@@ -1133,14 +1209,24 @@ class Cachable(object):
         valid_targets = self.glob_valid_targets(cachedir, partial_cfgstr)
         if len(valid_targets) != 1:
             import utool as ut
-            msg = 'need to further specify target. valid_targets=%s' % (ut.repr3(valid_targets,))
+
+            msg = 'need to further specify target. valid_targets=%s' % (
+                ut.repr3(valid_targets,)
+            )
             raise ValueError(msg)
         fpath = valid_targets[0]
         self.load(fpath=fpath, **kwargs)
 
     @profile
-    def load(self, cachedir=None, cfgstr=None, fpath=None, verbose=None,
-             quiet=QUIET, ignore_keys=None):
+    def load(
+        self,
+        cachedir=None,
+        cfgstr=None,
+        fpath=None,
+        verbose=None,
+        quiet=QUIET,
+        ignore_keys=None,
+    ):
         """
         Loads the result from the given database
         """
@@ -1156,25 +1242,28 @@ class Cachable(object):
                 print('... self cache hit: %r' % (basename(fpath),))
         except ValueError as ex:
             import utool as ut
+
             msg = '[!Cachable] Cachable(%s) is likely corrupt' % (self.get_cfgstr())
             print('CORRUPT fpath = %s' % (fpath,))
             ut.printex(ex, msg, iswarning=True)
             raise
-        #except BadZipFile as ex:
+        # except BadZipFile as ex:
         except zipfile.error as ex:
             import utool as ut
+
             msg = '[!Cachable] Cachable(%s) has bad zipfile' % (self.get_cfgstr())
             print('CORRUPT fpath = %s' % (fpath,))
             ut.printex(ex, msg, iswarning=True)
             raise
-            #if exists(fpath):
+            # if exists(fpath):
             #    #print('[Cachable] Removing corrupted file: %r' % fpath)
             #    #os.remove(fpath)
             #    raise hsexcept.HotsNeedsRecomputeError(msg)
-            #else:
+            # else:
             #    raise Exception(msg)
         except IOError as ex:
             import utool as ut
+
             if not exists(fpath):
                 msg = '... self cache miss: %r' % (basename(fpath),)
                 if verbose:
@@ -1186,6 +1275,7 @@ class Cachable(object):
             raise
         except Exception as ex:
             import utool as ut
+
             ut.printex(ex, 'unknown exception while loading query result')
             raise
 
@@ -1223,6 +1313,7 @@ def get_lru_cache(max_size=5):
     USE_C_LRU = False
     if USE_C_LRU:
         import lru
+
         cache_obj = lru.LRU(max_size)
     else:
         cache_obj = LRUDict(max_size)
@@ -1284,12 +1375,14 @@ class LRUDict(object):
 
     def __str__(self):
         import utool as ut
+
         return ut.repr4(self._cache, nl=False)
 
     def __repr__(self):
         import utool as ut
+
         return 'LRUDict(' + ut.repr4(self._cache) + ')'
-        #return repr(self._cache)
+        # return repr(self._cache)
 
     def __iter__(self):
         return iter(self._cache)
@@ -1349,6 +1442,7 @@ def time_different_diskstores():
     """
     import utool as ut
     import simplejson as json
+
     shelf_path = 'test.shelf'
     json_path = 'test.json'
     cpkl_path = 'test.pkl'
@@ -1387,8 +1481,8 @@ def time_different_diskstores():
 
     shelf_write_test()
     shelf_read_test()
-    #json_write_test()
-    #json_read_test()
+    # json_write_test()
+    # json_read_test()
     cPickle_write_test()
     cPickle_read_test()
     cPickle_read_test2()
@@ -1420,7 +1514,7 @@ class KeyedDefaultDict(util_dict.DictLike):
 # @six.add_metaclass(util_class.ReloadingMetaclass)
 @util_class.reloadable_class
 class LazyDict(object):
-    #class LazyDict(collections.Mapping):
+    # class LazyDict(collections.Mapping):
     """
     Hacky dictionary where values that are functions are counted as lazy
 
@@ -1447,9 +1541,16 @@ class LazyDict(object):
         >>> self.printinfo()
         >>> print(self.tostring(is_eager=False))
     """
-    def __init__(self, other=None, is_eager=True, verbose=False, reprkw=None,
-                 mutable=False,
-                 **kwargs):
+
+    def __init__(
+        self,
+        other=None,
+        is_eager=True,
+        verbose=False,
+        reprkw=None,
+        mutable=False,
+        **kwargs
+    ):
         # Registered lazy evaluations
         self._eval_funcs = {}
         # Computed results
@@ -1470,24 +1571,21 @@ class LazyDict(object):
 
     def set_lazy_func(self, key, func):
         assert util_type.is_funclike(func), 'func must be a callable'
-        #if key in self._stored_results:
+        # if key in self._stored_results:
         #    raise ValueError(
         #        ('Cannot add new lazy function for key=%r'
         #         'that has been computed') % (key,))
-        #if key in self._stored_results:
+        # if key in self._stored_results:
         if not self._mutable and key in self.reconstructable_keys():
-            raise ValueError(
-                ('Cannot overwrite lazy function for key=%r') % (key,))
+            raise ValueError(('Cannot overwrite lazy function for key=%r') % (key,))
         self._eval_funcs[key] = func
 
     def setitem(self, key, value):
         # HACK, lazy funcs should all be registered
         # this should should always just set a value
         if not self._mutable and key in self.reconstructable_keys():
-            raise ValueError(
-                ('Cannot overwrite lazy function for key=%r') % (key,))
-        if (self.infer_lazy_vals_hack and
-             util_type.is_funclike(value)):
+            raise ValueError(('Cannot overwrite lazy function for key=%r') % (key,))
+        if self.infer_lazy_vals_hack and util_type.is_funclike(value):
             self.set_lazy_func(key, value)
         else:
             self._stored_results[key] = value
@@ -1508,7 +1606,7 @@ class LazyDict(object):
 
     def eager_eval(self, key):
         if key in self._stored_results:
-            value  = self._stored_results[key]
+            value = self._stored_results[key]
         else:
             if self._verbose:
                 print('[util_cache] Evaluating key=%r' % (key,))
@@ -1518,7 +1616,7 @@ class LazyDict(object):
 
     def lazy_eval(self, key):
         if key in self._stored_results:
-            value  = self._stored_results[key]
+            value = self._stored_results[key]
         else:
             value = self._eval_funcs[key]
         return value
@@ -1572,17 +1670,21 @@ class LazyDict(object):
 
     def tostring(self, is_eager=None, keys=None, **kwargs):
         import utool as ut
+
         dict_ = self.asdict(is_eager=is_eager)
+
         class AwakeFaceRepr(object):
             def __repr__(self):
                 return '!'
                 # return '(o.o)'
                 # return "٩(ˊᗜˋ*)و"
+
         class SleepFaceRepr(object):
             def __repr__(self):
                 return 'z'
                 # return '(-_-)'
                 # return '(ᵕ≀ᵕ)'
+
         for key in self.evaluated_keys():
             # dict_[key] = '!'
             dict_[key] = AwakeFaceRepr()
@@ -1599,7 +1701,7 @@ class LazyDict(object):
         if len(d) > 1:
             raise ValueError('can only specify one default')
         elif len(d) == 1:
-            #assert len(d) == 0, 'no support for default yet'
+            # assert len(d) == 0, 'no support for default yet'
             if key not in self:
                 return d[0]
         return self.getitem(key, self._is_eager)
@@ -1645,17 +1747,18 @@ class LazyDict(object):
     def __repr__(self):
         return self.tostring(**self.reprkw)
 
-    #def __getstate__(self):
+    # def __getstate__(self):
     #    state_dict = self.asdict()
     #    return state_dict
 
-    #def __setstate__(self, state_dict):
+    # def __setstate__(self, state_dict):
     #    self._stored_results.update(state_dict)
 
 
 @six.add_metaclass(util_class.ReloadingMetaclass)
 class LazyList(object):
     """ very hacky list implemented as a dictionary """
+
     def __init__(self, **kwargs):
         self._hackstore = LazyDict(**kwargs)
 
@@ -1666,10 +1769,10 @@ class LazyList(object):
         try:
             return self._hackstore[index]
         except KeyError:
-            #raise ValueError('index=%r out of bounds' % (index,))
+            # raise ValueError('index=%r out of bounds' % (index,))
             raise ValueError(
-                'index=%r out of bounds or error computing lazy value.' % (
-                    index,))
+                'index=%r out of bounds or error computing lazy value.' % (index,)
+            )
 
     def append(self, item):
         self._hackstore[len(self._hackstore)] = item
@@ -1690,6 +1793,8 @@ if __name__ == '__main__':
         python -m utool.util_cache --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

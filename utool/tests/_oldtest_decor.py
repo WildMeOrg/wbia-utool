@@ -8,7 +8,7 @@ def func1(arg1, arg2):
     pass
 
 
-def func2(arg1, arg2,  arg4=5, *args, **kwargs):
+def func2(arg1, arg2, arg4=5, *args, **kwargs):
     pass
 
 
@@ -32,6 +32,7 @@ def decor(func):
     @utool.accepts_scalar_input2([0, 4])
     def testwrp(*args, **kwargs):
         return func(*args, **kwargs)
+
     testwrp = utool.preserve_sig(testwrp, func, force=True)
     return testwrp
 
@@ -82,24 +83,26 @@ class BoringTestClass(object):
 
 
 def print_argspec(func):
-        print('------------')
-        print('func_name = %r' % func.func_name)
-        # Extract argspec from orig function
-        argspec = inspect.getargspec(func)
-        # Get the function definition signature
-        defsig = inspect.formatargspec(*argspec)
-        # Get function call signature (no defaults)
-        callsig = inspect.formatargspec(*argspec[0:3])
-        print('argspec = %r' % (argspec,))
-        print('callsig = %r' % (callsig,))
-        print('defsig = %r' % (defsig,))
-        print('------------')
+    print('------------')
+    print('func_name = %r' % func.func_name)
+    # Extract argspec from orig function
+    argspec = inspect.getargspec(func)
+    # Get the function definition signature
+    defsig = inspect.formatargspec(*argspec)
+    # Get function call signature (no defaults)
+    callsig = inspect.formatargspec(*argspec[0:3])
+    print('argspec = %r' % (argspec,))
+    print('callsig = %r' % (callsig,))
+    print('defsig = %r' % (defsig,))
+    print('------------')
 
 
 def test_decorator_module():
     import utool as ut
     import decorator
+
     ut.rrrr()
+
     def testdecor(func):
         @ut.on_exception_report_input
         @ut.accepts_scalar_input2([0])
@@ -107,6 +110,7 @@ def test_decorator_module():
         def testwrp(*args, **kwargs):
             print('was wrapped')
             return func(*args, **kwargs)
+
         return testwrp
 
     preserving_testdecor = decorator.decorator(testdecor)
@@ -154,8 +158,8 @@ def main():
     for func in [func1, func2, func3, func4, func5, func6]:
         print_argspec(func)
 
-    #utool.rrrr()
-    #utool.util_decor.rrr()
+    # utool.rrrr()
+    # utool.util_decor.rrr()
 
     self = BoringTestClass()
     print('Testing class methods')
@@ -190,9 +194,11 @@ if __name__ == '__main__':
         python -m utool.tests.test_decor --allexamples --noface --nosrc
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
     import sys
+
     if len(sys.argv) == 1:
         main()
     else:

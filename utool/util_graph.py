@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function, unicode_literals
+
 try:
     import numpy as np
 except ImportError:
@@ -14,11 +15,13 @@ from utool import util_inject
 from utool import util_const
 from six.moves import reduce, zip, range
 import itertools as it
+
 (print, rrr, profile) = util_inject.inject2(__name__)
 
 
 def nx_topsort_nodes(graph, nodes):
     import utool as ut
+
     node_rank = ut.nx_topsort_rank(graph, nodes)
     node_idx = ut.rebase_labels(node_rank)
     sorted_nodes = ut.take(nodes, node_idx)
@@ -31,6 +34,7 @@ def nx_topsort_rank(graph, nodes=None):
     nodes = flat_node_order_
     """
     import utool as ut
+
     if False:
         # Determenistic version
         # Ok, this doesn't work.
@@ -62,6 +66,7 @@ def nx_common_ancestors(graph, node1, node2):
 
 def nx_make_adj_matrix(G):
     import utool as ut
+
     nodes = list(G.nodes())
     node2_idx = ut.make_index_lookup(nodes)
     edges = list(G.edges())
@@ -107,6 +112,7 @@ def nx_transitive_reduction(G, mode=1):
     """
 
     import utool as ut
+
     has_cycles = not nx.is_directed_acyclic_graph(G)
     if has_cycles:
         # FIXME: this does not work for cycle graphs.
@@ -168,15 +174,15 @@ def nx_transitive_reduction(G, mode=1):
         A = make_adj_matrix(G)
         B = make_adj_matrix(G_)
 
-        #AB = A * B
-        #AB = A.T.dot(B)
+        # AB = A * B
+        # AB = A.T.dot(B)
         AB = A.dot(B)
-        #AB = A.dot(B.T)
+        # AB = A.dot(B.T)
 
         A_and_notAB = np.logical_and(A, np.logical_not(AB))
         tr_uvs = np.where(A_and_notAB)
 
-        #nodes = G.nodes()
+        # nodes = G.nodes()
         edges = list(zip(*ut.unflat_take(nodes, tr_uvs)))
 
         G_tr = G.__class__()
@@ -225,6 +231,7 @@ def nx_sink_nodes(graph):
 
 def nx_to_adj_dict(graph):
     import utool as ut
+
     adj_dict = ut.ddict(list)
     for u, edges in graph.adjacency():
         adj_dict[u].extend(list(edges.keys()))
@@ -270,9 +277,11 @@ def nx_dag_node_rank(graph, nodes=None):
         ranks = [3, 2, 1]
     """
     import utool as ut
+
     source = list(ut.nx_source_nodes(graph))[0]
-    longest_paths = dict([(target, dag_longest_path(graph, source, target))
-                          for target in graph.nodes()])
+    longest_paths = dict(
+        [(target, dag_longest_path(graph, source, target)) for target in graph.nodes()]
+    )
     node_to_rank = ut.map_dict_vals(len, longest_paths)
     if nodes is None:
         return node_to_rank
@@ -286,25 +295,23 @@ def nx_all_nodes_between(graph, source, target, data=False):
     Find all nodes with on paths between source and target.
     """
     import utool as ut
+
     if source is None:
         # assume there is a single source
         sources = list(ut.nx_source_nodes(graph))
-        assert len(sources) == 1, (
-            'specify source if there is not only one')
+        assert len(sources) == 1, 'specify source if there is not only one'
         source = sources[0]
     if target is None:
         # assume there is a single source
         sinks = list(ut.nx_sink_nodes(graph))
-        assert len(sinks) == 1, (
-            'specify sink if there is not only one')
+        assert len(sinks) == 1, 'specify sink if there is not only one'
         target = sinks[0]
     all_simple_paths = list(nx.all_simple_paths(graph, source, target))
     nodes = sorted(set.union(*map(set, all_simple_paths)))
     return nodes
 
 
-def nx_all_simple_edge_paths(G, source, target, cutoff=None, keys=False,
-                             data=False):
+def nx_all_simple_edge_paths(G, source, target, cutoff=None, keys=False, data=False):
     """
     Returns each path from source to target as a list of edges.
 
@@ -321,6 +328,7 @@ def nx_all_simple_edge_paths(G, source, target, cutoff=None, keys=False,
         return
     import utool as ut
     import six
+
     visited_nodes = [source]
     visited_edges = []
     if G.is_multigraph():
@@ -354,8 +362,9 @@ def nx_all_simple_edge_paths(G, source, target, cutoff=None, keys=False,
                 visited_edges.pop()
 
 
-def nx_edges_between(graph, nodes1, nodes2=None, assume_disjoint=False,
-                     assume_sparse=True):
+def nx_edges_between(
+    graph, nodes1, nodes2=None, assume_disjoint=False, assume_sparse=True
+):
     r"""
     Get edges between two components or within a single component
 
@@ -475,9 +484,7 @@ def nx_edges_between(graph, nodes1, nodes2=None, assume_disjoint=False,
                     _node_combo_lower(graph, both),  # B-to-B (lower)
                 )
             else:
-                edge_sets = (
-                    _node_combo_upper(graph, both),  # B-to-B (upper)
-                )
+                edge_sets = (_node_combo_upper(graph, both),)  # B-to-B (upper)
         elif assume_disjoint:
             # Case where we find edges between disjoint sets
             only1 = set(nodes1)
@@ -488,9 +495,7 @@ def nx_edges_between(graph, nodes1, nodes2=None, assume_disjoint=False,
                     _node_product(graph, only2, only1),  # 2-to-1
                 )
             else:
-                edge_sets = (
-                    _node_product(graph, only1, only2),  # 1-to-2
-                )
+                edge_sets = (_node_product(graph, only1, only2),)  # 1-to-2
         else:
             # Full general case
             nodes1_ = set(nodes1)
@@ -507,20 +512,20 @@ def nx_edges_between(graph, nodes1, nodes2=None, assume_disjoint=False,
             if graph.is_directed():
                 edge_sets = (
                     _node_product(graph, only1, only2),  # 1-to-2
-                    _node_product(graph, only1, both),   # 1-to-B
-                    _node_combo_upper(graph, both),      # B-to-B (u)
-                    _node_combo_lower(graph, both),      # B-to-B (l)
-                    _node_product(graph, both, only1),   # B-to-1
-                    _node_product(graph, both, only2),   # B-to-2
-                    _node_product(graph, only2, both),   # 2-to-B
+                    _node_product(graph, only1, both),  # 1-to-B
+                    _node_combo_upper(graph, both),  # B-to-B (u)
+                    _node_combo_lower(graph, both),  # B-to-B (l)
+                    _node_product(graph, both, only1),  # B-to-1
+                    _node_product(graph, both, only2),  # B-to-2
+                    _node_product(graph, only2, both),  # 2-to-B
                     _node_product(graph, only2, only1),  # 2-to-1
                 )
             else:
                 edge_sets = (
                     _node_product(graph, only1, only2),  # 1-to-2
-                    _node_product(graph, only1, both),   # 1-to-B
-                    _node_combo_upper(graph, both),      # B-to-B (u)
-                    _node_product(graph, only2, both),   # 2-to-B
+                    _node_product(graph, only1, both),  # 1-to-B
+                    _node_combo_upper(graph, both),  # B-to-B (u)
+                    _node_product(graph, only2, both),  # 2-to-B
                 )
 
         for u, v in it.chain.from_iterable(edge_sets):
@@ -543,10 +548,12 @@ def nx_edges_between(graph, nodes1, nodes2=None, assume_disjoint=False,
                 nodes_isect = nodes1_.intersection(nodes2_)
                 nodes_only1 = nodes1_ - nodes_isect
                 nodes_only2 = nodes2_ - nodes_isect
-                edge_sets = [it.product(nodes_only1, nodes_only2),
-                             it.product(nodes_only1, nodes_isect),
-                             it.product(nodes_only2, nodes_isect),
-                             it.combinations(nodes_isect, 2)]
+                edge_sets = [
+                    it.product(nodes_only1, nodes_only2),
+                    it.product(nodes_only1, nodes_isect),
+                    it.product(nodes_only2, nodes_isect),
+                    it.combinations(nodes_isect, 2),
+                ]
                 edge_iter = it.chain.from_iterable(edge_sets)
 
         if graph.is_directed():
@@ -734,6 +741,7 @@ def nx_set_default_edge_attributes(graph, key, val):
 
 def nx_get_default_edge_attributes(graph, key, default=None):
     import utool as ut
+
     edge_list = list(graph.edges())
     partial_attr_dict = nx.get_edge_attributes(graph, key)
     attr_dict = ut.dict_subset(partial_attr_dict, edge_list, default=default)
@@ -742,6 +750,7 @@ def nx_get_default_edge_attributes(graph, key, default=None):
 
 def nx_get_default_node_attributes(graph, key, default=None):
     import utool as ut
+
     node_list = list(graph.nodes())
     partial_attr_dict = nx.get_node_attributes(graph, key)
     attr_dict = ut.dict_subset(partial_attr_dict, node_list, default=default)
@@ -759,8 +768,14 @@ def nx_gen_node_values(G, key, nodes, default=util_const.NoParam):
         return (node_dict[n].get(key, default) for n in nodes)
 
 
-def nx_gen_node_attrs(G, key, nodes=None, default=util_const.NoParam,
-                      on_missing='error', on_keyerr='default'):
+def nx_gen_node_attrs(
+    G,
+    key,
+    nodes=None,
+    default=util_const.NoParam,
+    on_missing='error',
+    on_keyerr='default',
+):
     """
     Improved generator version of nx.get_node_attributes
 
@@ -866,8 +881,9 @@ def nx_gen_node_attrs(G, key, nodes=None, default=util_const.NoParam,
     elif on_missing == 'default':
         node_data = ((n, node_dict.get(n, {})) for n in nodes)
     else:
-        raise KeyError('on_missing={} must be error, filter or default'.format(
-            on_missing))
+        raise KeyError(
+            'on_missing={} must be error, filter or default'.format(on_missing)
+        )
     # Get `node_attrs` desired value out of dictionary
     if on_keyerr == 'error':
         node_attrs = ((n, d[key]) for n, d in node_data)
@@ -880,8 +896,14 @@ def nx_gen_node_attrs(G, key, nodes=None, default=util_const.NoParam,
     return node_attrs
 
 
-def nx_gen_edge_values(G, key, edges=None, default=util_const.NoParam,
-                       on_missing='error', on_keyerr='default'):
+def nx_gen_edge_values(
+    G,
+    key,
+    edges=None,
+    default=util_const.NoParam,
+    on_missing='error',
+    on_keyerr='default',
+):
     """
     Generates attributes values of specific edges
 
@@ -904,11 +926,11 @@ def nx_gen_edge_values(G, key, edges=None, default=util_const.NoParam,
     if on_missing == 'error':
         data_iter = (G.adj[u][v] for u, v in edges)
     elif on_missing == 'default':
-        data_iter = (G.adj[u][v] if G.has_edge(u, v) else {}
-                     for u, v in edges)
+        data_iter = (G.adj[u][v] if G.has_edge(u, v) else {} for u, v in edges)
     else:
-        raise KeyError('on_missing={} must be error, filter or default'.format(
-            on_missing))
+        raise KeyError(
+            'on_missing={} must be error, filter or default'.format(on_missing)
+        )
     # Get `value_iter` desired value out of dictionary
     if on_keyerr == 'error':
         value_iter = (d[key] for d in data_iter)
@@ -923,8 +945,14 @@ def nx_gen_edge_values(G, key, edges=None, default=util_const.NoParam,
     #     return (G.adj[u][v].get(key, default) for u, v in edges)
 
 
-def nx_gen_edge_attrs(G, key, edges=None, default=util_const.NoParam,
-                      on_missing='error', on_keyerr='default'):
+def nx_gen_edge_attrs(
+    G,
+    key,
+    edges=None,
+    default=util_const.NoParam,
+    on_missing='error',
+    on_keyerr='default',
+):
     """
     Improved generator version of nx.get_edge_attributes
 
@@ -975,9 +1003,9 @@ def nx_gen_edge_attrs(G, key, edges=None, default=util_const.NoParam,
     elif on_missing == 'filter':
         edge_data = (((u, v), G.adj[u][v]) for u, v in edges if G.has_edge(u, v))
     elif on_missing == 'default':
-        edge_data = (((u, v), G.adj[u][v])
-                     if G.has_edge(u, v) else ((u, v), {})
-                     for u, v in edges)
+        edge_data = (
+            ((u, v), G.adj[u][v]) if G.has_edge(u, v) else ((u, v), {}) for u, v in edges
+        )
     else:
         raise KeyError('on_missing={}'.format(on_missing))
     # Get `edge_attrs` desired value out of dictionary
@@ -1049,6 +1077,7 @@ def nx_minimum_weight_component(graph, weight='weight'):
 def nx_from_matrix(weight_matrix, nodes=None, remove_self=True):
     import utool as ut
     import numpy as np
+
     if nodes is None:
         nodes = list(range(len(weight_matrix)))
     weight_list = weight_matrix.ravel()
@@ -1083,7 +1112,7 @@ def nx_ensure_agraph_color(graph):
     except ImportError:
         from plottool import color_funcs
         import wbia.plottool as pt
-    #import six
+    # import six
     def _fix_agraph_color(data):
         try:
             orig_color = data.get('color', None)
@@ -1093,7 +1122,7 @@ def nx_ensure_agraph_color(graph):
                 color = [0, 0, 0]
             if color is not None:
                 color = pt.ensure_nonhex_color(color)
-                #if isinstance(color, np.ndarray):
+                # if isinstance(color, np.ndarray):
                 #    color = color.tolist()
                 color = list(color_funcs.ensure_base255(color))
                 if alpha is not None:
@@ -1108,6 +1137,7 @@ def nx_ensure_agraph_color(graph):
                     data['color'] = '#%02x%02x%02x%02x' % color
         except Exception as ex:
             import utool as ut
+
             ut.printex(ex, keys=['color', 'orig_color', 'data'])
             raise
 
@@ -1125,7 +1155,7 @@ def nx_edges(graph, keys=False, data=False):
         edges = graph.edges(keys=keys, data=data)
     else:
         edges = graph.edges(data=data)
-        #if keys:
+        # if keys:
         #    edges = [e[0:2] + (0,) + e[:2] for e in edges]
     return edges
 
@@ -1163,6 +1193,7 @@ def testdata_graph():
         >>> ut.show_if_requested()
     """
     import utool as ut
+
     # Define adjacency list
     graph = {
         'a': ['b'],
@@ -1183,16 +1214,37 @@ def testdata_graph():
         'd': ['a', 'e'],
         'e': ['c'],
     }
-    #graph = {'a': ['b'], 'b': ['c'], 'c': ['d'], 'd': ['a']}
-    #graph = {'a': ['b'], 'b': ['c'], 'c': ['d'], 'd': ['e'], 'e': ['a']}
+    # graph = {'a': ['b'], 'b': ['c'], 'c': ['d'], 'd': ['a']}
+    # graph = {'a': ['b'], 'b': ['c'], 'c': ['d'], 'd': ['e'], 'e': ['a']}
     graph = {'a': ['b'], 'b': ['c'], 'c': ['d'], 'd': ['e'], 'e': ['a'], 'f': ['c']}
-    #graph = {'a': ['b'], 'b': ['c'], 'c': ['d'], 'd': ['e'], 'e': ['b']}
+    # graph = {'a': ['b'], 'b': ['c'], 'c': ['d'], 'd': ['e'], 'e': ['b']}
 
-    graph = {'a': ['b', 'c', 'd'], 'e': ['d'], 'f': ['d', 'e'], 'b': [], 'c': [], 'd': []}  # double pair in non-scc
-    graph = {'a': ['b', 'c', 'd'], 'e': ['d'], 'f': ['d', 'e'], 'b': [], 'c': [], 'd': ['e']}  # double pair in non-scc
-    #graph = {'a': ['b', 'c', 'd'], 'e': ['d', 'f'], 'f': ['d', 'e'], 'b': [], 'c': [], 'd': ['e']}  # double pair in non-scc
-    #graph = {'a': ['b', 'c', 'd'], 'e': ['d', 'c'], 'f': ['d', 'e'], 'b': ['e'], 'c': ['e'], 'd': ['e']}  # double pair in non-scc
-    graph = {'a': ['b', 'c', 'd'], 'e': ['d', 'c'], 'f': ['d', 'e'], 'b': ['e'], 'c': ['e', 'b'], 'd': ['e']}  # double pair in non-scc
+    graph = {
+        'a': ['b', 'c', 'd'],
+        'e': ['d'],
+        'f': ['d', 'e'],
+        'b': [],
+        'c': [],
+        'd': [],
+    }  # double pair in non-scc
+    graph = {
+        'a': ['b', 'c', 'd'],
+        'e': ['d'],
+        'f': ['d', 'e'],
+        'b': [],
+        'c': [],
+        'd': ['e'],
+    }  # double pair in non-scc
+    # graph = {'a': ['b', 'c', 'd'], 'e': ['d', 'f'], 'f': ['d', 'e'], 'b': [], 'c': [], 'd': ['e']}  # double pair in non-scc
+    # graph = {'a': ['b', 'c', 'd'], 'e': ['d', 'c'], 'f': ['d', 'e'], 'b': ['e'], 'c': ['e'], 'd': ['e']}  # double pair in non-scc
+    graph = {
+        'a': ['b', 'c', 'd'],
+        'e': ['d', 'c'],
+        'f': ['d', 'e'],
+        'b': ['e'],
+        'c': ['e', 'b'],
+        'd': ['e'],
+    }  # double pair in non-scc
     # Extract G = (V, E)
     nodes = list(graph.keys())
     edges = ut.flatten([[(v1, v2) for v2 in v2s] for v1, v2s in graph.items()])
@@ -1215,15 +1267,15 @@ def testdata_graph():
 def dict_depth(dict_, accum=0):
     if not isinstance(dict_, dict):
         return accum
-    return max([dict_depth(val, accum + 1)
-                for key, val in dict_.items()])
+    return max([dict_depth(val, accum + 1) for key, val in dict_.items()])
 
 
 def edges_to_adjacency_list(edges):
     import utool as ut
+
     children_, parents_ = list(zip(*edges))
     parent_to_children = ut.group_items(parents_, children_)
-    #to_leafs = {tablename: path_to_leafs(tablename, parent_to_children)}
+    # to_leafs = {tablename: path_to_leafs(tablename, parent_to_children)}
     return parent_to_children
 
 
@@ -1291,21 +1343,21 @@ def paths_to_root(tablename, root, child_to_parents):
     if tablename == root:
         return None
     parents = child_to_parents[tablename]
-    return {parent: paths_to_root(parent, root, child_to_parents)
-            for parent in parents}
+    return {parent: paths_to_root(parent, root, child_to_parents) for parent in parents}
 
 
 def get_allkeys(dict_):
     import utool as ut
+
     if not isinstance(dict_, dict):
         return []
-    subkeys = [[key] + get_allkeys(val)
-               for key, val in dict_.items()]
+    subkeys = [[key] + get_allkeys(val) for key, val in dict_.items()]
     return ut.unique_ordered(ut.flatten(subkeys))
 
 
 def traverse_path(start, end, seen_, allkeys, mat):
     import utool as ut
+
     if seen_ is None:
         seen_ = set([])
     index = allkeys.index(start)
@@ -1318,8 +1370,10 @@ def traverse_path(start, end, seen_, allkeys, mat):
         # for sk in subkeys:
         #     seen_.add(sk)
         if len(subkeys) > 0:
-            return {subkey: traverse_path(subkey, end, seen_, allkeys, mat)
-                    for subkey in subkeys}
+            return {
+                subkey: traverse_path(subkey, end, seen_, allkeys, mat)
+                for subkey in subkeys
+            }
     return None
 
 
@@ -1553,6 +1607,7 @@ def simplify_graph(graph):
         ['0 1 2 3 4', '1 3 4', '2 4', '3', '4 3']
     """
     import utool as ut
+
     nodes = sorted(list(graph.nodes()))
     node_lookup = ut.make_index_lookup(nodes)
     if graph.is_multigraph():
@@ -1592,7 +1647,7 @@ def subgraph_from_edges(G, edge_list, ref_back=True):
 
     # TODO: support multi-di-graph
     sub_nodes = list({y for x in edge_list for y in x[0:2]})
-    #edge_list_no_data = [edge[0:2] for edge in edge_list]
+    # edge_list_no_data = [edge[0:2] for edge in edge_list]
     multi_edge_list = [edge[0:3] for edge in edge_list]
 
     if ref_back:
@@ -1667,8 +1722,9 @@ def all_multi_paths(graph, source, target, data=False):
             ],
         ]
     """
-    path_multiedges = list(nx_all_simple_edge_paths(graph, source, target,
-                                                    keys=True, data=data))
+    path_multiedges = list(
+        nx_all_simple_edge_paths(graph, source, target, keys=True, data=data)
+    )
     return path_multiedges
 
 
@@ -1684,6 +1740,7 @@ def bfs_multi_edges(G, source, reverse=False, keys=True, data=False):
     """
     from collections import deque
     from functools import partial
+
     if reverse:
         G = G.reverse()
     edges_iter = partial(G.edges_iter, keys=keys, data=data)
@@ -1747,10 +1804,18 @@ def dfs_conditional(G, source, state, can_cross):
             stack.pop()
 
 
-def bfs_conditional(G, source, reverse=False, keys=True, data=False,
-                    yield_nodes=True, yield_if=None,
-                    continue_if=None, visited_nodes=None,
-                    yield_source=False):
+def bfs_conditional(
+    G,
+    source,
+    reverse=False,
+    keys=True,
+    data=False,
+    yield_nodes=True,
+    yield_if=None,
+    continue_if=None,
+    visited_nodes=None,
+    yield_source=False,
+):
     """
     Produce edges in a breadth-first-search starting at source, but only return
     nodes that satisfiy a condition, and only iterate past a node if it
@@ -1832,14 +1897,14 @@ def bfs_conditional(G, source, reverse=False, keys=True, data=False,
         queue.popleft()
 
 
-def color_nodes(graph, labelattr='label', brightness=.878,
-                outof=None, sat_adjust=None):
+def color_nodes(graph, labelattr='label', brightness=0.878, outof=None, sat_adjust=None):
     """ Colors edges and nodes by nid """
     try:
         import wbia.plottool as pt
     except ImportError:
         import wbia.plottool as pt
     import utool as ut
+
     node_to_lbl = nx.get_node_attributes(graph, labelattr)
     unique_lbls = sorted(set(node_to_lbl.values()))
     ncolors = len(unique_lbls)
@@ -1883,8 +1948,10 @@ def graph_info(graph, ignore=None, stats=False, verbose=False):
 
     if stats:
         import utool
+
         with utool.embed_on_exception_context:
             import pandas as pd
+
             node_df = pd.DataFrame(node_attrs)
             edge_df = pd.DataFrame(edge_attrs)
             if ignore is not None:
@@ -1900,8 +1967,12 @@ def graph_info(graph, ignore=None, stats=False, verbose=False):
             except ValueError:
                 edge_attr_hist = {}
             key_order = ['count', 'mean', 'std', 'min', '25%', '50%', '75%', 'max']
-            node_attr_hist = ut.map_dict_vals(lambda x: ut.order_dict_by(x, key_order), node_attr_hist)
-            edge_attr_hist = ut.map_dict_vals(lambda x: ut.order_dict_by(x, key_order), edge_attr_hist)
+            node_attr_hist = ut.map_dict_vals(
+                lambda x: ut.order_dict_by(x, key_order), node_attr_hist
+            )
+            edge_attr_hist = ut.map_dict_vals(
+                lambda x: ut.order_dict_by(x, key_order), edge_attr_hist
+            )
     else:
         node_attr_hist = ut.dict_hist(ut.flatten([attr.keys() for attr in node_attrs]))
         edge_attr_hist = ut.dict_hist(ut.flatten([attr.keys() for attr in edge_attrs]))
@@ -1909,20 +1980,22 @@ def graph_info(graph, ignore=None, stats=False, verbose=False):
             ut.delete_dict_keys(edge_attr_hist, ignore)
             ut.delete_dict_keys(node_attr_hist, ignore)
     node_type_hist = ut.dict_hist(list(map(type, graph.nodes())))
-    info_dict = ut.odict([
-        ('directed', graph.is_directed()),
-        ('multi', graph.is_multigraph()),
-        ('num_nodes', len(graph)),
-        ('num_edges', len(list(graph.edges()))),
-        ('edge_attr_hist', ut.sort_dict(edge_attr_hist)),
-        ('node_attr_hist', ut.sort_dict(node_attr_hist)),
-        ('node_type_hist', ut.sort_dict(node_type_hist)),
-        ('graph_attrs', graph.graph),
-        ('graph_name', graph.name),
-    ])
-    #unique_attrs = ut.map_dict_vals(ut.unique, ut.dict_accum(*node_attrs))
-    #ut.dict_isect_combine(*node_attrs))
-    #[list(attrs.keys())]
+    info_dict = ut.odict(
+        [
+            ('directed', graph.is_directed()),
+            ('multi', graph.is_multigraph()),
+            ('num_nodes', len(graph)),
+            ('num_edges', len(list(graph.edges()))),
+            ('edge_attr_hist', ut.sort_dict(edge_attr_hist)),
+            ('node_attr_hist', ut.sort_dict(node_attr_hist)),
+            ('node_type_hist', ut.sort_dict(node_type_hist)),
+            ('graph_attrs', graph.graph),
+            ('graph_name', graph.name),
+        ]
+    )
+    # unique_attrs = ut.map_dict_vals(ut.unique, ut.dict_accum(*node_attrs))
+    # ut.dict_isect_combine(*node_attrs))
+    # [list(attrs.keys())]
     if verbose:
         print(ut.repr3(info_dict))
     return info_dict
@@ -1934,17 +2007,19 @@ def get_graph_bounding_box(graph):
         import vtool as vt
     except ImportError:
         import vtool as vt
-    #nx.get_node_attrs = nx.get_node_attributes
+    # nx.get_node_attrs = nx.get_node_attributes
     nodes = list(graph.nodes())
     # pos_list = nx_gen_node_values(graph, 'pos', nodes, default=(0, 0))
     # shape_list = nx_gen_node_values(graph, 'size', nodes, default=(1, 1))
     shape_list = nx_gen_node_values(graph, 'size', nodes)
     pos_list = nx_gen_node_values(graph, 'pos', nodes)
 
-    node_extents = np.array([
-        vt.extent_from_bbox(vt.bbox_from_center_wh(xy, wh))
-        for xy, wh in zip(pos_list, shape_list)
-    ])
+    node_extents = np.array(
+        [
+            vt.extent_from_bbox(vt.bbox_from_center_wh(xy, wh))
+            for xy, wh in zip(pos_list, shape_list)
+        ]
+    )
     tl_x, br_x, tl_y, br_y = node_extents.T
     extent = tl_x.min(), br_x.max(), tl_y.min(), br_y.max()
     bbox = vt.bbox_from_extent(extent)
@@ -1952,24 +2027,20 @@ def get_graph_bounding_box(graph):
 
 
 def translate_graph(graph, t_xy):
-    #import utool as ut
+    # import utool as ut
     import utool as ut
+
     node_pos_attrs = ['pos']
     for attr in node_pos_attrs:
         attrdict = nx.get_node_attributes(graph, attr)
-        attrdict = {
-            node: pos + t_xy
-            for node, pos in attrdict.items()
-        }
+        attrdict = {node: pos + t_xy for node, pos in attrdict.items()}
         nx.set_node_attributes(graph, name=attr, values=attrdict)
     edge_pos_attrs = ['ctrl_pts', 'end_pt', 'head_lp', 'lp', 'start_pt', 'tail_lp']
     ut.nx_delete_None_edge_attr(graph)
     for attr in edge_pos_attrs:
         attrdict = nx.get_edge_attributes(graph, attr)
         attrdict = {
-            node: pos + t_xy
-            if pos is not None else pos
-            for node, pos in attrdict.items()
+            node: pos + t_xy if pos is not None else pos for node, pos in attrdict.items()
         }
         nx.set_edge_attributes(graph, name=attr, values=attrdict)
 
@@ -1981,6 +2052,7 @@ def translate_graph_to_origin(graph):
 
 def stack_graphs(graph_list, vert=False, pad=None):
     import utool as ut
+
     graph_list_ = [g.copy() for g in graph_list]
     for g in graph_list_:
         translate_graph_to_origin(g)
@@ -2008,7 +2080,7 @@ def stack_graphs(graph_list, vert=False, pad=None):
         nx.set_node_attributes(g, name='pin', values='true')
 
     new_graph = nx.compose_all(graph_list_)
-    #pt.show_nx(new_graph, layout='custom', node_labels=False, as_directed=False)  # NOQA
+    # pt.show_nx(new_graph, layout='custom', node_labels=False, as_directed=False)  # NOQA
     return new_graph
 
 
@@ -2018,15 +2090,19 @@ def nx_contracted_nodes(G, u, v, self_loops=True, inplace=False):
     TODO: commit to networkx
     """
     import itertools as it
+
     if G.is_directed():
-        in_edges = ((w, u, d) for w, x, d in G.in_edges(v, data=True)
-                    if self_loops or w != u)
-        out_edges = ((u, w, d) for x, w, d in G.out_edges(v, data=True)
-                     if self_loops or w != u)
+        in_edges = (
+            (w, u, d) for w, x, d in G.in_edges(v, data=True) if self_loops or w != u
+        )
+        out_edges = (
+            (u, w, d) for x, w, d in G.out_edges(v, data=True) if self_loops or w != u
+        )
         new_edges = it.chain(in_edges, out_edges)
     else:
-        new_edges = ((u, w, d) for x, w, d in G.edges(v, data=True)
-                     if self_loops or w != u)
+        new_edges = (
+            (u, w, d) for x, w, d in G.edges(v, data=True) if self_loops or w != u
+        )
     if inplace:
         H = G
         new_edges = list(new_edges)
@@ -2080,6 +2156,7 @@ def approx_min_num_components(nodes, negative_edges):
         2
     """
     import utool as ut
+
     num = 0
     g_neg = nx.Graph()
     g_neg.add_nodes_from(nodes)
@@ -2102,6 +2179,7 @@ def approx_min_num_components(nodes, negative_edges):
 
     if False:
         from networkx.algorithms.approximation import clique
+
         maxiset, cliques = clique.clique_removal(g_pos)
         num = len(cliques)
         return num
@@ -2111,7 +2189,7 @@ def approx_min_num_components(nodes, negative_edges):
         # Seed a new "minimum component"
         num += 1
         # Grab a random unused node n1
-        #idx1 = np.random.randint(0, len(unused))
+        # idx1 = np.random.randint(0, len(unused))
         idx1 = 0
         n1 = unused[idx1]
         unused.remove(n1)
@@ -2119,7 +2197,7 @@ def approx_min_num_components(nodes, negative_edges):
         neigbs = ut.isect(neigbs, unused)
         while len(neigbs) > 0:
             # Find node n2, that n1 could be connected to
-            #idx2 = np.random.randint(0, len(neigbs))
+            # idx2 = np.random.randint(0, len(neigbs))
             idx2 = 0
             n2 = neigbs[idx2]
             unused.remove(n2)
@@ -2251,8 +2329,9 @@ def mincost_diameter_augment(graph, max_cost, candidates=None, weight=None, cost
     length = reduce(op.mul, map(len, variable_basis), 1)
     if length > 3000:
         # Let the user know that it might take some time to find a solution
-        soln_generator = ut.ProgIter(soln_generator, label='BruteForce BCMD',
-                                     length=length)
+        soln_generator = ut.ProgIter(
+            soln_generator, label='BruteForce BCMD', length=length
+        )
     # Brute force solution
     for x in soln_generator:
         chosen_edges = ut.compress(candidates, x)
@@ -2268,7 +2347,9 @@ def mincost_diameter_augment(graph, max_cost, candidates=None, weight=None, cost
     return best_edges
 
 
-def greedy_mincost_diameter_augment(graph, max_cost, candidates=None, weight=None, cost=None):
+def greedy_mincost_diameter_augment(
+    graph, max_cost, candidates=None, weight=None, cost=None
+):
     # import utool as ut
 
     def solution_cost(graph):
@@ -2329,6 +2410,7 @@ def greedy_mincost_diameter_augment(graph, max_cost, candidates=None, weight=Non
             return best_cost, best_graph, best_energy, best_e
 
     import warnings
+
     if full_cost > max_cost:
         warnings.warn('no feasible solution')
     else:
@@ -2367,6 +2449,8 @@ if __name__ == '__main__':
         python -m utool.util_graph --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

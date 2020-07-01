@@ -75,6 +75,7 @@ def euler_tour(G, node=None, seen=None, visited=None):
 
 class Node(ut.NiceRepr):
     """Internal object, represents a tree node."""
+
     # __slots__ = ['left', 'right', 'parent', 'balance', 'key', 'value']
 
     def __init__(self, key=None, value=None):
@@ -101,10 +102,13 @@ class Node(ut.NiceRepr):
     def __nice__(self):
         with_neighbors = False
         if with_neighbors:
+
             def value(node):
                 return None if node is None else node.value
+
             return '({})-{}-({}, {})'.format(
-                value(self.parent), self.value, value(self.left), value(self.right))
+                value(self.parent), self.value, value(self.left), value(self.right)
+            )
         else:
             return str(self.value)
 
@@ -187,6 +191,7 @@ class EulerTourTree(ut.NiceRepr):
         >>> print(self)
         >>> assert list(self) == tour
     """
+
     def __init__(self, iterable=None, root=None):
         self.root = root
         if iterable is not None:
@@ -253,7 +258,7 @@ class EulerTourTree(ut.NiceRepr):
             >>> ut.show_if_requested()
         """
         min_elem = self.min_elem()
-        if min_elem  == first_node.value:
+        if min_elem == first_node.value:
             print('Already rooted there')
             return
         # tour = list(self)
@@ -324,6 +329,7 @@ class EulerTourTree(ut.NiceRepr):
 
     def copy(self):
         import copy
+
         return copy.deepcopy(self)
 
     def __nice__(self):
@@ -359,12 +365,14 @@ class EulerTourTree(ut.NiceRepr):
             if self.root.parent is not None:
                 treestr = self.get_ascii_tree()
                 msg = ut.codeblock(
-                    r'''
+                    r"""
                     Root cannot have a parent.
                     name = {}
                     root = {}
                     root.parent = {}
-                    '''.format(name, self.root, self.root.parent)
+                    """.format(
+                        name, self.root, self.root.parent
+                    )
                 )
                 msg = msg + '\n' + treestr
                 raise AssertionError(msg)
@@ -395,6 +403,7 @@ class EulerTourTree(ut.NiceRepr):
     def to_networkx(self, labels=None, edge_labels=False):
         """ Get a networkx representation of the binary search tree. """
         import networkx as nx
+
         graph = nx.DiGraph()
         for node in self._traverse_nodes():
             u = node.key
@@ -426,6 +435,7 @@ class EulerTourTree(ut.NiceRepr):
         """
         import utool as ut
         import networkx as nx
+
         repr_tree = nx.DiGraph()
         for u, v in ut.itertwo(self.values()):
             if not repr_tree.has_edge(v, u):
@@ -434,6 +444,7 @@ class EulerTourTree(ut.NiceRepr):
 
     def show_nx(self, labels=['value'], edge_labels=False, fnum=None):
         import wbia.plottool as pt
+
         graph = self.to_networkx(labels=labels, edge_labels=edge_labels)
         pt.show_nx(graph, fnum=fnum)
 
@@ -443,6 +454,7 @@ class EulerTourTree(ut.NiceRepr):
     def get_ascii_tree(self):
         import drawtree
         import ubelt as ub
+
         root = self.root
         with ub.CaptureStdout() as cap:
             drawtree.drawtree.drawtree(root)
@@ -452,6 +464,7 @@ class EulerTourTree(ut.NiceRepr):
 def ascii_tree(root, name=None):
     import drawtree
     import ubelt as ub
+
     if hasattr(root, 'root'):
         root = root.root
     with ub.CaptureStdout() as cap:
@@ -910,7 +923,7 @@ def test_avl_split(verbose=1):
                 assert bnode.parent is None, 'bnode must be split'
                 assert bnode is node, 'node must be same'
                 ut.assert_eq(list(tree1), tour[:index])
-                ut.assert_eq(list(tree2), tour[index + 1:])
+                ut.assert_eq(list(tree2), tour[index + 1 :])
                 tree1._assert_nodes(), tree2._assert_nodes()
             except Exception:
                 print('num = %r' % (num,))
@@ -1174,6 +1187,8 @@ if __name__ == '__main__':
         python -m utool.experimental.euler_tour_tree_avl --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

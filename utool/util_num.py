@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
 import sys
+
 try:
     import numpy as np
 except ImportError as ex:
@@ -8,6 +9,7 @@ except ImportError as ex:
 import decimal
 from utool import util_type
 from utool import util_inject
+
 print, rrr, profile = util_inject.inject2(__name__)
 
 
@@ -40,7 +42,7 @@ def sigfig_str(number, sigfig):
     References:
         http://stackoverflow.com/questions/2663612/nicely-repr-float-in-python
     """
-    assert(sigfig > 0)
+    assert sigfig > 0
     try:
         d = decimal.Decimal(number)
     except TypeError:
@@ -68,7 +70,7 @@ def sigfig_str(number, sigfig):
         result.insert(shift + 1, '.')
     else:
         # Tack zeros on the front
-        assert(shift < 0)
+        assert shift < 0
         result = ['0.'] + ['0'] * (-shift - 1) + result
     if sign:
         result.insert(0, '-')
@@ -107,12 +109,14 @@ def num_fmt(num, max_digits=None):
     """
     if num is None:
         return 'None'
+
     def num_in_mag(num, mag):
         return mag > num and num > (-1 * mag)
+
     if max_digits is None:
         # TODO: generalize
         if num_in_mag(num, 1):
-            if num_in_mag(num, .1):
+            if num_in_mag(num, 0.1):
                 max_digits = 4
             else:
                 max_digits = 3

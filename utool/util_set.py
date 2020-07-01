@@ -4,6 +4,7 @@ from six.moves import zip, map, range  # NOQA
 import collections
 import weakref
 from utool import util_inject
+
 print, rrr, profile = util_inject.inject2(__name__)
 
 
@@ -100,6 +101,7 @@ class OrderedSet(collections.MutableSet):
         >>> from utool.util_set import *  # NOQA
         """
         import utool as ut
+
         lists_ = ut.flatten([list(s) for s in sets])
         return cls(lists_)
 

@@ -7,6 +7,7 @@ import operator
 from six.moves import zip, range, zip_longest, reduce
 from utool import util_inject
 from utool._internal import meta_util_iter
+
 print, rrr, profile = util_inject.inject2(__name__)
 
 ensure_iterable = meta_util_iter.ensure_iterable
@@ -58,10 +59,10 @@ def evaluate_generator(iter_):
     for _ in iter_:  # NOQA
         pass
     # TODO: check if faster
-    #try:
+    # try:
     #    while True:
     #        six.next(iter_)
-    #except StopIteration:
+    # except StopIteration:
     #    pass
 
 
@@ -450,8 +451,9 @@ def ichunks_cycle(iterable, chunksize):
     # Yeild smaller chunks without sentinals
     for chunk in chunks_with_sentinals:
         if len(chunk) > 0:
-            yield [item if item is not sentinal else six.next(bordervalues)
-                   for item in chunk]
+            yield [
+                item if item is not sentinal else six.next(bordervalues) for item in chunk
+            ]
 
 
 def ichunks_replicate(iterable, chunksize):
@@ -467,7 +469,7 @@ def ichunks_replicate(iterable, chunksize):
             if len(filtered_chunk) == chunksize:
                 yield filtered_chunk
             else:
-                sizediff = (chunksize - len(filtered_chunk))
+                sizediff = chunksize - len(filtered_chunk)
                 padded_chunk = filtered_chunk + [filtered_chunk[-1]] * sizediff
                 yield padded_chunk
 
@@ -482,8 +484,8 @@ def ichunks_list(list_, chunksize):
     References:
         http://stackoverflow.com/questions/434287/iterate-over-a-list-in-chunks
     """
-    return (list_[ix:ix + chunksize] for ix in range(0, len(list_), chunksize))
-    #return (list_[sl] for sl in ichunk_slices(len(list_), chunksize))
+    return (list_[ix : ix + chunksize] for ix in range(0, len(list_), chunksize))
+    # return (list_[sl] for sl in ichunk_slices(len(list_), chunksize))
 
 
 def ichunk_slices(total, chunksize):
@@ -546,6 +548,7 @@ def random_product(items, num=None, rng=None):
         list(ut.random_product(items, num=3, rng=0))
     """
     import utool as ut
+
     rng = ut.ensure_rng(rng, 'python')
     seen = set()
     items = [list(g) for g in items]
@@ -612,6 +615,7 @@ def random_combinations(items, size, num=None, rng=None):
     import scipy.special
     import numpy as np
     import utool as ut
+
     rng = ut.ensure_rng(rng, impl='python')
     num_ = np.inf if num is None else num
     # Ensure we dont request more than is possible
@@ -643,6 +647,8 @@ if __name__ == '__main__':
         python -m utool.util_iter --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

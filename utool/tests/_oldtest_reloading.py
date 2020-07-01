@@ -5,6 +5,7 @@ import utool
 from utool import util_io
 
 from utool.util_io import write_to
+
 write_to2 = utool.write_to
 
 
@@ -13,7 +14,7 @@ def print_ids():
     print('utool.write_to:         %r' % id(utool.write_to))  # WHY GOOD?
     print('utool.util_io.write_to: %r' % id(utool.util_io.write_to))  # GOOD
     print('util_io.write_to:       %r' % id(util_io.write_to))  # GOOD
-    print('write_to:               %r' % id(write_to))   # BAD
+    print('write_to:               %r' % id(write_to))  # BAD
     print('write_to2:              %r' % id(write_to2))  # BAD
     print('>')
 
@@ -39,6 +40,7 @@ def reloading_test2():
     print('TEST2')
     print_ids()
     import imp
+
     # Causes utool.write_to to be bad
     # because utool doesnt do a rrr itself
     imp.reload(utool.util_io)
@@ -60,9 +62,9 @@ def docstr_test2():
 if __name__ == '__main__':
     utool.print_object_size(utool)
     reloading_test1()
-    #reloading_test2()
+    # reloading_test2()
     reloading_test1()
     reloading_test1()
-    #reloading_test2()
+    # reloading_test2()
     utool.print_object_size(utool)
     pass

@@ -7,6 +7,7 @@ from __future__ import absolute_import, division, print_function
 import re
 import six
 from utool import util_inject
+
 print, rrr, profile = util_inject.inject2(__name__)
 
 
@@ -45,7 +46,7 @@ def convert_text_to_varname(text):
 
 def regex_or(list_):
     return '(' + '|'.join(list_) + ')'
-    #return '|'.join(list_)
+    # return '|'.join(list_)
 
 
 def regex_word(w):
@@ -58,8 +59,8 @@ def extend_regex(regexpr):
       with re friendly syntax. Nameely things that I use in vim like \<\>
     """
     regex_map = {
-        #r'\<': r'\b(?=\w)',
-        #r'\>': r'\b(?!\w)',
+        # r'\<': r'\b(?=\w)',
+        # r'\>': r'\b(?!\w)',
         r'\<': r'\b' + positive_lookahead(r'\w'),
         r'\>': r'\b' + negative_lookahead(r'\w'),
         ('UNSAFE', r'\x08'): r'\b',
@@ -82,7 +83,7 @@ def extend_regex3(regex_list, reflags=0):
         IGNORE_CASE_PREFIX = '\\c'
         if extended_regex_list[0].startswith(IGNORE_CASE_PREFIX):
             # hack for vim-like ignore case
-            extended_regex_list[0] = extended_regex_list[0][len(IGNORE_CASE_PREFIX):]
+            extended_regex_list[0] = extended_regex_list[0][len(IGNORE_CASE_PREFIX) :]
             # TODO: reflags_list
             reflags = re.IGNORECASE | reflags
     return extended_regex_list, reflags
@@ -96,7 +97,7 @@ def extend_regex2(regexpr, reflags=0):
     IGNORE_CASE_PREF = '\\c'
     if regexpr.startswith(IGNORE_CASE_PREF):
         # hack for vim-like ignore case
-        regexpr = regexpr[len(IGNORE_CASE_PREF):]
+        regexpr = regexpr[len(IGNORE_CASE_PREF) :]
         reflags = reflags | re.IGNORECASE
     return regexpr, reflags
 
@@ -130,7 +131,7 @@ def named_field(key, regex, vim=False):
         https://docs.python.org/2/library/re.html#regular-expression-syntax
     """
     if key is None:
-        #return regex
+        # return regex
         return r'(%s)' % (regex,)
     if vim:
         return r'\(%s\)' % (regex)
@@ -154,6 +155,7 @@ def positive_lookbehind(regex, vim=False):
 
 # lookahead_pos
 # lookahead_neg
+
 
 def negative_lookahead(regex, vim=False):
     if vim:
@@ -270,8 +272,9 @@ def named_field_regex(keypat_tups):
         (?P<name>G\d+)(?P<under>_)(?P<id>\d+)(\.)(?P<ext>\w+)
     """
     # Allow for unnamed patterns
-    keypat_tups_ = [(None, tup) if isinstance(tup, six.string_types) else tup
-                    for tup in keypat_tups]
+    keypat_tups_ = [
+        (None, tup) if isinstance(tup, six.string_types) else tup for tup in keypat_tups
+    ]
     named_fields = [named_field(key, pat) for key, pat in keypat_tups_]
     regex = ''.join(named_fields)
     return regex
@@ -297,8 +300,7 @@ def named_field_repl(field_list):
     """
     # Allow for unnamed patterns
     bref_field_list = [
-        backref_field(key[0]) if isinstance(key, tuple) else key
-        for key in field_list
+        backref_field(key[0]) if isinstance(key, tuple) else key for key in field_list
     ]
     repl = ''.join(bref_field_list)
     return repl
@@ -332,9 +334,14 @@ def parse_docblock(func_code):
         >>> func_code = inspect.getsource(ut.modify_quoted_strs)
     """
     import pyparsing
-    doublequote_comment = pyparsing.QuotedString(quoteChar='"""', escChar='\\', multiline=True)
-    singlequote_comment = pyparsing.QuotedString(quoteChar='\'\'\'', escChar='\\', multiline=True)
-    docblock_parser  = doublequote_comment | singlequote_comment
+
+    doublequote_comment = pyparsing.QuotedString(
+        quoteChar='"""', escChar='\\', multiline=True
+    )
+    singlequote_comment = pyparsing.QuotedString(
+        quoteChar="'''", escChar='\\', multiline=True
+    )
+    docblock_parser = doublequote_comment | singlequote_comment
     docblock_parser.parseString(func_code)
 
 
@@ -358,6 +365,7 @@ def parse_python_syntax(text):
         >>> text = utool.read_from(utool.util_regex.__file__)
     """
     import utool as ut
+
     def find_all(a_str, sub):
         start = 0
         while True:
@@ -366,15 +374,23 @@ def parse_python_syntax(text):
                 return
             yield start
             start += len(sub)  # use start += 1 to find overlapping matches
+
     line_list_ = [line + '\n' for line in text.splitlines()]  # NOQA
     import re  # NOQA
-    line_list = [line[0:line.find('#')] for line in line_list_]
-    open_tokens  = ['\'\'\'', '"""', '\'', '"', '(', '[']   # ,  '#']
-    close_tokens = ['\'\'\'', '"""', '\'', '"', ')', ']']   # , '\n']
+
+    line_list = [line[0 : line.find('#')] for line in line_list_]
+    open_tokens = ["'''", '"""', "'", '"', '(', '[']  # ,  '#']
+    close_tokens = ["'''", '"""', "'", '"', ')', ']']  # , '\n']
+
     def find_token_pos(line, token):
         return list(find_all(line, token))
-    open_tokenxs  = [[find_token_pos(line, token) for line in line_list] for token in open_tokens]
-    close_tokenxs = [[find_token_pos(line, token) for line in line_list] for token in close_tokens]
+
+    open_tokenxs = [
+        [find_token_pos(line, token) for line in line_list] for token in open_tokens
+    ]
+    close_tokenxs = [
+        [find_token_pos(line, token) for line in line_list] for token in close_tokens
+    ]
     print(open_tokenxs)
     print(close_tokenxs)
     print(sum(ut.flatten(ut.flatten(open_tokenxs))))
@@ -406,8 +422,10 @@ def modify_quoted_strs(text, modify_func=None):
         'JUST' 'A' sentance with 'STRINGS'
     """
     if modify_func is None:
+
         def idenfunc(quoted_str):
             return quoted_str
+
         modify_func = idenfunc
     # regex to find a string sequence without any escaped strings in it
     regex = r'(?P<quoted_str>\'[^\']*\')'
@@ -433,6 +451,7 @@ def modify_quoted_strs(text, modify_func=None):
 def padded_parse(pattern, text):
     # TODO: move to util_parse
     import parse
+
     padded_pattern = '{_prefix}' + pattern + '{_suffix}'
     padded_text = ' ' + text + ' '
     parse_result = parse.parse(padded_pattern, padded_text)
@@ -482,7 +501,7 @@ RE_KWARGS = {'flags': RE_FLAGS}
 
 
 REGEX_VARNAME = '[A-Za-z_][A-Za-z0-9_]*'
-REGEX_WHITESPACE =  r'\s*'
+REGEX_WHITESPACE = r'\s*'
 REGEX_INT = regex_word(r'\d\d*')
 REGEX_FLOAT = regex_word(r'\d\d*\.\d\d*')
 
@@ -491,7 +510,7 @@ REGEX_NONGREEDY = '*?'
 # FIXME; Include escaped strings
 REGEX_STR = r"'[^']*'"
 REGEX_ESCSTR = r"'(.)*'"
-#REGEX_ESCSTR = r"'(?:\\.|[^'])*'"
+# REGEX_ESCSTR = r"'(?:\\.|[^'])*'"
 
 REGEX_LATEX_COMMENT = negative_lookbehind(re.escape('\\')) + re.escape('%') + '.*$'
 REGEX_C_COMMENT = re.escape('/*') + '.*' + re.escape('*/')
@@ -508,6 +527,8 @@ if __name__ == '__main__':
         python -m utool.util_regex --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

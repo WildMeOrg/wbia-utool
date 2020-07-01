@@ -2,6 +2,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 from os.path import join, splitext, basename
 from utool import util_inject
+
 print, rrr, profile = util_inject.inject2(__name__)
 
 
@@ -43,10 +44,11 @@ def add_new_mimetype_association(ext, mime_name, exe_fpath=None, dry=True):
         >>> print(result)
     """
     import utool as ut
+
     terminal = True
 
     mime_codeblock = ut.codeblock(
-        '''
+        """
         <?xml version="1.0" encoding="UTF-8"?>
         <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
             <mime-type type="application/x-{mime_name}">
@@ -54,7 +56,7 @@ def add_new_mimetype_association(ext, mime_name, exe_fpath=None, dry=True):
                 <glob pattern="*{ext}"/>
             </mime-type>
         </mime-info>
-        '''
+        """
     ).format(**locals())
 
     prefix = ut.truepath('~/.local/share')
@@ -70,11 +72,13 @@ def add_new_mimetype_association(ext, mime_name, exe_fpath=None, dry=True):
         exe_fname_noext = splitext(basename(exe_fpath))[0]
         app_name = exe_fname_noext.replace('_', '-')
         nice_name = ' '.join(
-            [word[0].upper() + word[1:].lower()
-             for word in app_name.replace('-', ' ').split(' ')]
+            [
+                word[0].upper() + word[1:].lower()
+                for word in app_name.replace('-', ' ').split(' ')
+            ]
         )
         app_codeblock = ut.codeblock(
-            '''
+            """
             [Desktop Entry]
             Name={nice_name}
             Exec={exe_fpath}
@@ -83,7 +87,7 @@ def add_new_mimetype_association(ext, mime_name, exe_fpath=None, dry=True):
             Type=Application
             Categories=Utility;Application;
             Comment=Custom App
-            '''
+            """
         ).format(**locals())
         app_dpath = join(prefix, 'applications')
         app_fpath = join(app_dpath, '{app_name}.desktop'.format(**locals()))
@@ -104,15 +108,17 @@ def add_new_mimetype_association(ext, mime_name, exe_fpath=None, dry=True):
 
         # UPDATE BACKENDS
 
-        #ut.cmd('update-mime-database /usr/share/mime')
-        #~/.local/share/applications/mimeapps.list
-        print(ut.codeblock(
-            '''
+        # ut.cmd('update-mime-database /usr/share/mime')
+        # ~/.local/share/applications/mimeapps.list
+        print(
+            ut.codeblock(
+                """
             Run these commands:
             update-desktop-database ~/.local/share/applications
             update-mime-database ~/.local/share/mime
-            '''
-        ))
+            """
+            )
+        )
         if exe_fpath is not None:
             ut.cmd('update-desktop-database ~/.local/share/applications')
         ut.cmd('update-mime-database ~/.local/share/mime')
@@ -149,11 +155,14 @@ def make_application_icon(exe_fpath, dry=True, props={}):
         >>> print(result)
     """
     import utool as ut
+
     exe_fname_noext = splitext(basename(exe_fpath))[0]
     app_name = exe_fname_noext.replace('_', '-')
     nice_name = ' '.join(
-        [word[0].upper() + word[1:].lower()
-         for word in app_name.replace('-', ' ').split(' ')]
+        [
+            word[0].upper() + word[1:].lower()
+            for word in app_name.replace('-', ' ').split(' ')
+        ]
     )
     lines = [
         '[Desktop Entry]',
@@ -302,14 +311,12 @@ class XCtrl(object):
 
         """
         import utool as ut
+
         try:
             import wbia.plottool.screeninfo as screeninfo
         except ImportError:
             import wbia.plottool.screeninfo as screeninfo
-        monitor_infos = {
-            i + 1: screeninfo.get_resolution_info(i)
-            for i in range(2)
-        }
+        monitor_infos = {i + 1: screeninfo.get_resolution_info(i) for i in range(2)}
         # TODO: cut out borders
         # TODO: fix screeninfo monitor offsets
         # TODO: dynamic num screens
@@ -322,22 +329,18 @@ class XCtrl(object):
             # Transform to the absolution position
             abs_x = (x * mw) + mx
             abs_y = (y * mh) + my
-            abs_w = (w * mw)
-            abs_h = (h * mh)
+            abs_w = w * mw
+            abs_h = h * mh
             abs_bbox = [abs_x, abs_y, abs_w, abs_h]
             abs_bbox = ','.join(map(str, map(int, abs_bbox)))
             return abs_bbox
 
         if win_key.startswith('joncrall') and bbox == 'special2':
             # Specify the relative position
-            abs_bbox = rel_to_abs_bbox(m=2,
-                                       x=0.0, y=0.7,
-                                       w=1.0, h=0.3)
+            abs_bbox = rel_to_abs_bbox(m=2, x=0.0, y=0.7, w=1.0, h=0.3)
         elif win_key.startswith('GVIM') and bbox == 'special2':
             # Specify the relative position
-            abs_bbox = rel_to_abs_bbox(m=2,
-                                       x=0.0, y=0.0,
-                                       w=1.0, h=0.7)
+            abs_bbox = rel_to_abs_bbox(m=2, x=0.0, y=0.0, w=1.0, h=0.7)
         else:
             abs_bbox = ','.join(map(str, eval(bbox)))
 
@@ -374,6 +377,7 @@ class XCtrl(object):
 
         """
         import utool as ut
+
         cmdkw = dict(verbose=False, quiet=True, silence=True)
         command = "wmctrl -lx | grep '%s' | awk '{print $1}'" % (pattern,)
         # print(command)
@@ -388,6 +392,7 @@ class XCtrl(object):
         Orders window ids by most recently used
         """
         import utool as ut
+
         winid_order = XCtrl.sorted_window_ids(order)
         sorted_win_ids = ut.isect(winid_order, winid_list)
         return sorted_win_ids
@@ -409,17 +414,21 @@ class XCtrl(object):
 
         """
         import utool as ut
+
         cmdkw = dict(verbose=False, quiet=True, silence=True)
         num = int(num)
         winid_list = XCtrl.findall_window_ids(pattern)
         winid_list = XCtrl.sort_window_ids(winid_list, 'mru')[num:]
-        output_lines = ut.cmd(
-            """wmctrl -lxp | awk '{print $1 " " $3}'""",
-            **cmdkw)[0].strip().split('\n')
+        output_lines = (
+            ut.cmd("""wmctrl -lxp | awk '{print $1 " " $3}'""", **cmdkw)[0]
+            .strip()
+            .split('\n')
+        )
         output_fields = [line.split(' ') for line in output_lines]
         output_fields = [(int(wid, 16), int(pid)) for wid, pid in output_fields]
         pid_list = [pid for wid, pid in output_fields if wid in winid_list]
         import psutil
+
         for pid in pid_list:
             proc = psutil.Process(pid=pid)
             proc.kill()
@@ -435,10 +444,12 @@ class XCtrl(object):
             python -m utool.util_ubuntu XCtrl.sorted_window_ids
         """
         import utool as ut
+
         if order in ['mru', 'lru']:
             cmdkw = dict(verbose=False, quiet=True, silence=True)
             winid_order_str = ut.cmd(
-                'xprop -root | grep "^_NET_CLIENT_LIST_STACKING"', **cmdkw)[0]
+                'xprop -root | grep "^_NET_CLIENT_LIST_STACKING"', **cmdkw
+            )[0]
             winid_order = winid_order_str.split('#')[1].strip().split(', ')[::-1]
             winid_order = [int(h, 16) for h in winid_order]
             if order == 'lru':
@@ -453,6 +464,7 @@ class XCtrl(object):
         xprop -id 0x00a00007 | grep "WM_CLASS(STRING)"
         """
         import utool as ut
+
         winid_candidates = XCtrl.findall_window_ids(pattern)
         if len(winid_candidates) == 0:
             if error == 'raise':
@@ -478,6 +490,7 @@ class XCtrl(object):
             python -m utool.util_ubuntu XCtrl.current_gvim_edit sp ~/.bashrc
         """
         import utool as ut
+
         fpath = ut.unexpanduser(ut.truepath(fpath))
         # print('fpath = %r' % (fpath,))
         ut.copy_text_to_clipboard(fpath)
@@ -490,10 +503,10 @@ class XCtrl(object):
             # ('key', 'ctrl+v'),
             ('key', 'KP_Enter'),
         ]
-        XCtrl.do(*doscript, verbose=0, sleeptime=.001)
+        XCtrl.do(*doscript, verbose=0, sleeptime=0.001)
 
     @staticmethod
-    def copy_gvim_to_terminal_script(text, return_to_win='1', verbose=0, sleeptime=.02):
+    def copy_gvim_to_terminal_script(text, return_to_win='1', verbose=0, sleeptime=0.02):
         """
         import utool.util_ubuntu
         utool.util_ubuntu.XCtrl.copy_gvim_to_terminal_script('print("hi")', verbose=1)
@@ -507,6 +520,7 @@ class XCtrl(object):
         # Prepare to send text to xdotool
         import utool as ut
         import utool.util_ubuntu
+
         ut.copy_text_to_clipboard(text)
 
         if verbose:
@@ -514,11 +528,14 @@ class XCtrl(object):
             print(ut.get_clipboard())
 
         import re
-        terminal_pattern = r'\|'.join([
-            'terminal',
-            re.escape('terminator.Terminator'),  # gtk3 terminator
-            re.escape('x-terminal-emulator.X-terminal-emulator'),  # gtk2 terminator
-        ])
+
+        terminal_pattern = r'\|'.join(
+            [
+                'terminal',
+                re.escape('terminator.Terminator'),  # gtk3 terminator
+                re.escape('x-terminal-emulator.X-terminal-emulator'),  # gtk2 terminator
+            ]
+        )
 
         # Build xdtool script
         doscript = [
@@ -548,6 +565,7 @@ class XCtrl(object):
         import time
         import six
         import sys
+
         verbose = kwargs.get('verbose', False)
         orig_print = globals()['print']
         print = ut.partial(orig_print, file=kwargs.get('file', sys.stdout))
@@ -561,7 +579,7 @@ class XCtrl(object):
         # Make things work even if other keys are pressed
         defaultsleep = 0.0
         sleeptime = kwargs.get('sleeptime', defaultsleep)
-        time.sleep(.05)
+        time.sleep(0.05)
         out, err, ret = ut.cmd('xset r off', **cmdkw)
         if debug:
             print('----------')
@@ -616,21 +634,27 @@ class XCtrl(object):
             elif xcmd == 'remember_window_name':
                 out, err, ret = ut.cmd('xdotool getwindowfocus getwindowname', **cmdkw)
                 import pipes
+
                 memory[key_] = pipes.quote(out.strip())
                 nocommand = True
                 args = []
             elif xcmd == 'type':
                 args = [
                     'xdotool',
-                    'keyup', '--window', '0', '7',
-                    'type', '--clearmodifiers',
-                    '--window', '0', str(key_)
+                    'keyup',
+                    '--window',
+                    '0',
+                    '7',
+                    'type',
+                    '--clearmodifiers',
+                    '--window',
+                    '0',
+                    str(key_),
                 ]
             elif xcmd == 'type2':
                 import pipes
-                args = [
-                    'xdotool', 'type', pipes.quote(str(key_))
-                ]
+
+                args = ['xdotool', 'type', pipes.quote(str(key_))]
             elif xcmd == 'xset-r-on':
                 args = ['xset', 'r', 'on']
             elif xcmd == 'xset-r-off':
@@ -657,8 +681,7 @@ class XCtrl(object):
             if sleeptime > 0:
                 time.sleep(sleeptime)
 
-        out, err, ret = ut.cmd('xset r on', verbose=False, quiet=True,
-                               silence=True)
+        out, err, ret = ut.cmd('xset r on', verbose=False, quiet=True, silence=True)
         if debug:
             print('----------')
             print('xset r on')
@@ -667,7 +690,7 @@ class XCtrl(object):
             print('out = %r' % (out,))
 
     @staticmethod
-    def focus_window(winhandle, path=None, name=None, sleeptime=.01):
+    def focus_window(winhandle, path=None, name=None, sleeptime=0.01):
         """
         sudo apt-get install xautomation
         apt-get install autokey-gtk
@@ -677,6 +700,7 @@ class XCtrl(object):
         """
         import utool as ut
         import time
+
         print('focus: ' + winhandle)
         args = ['wmctrl', '-xa', winhandle]
         ut.cmd(*args, verbose=False, quiet=True)
@@ -701,6 +725,7 @@ def monitor_mouse():
     import utool as ut
     import re
     import parse
+
     mouse_ids = ut.cmd('xinput --list ', verbose=False, quiet=True)[0]
     x = mouse_ids.decode('utf-8')
     pattern = 'mouse'
@@ -710,8 +735,9 @@ def monitor_mouse():
     mouse_id = parse.parse('{left}id={id}{right}', grepres[0][0])['id']
     print('mouse_id = %r' % (mouse_id,))
     import time
+
     while True:
-        time.sleep(.2)
+        time.sleep(0.2)
         out = ut.cmd('xinput --query-state ' + mouse_id, verbose=False, quiet=True)[0]
         print(out)
 
@@ -724,6 +750,8 @@ if __name__ == '__main__':
         python -m utool.util_ubuntu --allexamples --noface --nosrc
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

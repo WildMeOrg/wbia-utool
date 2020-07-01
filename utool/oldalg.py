@@ -9,8 +9,10 @@ from six.moves import zip, range, reduce
 from utool import util_type
 from utool import util_inject
 from utool import util_decor
+
 try:
     import numpy as np
+
     HAVE_NUMPY = True
 except ImportError:
     HAVE_NUMPY = False
@@ -18,6 +20,7 @@ except ImportError:
     pass
 try:
     import scipy.spatial.distance as spdist
+
     HAVE_SCIPY = True
 except ImportError:
     HAVE_SCIPY = False
@@ -25,7 +28,7 @@ print, rrr, profile = util_inject.inject2(__name__)
 
 
 PHI = 1.61803398875
-PHI_A = (1 / PHI)
+PHI_A = 1 / PHI
 PHI_B = 1 - PHI_A
 
 
@@ -92,13 +95,13 @@ def bayesnet():
         'name': name_nice,
         'match': match_nice,
     }
-    var2_cpd = {
-    }
+    var2_cpd = {}
     globals()['semtype2_nice'] = semtype2_nice
     globals()['var2_cpd'] = var2_cpd
 
     name_combo = np.array(list(ut.iprod(nid_basis, nid_basis)))
     combo_is_same = name_combo.T[0] == name_combo.T[1]
+
     def get_expected_scores_prob(level1, level2):
         part1 = combo_is_same * level1
         part2 = (1 - combo_is_same) * (1 - (level2))
@@ -109,10 +112,12 @@ def bayesnet():
 
     def name_cpd(aid):
         from pgmpy.factors import TabularCPD
+
         cpd = TabularCPD(
             variable='N' + aid,
             variable_card=num_names,
-            values=[[1.0 / num_names] * num_names])
+            values=[[1.0 / num_names] * num_names],
+        )
         cpd.semtype = 'name'
         return cpd
 
@@ -120,26 +125,36 @@ def bayesnet():
     var2_cpd.update(dict(zip([cpd.variable for cpd in name_cpds], name_cpds)))
     if True:
         num_same_diff = 2
-        samediff_measure = np.array([
-            # get_expected_scores_prob(.12, .2),
-            # get_expected_scores_prob(.88, .8),
-            get_expected_scores_prob(0, 0),
-            get_expected_scores_prob(1, 1),
-        ])
+        samediff_measure = np.array(
+            [
+                # get_expected_scores_prob(.12, .2),
+                # get_expected_scores_prob(.88, .8),
+                get_expected_scores_prob(0, 0),
+                get_expected_scores_prob(1, 1),
+            ]
+        )
         samediff_vals = (samediff_measure / samediff_measure.sum(axis=0)).tolist()
+
         def samediff_cpd(aid1, aid2):
             cpd = TabularCPD(
                 variable='A' + aid1 + aid2,
                 variable_card=num_same_diff,
                 values=samediff_vals,
                 evidence=['N' + aid1, 'N' + aid2],  # [::-1],
-                evidence_card=[num_names, num_names])  # [::-1])
+                evidence_card=[num_names, num_names],
+            )  # [::-1])
             cpd.semtype = 'match'
             return cpd
-        samediff_cpds = [samediff_cpd('i', 'j'), samediff_cpd('j', 'k'), samediff_cpd('k', 'i')]
+
+        samediff_cpds = [
+            samediff_cpd('i', 'j'),
+            samediff_cpd('j', 'k'),
+            samediff_cpd('k', 'i'),
+        ]
         var2_cpd.update(dict(zip([cpd.variable for cpd in samediff_cpds], samediff_cpds)))
 
         if True:
+
             def score_cpd(aid1, aid2):
                 semtype = 'score'
                 evidence = ['A' + aid1 + aid2, 'N' + aid1, 'N' + aid2]
@@ -155,13 +170,13 @@ def bayesnet():
                     for state in evidence_states:
                         if state[0] == state[1]:
                             if state[2] == 'same':
-                                val = .2 if mystate == 'low' else .8
+                                val = 0.2 if mystate == 'low' else 0.8
                             else:
                                 val = 1
                                 # val = .5 if mystate == 'low' else .5
                         elif state[0] != state[1]:
                             if state[2] == 'same':
-                                val = .5 if mystate == 'low' else .5
+                                val = 0.5 if mystate == 'low' else 0.5
                             else:
                                 val = 1
                                 # val = .9 if mystate == 'low' else .1
@@ -173,31 +188,39 @@ def bayesnet():
                     variable_card=len(variable_basis),
                     values=variable_values,
                     evidence=evidence,  # [::-1],
-                    evidence_card=evidence_card)  # [::-1])
+                    evidence_card=evidence_card,
+                )  # [::-1])
                 cpd.semtype = semtype
                 return cpd
+
         else:
             score_values = [
-                [.8, .1],
-                [.2, .9],
+                [0.8, 0.1],
+                [0.2, 0.9],
             ]
+
             def score_cpd(aid1, aid2):
                 cpd = TabularCPD(
                     variable='S' + aid1 + aid2,
                     variable_card=num_scores,
                     values=score_values,
                     evidence=['A' + aid1 + aid2],  # [::-1],
-                    evidence_card=[num_same_diff])  # [::-1])
+                    evidence_card=[num_same_diff],
+                )  # [::-1])
                 cpd.semtype = 'score'
                 return cpd
 
         score_cpds = [score_cpd('i', 'j'), score_cpd('j', 'k')]
         cpd_list = name_cpds + score_cpds + samediff_cpds
     else:
-        score_measure = np.array([get_expected_scores_prob(level1, level2)
-                                  for level1, level2 in
-                                  zip(np.linspace(.1, .9, num_scores),
-                                      np.linspace(.2, .8, num_scores))])
+        score_measure = np.array(
+            [
+                get_expected_scores_prob(level1, level2)
+                for level1, level2 in zip(
+                    np.linspace(0.1, 0.9, num_scores), np.linspace(0.2, 0.8, num_scores)
+                )
+            ]
+        )
 
         score_values = (score_measure / score_measure.sum(axis=0)).tolist()
 
@@ -207,9 +230,11 @@ def bayesnet():
                 variable_card=num_scores,
                 values=score_values,
                 evidence=['N' + aid1, 'N' + aid2],
-                evidence_card=[num_names, num_names])
+                evidence_card=[num_names, num_names],
+            )
             cpd.semtype = 'score'
             return cpd
+
         score_cpds = [score_cpd('i', 'j'), score_cpd('j', 'k')]
         cpd_list = name_cpds + score_cpds
         pass
@@ -230,13 +255,16 @@ def bayesnet():
     # --- PRINT CPDS ---
 
     cpd = score_cpds[0]
+
     def print_cpd(cpd):
         print('CPT: %r' % (cpd,))
         index = semtype2_nice[cpd.semtype]
         if cpd.evidence is None:
             columns = ['None']
         else:
-            basis_lists = [semtype2_nice[var2_cpd[ename].semtype] for ename in cpd.evidence]
+            basis_lists = [
+                semtype2_nice[var2_cpd[ename].semtype] for ename in cpd.evidence
+            ]
             columns = [','.join(x) for x in ut.iprod(*basis_lists)]
         data = cpd.get_cpd()
         print(pd.DataFrame(data, index=index, columns=columns))
@@ -260,8 +288,10 @@ def bayesnet():
     # Query about name of annotation k given different event space params
 
     def pretty_evidence(evidence):
-        return [key + '=' + str(semtype2_nice[var2_cpd[key].semtype][val])
-                for key, val in evidence.items()]
+        return [
+            key + '=' + str(semtype2_nice[var2_cpd[key].semtype][val])
+            for key, val in evidence.items()
+        ]
 
     def print_factor(factor):
         row_cards = factor.cardinality
@@ -277,7 +307,14 @@ def bayesnet():
             nice_basis = ['%s=%s' % (varname, val) for val in _nice_basis]
             nice_basis_lists.append(nice_basis)
         row_lbls = [', '.join(sorted(x)) for x in zip(*nice_basis_lists)]
-        print(ut.repr3(dict(zip(row_lbls, values)), precision=3, align=True, key_order_metric='-val'))
+        print(
+            ut.repr3(
+                dict(zip(row_lbls, values)),
+                precision=3,
+                align=True,
+                key_order_metric='-val',
+            )
+        )
 
     # name_belief = BeliefPropagation(name_model)
     name_belief = VariableElimination(name_model)
@@ -366,6 +403,7 @@ def bayesnet():
 
     import wbia.plottool as pt
     import networkx as netx
+
     fig = pt.figure()  # NOQA
     fig.clf()
     ax = pt.gca()
@@ -389,10 +427,7 @@ def bayesnet_examples():
     from pgmpy.models import BayesianModel
     import pandas as pd
 
-    student_model = BayesianModel([('D', 'G'),
-                                   ('I', 'G'),
-                                   ('G', 'L'),
-                                   ('I', 'S')])
+    student_model = BayesianModel([('D', 'G'), ('I', 'G'), ('G', 'L'), ('I', 'S')])
     # we can generate some random data.
     raw_data = np.random.randint(low=0, high=2, size=(1000, 5))
     data = pd.DataFrame(raw_data, columns=['D', 'I', 'G', 'L', 'S'])
@@ -400,40 +435,31 @@ def bayesnet_examples():
     student_model.fit(data_train)
     student_model.get_cpds()
 
-    data_test = data[int(0.75 * data.shape[0]): data.shape[0]]
+    data_test = data[int(0.75 * data.shape[0]) : data.shape[0]]
     data_test.drop('D', axis=1, inplace=True)
     student_model.predict(data_test)
 
     grade_cpd = TabularCPD(
         variable='G',
         variable_card=3,
-        values=[[0.3, 0.05, 0.9, 0.5],
-                [0.4, 0.25, 0.08, 0.3],
-                [0.3, 0.7, 0.02, 0.2]],
+        values=[[0.3, 0.05, 0.9, 0.5], [0.4, 0.25, 0.08, 0.3], [0.3, 0.7, 0.02, 0.2]],
         evidence=['I', 'D'],
-        evidence_card=[2, 2])
-    difficulty_cpd = TabularCPD(
-        variable='D',
-        variable_card=2,
-        values=[[0.6, 0.4]])
-    intel_cpd = TabularCPD(
-        variable='I',
-        variable_card=2,
-        values=[[0.7, 0.3]])
+        evidence_card=[2, 2],
+    )
+    difficulty_cpd = TabularCPD(variable='D', variable_card=2, values=[[0.6, 0.4]])
+    intel_cpd = TabularCPD(variable='I', variable_card=2, values=[[0.7, 0.3]])
     letter_cpd = TabularCPD(
         variable='L',
         variable_card=2,
-        values=[[0.1, 0.4, 0.99],
-                [0.9, 0.6, 0.01]],
+        values=[[0.1, 0.4, 0.99], [0.9, 0.6, 0.01]],
         evidence=['G'],
-        evidence_card=[3])
+        evidence_card=[3],
+    )
     sat_cpd = TabularCPD(
         variable='S',
         variable_card=2,
-        values=[[0.95, 0.2],
-                [0.05, 0.8]],
+        values=[[0.95, 0.2], [0.05, 0.8]],
         evidence=['I'],
-        evidence_card=[2])
-    student_model.add_cpds(grade_cpd, difficulty_cpd,
-                           intel_cpd, letter_cpd,
-                           sat_cpd)
+        evidence_card=[2],
+    )
+    student_model.add_cpds(grade_cpd, difficulty_cpd, intel_cpd, letter_cpd, sat_cpd)

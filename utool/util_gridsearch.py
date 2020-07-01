@@ -14,6 +14,7 @@ import operator
 from six.moves import reduce, map, zip
 import re
 import six
+
 print, rrr, profile = util_inject.inject2(__name__)
 
 
@@ -31,14 +32,15 @@ class CountstrParser(object):
 
     FIXME: make generalizable beyond wbia
     """
+
     numop = '#'
     compare_op_map = {
-        '<'  : operator.lt,
-        '<=' : operator.le,
-        '>'  : operator.gt,
-        '>=' : operator.ge,
-        '='  : operator.eq,
-        '!=' : operator.ne,
+        '<': operator.lt,
+        '<=': operator.le,
+        '>': operator.gt,
+        '>=': operator.ge,
+        '=': operator.eq,
+        '!=': operator.ne,
     }
 
     def __init__(self, lhs_dict, prop2_nid2_aids):
@@ -49,11 +51,12 @@ class CountstrParser(object):
     def parse_countstr_binop(self, part):
         import utool as ut
         import numpy as np
+
         # Parse binary comparison operation
         left, op, right = re.split(ut.regex_or(('[<>]=?', '=')), part)
         # Parse length operation. Get prop_left_nids, prop_left_values
         if left.startswith(self.numop):
-            varname = left[len(self.numop):]
+            varname = left[len(self.numop) :]
             # Parse varname
             prop = self.lhs_dict.get(varname, varname)
             # Apply length operator to each name with the prop
@@ -64,8 +67,7 @@ class CountstrParser(object):
         if right:
             prop_right_value = int(right)
         # Execute comparison
-        prop_binary_result = self.compare_op_map[op](
-            prop_left_values, prop_right_value)
+        prop_binary_result = self.compare_op_map[op](prop_left_values, prop_right_value)
         prop_nid2_result = dict(zip(prop_left_nids, prop_binary_result))
         return prop_nid2_result
 
@@ -77,15 +79,16 @@ class CountstrParser(object):
             prop_nid2_result = self.parse_countstr_binop(part)
             prop_nid2_result_list.append(prop_nid2_result)
         import utool as ut
+
         # change to dict_union when parsing ors
-        andcombine = functools.partial(
-            ut.dict_isect_combine, combine_op=operator.and_)
+        andcombine = functools.partial(ut.dict_isect_combine, combine_op=operator.and_)
         expr_nid2_result = reduce(andcombine, prop_nid2_result_list)
         return expr_nid2_result
 
 
-def parse_argv_cfg(argname, default=[''], named_defaults_dict=None,
-                   valid_keys=None, alias_keys=None):
+def parse_argv_cfg(
+    argname, default=[''], named_defaults_dict=None, valid_keys=None, alias_keys=None
+):
     """
     simple configs
 
@@ -112,6 +115,7 @@ def parse_argv_cfg(argname, default=[''], named_defaults_dict=None,
         >>> print(result)
     """
     import utool as ut
+
     if ut.in_jupyter_notebook():
         # dont parse argv in ipython notebook
         cfgstr_list = default
@@ -119,17 +123,18 @@ def parse_argv_cfg(argname, default=[''], named_defaults_dict=None,
         cfgstr_list = ut.get_argval(argname, type_=list, default=default)
     if cfgstr_list is None:
         return None
-    cfg_combos_list = parse_cfgstr_list2(cfgstr_list,
-                                         named_defaults_dict=named_defaults_dict,
-                                         valid_keys=valid_keys,
-                                         alias_keys=alias_keys,
-                                         strict=False)
+    cfg_combos_list = parse_cfgstr_list2(
+        cfgstr_list,
+        named_defaults_dict=named_defaults_dict,
+        valid_keys=valid_keys,
+        alias_keys=alias_keys,
+        strict=False,
+    )
     cfg_list = ut.flatten(cfg_combos_list)
     return cfg_list
 
 
-def get_varied_cfg_lbls(cfg_list, default_cfg=None, mainkey='_cfgname',
-                        checkname=False):
+def get_varied_cfg_lbls(cfg_list, default_cfg=None, mainkey='_cfgname', checkname=False):
     r"""
     Args:
         cfg_list (list):
@@ -156,6 +161,7 @@ def get_varied_cfg_lbls(cfg_list, default_cfg=None, mainkey='_cfgname',
         cfglbl_list = ['test:f=1', 'test:f=2', 'test:f=3,z=4']
     """
     import utool as ut
+
     try:
         cfgname_list = [cfg[mainkey] for cfg in cfg_list]
     except KeyError:
@@ -163,8 +169,9 @@ def get_varied_cfg_lbls(cfg_list, default_cfg=None, mainkey='_cfgname',
     varied_cfg_list = partition_varied_cfg_list(cfg_list, default_cfg)[1]
     if checkname and ut.allsame(cfgname_list):
         cfgname_list = [None] * len(cfgname_list)
-    cfglbl_list = [get_cfg_lbl(cfg, name)
-                   for cfg, name in zip(varied_cfg_list, cfgname_list)]
+    cfglbl_list = [
+        get_cfg_lbl(cfg, name) for cfg, name in zip(varied_cfg_list, cfgname_list)
+    ]
     if checkname:
         cfglbl_list = [x.lstrip(':') for x in cfglbl_list]
     return cfglbl_list
@@ -242,30 +249,42 @@ def partition_varied_cfg_list(cfg_list, default_cfg=None, recursive=False):
         varied_cfg_list=[{'f1': {'a2': {'y3': 2}}}, {'e1': 1, 'f1': {'a2': {'y3': 1}}}],
     """
     import utool as ut
+
     if default_cfg is None:
         nonvaried_cfg = reduce(ut.dict_intersection, cfg_list)
     else:
         nonvaried_cfg = reduce(ut.dict_intersection, [default_cfg] + cfg_list)
     nonvaried_keys = list(nonvaried_cfg.keys())
     varied_cfg_list = [
-        ut.delete_dict_keys(cfg.copy(), nonvaried_keys)
-        for cfg in cfg_list]
+        ut.delete_dict_keys(cfg.copy(), nonvaried_keys) for cfg in cfg_list
+    ]
     if recursive:
         # Find which varied keys have dict values
         varied_keys = list(set([key for cfg in varied_cfg_list for key in cfg]))
-        varied_vals_list = [[cfg[key] for cfg in varied_cfg_list if key in cfg] for key in varied_keys]
+        varied_vals_list = [
+            [cfg[key] for cfg in varied_cfg_list if key in cfg] for key in varied_keys
+        ]
         for key, varied_vals in zip(varied_keys, varied_vals_list):
             if len(varied_vals) == len(cfg_list):
                 if all([isinstance(val, dict) for val in varied_vals]):
-                    nonvaried_subdict, varied_subdicts = partition_varied_cfg_list(varied_vals, recursive=recursive)
+                    nonvaried_subdict, varied_subdicts = partition_varied_cfg_list(
+                        varied_vals, recursive=recursive
+                    )
                     nonvaried_cfg[key] = nonvaried_subdict
                     for cfg, subdict in zip(varied_cfg_list, varied_subdicts):
                         cfg[key] = subdict
     return nonvaried_cfg, varied_cfg_list
 
 
-def get_cfg_lbl(cfg, name=None, nonlbl_keys=INTERNAL_CFGKEYS, key_order=None,
-                with_name=True, default_cfg=None, sep=''):
+def get_cfg_lbl(
+    cfg,
+    name=None,
+    nonlbl_keys=INTERNAL_CFGKEYS,
+    key_order=None,
+    with_name=True,
+    default_cfg=None,
+    sep='',
+):
     r"""
     Formats a flat configuration dict into a short string label. This is useful
     for re-creating command line strings.
@@ -318,6 +337,7 @@ def get_cfg_lbl(cfg, name=None, nonlbl_keys=INTERNAL_CFGKEYS, key_order=None,
         cfg_lbl = test:K=1
     """
     import utool as ut
+
     if name is None:
         name = cfg.get('_cfgname', '')
 
@@ -327,8 +347,14 @@ def get_cfg_lbl(cfg, name=None, nonlbl_keys=INTERNAL_CFGKEYS, key_order=None,
 
     # remove keys that should not belong to the label
     _clean_cfg = ut.delete_keys(cfg.copy(), nonlbl_keys)
-    _lbl = ut.repr4(_clean_cfg, explicit=True, nl=False, strvals=True,
-                       key_order=key_order, itemsep=sep)
+    _lbl = ut.repr4(
+        _clean_cfg,
+        explicit=True,
+        nl=False,
+        strvals=True,
+        key_order=key_order,
+        itemsep=sep,
+    )
     # _search = ['dict(', ')', ' ']
     _search = ['dict(', ')']
     _repl = [''] * len(_search)
@@ -340,10 +366,12 @@ def get_cfg_lbl(cfg, name=None, nonlbl_keys=INTERNAL_CFGKEYS, key_order=None,
         # VERY HACKY TO PARSE OUT PARTS OF THE GIVEN NAME.
         hacked_name, _cfgstr, _ = parse_cfgstr_name_options(name)
         _cfgstr_options_list = re.split(
-            r',\s*' + ut.negative_lookahead(r'[^\[\]]*\]'), _cfgstr)
-        #cfgstr_options_list = cfgopt_strs.split(',')
+            r',\s*' + ut.negative_lookahead(r'[^\[\]]*\]'), _cfgstr
+        )
+        # cfgstr_options_list = cfgopt_strs.split(',')
         _cfg_options = ut.parse_cfgstr_list(
-            _cfgstr_options_list, smartcast=False, oldmode=False)
+            _cfgstr_options_list, smartcast=False, oldmode=False
+        )
         #
         ut.delete_keys(_cfg_options, cfg.keys())
         _preflbl = ut.repr4(_cfg_options, explicit=True, nl=False, strvals=True)
@@ -358,6 +386,7 @@ def get_cfg_lbl(cfg, name=None, nonlbl_keys=INTERNAL_CFGKEYS, key_order=None,
 
 def recombine_nestings(parsed_blocks):
     import utool as ut  # NOQA
+
     if len(parsed_blocks) == 0:
         return ''
     values = ut.take_column(parsed_blocks, 1)
@@ -371,6 +400,7 @@ class Nesting(object):
     x = Nesting.from_nestings(nestings)
     list(x.itertype('nonNested'))
     """
+
     def __init__(self, type_, value):
         self.type_ = type_
         self.value = value
@@ -448,8 +478,11 @@ def parse_nestings2(string, nesters=['()', '[]', '<>', "''", '""'], escape='\\')
 
     def as_tagged(parent, doctag=None):
         """Returns the parse results as XML. Tags are created for tokens and lists that have defined results names."""
-        namedItems = dict((v[1], k) for (k, vlist) in parent._ParseResults__tokdict.items()
-                          for v in vlist)
+        namedItems = dict(
+            (v[1], k)
+            for (k, vlist) in parent._ParseResults__tokdict.items()
+            for v in vlist
+        )
         # collapse out indents if formatting is not desired
         parentTag = None
         if doctag is not None:
@@ -483,11 +516,12 @@ def parse_nestings2(string, nesters=['()', '[]', '<>', "''", '""'], escape='\\')
         opener, closer, content = '(', ')', nest_body
         """
         import utool as ut  # NOQA
+
         ret1 = pp.Forward()
         # if opener == closer:
         #     closer = pp.Regex('(?<!' + re.escape(closer) + ')')
         _NEST = ut.identity
-        #_NEST = pp.Suppress
+        # _NEST = pp.Suppress
         opener_ = _NEST(opener)
         closer_ = _NEST(closer)
 
@@ -497,7 +531,7 @@ def parse_nestings2(string, nesters=['()', '[]', '<>', "''", '""'], escape='\\')
             ret2 = ret1
         else:
             pass
-            #raise AssertionError('Weird pyparsing behavior. Comment this line if encountered. pp.__version__ = %r' % (pp.__version__,))
+            # raise AssertionError('Weird pyparsing behavior. Comment this line if encountered. pp.__version__ = %r' % (pp.__version__,))
         if name is None:
             ret3 = ret2
         else:
@@ -512,16 +546,28 @@ def parse_nestings2(string, nesters=['()', '[]', '<>', "''", '""'], escape='\\')
         if left == right:
             # Treat left==right nestings as quoted strings
             q = left
-            quotedString = pp.Group(q + pp.Regex(r'(?:[^{q}\n\r\\]|(?:{q}{q})|(?:\\(?:[^x]|x[0-9a-fA-F]+)))*'.format(q=q)) + q)
+            quotedString = pp.Group(
+                q
+                + pp.Regex(
+                    r'(?:[^{q}\n\r\\]|(?:{q}{q})|(?:\\(?:[^x]|x[0-9a-fA-F]+)))*'.format(
+                        q=q
+                    )
+                )
+                + q
+            )
             nest_expr = quotedString.setResultsName('nest' + left + right)
         else:
-            nest_expr = combine_nested(left, right, content=nest_body, name='nest' + left + right)
+            nest_expr = combine_nested(
+                left, right, content=nest_body, name='nest' + left + right
+            )
         nest_expr_list.append(nest_expr)
 
     # quotedString = Combine(Regex(r'"(?:[^"\n\r\\]|(?:"")|(?:\\(?:[^x]|x[0-9a-fA-F]+)))*')+'"'|
     #                        Regex(r"'(?:[^'\n\r\\]|(?:'')|(?:\\(?:[^x]|x[0-9a-fA-F]+)))*")+"'").setName("quotedString using single or double quotes")
 
-    nonBracePrintables = ''.join(c for c in pp.printables if c not in ''.join(nesters)) + ' '
+    nonBracePrintables = (
+        ''.join(c for c in pp.printables if c not in ''.join(nesters)) + ' '
+    )
     nonNested = pp.Word(nonBracePrintables).setResultsName('nonNested')
     # nonNested = (pp.Word(nonBracePrintables) | pp.quotedString).setResultsName('nonNested')
     nonNested = nonNested.leaveWhitespace()
@@ -598,8 +644,11 @@ def parse_nestings(string, only_curl=False):
 
     def as_tagged(parent, doctag=None):
         """Returns the parse results as XML. Tags are created for tokens and lists that have defined results names."""
-        namedItems = dict((v[1], k) for (k, vlist) in parent._ParseResults__tokdict.items()
-                          for v in vlist)
+        namedItems = dict(
+            (v[1], k)
+            for (k, vlist) in parent._ParseResults__tokdict.items()
+            for v in vlist
+        )
         # collapse out indents if formatting is not desired
         parentTag = None
         if doctag is not None:
@@ -633,9 +682,10 @@ def parse_nestings(string, only_curl=False):
         opener, closer, content = '(', ')', nest_body
         """
         import utool as ut  # NOQA
+
         ret1 = pp.Forward()
         _NEST = ut.identity
-        #_NEST = pp.Suppress
+        # _NEST = pp.Suppress
         opener_ = _NEST(opener)
         closer_ = _NEST(closer)
         group = pp.Group(opener_ + pp.ZeroOrMore(content) + closer_)
@@ -644,7 +694,7 @@ def parse_nestings(string, only_curl=False):
             ret2 = ret1
         else:
             pass
-            #raise AssertionError('Weird pyparsing behavior. Comment this line if encountered. pp.__version__ = %r' % (pp.__version__,))
+            # raise AssertionError('Weird pyparsing behavior. Comment this line if encountered. pp.__version__ = %r' % (pp.__version__,))
         if name is None:
             ret3 = ret2
         else:
@@ -654,9 +704,9 @@ def parse_nestings(string, only_curl=False):
 
     # Current Best Grammar
     nest_body = pp.Forward()
-    nestedParens   = combine_nested('(', ')', content=nest_body, name='paren')
+    nestedParens = combine_nested('(', ')', content=nest_body, name='paren')
     nestedBrackets = combine_nested('[', ']', content=nest_body, name='brak')
-    nestedCurlies  = combine_nested('{', '}', content=nest_body, name='curl')
+    nestedCurlies = combine_nested('{', '}', content=nest_body, name='curl')
 
     nonBracePrintables = ''.join(c for c in pp.printables if c not in '(){}[]') + ' '
     nonNested = pp.Word(nonBracePrintables).setResultsName('nonNested')
@@ -732,8 +782,11 @@ def parse_cfgstr3(string, debug=None):
 
     def as_tagged(parent, doctag=None, namedItemsOnly=False):
         """Returns the parse results as XML. Tags are created for tokens and lists that have defined results names."""
-        namedItems = dict((v[1], k) for (k, vlist) in parent._ParseResults__tokdict.items()
-                          for v in vlist)
+        namedItems = dict(
+            (v[1], k)
+            for (k, vlist) in parent._ParseResults__tokdict.items()
+            for v in vlist
+        )
         # collapse out indents if formatting is not desired
         parentTag = None
         if doctag is not None:
@@ -751,10 +804,10 @@ def parse_cfgstr3(string, debug=None):
             if isinstance(res, pp.ParseResults):
                 if i in namedItems:
                     child = as_tagged(
-                        res, namedItems[i], namedItemsOnly and doctag is None)
+                        res, namedItems[i], namedItemsOnly and doctag is None
+                    )
                 else:
-                    child = as_tagged(
-                        res, None, namedItemsOnly and doctag is None)
+                    child = as_tagged(res, None, namedItemsOnly and doctag is None)
                 out.append(child)
             else:
                 # individual token, see if there is a name for it
@@ -775,9 +828,10 @@ def parse_cfgstr3(string, debug=None):
         opener, closer, content = '(', ')', nest_body
         """
         import utool as ut  # NOQA
+
         ret1 = pp.Forward()
         _NEST = ut.identity
-        #_NEST = pp.Suppress
+        # _NEST = pp.Suppress
         opener_ = _NEST(opener)
         closer_ = _NEST(closer)
         # ret1 <<= pp.Group(opener_ + pp.ZeroOrMore(content) + closer_)
@@ -786,7 +840,7 @@ def parse_cfgstr3(string, debug=None):
             ret2 = ret1
         else:
             pass
-            #raise AssertionError('Weird pyparsing behavior. Comment this line if encountered. pp.__version__ = %r' % (pp.__version__,))
+            # raise AssertionError('Weird pyparsing behavior. Comment this line if encountered. pp.__version__ = %r' % (pp.__version__,))
         if name is None:
             ret3 = ret2
         else:
@@ -796,30 +850,32 @@ def parse_cfgstr3(string, debug=None):
 
     # Current Best Grammar
     STRING = (pp.quotedString.copy()).setResultsName('quotedstring')
-    NUM    = pp.Word(pp.nums).setResultsName('num')
-    NAME   = pp.Regex('[a-zA-Z_][a-zA-Z_0-9]*')
-    atom   = (NAME | NUM | STRING).setResultsName('atom')
-    key    = pp.Word(pp.alphanums + '_').setResultsName('key')  # identifier
+    NUM = pp.Word(pp.nums).setResultsName('num')
+    NAME = pp.Regex('[a-zA-Z_][a-zA-Z_0-9]*')
+    atom = (NAME | NUM | STRING).setResultsName('atom')
+    key = pp.Word(pp.alphanums + '_').setResultsName('key')  # identifier
 
     nest_body = pp.Forward().setResultsName('nest_body')
-    nestedParens   = combine_nested('(', ')', content=nest_body, name='paren')
+    nestedParens = combine_nested('(', ')', content=nest_body, name='paren')
     nestedBrackets = combine_nested('[', ']', content=nest_body, name='brak')
-    nestedCurlies  = combine_nested('{', '}', content=nest_body, name='curl')
+    nestedCurlies = combine_nested('{', '}', content=nest_body, name='curl')
 
-    nest_stmt = pp.Combine((nestedParens | nestedBrackets | nestedCurlies).setResultsName('sequence'))
+    nest_stmt = pp.Combine(
+        (nestedParens | nestedBrackets | nestedCurlies).setResultsName('sequence')
+    )
 
-    val = (atom | nest_stmt)
+    val = atom | nest_stmt
 
     # Nest body cannot have assignments in it
-    #COMMA = pp.Suppress(',')
+    # COMMA = pp.Suppress(',')
     COMMA = ','
     nest_body << val + pp.ZeroOrMore(COMMA + val)
 
     assign = pp.Group(key + pp.Suppress('=') + (val)).setResultsName('assign')
-    #item = (assign | val).setResultsName('item')
-    item = (assign | val)
+    # item = (assign | val).setResultsName('item')
+    item = assign | val
     # OMG THIS LINE CAUSES NON-DETERMENISTIC RESULTS IN PYTHON3
-    #item = (assign | val).setResultsName('item')
+    # item = (assign | val).setResultsName('item')
 
     # Assignments only allowed at outer level
     assign_body = item + pp.ZeroOrMore(pp.Suppress(',') + item)
@@ -837,8 +893,9 @@ def parse_cfgstr3(string, debug=None):
         parsed_blocks = []
 
     from utool import util_type  # NOQA
-    #from collections import OrderedDict
-    #cfgdict = OrderedDict()
+
+    # from collections import OrderedDict
+    # cfgdict = OrderedDict()
     cfgdict = {}
     for item in parsed_blocks:
         if item[0] == 'assign':
@@ -846,7 +903,7 @@ def parse_cfgstr3(string, debug=None):
             keytup, valtup = keyval_pair
             key = keytup[1]
             val = util_type.smart_cast2(valtup[1])
-            #val = valtup[1]
+            # val = valtup[1]
         elif item[0] == 'atom':
             key = item[1]
             val = True
@@ -857,10 +914,10 @@ def parse_cfgstr3(string, debug=None):
             cfgdict[key] = val
     if debug_:
         print('[TOKENS] CFGDICT ' + ut.repr3(cfgdict, nl=1))
-        #x = list(map(type, cfgdict.keys()))
-        #print(x)
-        #print(list(cfgdict.keys()))
-        #if len(x) > 0 and str(x[0]).find('Word') > -1:
+        # x = list(map(type, cfgdict.keys()))
+        # print(x)
+        # print(list(cfgdict.keys()))
+        # if len(x) > 0 and str(x[0]).find('Word') > -1:
         #    import utool
         #    utool.embed()
     return cfgdict
@@ -890,9 +947,10 @@ def noexpand_parse_cfgstrs(cfgopt_strs, alias_keys=None):
     """
     import re
     import utool as ut
+
     # Parse dict out of a string
-    #ANYTHING_NOT_BRACE = r'[^\[\]]*\]'
-    #NOT_PAREN_OR_BRACE = r'[^()\[\]]*'
+    # ANYTHING_NOT_BRACE = r'[^\[\]]*\]'
+    # NOT_PAREN_OR_BRACE = r'[^()\[\]]*'
     if True:
         # Use a proper parser
         cfg_options = parse_cfgstr3(cfgopt_strs)
@@ -904,7 +962,8 @@ def noexpand_parse_cfgstrs(cfgopt_strs, alias_keys=None):
         cfgstr_options_list = re.split(split_pat, cfgopt_strs)
 
         cfg_options = ut.parse_cfgstr_list(
-            cfgstr_list=cfgstr_options_list, smartcast=True, oldmode=False)
+            cfgstr_list=cfgstr_options_list, smartcast=True, oldmode=False
+        )
     # Remap keynames based on aliases
     if alias_keys is not None:
         # Use new standard keys and remove old aliased keys
@@ -915,12 +974,20 @@ def noexpand_parse_cfgstrs(cfgopt_strs, alias_keys=None):
     return cfg_options
 
 
-@util_decor.on_exception_report_input(keys=['cfgname', 'cfgopt_strs', 'base_cfg',
-                                            'cfgtype', 'alias_keys', 'valid_keys'],
-                                      force=True)
-def customize_base_cfg(cfgname, cfgopt_strs, base_cfg, cfgtype,
-                       alias_keys=None, valid_keys=None, offset=0,
-                       strict=True):
+@util_decor.on_exception_report_input(
+    keys=['cfgname', 'cfgopt_strs', 'base_cfg', 'cfgtype', 'alias_keys', 'valid_keys'],
+    force=True,
+)
+def customize_base_cfg(
+    cfgname,
+    cfgopt_strs,
+    base_cfg,
+    cfgtype,
+    alias_keys=None,
+    valid_keys=None,
+    offset=0,
+    strict=True,
+):
     """
     Args:
         cfgname (str): config name
@@ -968,6 +1035,7 @@ def customize_base_cfg(cfgname, cfgopt_strs, base_cfg, cfgtype,
         ]
     """
     import utool as ut
+
     cfg = base_cfg.copy()
     # Parse config options without expansion
     cfg_options = noexpand_parse_cfgstrs(cfgopt_strs, alias_keys)
@@ -975,18 +1043,18 @@ def customize_base_cfg(cfgname, cfgopt_strs, base_cfg, cfgtype,
     if strict:
         parsed_keys = cfg_options.keys()
         if valid_keys is not None:
-            ut.assert_all_in(parsed_keys, valid_keys,
-                             'keys specified not in valid set')
+            ut.assert_all_in(parsed_keys, valid_keys, 'keys specified not in valid set')
         else:
-            ut.assert_all_in(parsed_keys, cfg.keys(),
-                             'keys specified not in default options')
+            ut.assert_all_in(
+                parsed_keys, cfg.keys(), 'keys specified not in default options'
+            )
     # Finalize configuration dict
     cfg.update(cfg_options)
     cfg['_cfgtype'] = cfgtype
     cfg['_cfgname'] = cfgname
     # Perform expansion
     cfg_combo = ut.all_dict_combinations(cfg)
-    #if len(cfg_combo) > 1:
+    # if len(cfg_combo) > 1:
     for combox, cfg_ in enumerate(cfg_combo, start=offset):
         cfg_['_cfgindex'] = combox
     for cfg_ in cfg_combo:
@@ -1039,6 +1107,7 @@ def parse_cfgstr_name_options(cfgstr):
         (cfgname, cfg_optstrs, subx) = ('default', 'myvar1=myval1,myvar2=myval2', [0])
     """
     import utool as ut
+
     cfgname_regex = ut.named_field('cfgname', r'[^\[:]*')  # name is optional
     subx_regex = r'\[' + ut.named_field('subx', r'[^\]]*') + r'\]'
     cfgopt_regex = re.escape(NAMEVARSEP) + ut.named_field('cfgopt', '.*')
@@ -1059,6 +1128,7 @@ def parse_cfgstr_name_options(cfgstr):
 
 def lookup_base_cfg_list(cfgname, named_defaults_dict, metadata=None):
     import utool as ut
+
     if named_defaults_dict is None:
         base_cfg_list = [{}]
     else:
@@ -1075,10 +1145,18 @@ def lookup_base_cfg_list(cfgname, named_defaults_dict, metadata=None):
     return base_cfg_list
 
 
-def parse_cfgstr_list2(cfgstr_list, named_defaults_dict=None, cfgtype=None,
-                       alias_keys=None, valid_keys=None, expand_nested=True,
-                       strict=True, special_join_dict=None, is_nestedcfgtype=False,
-                       metadata=None):
+def parse_cfgstr_list2(
+    cfgstr_list,
+    named_defaults_dict=None,
+    cfgtype=None,
+    alias_keys=None,
+    valid_keys=None,
+    expand_nested=True,
+    strict=True,
+    special_join_dict=None,
+    is_nestedcfgtype=False,
+    metadata=None,
+):
     r"""
     Parses config strings. By looking up name in a dict of configs
 
@@ -1203,7 +1281,8 @@ def parse_cfgstr_list2(cfgstr_list, named_defaults_dict=None, cfgtype=None,
         >>> print(result)
     """
     import utool as ut
-    #with ut.Indenter('    '):
+
+    # with ut.Indenter('    '):
     cfg_combos_list = []
     cfgstr_list_ = []
 
@@ -1214,9 +1293,9 @@ def parse_cfgstr_list2(cfgstr_list, named_defaults_dict=None, cfgtype=None,
             cfgname, cfgopt_strs, subx = parse_cfgstr_name_options(cfgstr)
             assert cfgname.endswith('=')
             cfgname = cfgname[:-1]
-            base_cfg_list = lookup_base_cfg_list(cfgname,
-                                                 named_defaults_dict,
-                                                 metadata=metadata)
+            base_cfg_list = lookup_base_cfg_list(
+                cfgname, named_defaults_dict, metadata=metadata
+            )
             cfg_options = noexpand_parse_cfgstrs(cfgopt_strs)
             dyndef_named_defaults[cfgname] = cfg_options
         else:
@@ -1232,10 +1311,15 @@ def parse_cfgstr_list2(cfgstr_list, named_defaults_dict=None, cfgtype=None,
             # Recursive call
             special_combo_list = parse_cfgstr_list2(
                 special_cfgstr_list,
-                named_defaults_dict=named_defaults_dict, cfgtype=cfgtype,
-                alias_keys=alias_keys, valid_keys=valid_keys,
-                strict=strict, expand_nested=expand_nested,
-                is_nestedcfgtype=False, metadata=metadata)
+                named_defaults_dict=named_defaults_dict,
+                cfgtype=cfgtype,
+                alias_keys=alias_keys,
+                valid_keys=valid_keys,
+                strict=strict,
+                expand_nested=expand_nested,
+                is_nestedcfgtype=False,
+                metadata=metadata,
+            )
             if special_join_dict is not None:
                 for special_combo in special_combo_list:
                     for cfg in special_combo:
@@ -1249,8 +1333,8 @@ def parse_cfgstr_list2(cfgstr_list, named_defaults_dict=None, cfgtype=None,
             if expand_nested:
                 cfg_combos.extend(cfg_combo)
             else:
-                #print('Appending: ' + str(ut.depth_profile(cfg_combo)))
-                #if ut.depth_profile(cfg_combo) == [1, 9]:
+                # print('Appending: ' + str(ut.depth_profile(cfg_combo)))
+                # if ut.depth_profile(cfg_combo) == [1, 9]:
                 #    ut.embed()
                 cfg_combos_list.append(cfg_combo)
         else:
@@ -1259,9 +1343,9 @@ def parse_cfgstr_list2(cfgstr_list, named_defaults_dict=None, cfgtype=None,
             # --
             # Lookup named default settings
             try:
-                base_cfg_list = lookup_base_cfg_list(cfgname,
-                                                     named_defaults_dict,
-                                                     metadata=metadata)
+                base_cfg_list = lookup_base_cfg_list(
+                    cfgname, named_defaults_dict, metadata=metadata
+                )
             except Exception as ex:
                 ut.printex(ex, keys=['cfgstr_list', 'cfgstr_list_'])
                 raise
@@ -1276,8 +1360,15 @@ def parse_cfgstr_list2(cfgstr_list, named_defaults_dict=None, cfgtype=None,
                 print('valid_keys = %r' % (valid_keys,))
                 print('strict = %r' % (strict,))
                 cfg_combo = customize_base_cfg(
-                    cfgname, cfgopt_strs, base_cfg, cfgtype, alias_keys,
-                    valid_keys, strict=strict, offset=len(cfg_combos))
+                    cfgname,
+                    cfgopt_strs,
+                    base_cfg,
+                    cfgtype,
+                    alias_keys,
+                    valid_keys,
+                    strict=strict,
+                    offset=len(cfg_combos),
+                )
                 if is_nestedcfgtype:
                     cfg_combo = [cfg_combo]
                 if expand_nested:
@@ -1285,12 +1376,12 @@ def parse_cfgstr_list2(cfgstr_list, named_defaults_dict=None, cfgtype=None,
                 else:
                     cfg_combos_list.append(cfg_combo)
         # SUBX Cannot work here because of acfg hackiness
-        #if subx is not None:
+        # if subx is not None:
         #    cfg_combo = ut.take(cfg_combo, subx)
         if expand_nested:
             cfg_combos_list.append(cfg_combos)
     #    print('Updated to: ' + str(ut.depth_profile(cfg_combos_list)))
-    #print('Returning len(cfg_combos_list) = %r' % (len(cfg_combos_list),))
+    # print('Returning len(cfg_combos_list) = %r' % (len(cfg_combos_list),))
     return cfg_combos_list
 
 
@@ -1318,10 +1409,23 @@ class ParamInfo(util_dev.NiceRepr):
         >>> print(result)
         foo=5
     """
-    def __init__(pi, varname=None, default=None, shortprefix=None,
-                 type_=util_const.NoParam, varyvals=[], varyslice=None,
-                 hideif=util_const.NoParam, help_=None, valid_values=None,
-                 max_=None, min_=None, step_=None, none_ok=True):
+
+    def __init__(
+        pi,
+        varname=None,
+        default=None,
+        shortprefix=None,
+        type_=util_const.NoParam,
+        varyvals=[],
+        varyslice=None,
+        hideif=util_const.NoParam,
+        help_=None,
+        valid_values=None,
+        max_=None,
+        min_=None,
+        step_=None,
+        none_ok=True,
+    ):
         r"""
         Args:
             varname (str): name of the variable
@@ -1365,9 +1469,11 @@ class ParamInfo(util_dev.NiceRepr):
         return pi._make_varstr(pi.default)
 
     def is_type_enforced(pi):
-        enforce_type = (pi.type_ is not None and
-                        not isinstance(pi.type_, six.string_types) and
-                        isinstance(pi.type_, type))
+        enforce_type = (
+            pi.type_ is not None
+            and not isinstance(pi.type_, six.string_types)
+            and isinstance(pi.type_, type)
+        )
         return enforce_type
 
     def error_if_invalid_value(pi, value):
@@ -1378,13 +1484,16 @@ class ParamInfo(util_dev.NiceRepr):
             return True
         if pi.valid_values is not None:
             if value not in pi.valid_values:
-                raise ValueError('pi=%r, value=%r not in valid_values=%r' %
-                                 (pi, value, pi.valid_values,))
+                raise ValueError(
+                    'pi=%r, value=%r not in valid_values=%r'
+                    % (pi, value, pi.valid_values,)
+                )
         if pi.is_type_enforced():
             if not util_type.is_comparable_type(value, pi.type_):
                 raise TypeError(
                     'pi=%r, value=%r with type_=%r is not the expected '
-                    'type_=%r' % (pi, value, type(value), pi.type_))
+                    'type_=%r' % (pi, value, type(value), pi.type_)
+                )
 
     def cast_to_valid_type(pi, value):
         """
@@ -1395,12 +1504,15 @@ class ParamInfo(util_dev.NiceRepr):
             return True
         if pi.valid_values is not None:
             if value not in pi.valid_values:
-                raise ValueError('pi=%r, value=%r not in valid_values=%r' %
-                                 (pi, value, pi.valid_values,))
+                raise ValueError(
+                    'pi=%r, value=%r not in valid_values=%r'
+                    % (pi, value, pi.valid_values,)
+                )
         if not util_type.is_comparable_type(value, pi.type_):
             raise TypeError(
-                'pi=%r, value=%r with type_=%r is not the expected type_=%r' %
-                (pi, value, type(value), pi.type_))
+                'pi=%r, value=%r with type_=%r is not the expected type_=%r'
+                % (pi, value, type(value), pi.type_)
+            )
 
     def append_hideif(pi, hideif):
         pi.hideif_list.append(hideif)
@@ -1412,8 +1524,7 @@ class ParamInfo(util_dev.NiceRepr):
         for hideif in pi.hideif_list:
             if callable(hideif):
                 hide = hideif(cfg)
-            elif (isinstance(hideif, six.string_types) and
-                  hideif.startswith(':')):
+            elif isinstance(hideif, six.string_types) and hideif.startswith(':'):
                 # advanced hideif parsing
                 print('Checking hide for {}'.format(pi.varname))
                 code = hideif[1:]
@@ -1423,7 +1534,7 @@ class ParamInfo(util_dev.NiceRepr):
                 print('hide = %r' % (hide,))
             else:
                 # just a value wrt to this param
-                hide = getattr(cfg,  pi.varname) == hideif
+                hide = getattr(cfg, pi.varname) == hideif
             if hide:
                 return True
 
@@ -1446,12 +1557,15 @@ class ParamInfo(util_dev.NiceRepr):
         # Create string representation of a `varval`
         if isinstance(varval, set):
             import utool as ut
-            varstr = 'set([' + ut.repr4(sorted(varval), nl=0, itemsep='', nobr=True) + '])'
+
+            varstr = (
+                'set([' + ut.repr4(sorted(varval), nl=0, itemsep='', nobr=True) + '])'
+            )
         elif isinstance(varval, dict):
             from utool import util_str
+
             # The ut.repr4 representation will consistently stringify dicts
-            varstr = util_str.repr4(varval, explicit=True, strvals=True,
-                                       itemsep='', nl=0)
+            varstr = util_str.repr4(varval, explicit=True, strvals=True, itemsep='', nl=0)
         else:
             varstr = six.text_type(varval)
             if isinstance(varval, slice):
@@ -1460,11 +1574,11 @@ class ParamInfo(util_dev.NiceRepr):
         if pi.shortprefix is not None:
             itemstr = '%s%s' % (pi.shortprefix, varstr)
         else:
-            itemstr =  '%s=%s' % (pi.varname, varstr)
+            itemstr = '%s=%s' % (pi.varname, varstr)
         return itemstr
 
     def _make_itemstr(pi, cfg):
-        varval = getattr(cfg,  pi.varname)
+        varval = getattr(cfg, pi.varname)
         return pi._make_varstr(varval)
 
     def get_itemstr(pi, cfg):
@@ -1494,38 +1608,56 @@ class ParamInfoBool(ParamInfo):
         >>> print(result)
         nocheese
     """
-    def __init__(pi, varname, default=False, shortprefix=None,
-                 type_=bool, varyvals=[], varyslice=None, hideif=False,
-                 help_=None):
+
+    def __init__(
+        pi,
+        varname,
+        default=False,
+        shortprefix=None,
+        type_=bool,
+        varyvals=[],
+        varyslice=None,
+        hideif=False,
+        help_=None,
+    ):
         if not varname.endswith('_on'):
             # TODO: use this convention or come up with a better one
-            #print('WARNING: varname=%r should end with _on' % (varname,))
+            # print('WARNING: varname=%r should end with _on' % (varname,))
             pass
         import utool as ut
+
         _ParamInfoBool = ut.fix_super_reload(ParamInfoBool, pi)
         super(_ParamInfoBool, pi).__init__(
-            varname, default=default, shortprefix=shortprefix, type_=bool,
-            varyvals=varyvals, varyslice=varyslice, hideif=hideif)
+            varname,
+            default=default,
+            shortprefix=shortprefix,
+            type_=bool,
+            varyvals=varyvals,
+            varyslice=varyslice,
+            hideif=hideif,
+        )
 
     def _make_itemstr(pi, cfg):
         # TODO: redo this as _make_varstr and remove all instances of
         # _make_itemstr
-        varval = getattr(cfg,  pi.varname)
+        varval = getattr(cfg, pi.varname)
         if pi.shortprefix is not None:
             itemstr = pi.shortprefix
         else:
-            itemstr =  pi.varname.replace('_on', '')
+            itemstr = pi.varname.replace('_on', '')
         if varval is False:
             itemstr = 'no' + itemstr
         elif varval is not True:
-            raise AssertionError('Not a boolean pi.varname=%r, varval=%r' % (
-                pi.varname, varval,))
+            raise AssertionError(
+                'Not a boolean pi.varname=%r, varval=%r' % (pi.varname, varval,)
+            )
         return itemstr
 
 
 @six.add_metaclass(util_class.ReloadingMetaclass)
 class ParamInfoList(object):
     """ small class for ut.Pref-less configurations """
+
     def __init__(self, name, param_info_list=[], constraint_func=None, hideif=None):
         self.name = name
         self.param_info_list = param_info_list
@@ -1544,7 +1676,9 @@ class ParamInfoList(object):
         return self.param_info_list
 
     def updated_cfgdict(self, dict_):
-        return {pi.varname: dict_.get(pi.varname, pi.default) for pi in self.param_info_list}
+        return {
+            pi.varname: dict_.get(pi.varname, pi.default) for pi in self.param_info_list
+        }
 
     def get_varnames(self):
         return [pi.varname for pi in self.param_info_list]
@@ -1556,8 +1690,11 @@ class ParamInfoList(object):
 
     def get_slicedict(self):
         """ for gridsearch """
-        slice_dict = {pi.varname: pi.varyslice for pi in self.param_info_list
-                      if pi.varyslice is not None}
+        slice_dict = {
+            pi.varname: pi.varyslice
+            for pi in self.param_info_list
+            if pi.varyslice is not None
+        }
         if len(slice_dict) == 0:
             slice_dict = None
         return slice_dict
@@ -1565,8 +1702,7 @@ class ParamInfoList(object):
     def get_grid_basis(self):
         """ DEPRICATE """
         grid_basis = [
-            DimensionBasis(pi.varname, pi.varyvals)
-            for pi in self.param_info_list
+            DimensionBasis(pi.varname, pi.varyvals) for pi in self.param_info_list
         ]
         return grid_basis
 
@@ -1579,7 +1715,7 @@ class ParamInfoList(object):
             varied_dict,
             constraint_func=constraint_func,
             slice_dict=slice_dict,
-            defaultslice=defaultslice
+            defaultslice=defaultslice,
         )
         return cfgdict_list, cfglbl_list
 
@@ -1589,14 +1725,15 @@ def testdata_grid_search():
     test data function for doctests
     """
     import utool as ut
+
     grid_basis = [
-        ut.DimensionBasis('p', [.5, .8, .9, 1.0]),
+        ut.DimensionBasis('p', [0.5, 0.8, 0.9, 1.0]),
         ut.DimensionBasis('K', [2, 3, 4, 5]),
-        ut.DimensionBasis('dcvs_clip_max', [.1, .2, .5, 1.0]),
+        ut.DimensionBasis('dcvs_clip_max', [0.1, 0.2, 0.5, 1.0]),
     ]
     gridsearch = ut.GridSearch(grid_basis, label='testdata_gridsearch')
     for cfgdict in gridsearch:
-        tp_score = cfgdict['p'] + (cfgdict['K'] ** .5)
+        tp_score = cfgdict['p'] + (cfgdict['K'] ** 0.5)
         tn_score = (cfgdict['p'] * (cfgdict['K'])) / cfgdict['dcvs_clip_max']
         gridsearch.append_result(tp_score, tn_score)
     return gridsearch
@@ -1621,6 +1758,7 @@ class GridSearch(object):
         ...     tn_score = (cfgdict['p'] * (cfgdict['K'])) / cfgdict['dcvs_clip_max']
         ...     gridsearch.append_result(tp_score, tn_score)
     """
+
     def __init__(gridsearch, grid_basis, label=None):
         gridsearch.label = label
         gridsearch.grid_basis = grid_basis
@@ -1630,7 +1768,7 @@ class GridSearch(object):
         cfgdict_iter = grid_search_generator(grid_basis)
         gridsearch.cfgdict_list = list(cfgdict_iter)
         gridsearch.num_configs = len(gridsearch.cfgdict_list)
-        gridsearch.score_lbls  = ['score_diff', 'tp_score', 'tn_score']
+        gridsearch.score_lbls = ['score_diff', 'tp_score', 'tn_score']
 
     def append_result(gridsearch, tp_score, tn_score):
         """ for use in iteration """
@@ -1648,23 +1786,27 @@ class GridSearch(object):
 
     def get_score_list_and_lbls(gridsearch):
         """ returns result data """
-        score_list  = [gridsearch.score_diff_list,
-                       gridsearch.tp_score_list,
-                       gridsearch.tn_score_list]
+        score_list = [
+            gridsearch.score_diff_list,
+            gridsearch.tp_score_list,
+            gridsearch.tn_score_list,
+        ]
         score_lbls = gridsearch.score_lbls
         return score_list, score_lbls
 
     def get_param_list_and_lbls(gridsearch):
         """ returns input data """
         import utool as ut
+
         param_name_list = ut.get_list_column(gridsearch.grid_basis, 0)
         params_vals = [list(six.itervalues(dict_)) for dict_ in gridsearch.cfgdict_list]
         param_vals_list = list(zip(*params_vals))
         return param_name_list, param_vals_list
 
     def get_param_lbls(gridsearch, exclude_unvaried_dimension=True):
-        #param_label_list, param_vals_list = gridsearch.get_param_list_and_lbls()[0]
+        # param_label_list, param_vals_list = gridsearch.get_param_list_and_lbls()[0]
         import utool as ut
+
         param_label_list_ = ut.get_list_column(gridsearch.grid_basis, 0)
         param_range_list = ut.get_list_column(gridsearch.grid_basis, 1)
         if exclude_unvaried_dimension:
@@ -1677,6 +1819,7 @@ class GridSearch(object):
     def get_sorted_columns_and_labels(gridsearch, score_lbl='score_diff'):
         """ returns sorted input and result data """
         import utool as ut
+
         # Input Parameters
         param_name_list, param_vals_list = gridsearch.get_param_list_and_lbls()
         # Result Scores
@@ -1689,8 +1832,12 @@ class GridSearch(object):
         param_name_sorted = param_name_list
         score_list_sorted = list(map(sortby_func, score_list))
         param_vals_sorted = list(map(sortby_func, param_vals_list))
-        collbl_tup = (score_name_sorted, param_name_sorted,
-                      score_list_sorted, param_vals_sorted)
+        collbl_tup = (
+            score_name_sorted,
+            param_name_sorted,
+            score_list_sorted,
+            param_vals_sorted,
+        )
         return collbl_tup
 
     def get_csv_results(gridsearch, max_lines=None, score_lbl='score_diff'):
@@ -1722,9 +1869,14 @@ class GridSearch(object):
             60yptleiwo@lk@24
         """
         import utool as ut
+
         collbl_tup = gridsearch.get_sorted_columns_and_labels(score_lbl)
-        (score_name_sorted, param_name_sorted,
-         score_list_sorted, param_vals_sorted) = collbl_tup
+        (
+            score_name_sorted,
+            param_name_sorted,
+            score_list_sorted,
+            param_vals_sorted,
+        ) = collbl_tup
 
         # Build CSV
         column_lbls = score_name_sorted + param_name_sorted
@@ -1733,28 +1885,33 @@ class GridSearch(object):
         if max_lines is not None:
             column_list = [ut.listclip(col, max_lines) for col in column_list]
         header_raw_fmtstr = ut.codeblock(
-            '''
+            """
             import utool as ut
             from utool import DimensionBasis
             title = 'Grid Search Results CSV'
             label = {label}
             grid_basis = {grid_basis_str}
-            ''')
+            """
+        )
         fmtdict = dict(
-            grid_basis_str=ut.repr4(gridsearch.grid_basis),
-            label=gridsearch.label
+            grid_basis_str=ut.repr4(gridsearch.grid_basis), label=gridsearch.label
         )
         header_raw = header_raw_fmtstr.format(**fmtdict)
-        header     = ut.indent(header_raw, '# >>> ')
+        header = ut.indent(header_raw, '# >>> ')
         precision = 3
         csvtext = ut.make_csv_table(column_list, column_lbls, header, precision=precision)
         return csvtext
 
     def get_rank_cfgdict(gridsearch, rank=0, score_lbl='score_diff'):
         import utool as ut
+
         collbl_tup = gridsearch.get_sorted_columns_and_labels(score_lbl)
-        (score_name_sorted, param_name_sorted,
-         score_list_sorted, param_vals_sorted) = collbl_tup
+        (
+            score_name_sorted,
+            param_name_sorted,
+            score_list_sorted,
+            param_vals_sorted,
+        ) = collbl_tup
         rank_vals = ut.get_list_column(param_vals_sorted, rank)
         rank_cfgdict = dict(zip(param_name_sorted, rank_vals))
         return rank_cfgdict
@@ -1771,18 +1928,18 @@ class GridSearch(object):
             dict: param2_score_stats
         """
         import utool as ut
+
         score_list, score_lbls = gridsearch.get_score_list_and_lbls()
         param_name_list, param_vals_list = gridsearch.get_param_list_and_lbls()
         param_vals = param_vals_list[param_name_list.index(param_lbl)]
         score_vals = score_list[score_lbls.index(score_lbl)]
-        #sortby_func = ut.make_sortby_func(score_vals, reverse=True)
-        #build_conflict_dict(param_vals, score_vals)
+        # sortby_func = ut.make_sortby_func(score_vals, reverse=True)
+        # build_conflict_dict(param_vals, score_vals)
         param2_scores = ut.group_items(score_vals, param_vals)
         param2_score_stats = {
-            param: ut.get_stats(scores)
-            for param, scores in six.iteritems(param2_scores)
+            param: ut.get_stats(scores) for param, scores in six.iteritems(param2_scores)
         }
-        #print(ut.repr4(param2_score_stats))
+        # print(ut.repr4(param2_score_stats))
         return param2_score_stats
 
     def get_dimension_stats_str(gridsearch, param_lbl, score_lbl='score_diff'):
@@ -1790,16 +1947,17 @@ class GridSearch(object):
         Returns a result stat string about a specific parameter
         """
         import utool as ut
+
         exclude_keys = ['nMin', 'nMax']
         param2_score_stats = gridsearch.get_dimension_stats(param_lbl)
         param2_score_stats_str = {
             param: ut.get_stats_str(stat_dict=stat_dict, exclude_keys=exclude_keys)
-            for param, stat_dict in six.iteritems(param2_score_stats)}
+            for param, stat_dict in six.iteritems(param2_score_stats)
+        }
         param_stats_str = 'stats(' + param_lbl + ') = ' + ut.repr4(param2_score_stats_str)
         return param_stats_str
 
-    def plot_dimension(gridsearch, param_lbl, score_lbl='score_diff',
-                       **kwargs):
+    def plot_dimension(gridsearch, param_lbl, score_lbl='score_diff', **kwargs):
         r"""
         Plots result statistics about a specific parameter
 
@@ -1826,11 +1984,17 @@ class GridSearch(object):
             >>> pt.show_if_requested()
         """
         import wbia.plottool as pt
+
         param2_score_stats = gridsearch.get_dimension_stats(param_lbl, score_lbl)
         title = param_lbl
-        #title = param_lbl + ' vs ' + score_lbl
-        fig = pt.interval_stats_plot(param2_score_stats, x_label=param_lbl,
-                                     y_label=score_lbl, title=title, **kwargs)
+        # title = param_lbl + ' vs ' + score_lbl
+        fig = pt.interval_stats_plot(
+            param2_score_stats,
+            x_label=param_lbl,
+            y_label=score_lbl,
+            title=title,
+            **kwargs
+        )
         return fig
 
 
@@ -1882,9 +2046,9 @@ def grid_search_generator(grid_basis=[], *args, **kwargs):
         yield grid_point
 
 
-def make_constrained_cfg_and_lbl_list(varied_dict, constraint_func=None,
-                                      slice_dict=None,
-                                      defaultslice=slice(0, 1)):
+def make_constrained_cfg_and_lbl_list(
+    varied_dict, constraint_func=None, slice_dict=None, defaultslice=slice(0, 1)
+):
     r"""
     Args:
         varied_dict (dict):  parameters to vary with possible variations
@@ -1981,8 +2145,11 @@ def get_cfgdict_list_subset(cfgdict_list, keys):
         ]
     """
     import utool as ut
+
     cfgdict_sublist_ = [ut.dict_subset(cfgdict, keys) for cfgdict in cfgdict_list]
-    cfgtups_sublist_ = [tuple(ut.dict_to_keyvals(cfgdict)) for cfgdict in cfgdict_sublist_]
+    cfgtups_sublist_ = [
+        tuple(ut.dict_to_keyvals(cfgdict)) for cfgdict in cfgdict_sublist_
+    ]
     cfgtups_sublist = ut.unique_ordered(cfgtups_sublist_)
     cfgdict_sublist = list(map(dict, cfgtups_sublist))
     return cfgdict_sublist
@@ -2002,8 +2169,9 @@ def constrain_cfgdict_list(cfgdict_list_, constraint_func):
 def make_cfglbls(cfgdict_list, varied_dict):
     """  Show only the text in labels that mater from the cfgdict """
     import textwrap
+
     wrapper = textwrap.TextWrapper(width=50)
-    cfglbl_list =  []
+    cfglbl_list = []
     for cfgdict_ in cfgdict_list:
         cfgdict = cfgdict_.copy()
         for key in six.iterkeys(cfgdict_):
@@ -2020,22 +2188,30 @@ def make_cfglbls(cfgdict_list, varied_dict):
                 # Don't print keys not in varydict
                 del cfgdict[key]
         cfglbl = six.text_type(cfgdict)
-        search_repl_list = [('\'', ''), ('}', ''),
-                            ('{', ''), (': ', '=')]
+        search_repl_list = [("'", ''), ('}', ''), ('{', ''), (': ', '=')]
         for search, repl in search_repl_list:
             cfglbl = cfglbl.replace(search, repl)
-        #cfglbl = str(cfgdict).replace('\'', '').replace('}', '').replace('{', '').replace(': ', '=')
-        cfglbl = ('\n'.join(wrapper.wrap(cfglbl)))
+        # cfglbl = str(cfgdict).replace('\'', '').replace('}', '').replace('{', '').replace(': ', '=')
+        cfglbl = '\n'.join(wrapper.wrap(cfglbl))
         cfglbl_list.append(cfglbl)
     return cfglbl_list
 
 
-def interact_gridsearch_result_images(show_result_func, cfgdict_list,
-                                      cfglbl_list, cfgresult_list,
-                                      score_list=None, fnum=None, figtitle='',
-                                      unpack=False, max_plots=25, verbose=True,
-                                      precision=3, scorelbl='score',
-                                      onclick_func=None):
+def interact_gridsearch_result_images(
+    show_result_func,
+    cfgdict_list,
+    cfglbl_list,
+    cfgresult_list,
+    score_list=None,
+    fnum=None,
+    figtitle='',
+    unpack=False,
+    max_plots=25,
+    verbose=True,
+    precision=3,
+    scorelbl='score',
+    onclick_func=None,
+):
     """ helper function for visualizing results of gridsearch """
     assert callable(show_result_func), 'NEED FUNCTION GOT: %r' % (show_result_func,)
 
@@ -2043,6 +2219,7 @@ def interact_gridsearch_result_images(show_result_func, cfgdict_list,
     import wbia.plottool as pt
     from wbia.plottool import plot_helpers as ph
     from wbia.plottool import interact_helpers as ih
+
     if verbose:
         print('Plotting gridsearch results figtitle=%r' % (figtitle,))
     if score_list is None:
@@ -2062,9 +2239,9 @@ def interact_gridsearch_result_images(show_result_func, cfgdict_list,
     # Get plots for each of the resutls
     nRows, nCols = pt.get_square_row_cols(len(score_list), fix=True)
     next_pnum = pt.make_pnum_nextgen(nRows, nCols)
-    for cfgdict, cfglbl, cfgresult, score in zip(cfgdict_list, cfglbl_list,
-                                                  cfgresult_list,
-                                                  score_list):
+    for cfgdict, cfglbl, cfgresult, score in zip(
+        cfgdict_list, cfglbl_list, cfgresult_list, score_list
+    ):
         if score is not None:
             cfglbl += '\n' + scorelbl + '=' + ut.repr2(score, precision=precision)
         pnum = next_pnum()
@@ -2075,12 +2252,12 @@ def interact_gridsearch_result_images(show_result_func, cfgdict_list,
                 show_result_func(cfgresult, fnum=fnum, pnum=pnum)
         except Exception as ex:
             if isinstance(cfgresult, tuple):
-                #print(ut.repr4(cfgresult))
+                # print(ut.repr4(cfgresult))
                 print(ut.depth_profile(cfgresult))
                 print(ut.list_type_profile(cfgresult))
             ut.printex(ex, 'error showing', keys=['cfgresult', 'fnum', 'pnum'])
             raise
-        #pt.imshow(255 * cfgresult, fnum=fnum, pnum=next_pnum(), title=cfglbl)
+        # pt.imshow(255 * cfgresult, fnum=fnum, pnum=next_pnum(), title=cfglbl)
         ax = pt.gca()
         pt.set_title(cfglbl, ax=ax)  # , size)
         ph.set_plotdat(ax, 'cfgdict', cfgdict)
@@ -2112,6 +2289,7 @@ def interact_gridsearch_result_images(show_result_func, cfgdict_list,
                     onclick_func(cfgresult)
             infostr = ut.msgblock('CLICKED', '\n'.join(infostr_list))
             print(infostr)
+
     # Connect callbacks
     ih.connect_callback(fig, 'button_press_event', on_clicked)
     pt.set_figtitle(figtitle)
@@ -2157,6 +2335,7 @@ def gridsearch_timer(func_list, args_list, niters=None, **searchkw):
         >>> ut.show_if_requested()
     """
     import utool as ut
+
     timings = ut.ddict(list)
     if niters is None:
         niters = len(args_list)
@@ -2166,9 +2345,13 @@ def gridsearch_timer(func_list, args_list, niters=None, **searchkw):
     else:
         get_args = args_list.__getitem__
 
-    #func_labels = searchkw.get('func_labels', list(range(len(func_list))))
-    func_labels = searchkw.get('func_labels', [ut.get_funcname(func) for func in func_list])
-    use_cache = searchkw.get('use_cache', not ut.get_argflag(('--nocache', '--nocache-time')))
+    # func_labels = searchkw.get('func_labels', list(range(len(func_list))))
+    func_labels = searchkw.get(
+        'func_labels', [ut.get_funcname(func) for func in func_list]
+    )
+    use_cache = searchkw.get(
+        'use_cache', not ut.get_argflag(('--nocache', '--nocache-time'))
+    )
     assert_eq = searchkw.get('assert_eq', True)
 
     count_list = list(range(niters))
@@ -2209,6 +2392,7 @@ def gridsearch_timer(func_list, args_list, niters=None, **searchkw):
 
     def plot_timings():
         import wbia.plottool as pt
+
         ydata_list = ut.dict_take(timings, func_list)
         xdata = xtick_list
 
@@ -2216,10 +2400,14 @@ def gridsearch_timer(func_list, args_list, niters=None, **searchkw):
         xlabel = 'input size'
 
         pt.multi_plot(
-            xdata, ydata_list, label_list=func_labels,
-            ylabel=ylabel, xlabel=xlabel,
+            xdata,
+            ydata_list,
+            label_list=func_labels,
+            ylabel=ylabel,
+            xlabel=xlabel,
             **searchkw
         )
+
     time_result = {
         'plot_timings': plot_timings,
         'timings': timings,
@@ -2237,6 +2425,8 @@ if __name__ == '__main__':
         python -m utool.util_gridsearch --allexamples --noface --nosrc
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

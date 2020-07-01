@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-lazy_module_attrs =  ['_modname', '_module', '_load_module']
+lazy_module_attrs = ['_modname', '_module', '_load_module']
 
 
 class LazyModule(object):
@@ -7,13 +7,16 @@ class LazyModule(object):
     Waits to import the module until it is actually used
 
     """
+
     def __init__(self, modname):
         self._modname = modname
         self._module = None
 
     def _load_module(self):
-        #print('loading module')
-        self._module =  __import__(self._modname, globals(), locals(), fromlist=[], level=0)
+        # print('loading module')
+        self._module = __import__(
+            self._modname, globals(), locals(), fromlist=[], level=0
+        )
 
     def __str__(self):
         return 'LazyModule(%s)' % (self._modname,)

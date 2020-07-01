@@ -15,6 +15,7 @@ def global_cache_read(key, appname=None, **kwargs):
     ensuredir(global_cache_dir)
     shelf_fpath = join(global_cache_dir, global_cache_fname)
     import six
+
     if six.PY2:
         # key must be non-unicode in python2
         key = str(key)
@@ -32,4 +33,4 @@ def global_cache_read(key, appname=None, **kwargs):
         if meta_util_arg.SUPER_STRICT:
             raise
         return kwargs['default']
-        #raise
+        # raise

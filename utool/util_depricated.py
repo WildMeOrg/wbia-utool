@@ -53,10 +53,11 @@ def cartesian(arrays, out=None):
     if arrays[1:]:
         cartesian(arrays[1:], out=out[0:m, 1:])
         for j in range(1, arrays[0].size):
-            out[j * m:(j + 1) * m, 1:] = out[0:m, 1:]
+            out[j * m : (j + 1) * m, 1:] = out[0:m, 1:]
     return out
 
-#def unpack_items_sorted(dict_, sortfn, reverse=True):
+
+# def unpack_items_sorted(dict_, sortfn, reverse=True):
 #    """ Unpacks and sorts the dictionary by sortfn
 #    """
 #    items = dict_.items()
@@ -65,7 +66,7 @@ def cartesian(arrays, out=None):
 #    return sorted_keys, sorted_vals
 
 
-#def unpack_items_sorted_by_lenvalue(dict_, reverse=True):
+# def unpack_items_sorted_by_lenvalue(dict_, reverse=True):
 #    """ Unpacks and sorts the dictionary by key
 #    """
 #    def sort_lenvalue(item):
@@ -73,14 +74,14 @@ def cartesian(arrays, out=None):
 #    return unpack_items_sorted(dict_, sort_lenvalue)
 
 
-#def unpack_items_sorted_by_value(dict_, reverse=True):
+# def unpack_items_sorted_by_value(dict_, reverse=True):
 #    """ Unpacks and sorts the dictionary by key
 #    """
 #    def sort_value(item):
 #        return item[1]
 #    return unpack_items_sorted(dict_, sort_value)
 
-#def inbounds(arr, min_, max_):
+# def inbounds(arr, min_, max_):
 #    if min_ > 0 and max_ is not None:
 #        #if max_ is not None and min
 #        islt_max = np.less_equal(arr, max_)
@@ -101,6 +102,8 @@ if __name__ == '__main__':
         python -m utool.util_depricated --allexamples
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()

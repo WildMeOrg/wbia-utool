@@ -16,14 +16,16 @@ def get_regstr(regtype, var, val):
     EXCLUDE = ['USERPROFILE', 'USERNAME', 'SYSTEM32']
     if var in EXCLUDE:
         return ''
+
     def quotes(str_):
         return '"' + str_.replace('"', r'\"') + '"'
+
     sanitized_var = quotes(var)
     if regtype == 'REG_EXPAND_SZ':
         # Weird encoding
-        #bin_ = binascii.hexlify(hex_)
-        #val_ = ','.join([''.join(hex2) for hex2 in hex2zip])
-        #import binascii  # NOQA
+        # bin_ = binascii.hexlify(hex_)
+        # val_ = ','.join([''.join(hex2) for hex2 in hex2zip])
+        # import binascii  # NOQA
         x = val
         ascii_ = x.encode('ascii')
         hex_ = ascii_.encode('hex')
@@ -31,7 +33,9 @@ def get_regstr(regtype, var, val):
         hex2zip = zip(hex_[0::2], hex_[1::2])
         spacezip = [('0', '0')] * len(hex2zip)
         hex3zip = zip(hex2zip, spacezip)
-        sanitized_val = ','.join([''.join(hex2) + ',' + ''.join(space) for hex2, space in hex3zip])
+        sanitized_val = ','.join(
+            [''.join(hex2) + ',' + ''.join(space) for hex2, space in hex3zip]
+        )
     elif regtype == 'REG_DWORD':
         sanitized_val = '%08d' % int(val)
     else:
@@ -46,9 +50,7 @@ def make_regfile_str(key, varval_list, rtype):
     # Input: list of (var, val) tuples
     # key to put varval list in
     # rtype - type of registry variables
-    envtxt_list = ['Windows Registry Editor Version 5.00',
-                   '',
-                   key]
+    envtxt_list = ['Windows Registry Editor Version 5.00', '', key]
     print('\n'.join(map(repr, varval_list)))
     varval_list = filter(lambda x: isinstance(x, tuple), varval_list)
     vartxt_list = [get_regstr(rtype, var, val) for (var, val) in varval_list]
@@ -74,13 +76,14 @@ def add_to_win32_PATH(script_fpath, *add_path_list):
         >>> print(result)
     """
     import utool as ut
+
     write_dir = dirname(script_fpath)
     key = '[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment]'
     rtype = 'REG_EXPAND_SZ'
     # Read current PATH values
     win_pathlist = list(os.environ['PATH'].split(os.path.pathsep))
     new_path_list = ut.unique_ordered(win_pathlist + list(add_path_list))
-    #new_path_list = unique_ordered(win_pathlist, rob_pathlist)
+    # new_path_list = unique_ordered(win_pathlist, rob_pathlist)
     print('\n'.join(new_path_list))
     pathtxt = pathsep.join(new_path_list)
     varval_list = [('Path', pathtxt)]
@@ -99,6 +102,8 @@ if __name__ == '__main__':
         python -m utool.util_win32 --allexamples --noface --nosrc
     """
     import multiprocessing
+
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+
     ut.doctest_funcs()
