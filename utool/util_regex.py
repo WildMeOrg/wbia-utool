@@ -141,14 +141,14 @@ def named_field(key, regex, vim=False):
 
 def positive_lookahead(regex, vim=False):
     if vim:
-        return '\(' + regex + '\)\@='
+        return r'\(' + regex + r'\)\@='
     else:
         return '(?=' + regex + ')'
 
 
 def positive_lookbehind(regex, vim=False):
     if vim:
-        return '\(' + regex + '\)\@<='
+        return r'\(' + regex + r'\)\@<='
     else:
         return '(?<=' + regex + ')'
 
@@ -159,7 +159,7 @@ def positive_lookbehind(regex, vim=False):
 
 def negative_lookahead(regex, vim=False):
     if vim:
-        return '\(' + regex + '\)\@!'
+        return r'\(' + regex + r'\)\@!'
     else:
         return '(?!' + regex + ')'
 

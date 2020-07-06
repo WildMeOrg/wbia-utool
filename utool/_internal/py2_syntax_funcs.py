@@ -52,7 +52,7 @@ def ignores_exc_tb(*args, **kwargs):
                 except Exception:
                     print('too many reraise')
                     pass
-                raise exc_type, exc_value, exc_traceback
+                raise exc_type(exc_value, exc_traceback)
 
         if outer_wrapper:
             wrp_noexectb = util_decor.preserve_sig(wrp_noexectb, func)

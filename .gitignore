@@ -1,8 +1,13 @@
+# setuptools_scm version discovery writes the version to <pkg>/_version.py
+**/_version.py
+
 # idk why this exists. probably jon's vimrc
 '
 
 .cache
 *.py[cod]
+
+.eggs/
 
 # C extensions
 *.so
@@ -27,6 +32,7 @@ pip-log.txt
 
 # Print Logs
 logs
+htmlcov/
 
 # Unit test / coverage reports
 .coverage
