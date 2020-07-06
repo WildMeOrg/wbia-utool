@@ -17,7 +17,10 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import sys
 import textwrap
 
-__version__ = '3.0.0'
+try:
+    from utool._version import __version__
+except ImportError:
+    __version__ = '0.0.0'
 
 __DYNAMIC__ = True
 if __DYNAMIC__:

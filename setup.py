@@ -9,29 +9,6 @@ import sys
 from os.path import exists
 
 
-def parse_version(fpath):
-    """
-    Statically parse the version number from a python file
-    """
-    import ast
-
-    if not exists(fpath):
-        raise ValueError('fpath={!r} does not exist'.format(fpath))
-    with open(fpath, 'r') as file_:
-        sourcecode = file_.read()
-    pt = ast.parse(sourcecode)
-
-    class VersionVisitor(ast.NodeVisitor):
-        def visit_Assign(self, node):
-            for target in node.targets:
-                if getattr(target, 'id', None) == '__version__':
-                    self.version = node.value.s
-
-    visitor = VersionVisitor()
-    visitor.visit(pt)
-    return visitor.version
-
-
 def parse_description():
     """
     Parse the description in the README file
@@ -177,14 +154,12 @@ def native_mb_python_tag(plat_impl=None, version_info=None):
 
 
 NAME = 'wbia-utool'
-VERSION = parse_version('utool/__init__.py')  # must be global for git tags
 
 
 if __name__ == '__main__':
     # run setuptools setup function
     setup(
         name=NAME,
-        version=VERSION,
         packages=['utool', 'utool._internal', 'utool.tests', 'utool.util_scripts',],
         # packages=util_setup.find_packages(),
         description='Useful utilities and the kitchen sink',
@@ -193,6 +168,15 @@ if __name__ == '__main__':
         url='https://github.com/Erotemic/utool',
         author='Jon Crall',
         author_email='erotemic@gmail.com',
+        # The following settings retreive the version from git.
+        # See https://github.com/pypa/setuptools_scm/ for more information
+        setup_requires=['setuptools_scm'],
+        use_scm_version={
+            'write_to': 'utool/_version.py',
+            'write_to_template': '__version__ = "{version}"',
+            'tag_regex': '^(?P<prefix>v)?(?P<version>[^\\+]+)(?P<suffix>.*)?$',
+            'local_scheme': 'dirty-tag',
+        },
         install_requires=parse_requirements('requirements/runtime.txt'),
         extras_require={
             'all': parse_requirements('requirements.txt'),
