@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 def main():  # nocover
-    import vtool
+    import utool
 
     print('Looks like the imports worked')
-    print('vtool = {!r}'.format(vtool))
-    print('vtool.__file__ = {!r}'.format(vtool.__file__))
-    print('vtool.__version__ = {!r}'.format(vtool.__version__))
+    print('utool = {!r}'.format(utool))
+    print('utool.__file__ = {!r}'.format(utool.__file__))
+    print('utool.__version__ = {!r}'.format(utool.__version__))
 
     import networkx
 
@@ -17,6 +17,6 @@ def main():  # nocover
 if __name__ == '__main__':
     """
     CommandLine:
-       python -m vtool
+       python -m utool
     """
     main()
