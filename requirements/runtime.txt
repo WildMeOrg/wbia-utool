@@ -6,7 +6,7 @@ lockfile >= 0.10.2 ; python_version<'3.0'
 
 networkx == 2.2 ; python_version<'3.0'
 networkx >= 2.2.0 ; python_version>'3.0'
-numpy
+numpy == 1.18.4
 pandas
 parse >= 1.6.6
 pint
