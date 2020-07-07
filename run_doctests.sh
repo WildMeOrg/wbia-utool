@@ -1,2 +1,2 @@
 #!/bin/bash
-xdoctest utool --style=google all
+xdoctest -m utool --style=google all

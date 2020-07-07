@@ -1,20 +1,22 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function, unicode_literals
+def main():  # nocover
+    import utool
 
+    print('Looks like the imports worked')
+    print('utool = {!r}'.format(utool))
+    print('utool.__file__ = {!r}'.format(utool.__file__))
+    print('utool.__version__ = {!r}'.format(utool.__version__))
 
-def utool_main():
-    ignore_prefix = []
-    ignore_suffix = []
-    import utool as ut
+    import networkx
 
-    # allows for --tf
-    ut.main_function_tester('utool', ignore_prefix, ignore_suffix)
+    print('networkx = {!r}'.format(networkx))
+    print('networkx.__file__ = {!r}'.format(networkx.__file__))
+    print('networkx.__version__ = {!r}'.format(networkx.__version__))
 
 
 if __name__ == '__main__':
     """
-    python -m utool --tf infer_function_info:0
+    CommandLine:
+       python -m utool
     """
-    print('Checking utool main')
-    utool_main()
+    main()
