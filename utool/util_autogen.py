@@ -366,7 +366,7 @@ def load_func_from_module(modname, funcname, verbose=True, moddir=None, modpath=
         #                 raise
         try:
             imp.reload(module)
-        except Exception as ex:
+        except Exception:
             pass
         try:
             # FIXME: PYTHON 3
@@ -685,10 +685,8 @@ def make_example_docstr(
         'kpts': ['vt'],
         #'qreq_':     ['ibs', 'species', 'daids', 'qaids'],
         'qreq_': ['wbia'],
-        'qaids': ['ibs'],
-        'daids': ['ibs'],
-        'qaids': ['species'],
-        'daids': ['species'],
+        'qaids': ['ibs', 'species'],
+        'daids': ['ibs', 'species'],
         'img': ['img_fpath', 'vt'],
     }
 

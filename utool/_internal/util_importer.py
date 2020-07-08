@@ -208,7 +208,7 @@ def _initstr(modname, imports, from_imports, inject_execstr, withheader=True):
     initstr = '\n'.join(
         [
             str_
-            for str_ in [header, import_str, fromimport_str, inject_execstr,]
+            for str_ in [header, import_str, fromimport_str, inject_execstr]
             if len(str_) > 0
         ]
     )

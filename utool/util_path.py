@@ -559,7 +559,7 @@ def remove_fpaths(
             try:
                 os.remove(fpath)
                 n_removed += 1
-            except OSError as ex:
+            except OSError:
                 if VERYVERBOSE:
                     print('WARNING: Could not remove fpath = %r' % (fpath,))
     if _verbose:
@@ -1707,7 +1707,7 @@ def assertpath(path_, msg='', **kwargs):
     if NO_ASSERTS:
         return
     if path_ is None:
-        raise AssertionError('path is None! %s' % (path_, msg))
+        raise AssertionError('path=%r is None! %s' % (path_, msg))
     if path_ == '':
         raise AssertionError('path=%r is the empty string! %s' % (path_, msg))
     if not checkpath(path_, **kwargs):
@@ -2384,7 +2384,7 @@ def expand_win32_shortname(path1):
 
         # import win32file
         if six.PY2:
-            path1 = unicode(path1)
+            path1 = unicode(path1)  # NOQA
         else:
             path1 = str(path1)
         buflen = 260  # max size
@@ -2477,7 +2477,7 @@ def existing_commonprefix(paths):
 def search_in_dirs(
     fname, search_dpaths=[], shortcircuit=True, return_tried=False, strict=False
 ):
-    """
+    r"""
     search_in_dirs
 
     Args:

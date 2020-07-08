@@ -248,9 +248,9 @@ def filterflags_general_tags(
     if logic is None:
         logic = 'and'
 
-    logic_func = {'and': np.logical_and, 'or': np.logical_or,}[logic]
+    logic_func = {'and': np.logical_and, 'or': np.logical_or}[logic]
 
-    default_func = {'and': np.ones, 'or': np.zeros,}[logic]
+    default_func = {'and': np.ones, 'or': np.zeros}[logic]
 
     tags_list_ = [_fix_tags(tags_) for tags_ in tags_list]
     flags = default_func(len(tags_list_), dtype=np.bool)

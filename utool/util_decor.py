@@ -111,6 +111,7 @@ else:
                 # if the global enforces that we should not ignore anytracebacks
                 # then just return the original function without any modifcation
                 return func
+
             # @wraps(func)
             def wrp_noexectb(*args, **kwargs):
                 try:
@@ -695,6 +696,7 @@ def memoize(func):
         >>> assert foo_memo('a') == 'b' and foo_memo('c') == 'd'
     """
     cache = func._util_decor_memoize_cache = {}
+
     # @functools.wraps(func)
     def memoizer(*args, **kwargs):
         key = str(args) + str(kwargs)

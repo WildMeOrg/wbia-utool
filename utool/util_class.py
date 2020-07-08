@@ -854,7 +854,7 @@ def reload_class(self, verbose=True, reload_module=True):
         ut.printex(
             ex,
             'Error Reloading Class',
-            keys=['modname', 'module', 'class_', 'class_list', 'self',],
+            keys=['modname', 'module', 'class_', 'class_list', 'self'],
         )
         raise
 

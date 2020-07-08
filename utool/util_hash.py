@@ -629,7 +629,7 @@ def hash_data(data, hashlen=None, alphabet=None):
 
 
 def digest_data(data, alg='sha256'):
-    hasher = {'md5': hashlib.md5, 'sha1': hashlib.sha1, 'sha256': hashlib.sha256,}[alg]()
+    hasher = {'md5': hashlib.md5, 'sha1': hashlib.sha1, 'sha256': hashlib.sha256}[alg]()
     _update_hasher(hasher, data)
     return hasher.digest()
 
@@ -1139,6 +1139,7 @@ def augment_uuid(uuid_, *hashables):
     # ascii data in python2 and unicode text in python3
     # it would be nice to
     # warnings.warn('[ut] should not use repr when hashing', RuntimeWarning)
+
     def tmprepr(x):
         y = repr(x)
         # hack to remove u prefix

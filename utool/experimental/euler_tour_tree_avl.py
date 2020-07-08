@@ -545,7 +545,7 @@ def avl_release_parent(node):
 
 
 def avl_rotate_single(root, direction):
-    """
+    r"""
     Single rotation, either 0 (left) or 1 (right).
 
     Figure:
@@ -576,7 +576,7 @@ def avl_rotate_single(root, direction):
 
 
 def avl_rotate_double(root, direction):
-    """
+    r"""
     Double rotation, either 0 (left) or 1 (right).
 
     Figure:

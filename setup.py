@@ -200,8 +200,8 @@ KWARGS = OrderedDict(
         'local_scheme': 'dirty-tag',
     },
     # packages=find_packages(),
-    packages=['utool', 'utool._internal', 'utool.tests', 'utool.util_scripts',],
-    package_dir={'utool': 'utool',},
+    packages=['utool', 'utool._internal', 'utool.tests', 'utool.util_scripts'],
+    package_dir={'utool': 'utool'},
     include_package_data=False,
     # List of classifiers available at:
     # https://pypi.python.org/pypi?%3Aaction=list_classifiers

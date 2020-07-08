@@ -356,7 +356,9 @@ class CustomStreamHandler(logging.Handler):
                 stream.write(fs % (msg, self.terminator))
             else:
                 try:
-                    if isinstance(msg, unicode) and getattr(stream, 'encoding', None):
+                    if isinstance(msg, unicode) and getattr(  # NOQA
+                        stream, 'encoding', None
+                    ):
                         ufs = '%s%s'
                         try:
                             stream.write(ufs % (msg, self.terminator))

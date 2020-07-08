@@ -4,7 +4,7 @@ import sys
 
 try:
     import numpy as np
-except ImportError as ex:
+except ImportError:
     pass
 import decimal
 from utool import util_type

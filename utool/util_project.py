@@ -882,13 +882,13 @@ class GrepResult(util_dev.NiceRepr):
             lines = ut.compress(lines, flags)
 
             flags = [
-                not re.search('--exec-[a-zA-z]*\.' + self.extended_regex_list[0], line)
+                not re.search(r'--exec-[a-zA-z]*\.' + self.extended_regex_list[0], line)
                 for line in lines
             ]
             lines = ut.compress(lines, flags)
 
             flags = [
-                not re.search('--test-[a-zA-z]*\.' + self.extended_regex_list[0], line)
+                not re.search(r'--test-[a-zA-z]*\.' + self.extended_regex_list[0], line)
                 for line in lines
             ]
             lines = ut.compress(lines, flags)
@@ -908,11 +908,11 @@ class GrepResult(util_dev.NiceRepr):
         del self[idxs]
 
 
-## Grep my projects
+# # Grep my projects
 # def gp(r, regexp):
 #    rob_nav._grep(r, [regexp], recursive=True, dpath_list=project_dpaths(), regex=True)
 
-## Sed my projects
+# # Sed my projects
 # def sp(r, regexpr, repl, force=False):
 #    rob_nav._sed(r, regexpr, repl, force=force, recursive=True, dpath_list=project_dpaths())
 

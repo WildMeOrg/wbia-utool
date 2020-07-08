@@ -16,7 +16,7 @@ import os
 # import inspect
 import contextlib
 import collections
-from six.moves import cPickle as pickle
+from six.moves import cPickle as pickle  # NOQA
 from six.moves import range, zip
 from os.path import join, normpath, basename, exists
 from functools import partial
@@ -33,7 +33,8 @@ from utool import util_inspect
 from utool import util_list
 from utool import util_class
 from utool import util_type
-from utool import util_decor
+
+# from utool import util_decor
 from utool import util_dict
 from utool._internal import meta_util_constants
 
@@ -488,7 +489,7 @@ def make_utool_json_encoder(allow_pickle=False):
         return text
 
     type_to_tag = collections.OrderedDict(
-        [(slice, SLICE_TAG), (uuid.UUID, UUID_TAG), (object, PYOBJECT_TAG),]
+        [(slice, SLICE_TAG), (uuid.UUID, UUID_TAG), (object, PYOBJECT_TAG)]
     )
 
     tag_to_type = {tag: type_ for type_, tag in type_to_tag.items()}
@@ -893,6 +894,7 @@ def cached_func(
             use_cache_ = use_cache
         # _dbgdict = dict(fname_=fname_, key_kwds=key_kwds, appname=appname,
         #                key_argx=key_argx, use_cache_=use_cache_)
+
         # @functools.wraps(func)
         def cached_wraper(*args, **kwargs):
             """

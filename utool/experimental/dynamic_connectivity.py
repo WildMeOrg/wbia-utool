@@ -135,7 +135,7 @@ class TestETT(object):
 
     @classmethod
     @profile
-    def from_tree(TestETT, mst, version='bst', fast=True):
+    def from_tree(cls, mst, version='bst', fast=True):
         """
         >>> # DISABLE_DOCTEST
         >>> from utool.experimental.dynamic_connectivity import *  # NOQA
@@ -151,15 +151,15 @@ class TestETT(object):
 
         """
         tour = euler_tour_dfs(mst)
-        self = TestETT.from_tour(tour, version=version, fast=fast)
+        self = cls.from_tour(tour, version=version, fast=fast)
         return self
 
     @classmethod
     @profile
-    def from_tour(TestETT, tour, version='bst', fast=True):
+    def from_tour(cls, tour, version='bst', fast=True):
         import bintrees
 
-        self = TestETT()
+        self = cls()
         self.fast = fast
         self.version = version
 
@@ -367,7 +367,7 @@ class EulerTourList(object):
         self._len += other._len
 
     def split(self, pos, idx):
-        (pos, idx) = self._pos(index)
+        (pos, idx) = self._pos(idx)
         left_part = self._lists[0 : pos + 1]
         right_part = self._lists[pos + 1 : 0]
 
@@ -453,17 +453,17 @@ class EulerTourTree(object):
 
     @classmethod
     @profile
-    def from_tree(EulerTourTree, mst, fast=True, start=0):
+    def from_tree(cls, mst, fast=True, start=0):
         tour = euler_tour_dfs(mst)
-        self = EulerTourTree.from_tour(tour, fast=fast, start=0)
+        self = cls.from_tour(tour, fast=fast, start=0)
         return self
 
     @classmethod
     @profile
-    def from_tour(EulerTourTree, tour, fast=False, start=0):
+    def from_tour(cls, tour, fast=False, start=0):
         import bintrees
 
-        self = EulerTourTree()
+        self = cls()
         self.fast = fast
 
         if fast:
@@ -615,7 +615,7 @@ class EulerTourForest(object):
         ru = self.reroot(ru, u)
         rv = self.reroot(rv, v)
 
-        ubin.set_child(vbin)
+        u.set_child(v)
 
         pass
 

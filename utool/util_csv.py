@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 try:
     import numpy as np
-except ImportError as ex:
+except ImportError:
     pass
 from six.moves import zip, map
 import six

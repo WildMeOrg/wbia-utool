@@ -110,7 +110,6 @@ def nx_transitive_reduction(G, mode=1):
         >>> pt.show_nx(nx.dag.transitive_closure(G_tr), pnum=(1, 5, 5), fnum=1)
         >>> ut.show_if_requested()
     """
-
     import utool as ut
 
     has_cycles = not nx.is_directed_acyclic_graph(G)
@@ -1113,6 +1112,7 @@ def nx_ensure_agraph_color(graph):
         from plottool import color_funcs
         import wbia.plottool as pt
     # import six
+
     def _fix_agraph_color(data):
         try:
             orig_color = data.get('color', None)
@@ -1168,9 +1168,9 @@ def dag_longest_path(graph, source, target):
         return [source]
     allpaths = nx.all_simple_paths(graph, source, target)
     longest_path = []
-    for l in allpaths:
-        if len(l) > len(longest_path):
-            longest_path = l
+    for path in allpaths:
+        if len(path) > len(longest_path):
+            longest_path = path
     return longest_path
 
 
@@ -1644,7 +1644,6 @@ def subgraph_from_edges(G, edge_list, ref_back=True):
     References:
         http://stackoverflow.com/questions/16150557/nx-subgraph-from-edges
     """
-
     # TODO: support multi-di-graph
     sub_nodes = list({y for x in edge_list for y in x[0:2]})
     # edge_list_no_data = [edge[0:2] for edge in edge_list]
@@ -2238,7 +2237,7 @@ def weighted_diamter(graph, weight=None):
 
 
 def mincost_diameter_augment(graph, max_cost, candidates=None, weight=None, cost=None):
-    """
+    r"""
     PROBLEM: Bounded Cost Minimum Diameter Edge Addition (BCMD)
 
     Args:

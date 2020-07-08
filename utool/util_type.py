@@ -24,7 +24,7 @@ if six.PY2:
         str_ = str_.replace("<class '", '').replace("'>", '')
         return str_
 
-    VALID_STRING_TYPES = (str, unicode, basestring)
+    VALID_STRING_TYPES = (str, unicode, basestring)  # NOQA
 else:
 
     def type_str(type_):

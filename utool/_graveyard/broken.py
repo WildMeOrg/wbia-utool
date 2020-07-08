@@ -1,4 +1,12 @@
 # -*- coding: utf-8 -*-
+import six
+from itertools import cycle, chain, islice
+import textwrap
+from utool import util_type
+import decimal
+from utool.util_num import int_comma_str
+
+
 def ipython_execstr2():
     return textwrap.dedent(
         r"""
@@ -51,7 +59,11 @@ except Exception as ex:
 
 
 def roundrobin(*iterables):
-    """roundrobin('ABC', 'D', 'EF') --> A D E B F C"""
+    """
+    Compute a round-robin sequence
+
+    roundrobin('ABC', 'D', 'EF') --> A D E B F C
+    """
     raise NotImplementedError('not sure if this implementation is correct')
     # http://stackoverflow.com/questions/11125212/interleaving-lists-in-python
     # sentinel = object()
@@ -115,9 +127,9 @@ def fewest_digits_float_str(num, n=8):
 
 def format_(num, n=8):
     """
-        makes numbers pretty e.g.
-        nums = [9001, 9.053]
-        print([format_(num) for num in nums])
+    makes numbers pretty e.g.
+    nums = [9001, 9.053]
+    print([format_(num) for num in nums])
     """
     if num is None:
         return 'None'

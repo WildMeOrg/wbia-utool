@@ -1320,6 +1320,7 @@ def inherit_kwargs(inherit_func):
     if is_arbitrary:
         keys += ['**kwargs']
     kwargs_append = '\n'.join(keys)
+
     # from six.moves import builtins
     # builtins.print(kwargs_block)
     def _wrp(func):
@@ -1631,7 +1632,7 @@ def _node_is_main_if(node):
                 ]
             ):
                 return True
-        except Exception as ex:
+        except Exception:
             pass
     return False
 
@@ -3369,7 +3370,7 @@ def infer_function_info(func):
                     m = re.match(argpattern, argline, flags=re.MULTILINE | re.DOTALL)
                     try:
                         groupdict_ = m.groupdict()
-                    except Exception as ex:
+                    except Exception:
                         print('---')
                         print('argline = \n%s' % (argline,))
                         print('---')
@@ -3437,7 +3438,7 @@ def infer_function_info(func):
         ut.printex(
             ex,
             'Error Infering Function Info',
-            keys=['func', 'sourcefile', 'sourcecode', 'argspec',],
+            keys=['func', 'sourcefile', 'sourcecode', 'argspec'],
             tb=True,
         )
         raise

@@ -7,8 +7,7 @@ import sys
 import six
 import re
 import textwrap
-from six.moves import map, range, reduce
-import itertools
+from six.moves import map, range
 import math
 import collections
 from os.path import split
@@ -617,6 +616,8 @@ def _magnitude_str(abs_num, magnitude, prefix_, suffix):
 
 def parse_bytes(bytes_str):
     """
+    Parse bytes from string
+
     uint8_size = ut.parse_bytes('1B')
     image_size = ut.parse_bytes('3.5MB')
     float32_size = ut.parse_bytes('32bit')
@@ -2137,11 +2138,7 @@ def align_lines(line_list, character='=', replchar=None, pos=0):
         testing  &    363 &    1119 &   3.08\pm2.82 &              - \\
         \bottomrule
         \end{tabular}
-
-
-
     """
-
     # FIXME: continue to fix ansi
     if pos is None:
         # Align all occurences
@@ -2921,7 +2918,7 @@ def highlight_text(text, lexer_name='python', **kwargs):
         color_text
     """
     # Resolve extensions to languages
-    lexer_name = {'py': 'python', 'h': 'cpp', 'cpp': 'cpp', 'c': 'cpp',}.get(
+    lexer_name = {'py': 'python', 'h': 'cpp', 'cpp': 'cpp', 'c': 'cpp'}.get(
         lexer_name.replace('.', ''), lexer_name
     )
     if lexer_name in ['red', 'yellow', 'blue', 'green']:

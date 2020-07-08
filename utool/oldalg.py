@@ -3,12 +3,8 @@
 #
 # TODO:  move library intensive functions to vtool
 from __future__ import absolute_import, division, print_function, unicode_literals
-import operator
-import six
-from six.moves import zip, range, reduce
-from utool import util_type
-from utool import util_inject
-from utool import util_decor
+from six.moves import zip, range
+import utool
 
 try:
     import numpy as np
@@ -19,12 +15,12 @@ except ImportError:
     # TODO remove numpy
     pass
 try:
-    import scipy.spatial.distance as spdist
+    import scipy.spatial.distance as spdist  # NOQA
 
     HAVE_SCIPY = True
 except ImportError:
     HAVE_SCIPY = False
-print, rrr, profile = util_inject.inject2(__name__)
+print, rrr, profile = utool.util_inject.inject2(__name__)
 
 
 PHI = 1.61803398875
@@ -46,7 +42,7 @@ def bayesnet():
     # import operator as op
     # # Enumerate all possible events
     # varcard_list = list(map(op.attrgetter('variable_card'), cpd_list))
-    # _esdat = list(ut.iprod(*map(range, varcard_list)))
+    # _esdat = list(utool.iprod(*map(range, varcard_list)))
     # _escol = list(map(op.attrgetter('variable'), cpd_list))
     # event_space = pd.DataFrame(_esdat, columns=_escol)
 
@@ -57,7 +53,7 @@ def bayesnet():
     #     """
     #     import vtool as vt
     #     data = event_space
-    #     other_cols = ut.setdiff_ordered(data.columns.tolist(), [var1, var2, var3])
+    #     other_cols = utool.setdiff_ordered(data.columns.tolist(), [var1, var2, var3])
     #     case_flags12 = cmp12_(data[var1], data[var2]).values
     #     # case_flags23 = cmp23_(data[var2], data[var3]).values
     #     # case_flags = np.logical_and(case_flags12, case_flags23)
@@ -99,7 +95,7 @@ def bayesnet():
     globals()['semtype2_nice'] = semtype2_nice
     globals()['var2_cpd'] = var2_cpd
 
-    name_combo = np.array(list(ut.iprod(nid_basis, nid_basis)))
+    name_combo = np.array(list(utool.iprod(nid_basis, nid_basis)))
     combo_is_same = name_combo.T[0] == name_combo.T[1]
 
     def get_expected_scores_prob(level1, level2):
@@ -161,7 +157,7 @@ def bayesnet():
                 evidence_cpds = [var2_cpd[key] for key in evidence]
                 evidence_nice = [semtype2_nice[cpd.semtype] for cpd in evidence_cpds]
                 evidence_card = list(map(len, evidence_nice))
-                evidence_states = list(ut.iprod(*evidence_nice))
+                evidence_states = list(utool.iprod(*evidence_nice))
                 variable_basis = semtype2_nice[semtype]
 
                 variable_values = []
@@ -265,7 +261,7 @@ def bayesnet():
             basis_lists = [
                 semtype2_nice[var2_cpd[ename].semtype] for ename in cpd.evidence
             ]
-            columns = [','.join(x) for x in ut.iprod(*basis_lists)]
+            columns = [','.join(x) for x in utool.iprod(*basis_lists)]
         data = cpd.get_cpd()
         print(pd.DataFrame(data, index=index, columns=columns))
 
@@ -283,7 +279,7 @@ def bayesnet():
     for cpd in cpd_list:
         if cpd.semtype == 'score':
             event_space_combos[cpd.variable] = list(range(cpd.variable_card))
-    evidence_dict = ut.all_dict_combinations(event_space_combos)
+    evidence_dict = utool.all_dict_combinations(event_space_combos)
 
     # Query about name of annotation k given different event space params
 
@@ -299,16 +295,16 @@ def bayesnet():
         values = factor.values.reshape(np.prod(row_cards), 1).flatten()
         # col_cards = 1
         # col_vars = ['']
-        basis_lists = list(zip(*list(ut.iprod(*[range(c) for c in row_cards]))))
+        basis_lists = list(zip(*list(utool.iprod(*[range(c) for c in row_cards]))))
         nice_basis_lists = []
         for varname, basis in zip(row_vars, basis_lists):
             cpd = var2_cpd[varname]
-            _nice_basis = ut.take(semtype2_nice[cpd.semtype], basis)
+            _nice_basis = utool.take(semtype2_nice[cpd.semtype], basis)
             nice_basis = ['%s=%s' % (varname, val) for val in _nice_basis]
             nice_basis_lists.append(nice_basis)
         row_lbls = [', '.join(sorted(x)) for x in zip(*nice_basis_lists)]
         print(
-            ut.repr3(
+            utool.repr3(
                 dict(zip(row_lbls, values)),
                 precision=3,
                 align=True,
@@ -323,7 +319,7 @@ def bayesnet():
 
     def try_query(evidence):
         print('--------')
-        query_vars = ut.setdiff_ordered(varnames, list(evidence.keys()))
+        query_vars = utool.setdiff_ordered(varnames, list(evidence.keys()))
         evidence_str = ', '.join(pretty_evidence(evidence))
         probs = name_belief.query(query_vars, evidence)
         factor_list = probs.values()
@@ -333,7 +329,7 @@ def bayesnet():
         factor = joint_factor  # NOQA
         # print_factor(factor)
         # import utool as ut
-        print(ut.hz_str([(f._str(phi_or_p='phi')) for f in factor_list]))
+        print(utool.hz_str([(f._str(phi_or_p='phi')) for f in factor_list]))
 
     for evidence in evidence_dict:
         try_query(evidence)
@@ -369,10 +365,10 @@ def bayesnet():
     #         evidence_['Lj'] = name_nice[evidence['Lj']]
     #         evidence_['Sij'] = score_nice[evidence['Sij']]
     #         evidence_['Sjk'] = score_nice[evidence['Sjk']]
-    #         nice2_prob = ut.odict(zip(name_nice, probs.tolist()))
-    #         ut.print_python_code('P(Lk | {evidence}) = {cpt}'.format(
-    #             evidence=(ut.repr2(evidence_, explicit=True, nobraces=True, strvals=True)),
-    #             cpt=ut.repr3(nice2_prob, precision=3, align=True, key_order_metric='-val')
+    #         nice2_prob = utool.odict(zip(name_nice, probs.tolist()))
+    #         utool.print_python_code('P(Lk | {evidence}) = {cpt}'.format(
+    #             evidence=(utool.repr2(evidence_, explicit=True, nobraces=True, strvals=True)),
+    #             cpt=utool.repr3(nice2_prob, precision=3, align=True, key_order_metric='-val')
     #         ))
 
     # for case in special_cases:
@@ -392,11 +388,11 @@ def bayesnet():
     #             evidence_['Li'] = name_nice[evidence['Li']]
     #             evidence_['Sij'] = score_nice[evidence['Sij']]
     #             evidence_['Sjk'] = score_nice[evidence['Sjk']]
-    #             nice2_prob = ut.odict(zip([queryvar + '=' + x for x in name_nice], probs.tolist()))
-    #             ut.print_python_code('P({queryvar} | {evidence}) = {cpt}'.format(
+    #             nice2_prob = utool.odict(zip([queryvar + '=' + x for x in name_nice], probs.tolist()))
+    #             utool.print_python_code('P({queryvar} | {evidence}) = {cpt}'.format(
     #                 query_var=query_var,
-    #                 evidence=(ut.repr2(evidence_, explicit=True, nobraces=True, strvals=True)),
-    #                 cpt=ut.repr3(nice2_prob, precision=3, align=True, key_order_metric='-val')
+    #                 evidence=(utool.repr2(evidence_, explicit=True, nobraces=True, strvals=True)),
+    #                 cpt=utool.repr3(nice2_prob, precision=3, align=True, key_order_metric='-val')
     #             ))
 
     # _ draw model
@@ -419,7 +415,7 @@ def bayesnet():
     netx.draw(netx_graph, pos=pos, ax=ax, with_labels=True)
 
     pt.plt.savefig('foo.png')
-    ut.startfile('foo.png')
+    utool.startfile('foo.png')
 
 
 def bayesnet_examples():

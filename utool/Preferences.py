@@ -12,7 +12,7 @@ from six.moves import cPickle as pickle
 
 try:
     import numpy as np
-except ImportError as ex:
+except ImportError:
     pass
 from utool import DynamicStruct
 from utool import util_dbg

@@ -389,7 +389,7 @@ def latex_scalar(lbl, data):
 
 
 def make_stats_tabular():
-    'tabular for dipslaying statistics'
+    '''tabular for dipslaying statistics'''
     pass
 
 
@@ -787,7 +787,7 @@ def make_score_tabular(
         # tabular_head = r'\end{centering}' + '\n' + tabular_head
         tabular_tail = (
             tabular_tail
-            + '\n\caption[%s]{%s}\n\label{tbl:%s}\n\end{table}'
+            + '\n\\caption[%s]{%s}\n\\label{tbl:%s}\n\\end{table}'
             % (lblstr, caption, lblstr)
         )
 
@@ -963,11 +963,11 @@ def get_latex_figure_str(
     if caption_str is not None:
         # tabular_body += '\n\caption{\\footnotesize{%s}}' % (caption_str,)
         if label_str is not None:
-            figure_body += '\n\caption[%s]{%s}' % (label_str, caption_str,)
+            figure_body += '\n\\caption[%s]{%s}' % (label_str, caption_str,)
         else:
-            figure_body += '\n\caption{%s}' % (caption_str,)
+            figure_body += '\n\\caption{%s}' % (caption_str,)
     if label_str is not None:
-        figure_body += '\n\label{fig:%s}' % (label_str,)
+        figure_body += '\n\\label{fig:%s}' % (label_str,)
     # figure_fmtstr = ut.codeblock(
     #    r'''
     #    \begin{figure*}

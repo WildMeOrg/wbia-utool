@@ -474,7 +474,7 @@ def get_install_dirs():
 
 
 def getroot():
-    root = {'win32': 'C:\\', 'linux': '/', 'darwin': '/',}[OS_TYPE]  # HACK
+    root = {'win32': 'C:\\', 'linux': '/', 'darwin': '/'}[OS_TYPE]  # HACK
     return root
 
 
@@ -792,7 +792,7 @@ def __parse_cmd_args(args, sudo, shell):
             # if isinstance(args, six.string_types):
             #    args = shlex.split(args)
             # args = ['sudo'] + args
-            ## using sudo means we need to use a single string I believe
+            # # using sudo means we need to use a single string I believe
             # args = ' '.join(args)
         else:
             # TODO: strip out sudos
@@ -1183,6 +1183,8 @@ def is64bit_python():
 
 def get_python_dynlib():
     """
+    Ge Python's dynamic library
+
     python -c "import utool; print(utool.get_python_dynlib())"
 
     get_python_dynlib
@@ -1319,7 +1321,7 @@ def __debug_win_msvcr():
 
 
 def change_term_title(title):
-    """
+    r"""
     only works on unix systems only tested on Ubuntu GNOME changes text on
     terminal title for identifying debugging tasks.
 

@@ -511,13 +511,13 @@ def parse_timestamp(timestamp, zone='UTC', timestamp_format=None):
     if use_delorean:
         import delorean
 
-        ## customize delorean string method
+        # # customize delorean string method
         # def __str__(self):
         #    return str(self.datetime)
         #    #return str(self.datetime) + ' ' + str(self.timezone)
         # delorean.Delorean.__str__ = __str__
-        ## method types must be injected into the class
-        ##ut.inject_func_as_method(dn, __str__, '__repr__', override=True)
+        # # method types must be injected into the class
+        # #ut.inject_func_as_method(dn, __str__, '__repr__', override=True)
 
     if not isinstance(timestamp, six.string_types):
         raise NotImplementedError('Unknown format: timestamp=%r' % (timestamp,))
@@ -1112,7 +1112,7 @@ def get_timestats_dict(unixtime_list, full=True, isutc=True):
             )
         except KeyError:
             pass
-        except (ValueError, OSError) as ex:
+        except (ValueError, OSError):
             datetime_stats[key] = 'NA'
         except Exception as ex:
             ut.printex(ex, keys=['key', 'unixtime_stats'])
@@ -1124,7 +1124,7 @@ def get_timestats_dict(unixtime_list, full=True, isutc=True):
             )
         except KeyError:
             pass
-        except (ValueError, OSError) as ex:
+        except (ValueError, OSError):
             datetime_stats[key] = 'NA'
     try:
         datetime_stats['range'] = str(
@@ -1134,7 +1134,7 @@ def get_timestats_dict(unixtime_list, full=True, isutc=True):
         )
     except KeyError:
         pass
-    except (ValueError, OSError) as ex:
+    except (ValueError, OSError):
         datetime_stats['range'] = 'NA'
 
     if full:

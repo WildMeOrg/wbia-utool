@@ -186,7 +186,7 @@ def negative_lookbehind(regex, vim=False):
         >>> match4 = re.search(pattern, '" foo"')
     """
     if vim:
-        return '\(' + regex + '\)\@<!'
+        return r'\(' + regex + r'\)\@<!'
     else:
         return '(?<!' + regex + ')'
 
@@ -246,7 +246,7 @@ def regex_replace(regex, repl, text):
 
 
 def named_field_regex(keypat_tups):
-    """
+    r"""
     named_field_regex
 
     Args:
@@ -493,7 +493,7 @@ def regex_replace_lines(lines, regexpat, replpat):
 
 
 def nongreedy_kleene_star(vim=False):
-    return '\{-}' if vim else '*?'
+    return r'\{-}' if vim else '*?'
 
 
 RE_FLAGS = re.MULTILINE | re.DOTALL

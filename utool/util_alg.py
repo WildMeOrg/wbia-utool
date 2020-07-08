@@ -408,8 +408,8 @@ def grouping_delta(old, new, pure=True):
     if pure:
         delta = ut.odict()
         delta['unchanged'] = unchanged
-        delta['splits'] = ut.odict([('old', old_splits), ('new', new_splits),])
-        delta['merges'] = ut.odict([('old', old_merges), ('new', new_merges),])
+        delta['splits'] = ut.odict([('old', old_splits), ('new', new_splits)])
+        delta['merges'] = ut.odict([('old', old_merges), ('new', new_merges)])
         delta['hybrid'] = ut.odict(
             [
                 ('old', old_hybrid),
@@ -1625,7 +1625,7 @@ def knapsack_iterative_int(items, maxweight):
 
 
 def knapsack_iterative_numpy(items, maxweight):
-    """
+    r"""
     Iterative knapsack method
 
     maximize \sum_{i \in T} v_i
@@ -2887,7 +2887,7 @@ def solve_boolexpr():
         (
             term.get('1', [])
             + ['(not ' + b + ')' for b in term.get('0', [])]
-            + [parenjoin(' ^ ', term.get('^', [])), parenjoin(' ~ ', term.get('~', [])),]
+            + [parenjoin(' ^ ', term.get('^', [])), parenjoin(' ~ ', term.get('~', []))]
         )
         for term in grouped_terms
     ]

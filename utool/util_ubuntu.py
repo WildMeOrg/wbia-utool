@@ -275,6 +275,7 @@ class XCtrl(object):
 
 
     """
+
     # @staticmethod
     # def send_raw_key_input(keys):
     #     import utool as ut
@@ -320,6 +321,7 @@ class XCtrl(object):
         # TODO: cut out borders
         # TODO: fix screeninfo monitor offsets
         # TODO: dynamic num screens
+
         def rel_to_abs_bbox(m, x, y, w, h):
             """ monitor_num, relative x, y, w, h """
             minfo = monitor_infos[m]

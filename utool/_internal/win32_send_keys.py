@@ -305,8 +305,8 @@ class KeyAction(object):
 
     def __init__(self, key, down=True, up=True):
         self.key = key
-        if isinstance(self.key, basestring):
-            self.key = unicode(key)
+        if isinstance(self.key, basestring):  # NOQA
+            self.key = unicode(key)  # NOQA
         self.down = down
         self.up = up
 

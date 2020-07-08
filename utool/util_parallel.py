@@ -344,8 +344,10 @@ def set_num_procs(num_procs):
 
 
 def in_main_process():
-    """ Returns if you are executing in a multiprocessing subprocess
-    Usefull to disable init print messages on windows """
+    """
+    Returns if you are executing in a multiprocessing subprocess
+    Usefull to disable init print messages on windows
+    """
     return multiprocessing.current_process().name == 'MainProcess'
 
 
@@ -762,6 +764,7 @@ def _test_buffered_generator_img():
     # import cv2
     # func = cv2.imread
     # bffunc = vt.imread
+
     def sleepfunc_bufwin(x, niters=10):
         # import cv2
         for z in range(niters):

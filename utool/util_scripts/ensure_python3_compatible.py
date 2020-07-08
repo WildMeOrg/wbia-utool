@@ -124,7 +124,7 @@ def abstract_external_module_cv2():
         greater_exclude_dirs=ut.get_standard_exclude_dnames(),
         recursive=True,
     )
-    modregex = '\<' + modname + '\>'
+    modregex = r'\<' + modname + r'\>'
     tup = ut.grep(modregex, **grepkw)
     fpath_list, line_list, lineno_list = tup
     fpath_list = [fpath.replace('\\', '/') for fpath in fpath_list]
@@ -143,7 +143,7 @@ def change_doctestcommand_to_use_dashm_flag():
     """
     # http://stackoverflow.com/questions/18737863/passing-a-function-to-re-sub-in-python
     # CANNOT USE [^ ] FOR SOME GOD DAMN REASON USE /S instead
-    regex_list = ['python [A-Za-z_]+[\\/]\S* --allexamples']
+    regex_list = [r'python [A-Za-z_]+[\\/]\S* --allexamples']
     dpath_list = [
         ut.ensure_crossplat_path(ut.truepath('~/code/utool/utool')),
         ut.ensure_crossplat_path(ut.truepath('~/code/ibeis/ibeis')),
@@ -160,8 +160,8 @@ def change_doctestcommand_to_use_dashm_flag():
     import re
 
     keypat_list = [
-        ('prefix', 'python\s*'),
-        ('modrelpath', '[A-Za-z_]+[\\/]\S*'),
+        ('prefix', r'python\s*'),
+        ('modrelpath', r'[A-Za-z_]+[\\/]\S*'),
         ('suffix', '.*'),
     ]
     namedregex = ut.named_field_regex(keypat_list)

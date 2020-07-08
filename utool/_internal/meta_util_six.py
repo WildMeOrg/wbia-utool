@@ -8,7 +8,7 @@ import codecs
 if six.PY2:
     import types
 
-    __STR__ = unicode
+    __STR__ = unicode  # NOQA
 
     # TODO: use six.text_type
     def get_funcname(func):

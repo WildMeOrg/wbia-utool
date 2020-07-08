@@ -33,7 +33,7 @@ def get_default_global_config():
     GLOBAL_CONFIG = {
         # Supplementary Info
         'AUTHORS': {
-            'username': {'name': None, 'email': None,},
+            'username': {'name': None, 'email': None},
             'kingarthur': {
                 'name': 'Arthur, King of the Britans',
                 'email': 'kingarthur@camelot.com',
