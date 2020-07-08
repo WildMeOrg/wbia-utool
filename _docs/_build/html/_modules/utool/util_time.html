@@ -1,0 +1,1289 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>utool.util_time &#8212; wbia-vtool 3.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for utool.util_time</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">TODO: This file seems to care about timezone</span>
+
+<span class="sd">TODO: Use UTC/GMT time here for EVERYTHING</span>
+
+<span class="sd">References:</span>
+<span class="sd">    http://www.timeanddate.com/time/aboututc.html</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">six</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">calendar</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inject</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_cplat</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_arg</span>
+
+<span class="nb">print</span><span class="p">,</span> <span class="n">rrr</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">util_inject</span><span class="o">.</span><span class="n">inject2</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">print_</span> <span class="o">=</span> <span class="n">util_inject</span><span class="o">.</span><span class="n">make_module_write_func</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="n">util_cplat</span><span class="o">.</span><span class="n">WIN32</span><span class="p">:</span>
+    <span class="c1"># Use time.clock in win32</span>
+    <span class="n">default_timer</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">clock</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">default_timer</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span>
+
+
+<span class="c1"># --- Timing ---</span>
+<div class="viewcode-block" id="tic"><a class="viewcode-back" href="../../utool.html#utool.util_time.tic">[docs]</a><span class="k">def</span> <span class="nf">tic</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    similar to matlab tic</span>
+
+<span class="sd">    SeeAlso:</span>
+<span class="sd">        ut.toc</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">default_timer</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="toc"><a class="viewcode-back" href="../../utool.html#utool.util_time.toc">[docs]</a><span class="k">def</span> <span class="nf">toc</span><span class="p">(</span><span class="n">tt</span><span class="p">,</span> <span class="n">return_msg</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">write_msg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    similar to matlab toc</span>
+
+<span class="sd">    SeeAlso:</span>
+<span class="sd">        ut.tic</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">verbose</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">write_msg</span> <span class="o">=</span> <span class="n">verbose</span>
+    <span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">=</span> <span class="n">tt</span>
+    <span class="n">ellapsed</span> <span class="o">=</span> <span class="n">default_timer</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">return_msg</span><span class="p">)</span> <span class="ow">and</span> <span class="n">write_msg</span> <span class="ow">and</span> <span class="n">msg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;...toc(</span><span class="si">%.4f</span><span class="s1">s, &#39;</span> <span class="o">%</span> <span class="n">ellapsed</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="s1">&#39;)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">return_msg</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">msg</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ellapsed</span></div>
+
+
+<div class="viewcode-block" id="get_timestamp"><a class="viewcode-back" href="../../utool.html#utool.util_time.get_timestamp">[docs]</a><span class="k">def</span> <span class="nf">get_timestamp</span><span class="p">(</span>
+    <span class="n">format_</span><span class="o">=</span><span class="s1">&#39;iso&#39;</span><span class="p">,</span> <span class="n">use_second</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">delta_seconds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">isutc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">timezone</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get_timestamp</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        format_ (str): (tag, printable, filename, other)</span>
+<span class="sd">        use_second (bool):</span>
+<span class="sd">        delta_seconds (None):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: stamp</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_time import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; format_ = &#39;printable&#39;</span>
+<span class="sd">        &gt;&gt;&gt; use_second = False</span>
+<span class="sd">        &gt;&gt;&gt; delta_seconds = None</span>
+<span class="sd">        &gt;&gt;&gt; stamp = get_timestamp(format_, use_second, delta_seconds)</span>
+<span class="sd">        &gt;&gt;&gt; print(stamp)</span>
+<span class="sd">        &gt;&gt;&gt; assert len(stamp) == len(&#39;15:43:04 2015/02/24&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: time.timezone</span>
+    <span class="k">if</span> <span class="n">format_</span> <span class="o">==</span> <span class="s1">&#39;int&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">isutc</span><span class="p">:</span>
+            <span class="n">stamp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">mktime</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">gmtime</span><span class="p">()))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">stamp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">mktime</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="n">stamp</span>
+    <span class="k">if</span> <span class="n">isutc</span><span class="p">:</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">delta_seconds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">now</span> <span class="o">+=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">delta_seconds</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">format_</span> <span class="o">==</span> <span class="s1">&#39;iso&#39;</span><span class="p">:</span>
+        <span class="c1"># ISO 8601</span>
+        <span class="c1"># utcnow = datetime.datetime.utcnow()</span>
+        <span class="c1"># utcnow.isoformat()</span>
+        <span class="n">localOffsetHour</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">timezone</span> <span class="o">//</span> <span class="mi">3600</span>
+        <span class="n">utc_offset</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">localOffsetHour</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">localOffsetHour</span> <span class="o">&lt;</span> <span class="mi">0</span>
+            <span class="k">else</span> <span class="s1">&#39;+&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">localOffsetHour</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">stamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H%M%S&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">utc_offset</span>
+        <span class="k">return</span> <span class="n">stamp</span>
+    <span class="k">if</span> <span class="n">format_</span> <span class="o">==</span> <span class="s1">&#39;tag&#39;</span><span class="p">:</span>
+        <span class="n">time_tup</span> <span class="o">=</span> <span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">year</span> <span class="o">-</span> <span class="mi">2000</span><span class="p">,</span> <span class="n">now</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">now</span><span class="o">.</span><span class="n">day</span><span class="p">)</span>
+        <span class="n">stamp</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%02d%02d%02d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">time_tup</span>
+    <span class="k">elif</span> <span class="n">format_</span> <span class="o">==</span> <span class="s1">&#39;printable&#39;</span><span class="p">:</span>
+        <span class="n">time_tup</span> <span class="o">=</span> <span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span> <span class="n">now</span><span class="o">.</span><span class="n">minute</span><span class="p">,</span> <span class="n">now</span><span class="o">.</span><span class="n">second</span><span class="p">,</span> <span class="n">now</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">now</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">now</span><span class="o">.</span><span class="n">day</span><span class="p">)</span>
+        <span class="n">time_format</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%02d</span><span class="s1">:</span><span class="si">%02d</span><span class="s1">:</span><span class="si">%02d</span><span class="s1"> </span><span class="si">%02d</span><span class="s1">/</span><span class="si">%02d</span><span class="s1">/</span><span class="si">%02d</span><span class="s1">&#39;</span>
+        <span class="n">stamp</span> <span class="o">=</span> <span class="n">time_format</span> <span class="o">%</span> <span class="n">time_tup</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">use_second</span><span class="p">:</span>
+            <span class="n">time_tup</span> <span class="o">=</span> <span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">now</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">now</span><span class="o">.</span><span class="n">day</span><span class="p">,</span> <span class="n">now</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span> <span class="n">now</span><span class="o">.</span><span class="n">minute</span><span class="p">,</span> <span class="n">now</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
+            <span class="n">time_formats</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="s1">&#39;ymd_hms-</span><span class="si">%04d</span><span class="s1">-</span><span class="si">%02d</span><span class="s1">-</span><span class="si">%02d</span><span class="s1">_</span><span class="si">%02d</span><span class="s1">-</span><span class="si">%02d</span><span class="s1">-</span><span class="si">%02d</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="s1">&#39;# (yyyy-mm-dd hh:mm:ss) </span><span class="si">%04d</span><span class="s1">-</span><span class="si">%02d</span><span class="s1">-</span><span class="si">%02d</span><span class="s1"> </span><span class="si">%02d</span><span class="s1">:</span><span class="si">%02d</span><span class="s1">:</span><span class="si">%02d</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">time_tup</span> <span class="o">=</span> <span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">now</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">now</span><span class="o">.</span><span class="n">day</span><span class="p">,</span> <span class="n">now</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span> <span class="n">now</span><span class="o">.</span><span class="n">minute</span><span class="p">)</span>
+            <span class="n">time_formats</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="s1">&#39;ymd_hm-</span><span class="si">%04d</span><span class="s1">-</span><span class="si">%02d</span><span class="s1">-</span><span class="si">%02d</span><span class="s1">_</span><span class="si">%02d</span><span class="s1">-</span><span class="si">%02d</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="s1">&#39;# (yyyy-mm-dd hh:mm) </span><span class="si">%04d</span><span class="s1">-</span><span class="si">%02d</span><span class="s1">-</span><span class="si">%02d</span><span class="s1"> </span><span class="si">%02d</span><span class="s1">:</span><span class="si">%02d</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="n">stamp</span> <span class="o">=</span> <span class="n">time_formats</span><span class="p">[</span><span class="n">format_</span><span class="p">]</span> <span class="o">%</span> <span class="n">time_tup</span>
+    <span class="k">if</span> <span class="n">timezone</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">isutc</span><span class="p">:</span>
+            <span class="n">stamp</span> <span class="o">+=</span> <span class="s1">&#39;_UTC&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">pytz</span> <span class="k">import</span> <span class="n">reference</span>
+
+            <span class="n">localtime</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">LocalTimezone</span><span class="p">()</span>
+            <span class="n">tzname</span> <span class="o">=</span> <span class="n">localtime</span><span class="o">.</span><span class="n">tzname</span><span class="p">(</span><span class="n">now</span><span class="p">)</span>
+            <span class="n">stamp</span> <span class="o">+=</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">tzname</span>
+    <span class="k">return</span> <span class="n">stamp</span></div>
+
+
+<div class="viewcode-block" id="get_datestamp"><a class="viewcode-back" href="../../utool.html#utool.util_time.get_datestamp">[docs]</a><span class="k">def</span> <span class="nf">get_datestamp</span><span class="p">(</span><span class="n">explicit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">isutc</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">isutc</span><span class="p">:</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">stamp</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%04d</span><span class="s1">-</span><span class="si">%02d</span><span class="s1">-</span><span class="si">%02d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">now</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">now</span><span class="o">.</span><span class="n">day</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">explicit</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;ymd-&#39;</span> <span class="o">+</span> <span class="n">stamp</span> <span class="o">+</span> <span class="n">time</span><span class="o">.</span><span class="n">timezone</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">stamp</span></div>
+
+
+<span class="c1"># alias</span>
+<span class="n">timestamp</span> <span class="o">=</span> <span class="n">get_timestamp</span>
+
+
+<div class="viewcode-block" id="Timer"><a class="viewcode-back" href="../../utool.html#utool.util_time.Timer">[docs]</a><span class="k">class</span> <span class="nc">Timer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Timer with-statment context object.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; timer = ut.Timer(&#39;Timer test!&#39;, verbose=1)</span>
+<span class="sd">        &gt;&gt;&gt; with timer:</span>
+<span class="sd">        &gt;&gt;&gt;     prime = ut.get_nth_prime(400)</span>
+<span class="sd">        &gt;&gt;&gt; assert timer.ellapsed &gt; 0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newline</span> <span class="o">=</span> <span class="n">newline</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tstart</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ellapsed</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+<div class="viewcode-block" id="Timer.tic"><a class="viewcode-back" href="../../utool.html#utool.util_time.Timer.tic">[docs]</a>    <span class="k">def</span> <span class="nf">tic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="n">print_</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">tic(</span><span class="si">%r</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">newline</span><span class="p">:</span>
+                <span class="n">print_</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tstart</span> <span class="o">=</span> <span class="n">default_timer</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Timer.toc"><a class="viewcode-back" href="../../utool.html#utool.util_time.Timer.toc">[docs]</a>    <span class="k">def</span> <span class="nf">toc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ellapsed</span> <span class="o">=</span> <span class="n">default_timer</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tstart</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="n">print_</span><span class="p">(</span><span class="s1">&#39;...toc(</span><span class="si">%r</span><span class="s1">)=</span><span class="si">%.4f</span><span class="s1">s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="p">,</span> <span class="n">ellapsed</span><span class="p">))</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ellapsed</span></div>
+
+    <span class="n">start</span> <span class="o">=</span> <span class="n">tic</span>
+    <span class="n">stop</span> <span class="o">=</span> <span class="n">toc</span>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tic</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">trace</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ellapsed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toc</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">trace</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># return a falsey value on error</span></div>
+
+
+<div class="viewcode-block" id="Timerit"><a class="viewcode-back" href="../../utool.html#utool.util_time.Timerit">[docs]</a><span class="k">class</span> <span class="nc">Timerit</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reports the average time to run a block of code.</span>
+
+<span class="sd">    Unlike `timeit`, `Timerit` can handle multiline blocks of code</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        num (int): number of times to run the loop</span>
+<span class="sd">        label (str): identifier for printing</span>
+<span class="sd">        unit (str): reporting unit of time (e.g. &#39;ms&#39;, &#39;s&#39;, None)</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_time Timerit</span>
+<span class="sd">        python -m utool.util_time Timerit:0</span>
+<span class="sd">        python -m utool.util_time Timerit:1</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">        Minimal syntax with less-precise timing</span>
+<span class="sd">        ```python</span>
+<span class="sd">        import utool as ut</span>
+<span class="sd">        for timer in ut.Timerit(100):</span>
+<span class="sd">            # &lt;write code to time here&gt;</span>
+<span class="sd">        ```</span>
+
+<span class="sd">        Full syntax with most-precise timing</span>
+<span class="sd">        ```python</span>
+<span class="sd">        import utool as ut</span>
+<span class="sd">        for timer in ut.Timerit(100):</span>
+<span class="sd">            # &lt;write untimed setup code here&gt;</span>
+<span class="sd">            with timer:</span>
+<span class="sd">                # &lt;write code to time here&gt;</span>
+<span class="sd">        ```</span>
+
+<span class="sd">        Can also keep track of the Timerit object for extra statistics</span>
+<span class="sd">        ```python</span>
+<span class="sd">        import utool as ut</span>
+<span class="sd">        t1 = ut.Timerit(100)</span>
+<span class="sd">        for timer in t1:</span>
+<span class="sd">            # &lt;write untimed setup code here&gt;</span>
+<span class="sd">            with timer:</span>
+<span class="sd">                # &lt;write code to time here&gt;</span>
+<span class="sd">        # &lt;you can now access Timerit attributes like t1.total_time&gt;</span>
+<span class="sd">        ```</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; num = 15</span>
+<span class="sd">        &gt;&gt;&gt; t1 = ut.Timerit(num)</span>
+<span class="sd">        &gt;&gt;&gt; for timer in t1:</span>
+<span class="sd">        &gt;&gt;&gt;     # &lt;write untimed setup code here&gt; this example has no setup</span>
+<span class="sd">        &gt;&gt;&gt;     with timer:</span>
+<span class="sd">        &gt;&gt;&gt;         # &lt;write code to time here&gt; for example...</span>
+<span class="sd">        &gt;&gt;&gt;         ut.get_nth_prime_bruteforce(100)</span>
+<span class="sd">        &gt;&gt;&gt; # &lt;you can now access Timerit attributes&gt;</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;t1.total_time = %r&#39; % (t1.total_time,))</span>
+<span class="sd">        &gt;&gt;&gt; assert t1.total_time &gt; 0</span>
+<span class="sd">        &gt;&gt;&gt; assert t1.n_loops == t1.num</span>
+<span class="sd">        &gt;&gt;&gt; assert t1.n_loops == num</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; num = 10000</span>
+<span class="sd">        &gt;&gt;&gt; n = 50</span>
+<span class="sd">        &gt;&gt;&gt; # If the timer object is unused, time will still be recoreded,</span>
+<span class="sd">        &gt;&gt;&gt; # but with less precision.</span>
+<span class="sd">        &gt;&gt;&gt; for _ in ut.Timerit(num, &#39;inprecise&#39;):</span>
+<span class="sd">        &gt;&gt;&gt;     ut.get_nth_prime_bruteforce(n)</span>
+<span class="sd">        &gt;&gt;&gt; # Using the timer object results in the most precise timeings</span>
+<span class="sd">        &gt;&gt;&gt; for timer in ut.Timerit(num, &#39;precise&#39;):</span>
+<span class="sd">        &gt;&gt;&gt;     with timer:</span>
+<span class="sd">        &gt;&gt;&gt;         ut.get_nth_prime_bruteforce(n)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num</span> <span class="o">=</span> <span class="n">num</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">times</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_loops</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="n">unit</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Timing for </span><span class="si">%d</span><span class="s1"> loops&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">num</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Timing </span><span class="si">%s</span><span class="s1"> for </span><span class="si">%d</span><span class="s1"> loops.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num</span><span class="p">,))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_loops</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_time</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Create a foreground and background timer</span>
+        <span class="n">bg_timer</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># (ideally this is unused)</span>
+        <span class="n">fg_timer</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># (used directly by user)</span>
+        <span class="c1"># Core timing loop</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num</span><span class="p">):</span>
+            <span class="c1"># Start background timer (in case the user doesnt use fg_timer)</span>
+            <span class="c1"># Yield foreground timer to let the user run a block of code</span>
+            <span class="c1"># When we return from yield the user code will have just finishec</span>
+            <span class="c1"># Then record background time + loop overhead</span>
+            <span class="n">bg_timer</span><span class="o">.</span><span class="n">tic</span><span class="p">()</span>
+            <span class="k">yield</span> <span class="n">fg_timer</span>
+            <span class="n">bg_time</span> <span class="o">=</span> <span class="n">bg_timer</span><span class="o">.</span><span class="n">toc</span><span class="p">()</span>
+            <span class="c1"># Check if the fg_timer object was used, but fallback on bg_timer</span>
+            <span class="k">if</span> <span class="n">fg_timer</span><span class="o">.</span><span class="n">ellapsed</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">block_time</span> <span class="o">=</span> <span class="n">fg_timer</span><span class="o">.</span><span class="n">ellapsed</span>  <span class="c1"># high precision</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">block_time</span> <span class="o">=</span> <span class="n">bg_time</span>  <span class="c1"># low precision</span>
+            <span class="c1"># record timeings</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block_time</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">total_time</span> <span class="o">+=</span> <span class="n">block_time</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_loops</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># Timeing complete, print results</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">num</span><span class="p">,</span> <span class="s1">&#39;incorrectly recorded times&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_print_report</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ave_secs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_time</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_loops</span>
+
+    <span class="k">def</span> <span class="nf">_print_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+        <span class="n">ave_secs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ave_secs</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Timing complete, </span><span class="si">%d</span><span class="s1"> loops&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_loops</span><span class="p">,))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Timing complete for: </span><span class="si">%s</span><span class="s1">, </span><span class="si">%d</span><span class="s1"> loops&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_loops</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">body</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">second_str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_time</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;    body took: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">body</span><span class="p">)</span>
+        <span class="n">perloop</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">second_str</span><span class="p">(</span><span class="n">ave_secs</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;    time per loop : </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">perloop</span><span class="p">,))</span></div>
+
+
+<div class="viewcode-block" id="determine_timestamp_format"><a class="viewcode-back" href="../../utool.html#utool.util_time.determine_timestamp_format">[docs]</a><span class="k">def</span> <span class="nf">determine_timestamp_format</span><span class="p">(</span><span class="n">datetime_str</span><span class="p">,</span> <span class="n">warn</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        datetime_str (str):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str:</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        https://docs.python.org/2/library/datetime.html#strftime-and-strptime-behavior</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_time --exec-determine_timestamp_format</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_time import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; datetime_str_list = [</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;0000:00:00 00:00:00&#39;,</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;    :  :     :  :  &#39;,</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;2015:04:01 00:00:00&#39;,</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;2080/04/01 00:00:00&#39;,</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;2005-10-27T14:35:20+02:00&#39;,</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;6:35:01\x002006:03:19 1&#39;,</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;2016/05/03 16:34:57 EST&#39;</span>
+<span class="sd">        &gt;&gt;&gt; ]</span>
+<span class="sd">        &gt;&gt;&gt; result = ut.repr4([determine_timestamp_format(datetime_str)</span>
+<span class="sd">        &gt;&gt;&gt;            for datetime_str in datetime_str_list])</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">re</span>
+
+    <span class="c1"># try to determine the format</span>
+    <span class="n">clean_datetime_str</span> <span class="o">=</span> <span class="n">datetime_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">clean_datetime_str</span><span class="p">)</span> <span class="o">==</span> <span class="mi">25</span> <span class="ow">and</span> <span class="s1">&#39;T&#39;</span> <span class="ow">in</span> <span class="n">clean_datetime_str</span><span class="p">:</span>
+        <span class="c1"># Delete last colon from ISO 8601 format</span>
+        <span class="c1"># clean_datetime_str = clean_datetime_str[:-3] + clean_datetime_str[-2:]</span>
+        <span class="k">if</span> <span class="kc">True</span> <span class="ow">or</span> <span class="n">six</span><span class="o">.</span><span class="n">PY2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">warn</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="s1">&#39;WARNING: Python 2.7 does not support %z directive &#39;</span>
+                    <span class="s1">&#39;in strptime, ignoring timezone in parsing: &#39;</span> <span class="o">+</span> <span class="n">clean_datetime_str</span>
+                <span class="p">)</span>
+            <span class="n">clean_datetime_str</span> <span class="o">=</span> <span class="n">clean_datetime_str</span><span class="p">[:</span><span class="o">-</span><span class="mi">6</span><span class="p">]</span>
+
+    <span class="n">year_regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;(\d\d)?\d\d&#39;</span>
+    <span class="n">month_regex</span> <span class="o">=</span> <span class="s1">&#39;[0-1]?[0-9]&#39;</span>
+    <span class="n">day_regex</span> <span class="o">=</span> <span class="s1">&#39;[0-3]?[0-9]&#39;</span>
+
+    <span class="n">time_regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;[0-6]?[0-9]:[0-6]?[0-9]:[0-6]?[0-9]&#39;</span>
+
+    <span class="c1"># odd_time_regex = r&#39;[0-6]?[0-9]:[0-6]?[0-9]:[0-6 ]?[0-9]&#39;</span>
+
+    <span class="n">date_regex1</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">year_regex</span><span class="p">,</span> <span class="n">month_regex</span><span class="p">,</span> <span class="n">day_regex</span><span class="p">])</span>
+    <span class="n">date_regex2</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">year_regex</span><span class="p">,</span> <span class="n">month_regex</span><span class="p">,</span> <span class="n">day_regex</span><span class="p">])</span>
+    <span class="n">date_regex3</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">year_regex</span><span class="p">,</span> <span class="n">month_regex</span><span class="p">,</span> <span class="n">day_regex</span><span class="p">])</span>
+    <span class="n">datetime_regex1</span> <span class="o">=</span> <span class="n">date_regex1</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">time_regex</span>
+    <span class="n">datetime_regex2</span> <span class="o">=</span> <span class="n">date_regex2</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">time_regex</span>
+    <span class="n">datetime_regex3</span> <span class="o">=</span> <span class="n">date_regex3</span> <span class="o">+</span> <span class="s1">&#39;T&#39;</span> <span class="o">+</span> <span class="n">time_regex</span>  <span class="c1"># + r&#39;\+[0-2]?[0-9]?[0-6]?[0-9]&#39;</span>
+    <span class="n">datetime_regex4</span> <span class="o">=</span> <span class="n">time_regex</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">date_regex2</span> <span class="o">+</span> <span class="s1">&#39; 1&#39;</span>
+
+    <span class="n">timefmt</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">datetime_regex1</span><span class="p">,</span> <span class="n">clean_datetime_str</span><span class="p">):</span>
+        <span class="n">timefmt</span> <span class="o">=</span> <span class="s1">&#39;%Y/%m/</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span>
+    <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">datetime_regex2</span><span class="p">,</span> <span class="n">clean_datetime_str</span><span class="p">):</span>
+        <span class="n">timefmt</span> <span class="o">=</span> <span class="s1">&#39;%Y:%m:</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span>
+    <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">datetime_regex3</span><span class="p">,</span> <span class="n">clean_datetime_str</span><span class="p">):</span>
+        <span class="c1"># timefmt = &#39;%Y-%m-%dT%H:%M:%S%z&#39;</span>
+        <span class="n">timefmt</span> <span class="o">=</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%S&#39;</span>
+    <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">datetime_regex4</span><span class="p">,</span> <span class="n">clean_datetime_str</span><span class="p">):</span>
+        <span class="c1"># timefmt = &#39;%Y-%m-%dT%H:%M:%S%z&#39;</span>
+        <span class="n">timefmt</span> <span class="o">=</span> <span class="s1">&#39;%H:%M:%S %Y:%m:</span><span class="si">%d</span><span class="s1"> 1&#39;</span>
+    <span class="c1"># Just dont accept this bad format</span>
+    <span class="c1"># elif re.match(datetime_regex3, clean_datetime_str):</span>
+    <span class="c1">#    timefmt = &#39;%Y:%m:%d %H:%M: %S&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">clean_datetime_str</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">clean_datetime_str</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">clean_datetime_str</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;:/ &#39;</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">elif</span> <span class="n">clean_datetime_str</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;No EXIF Data&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">elif</span> <span class="n">clean_datetime_str</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;Invalid&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">elif</span> <span class="n">clean_datetime_str</span> <span class="o">==</span> <span class="s1">&#39;0000:00:00 00:00:00&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">elif</span> <span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">128</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">clean_datetime_str</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+        <span class="c1"># return -1</span>
+        <span class="c1"># import utool as ut</span>
+        <span class="c1"># ut.embed()</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Unknown format: datetime_str=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">datetime_str</span><span class="p">,)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+        <span class="c1"># raise NotImplementedError(msg)</span>
+    <span class="k">return</span> <span class="n">timefmt</span></div>
+
+
+<div class="viewcode-block" id="local_timezone"><a class="viewcode-back" href="../../utool.html#utool.util_time.local_timezone">[docs]</a><span class="k">def</span> <span class="nf">local_timezone</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">time</span>
+
+    <span class="k">return</span> <span class="n">time</span><span class="o">.</span><span class="n">tzname</span></div>
+
+
+<div class="viewcode-block" id="utcnow_tz"><a class="viewcode-back" href="../../utool.html#utool.util_time.utcnow_tz">[docs]</a><span class="k">def</span> <span class="nf">utcnow_tz</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">pytz</span>
+
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">pytz</span><span class="o">.</span><span class="n">timezone</span><span class="p">(</span><span class="s1">&#39;UTC&#39;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">dt</span></div>
+
+
+<div class="viewcode-block" id="parse_timestamp"><a class="viewcode-back" href="../../utool.html#utool.util_time.parse_timestamp">[docs]</a><span class="k">def</span> <span class="nf">parse_timestamp</span><span class="p">(</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">zone</span><span class="o">=</span><span class="s1">&#39;UTC&#39;</span><span class="p">,</span> <span class="n">timestamp_format</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    pip install delorean</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        timestamp (str): timestampe string</span>
+<span class="sd">        zone (bool): assumes input is zone (only if not specified) and gives</span>
+<span class="sd">            output in zone.</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_time --test-parse_timestamp</span>
+<span class="sd">        python -m utool.util_time parse_timestamp</span>
+
+<span class="sd">    Example0:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_time import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; utc = True</span>
+<span class="sd">        &gt;&gt;&gt; timestampe_format = None</span>
+<span class="sd">        &gt;&gt;&gt; timestamps = [</span>
+<span class="sd">        &gt;&gt;&gt;     (&#39;2015:04:01 00:00:00&#39;,),</span>
+<span class="sd">        &gt;&gt;&gt;     (&#39;2005-10-27T14:35:20+02:00&#39;,),</span>
+<span class="sd">        &gt;&gt;&gt;     (&#39;2000-01-01T09:00:00-05:00&#39;, &#39;UTC&#39;),</span>
+<span class="sd">        &gt;&gt;&gt;     (&#39;2000-01-01T09:00:00-05:00&#39;, &#39;EST&#39;),</span>
+<span class="sd">        &gt;&gt;&gt;     (&#39;2000-01-01T09:00:00&#39;, &#39;EST&#39;),</span>
+<span class="sd">        &gt;&gt;&gt;     (&#39;2000-01-01T09:00:00&#39;, &#39;UTC&#39;),</span>
+<span class="sd">        &gt;&gt;&gt;     (&#39;6:35:01\x002006:03:19 1&#39;,),</span>
+<span class="sd">        &gt;&gt;&gt;     (&#39;2016/08/18 10:51:02 EST&#39;,),</span>
+<span class="sd">        &gt;&gt;&gt;     (&#39;2016-08-18T10:51:02-05:00&#39;,),</span>
+<span class="sd">        &gt;&gt;&gt; ]</span>
+<span class="sd">        &gt;&gt;&gt; timestamp = timestamps[-1][0]</span>
+<span class="sd">        &gt;&gt;&gt; dn_list = [parse_timestamp(*args) for args in timestamps]</span>
+<span class="sd">        &gt;&gt;&gt; result = ut.NEWLINE.join([str(dn) for dn in dn_list])</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        2015-04-01 00:00:00+00:00</span>
+<span class="sd">        2005-10-27 12:35:20+00:00</span>
+<span class="sd">        2000-01-01 14:00:00+00:00</span>
+<span class="sd">        2000-01-01 09:00:00-05:00</span>
+<span class="sd">        2000-01-01 09:00:00-05:00</span>
+<span class="sd">        2000-01-01 09:00:00+00:00</span>
+<span class="sd">        2006-03-19 06:35:01+00:00</span>
+<span class="sd">        2016-08-18 15:51:02+00:00</span>
+<span class="sd">        2016-08-18 15:51:02+00:00</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">timestamp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">use_delorean</span> <span class="o">=</span> <span class="kc">True</span> <span class="ow">or</span> <span class="n">six</span><span class="o">.</span><span class="n">PY2</span>
+    <span class="k">if</span> <span class="n">use_delorean</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">delorean</span>
+
+        <span class="c1">## customize delorean string method</span>
+        <span class="c1"># def __str__(self):</span>
+        <span class="c1">#    return str(self.datetime)</span>
+        <span class="c1">#    #return str(self.datetime) + &#39; &#39; + str(self.timezone)</span>
+        <span class="c1"># delorean.Delorean.__str__ = __str__</span>
+        <span class="c1">## method types must be injected into the class</span>
+        <span class="c1">##ut.inject_func_as_method(dn, __str__, &#39;__repr__&#39;, override=True)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Unknown format: timestamp=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">timestamp</span><span class="p">,))</span>
+
+    <span class="c1"># Normal format, or non-standard year first data</span>
+    <span class="k">if</span> <span class="n">timestamp_format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># dont warn because we will take care of utc</span>
+        <span class="n">timefmt</span> <span class="o">=</span> <span class="n">determine_timestamp_format</span><span class="p">(</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">warn</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">timefmt</span> <span class="o">=</span> <span class="n">timestamp_format</span>
+    <span class="k">if</span> <span class="n">timefmt</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">timefmt</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s1">&#39;unknown timestamp_format=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">timestamp_format</span><span class="p">,))</span>
+
+    <span class="c1"># Fixup timestamp</span>
+    <span class="n">utc_offset</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">20</span> <span class="ow">and</span> <span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">timestamp</span><span class="p">:</span>
+        <span class="n">timestamp_</span> <span class="o">=</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">use_delorean</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">19</span><span class="p">:</span>
+        <span class="n">timestamp_</span> <span class="o">=</span> <span class="n">timestamp</span><span class="p">[:</span><span class="mi">19</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">utc_offset</span> <span class="o">=</span> <span class="n">timestamp</span><span class="p">[</span><span class="mi">19</span><span class="p">:]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">timestamp_</span> <span class="o">=</span> <span class="n">timestamp</span>
+
+    <span class="n">dt_</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">timestamp_</span><span class="p">,</span> <span class="n">timefmt</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">use_delorean</span><span class="p">:</span>
+        <span class="c1"># if utc and utc_offset is not None:</span>
+        <span class="c1"># if utc:</span>
+        <span class="c1">#    dn_ = delorean.Delorean(dt_, &#39;UTC&#39;)</span>
+        <span class="c1"># else:</span>
+        <span class="k">if</span> <span class="n">zone</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">zone</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">tzname</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">zone</span> <span class="o">==</span> <span class="s1">&#39;local&#39;</span><span class="p">:</span>
+            <span class="n">zone</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">tzname</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">dn_</span> <span class="o">=</span> <span class="n">delorean</span><span class="o">.</span><span class="n">Delorean</span><span class="p">(</span><span class="n">dt_</span><span class="p">,</span> <span class="n">zone</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dn_</span> <span class="o">=</span> <span class="n">dt_</span>
+
+    <span class="k">if</span> <span class="n">utc_offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">zone</span> <span class="o">==</span> <span class="s1">&#39;UTC&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">use_delorean</span><span class="p">:</span>
+            <span class="c1"># Python 2.7 does not account for timezones</span>
+            <span class="k">if</span> <span class="s1">&#39;:&#39;</span> <span class="ow">in</span> <span class="n">utc_offset</span><span class="p">:</span>
+                <span class="n">sign</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39; &#39;</span><span class="p">:</span> <span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;+&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">}[</span><span class="n">utc_offset</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                <span class="n">hours</span><span class="p">,</span> <span class="n">seconds</span> <span class="o">=</span> <span class="n">utc_offset</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+                <span class="n">delta_</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">hours</span><span class="p">),</span> <span class="n">seconds</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">seconds</span><span class="p">))</span>
+                <span class="n">delta</span> <span class="o">=</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">delta_</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">pytz</span>
+
+                <span class="n">tzname</span> <span class="o">=</span> <span class="n">utc_offset</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">delta</span> <span class="o">=</span> <span class="n">pytz</span><span class="o">.</span><span class="n">timezone</span><span class="p">(</span><span class="n">tzname</span><span class="p">)</span><span class="o">.</span><span class="n">utcoffset</span><span class="p">(</span><span class="n">dt_</span><span class="p">)</span>
+            <span class="c1"># Move back to utc</span>
+            <span class="n">dn</span> <span class="o">=</span> <span class="n">dn_</span> <span class="o">-</span> <span class="n">delta</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s1">&#39;python3 should take care of timezone&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dn</span> <span class="o">=</span> <span class="n">dn_</span>
+
+    <span class="k">if</span> <span class="n">use_delorean</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">zone</span> <span class="o">!=</span> <span class="s1">&#39;UTC&#39;</span><span class="p">:</span>
+            <span class="n">dn</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="n">zone</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dn</span><span class="o">.</span><span class="n">datetime</span></div>
+    <span class="c1"># return dn</span>
+
+
+<div class="viewcode-block" id="exiftime_to_unixtime"><a class="viewcode-back" href="../../utool.html#utool.util_time.exiftime_to_unixtime">[docs]</a><span class="k">def</span> <span class="nf">exiftime_to_unixtime</span><span class="p">(</span><span class="n">datetime_str</span><span class="p">,</span> <span class="n">timestamp_format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    converts a datetime string to posixtime (unixtime)</span>
+<span class="sd">    Use parse timestamp instead</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        datetime_str     (str):</span>
+<span class="sd">        timestamp_format (int):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        int: unixtime seconds from 1970 (currently not UTC; this will change)</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_time --test-exiftime_to_unixtime:2</span>
+
+<span class="sd">    Example0:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_time import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; datetime_str = &#39;0000:00:00 00:00:00&#39;</span>
+<span class="sd">        &gt;&gt;&gt; timestamp_format = 1</span>
+<span class="sd">        &gt;&gt;&gt; result = exiftime_to_unixtime(datetime_str, timestamp_format)</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        -1</span>
+
+<span class="sd">    Example1:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_time import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; datetime_str = &#39;2015:04:01 00:00:00&#39;</span>
+<span class="sd">        &gt;&gt;&gt; timestamp_format = 1</span>
+<span class="sd">        &gt;&gt;&gt; result = exiftime_to_unixtime(datetime_str, timestamp_format)</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        1427846400</span>
+
+<span class="sd">    Example2:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_time import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; datetime_str = &#39;2005-10-27T14:35:20+02:00&#39;</span>
+<span class="sd">        &gt;&gt;&gt; timestamp_format = None</span>
+<span class="sd">        &gt;&gt;&gt; result = exiftime_to_unixtime(datetime_str, timestamp_format)</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        1130423720</span>
+
+<span class="sd">    Example3:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_time import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; datetime_str = &#39;6:35:01\x002006:03:19 1&#39;</span>
+<span class="sd">        &gt;&gt;&gt; timestamp_format = None</span>
+<span class="sd">        &gt;&gt;&gt; result = exiftime_to_unixtime(datetime_str, timestamp_format)</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        1142750101</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">invalid_value</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">datetime_str</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">datetime_str</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">invalid_value</span>
+    <span class="k">elif</span> <span class="n">datetime_str</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="c1"># TODO: use parse_timestamp to reduce duplicate code</span>
+    <span class="c1"># try:</span>
+    <span class="c1">#    dt = parse_timestamp(datetime_str)</span>
+    <span class="c1"># except TypeError:</span>
+    <span class="c1">#    #if datetime_str is None:</span>
+    <span class="c1">#        #return -1</span>
+    <span class="c1">#    return -1</span>
+    <span class="c1"># except ValueError as ex:</span>
+    <span class="c1">#    if strict is None:</span>
+    <span class="c1">#        ...</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">datetime_str</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Unknown format: datetime_str=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">datetime_str</span><span class="p">,))</span>
+    <span class="c1"># Normal format, or non-standard year first data</span>
+    <span class="k">if</span> <span class="n">timestamp_format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">timefmt</span> <span class="o">=</span> <span class="n">determine_timestamp_format</span><span class="p">(</span><span class="n">datetime_str</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">timefmt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">invalid_value</span>
+    <span class="k">elif</span> <span class="n">timestamp_format</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">timefmt</span> <span class="o">=</span> <span class="s1">&#39;%m/</span><span class="si">%d</span><span class="s1">/%Y %H:%M:%S&#39;</span>
+    <span class="k">elif</span> <span class="n">timestamp_format</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">timefmt</span> <span class="o">=</span> <span class="s1">&#39;%Y:%m:</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">timestamp_format</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">)</span>
+        <span class="n">timefmt</span> <span class="o">=</span> <span class="n">timestamp_format</span>
+        <span class="c1"># raise AssertionError(&#39;unknown timestamp_format=%r&#39; % (timestamp_format,))</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">datetime_str</span><span class="p">)</span> <span class="o">==</span> <span class="mi">20</span> <span class="ow">and</span> <span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">datetime_str</span><span class="p">:</span>
+            <span class="n">datetime_str_</span> <span class="o">=</span> <span class="n">datetime_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">datetime_str</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">19</span><span class="p">:</span>
+            <span class="n">datetime_str_</span> <span class="o">=</span> <span class="n">datetime_str</span><span class="p">[:</span><span class="mi">19</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">datetime_str_</span> <span class="o">=</span> <span class="n">datetime_str</span>
+        <span class="c1"># try:</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">datetime_str_</span><span class="p">,</span> <span class="n">timefmt</span><span class="p">)</span>
+        <span class="c1"># except ValueError as ex:</span>
+        <span class="c1">#    import utool as ut</span>
+        <span class="c1">#    ut.printex(ex, iswarning=True)</span>
+        <span class="c1">#    return invalid_value</span>
+        <span class="k">return</span> <span class="n">calendar</span><span class="o">.</span><span class="n">timegm</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">timetuple</span><span class="p">())</span>
+        <span class="c1"># return time.mktime(dt.timetuple())</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="c1"># if datetime_str is None:</span>
+        <span class="c1"># return -1</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">strict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">strict</span> <span class="o">=</span> <span class="n">util_arg</span><span class="o">.</span><span class="n">SUPER_STRICT</span>
+        <span class="c1"># strict = False</span>
+        <span class="c1"># from utool.util_arg import STRICT</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">datetime_str</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">datetime_str_</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">invalid_value</span>
+            <span class="k">if</span> <span class="n">datetime_str_</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;No EXIF Data&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">invalid_value</span>
+            <span class="k">if</span> <span class="n">datetime_str_</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;Invalid&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">invalid_value</span>
+            <span class="k">if</span> <span class="n">datetime_str_</span> <span class="o">==</span> <span class="s1">&#39;0000:00:00 00:00:00&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">invalid_value</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&lt;!!! ValueError !!!&gt;&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[util_time] Caught Error: &#39;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[util_time] type(datetime_str)  = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">datetime_str</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[util_time] repr(datetime_str)  = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">datetime_str</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[util_time]     (datetime_str)  = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">datetime_str</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[util_time]  len(datetime_str)  = </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">datetime_str</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[util_time] repr(datetime_str_) = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">datetime_str_</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[util_time]  len(datetime_str_) = </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">datetime_str_</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&lt;/!!! ValueError !!!&gt;&#39;</span><span class="p">)</span>
+
+        <span class="n">debug</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+
+            <span class="k">def</span> <span class="nf">find_offending_part</span><span class="p">(</span><span class="n">datetime_str_</span><span class="p">,</span> <span class="n">timefmt</span><span class="p">,</span> <span class="n">splitchar</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">):</span>
+                <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+                <span class="n">parts_list</span> <span class="o">=</span> <span class="n">datetime_str_</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">splitchar</span><span class="p">)</span>
+                <span class="n">fmt_list</span> <span class="o">=</span> <span class="n">timefmt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">splitchar</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">return</span>
+                <span class="k">for</span> <span class="n">part</span><span class="p">,</span> <span class="n">fmt</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">parts_list</span><span class="p">,</span> <span class="n">fmt_list</span><span class="p">):</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Trying:&#39;</span><span class="p">)</span>
+                    <span class="k">with</span> <span class="n">ut</span><span class="o">.</span><span class="n">Indenter</span><span class="p">(</span><span class="s1">&#39;  &#39;</span><span class="p">):</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;fmt = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fmt</span><span class="p">,))</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;part = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">part</span><span class="p">,))</span>
+                            <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="n">fmt</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                            <span class="n">find_offending_part</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Failed&#39;</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Passed&#39;</span><span class="p">)</span>
+
+            <span class="n">find_offending_part</span><span class="p">(</span><span class="n">datetime_str_</span><span class="p">,</span> <span class="n">timefmt</span><span class="p">)</span>
+
+        <span class="c1"># import utool as ut</span>
+        <span class="c1"># ut.embed()</span>
+        <span class="k">if</span> <span class="n">strict</span><span class="p">:</span>
+            <span class="k">raise</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Supressed ValueError&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">invalid_value</span></div>
+
+
+<div class="viewcode-block" id="parse_timedelta_str"><a class="viewcode-back" href="../../utool.html#utool.util_time.parse_timedelta_str">[docs]</a><span class="k">def</span> <span class="nf">parse_timedelta_str</span><span class="p">(</span><span class="n">str_</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        str_ (str):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: timedelta</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_time --exec-parse_timedelta_str</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_time import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; str_ = &#39;24h&#39;</span>
+<span class="sd">        &gt;&gt;&gt; timedelta = parse_timedelta_str(str_)</span>
+<span class="sd">        &gt;&gt;&gt; result = (&#39;timedelta = %s&#39; % (str(timedelta),))</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        timedelta = 86400.0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">str_</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">):</span>
+        <span class="n">timedelta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">str_</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="mi">60</span>
+    <span class="k">elif</span> <span class="n">str_</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;h&#39;</span><span class="p">):</span>
+        <span class="n">timedelta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">str_</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span>
+    <span class="k">elif</span> <span class="n">str_</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">):</span>
+        <span class="n">timedelta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">str_</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Unknown timedelta format </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">str_</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">timedelta</span></div>
+
+
+<div class="viewcode-block" id="ensure_timedelta"><a class="viewcode-back" href="../../utool.html#utool.util_time.ensure_timedelta">[docs]</a><span class="k">def</span> <span class="nf">ensure_timedelta</span><span class="p">(</span><span class="n">str_or_num</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">str_or_num</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">parse_timedelta_str</span><span class="p">(</span><span class="n">str_or_num</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">str_or_num</span></div>
+
+
+<div class="viewcode-block" id="unixtime_to_datetimestr"><a class="viewcode-back" href="../../utool.html#utool.util_time.unixtime_to_datetimestr">[docs]</a><span class="k">def</span> <span class="nf">unixtime_to_datetimestr</span><span class="p">(</span><span class="n">unixtime</span><span class="p">,</span> <span class="n">timefmt</span><span class="o">=</span><span class="s1">&#39;%Y/%m/</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">,</span> <span class="n">isutc</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TODO: ranme to datetimestr</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">unixtime</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;NA&#39;</span>
+        <span class="k">if</span> <span class="n">unixtime</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">isutc</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcfromtimestamp</span><span class="p">(</span><span class="n">unixtime</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">timefmt</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">unixtime</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">timefmt</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">raise</span></div>
+        <span class="c1"># return &#39;NA&#39;</span>
+
+
+<div class="viewcode-block" id="unixtime_to_datetimeobj"><a class="viewcode-back" href="../../utool.html#utool.util_time.unixtime_to_datetimeobj">[docs]</a><span class="k">def</span> <span class="nf">unixtime_to_datetimeobj</span><span class="p">(</span><span class="n">unixtime</span><span class="p">,</span> <span class="n">isutc</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">unixtime</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;NA&#39;</span>
+        <span class="k">if</span> <span class="n">unixtime</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">isutc</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcfromtimestamp</span><span class="p">(</span><span class="n">unixtime</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">unixtime</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">raise</span></div>
+
+
+<div class="viewcode-block" id="unixtime_to_timedelta"><a class="viewcode-back" href="../../utool.html#utool.util_time.unixtime_to_timedelta">[docs]</a><span class="k">def</span> <span class="nf">unixtime_to_timedelta</span><span class="p">(</span><span class="n">unixtime_diff</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; alias for get_unix_timedelta &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">get_unix_timedelta</span><span class="p">(</span><span class="n">unixtime_diff</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_unix_timedelta"><a class="viewcode-back" href="../../utool.html#utool.util_time.get_unix_timedelta">[docs]</a><span class="k">def</span> <span class="nf">get_unix_timedelta</span><span class="p">(</span><span class="n">unixtime_diff</span><span class="p">):</span>
+    <span class="n">timedelta</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="nb">abs</span><span class="p">(</span><span class="n">unixtime_diff</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">timedelta</span></div>
+
+
+<div class="viewcode-block" id="get_unix_timedelta_str"><a class="viewcode-back" href="../../utool.html#utool.util_time.get_unix_timedelta_str">[docs]</a><span class="k">def</span> <span class="nf">get_unix_timedelta_str</span><span class="p">(</span><span class="n">unixtime_diff</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TODO: rectify this function with get_posix_timedelta_str</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        unixtime_diff (int): number of seconds</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        timestr (str): formated time string</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        unixtime_diff (int):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: timestr</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_time --test-get_unix_timedelta_str</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_time import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; unixtime_diff = 0</span>
+<span class="sd">        &gt;&gt;&gt; timestr = get_unix_timedelta_str(unixtime_diff)</span>
+<span class="sd">        &gt;&gt;&gt; timestr_list = [get_unix_timedelta_str(_) for _ in [-9001, -1, 0, 1, 9001]]</span>
+<span class="sd">        &gt;&gt;&gt; result = ut.repr2(timestr_list)</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        [&#39;2 hours 30 minutes 1 second&#39;, &#39;1 second&#39;, &#39;0 seconds&#39;, &#39;1 second&#39;, &#39;2 hours 30 minutes 1 second&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">timedelta</span> <span class="o">=</span> <span class="n">get_unix_timedelta</span><span class="p">(</span><span class="n">unixtime_diff</span><span class="p">)</span>
+    <span class="n">timestr</span> <span class="o">=</span> <span class="n">get_timedelta_str</span><span class="p">(</span><span class="n">timedelta</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">timestr</span></div>
+
+
+<div class="viewcode-block" id="get_timedelta_str"><a class="viewcode-back" href="../../utool.html#utool.util_time.get_timedelta_str">[docs]</a><span class="k">def</span> <span class="nf">get_timedelta_str</span><span class="p">(</span><span class="n">timedelta</span><span class="p">,</span> <span class="n">exclude_zeros</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get_timedelta_str</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: timedelta_str, formated time string</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        http://stackoverflow.com/questions/8906926/formatting-python-timedelta-objects</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_time import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; timedelta = get_unix_timedelta(10)</span>
+<span class="sd">        &gt;&gt;&gt; timedelta_str = get_timedelta_str(timedelta)</span>
+<span class="sd">        &gt;&gt;&gt; result = (timedelta_str)</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        10 seconds</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">timedelta</span> <span class="o">==</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;0 seconds&#39;</span>
+    <span class="n">days</span> <span class="o">=</span> <span class="n">timedelta</span><span class="o">.</span><span class="n">days</span>
+    <span class="n">hours</span><span class="p">,</span> <span class="n">rem</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">timedelta</span><span class="o">.</span><span class="n">seconds</span><span class="p">,</span> <span class="mi">3600</span><span class="p">)</span>
+    <span class="n">minutes</span><span class="p">,</span> <span class="n">seconds</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">rem</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">fmtstr_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">fmtdict</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">append_cases</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">fmtlbl</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">exclude_zeros</span> <span class="ow">or</span> <span class="n">unit</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">fmtstr_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;{</span><span class="si">%s</span><span class="s1">} </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fmtlbl</span><span class="p">,</span> <span class="n">fmtlbl</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">fmtstr_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;{</span><span class="si">%s</span><span class="s1">} </span><span class="si">%s</span><span class="s1">s&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fmtlbl</span><span class="p">,</span> <span class="n">fmtlbl</span><span class="p">))</span>
+            <span class="n">fmtdict</span><span class="p">[</span><span class="n">fmtlbl</span><span class="p">]</span> <span class="o">=</span> <span class="n">unit</span>
+
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">days</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">append_cases</span><span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="s1">&#39;day&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fmtstr_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">hours</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">append_cases</span><span class="p">(</span><span class="n">hours</span><span class="p">,</span> <span class="s1">&#39;hour&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fmtstr_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">minutes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">append_cases</span><span class="p">(</span><span class="n">minutes</span><span class="p">,</span> <span class="s1">&#39;minute&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fmtstr_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">seconds</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">append_cases</span><span class="p">(</span><span class="n">seconds</span><span class="p">,</span> <span class="s1">&#39;second&#39;</span><span class="p">)</span>
+    <span class="n">fmtstr</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fmtstr_list</span><span class="p">)</span>
+    <span class="n">timedelta_str</span> <span class="o">=</span> <span class="n">fmtstr</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">fmtdict</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">timedelta_str</span></div>
+
+
+<div class="viewcode-block" id="get_posix_timedelta_str"><a class="viewcode-back" href="../../utool.html#utool.util_time.get_posix_timedelta_str">[docs]</a><span class="k">def</span> <span class="nf">get_posix_timedelta_str</span><span class="p">(</span><span class="n">posixtime</span><span class="p">,</span> <span class="n">year</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">approx</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get_timedelta_str</span>
+
+<span class="sd">    TODO: rectify this function with get_unix_timedelta_str (unix_timedelta_str probably has better implementation)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: timedelta_str, formated time string</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_time --test-get_posix_timedelta_str</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_time import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; posixtime_list = [-13, 10.2, 10.2 ** 2, 10.2 ** 3, 10.2 ** 4, 10.2 ** 5, 10.2 ** 8, 60 * 60 * 60 * 24 * 7]</span>
+<span class="sd">        &gt;&gt;&gt; posixtime = posixtime_list[-1]</span>
+<span class="sd">        &gt;&gt;&gt; timedelta_str = [get_posix_timedelta_str(posixtime) for posixtime in posixtime_list]</span>
+<span class="sd">        &gt;&gt;&gt; result = ut.repr2(timedelta_str)</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        [&#39;-00:00:13&#39;, &#39;00:00:10&#39;, &#39;00:01:44&#39;, &#39;00:17:41&#39;, &#39;03:00:24&#39;, &#39;1 day&#39;, &#39;193 weeks&#39;, &#39;60 weeks&#39;]</span>
+
+<span class="sd">    Timeit::</span>
+<span class="sd">        import datetime</span>
+<span class="sd">        # Seems like like timedelta is just faster. must be because it is builtin</span>
+<span class="sd">        %timeit get_posix_timedelta_str(posixtime)</span>
+<span class="sd">        %timeit str(datetime.timedelta(seconds=posixtime))</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">posixtime</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;NaN&#39;</span>
+    <span class="n">sign</span><span class="p">,</span> <span class="n">posixtime_</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">posixtime</span><span class="p">)</span> <span class="k">if</span> <span class="n">posixtime</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="n">posixtime</span><span class="p">)</span>
+    <span class="n">seconds_</span><span class="p">,</span> <span class="n">subseconds</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">posixtime_</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">minutes_</span><span class="p">,</span> <span class="n">seconds</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">seconds_</span><span class="p">),</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">hours_</span><span class="p">,</span> <span class="n">minutes</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">minutes_</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">days_</span><span class="p">,</span> <span class="n">hours</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">hours_</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span>
+    <span class="n">weeks_</span><span class="p">,</span> <span class="n">days</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">days_</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">year</span><span class="p">:</span>
+        <span class="n">years</span><span class="p">,</span> <span class="n">weeks</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">weeks_</span><span class="p">,</span> <span class="mi">52</span><span class="p">)</span>  <span class="c1"># not accurate</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">years</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">weeks</span> <span class="o">=</span> <span class="n">weeks_</span>
+    <span class="n">timedelta_parts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">subseconds</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">timedelta_parts</span> <span class="o">+=</span> <span class="p">[(</span><span class="s1">&#39;</span><span class="si">%.2f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">subseconds</span><span class="p">,))[</span><span class="mi">1</span><span class="p">:]]</span>
+    <span class="n">timedelta_parts</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;:&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">%02d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">_</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="p">(</span><span class="n">hours</span><span class="p">,</span> <span class="n">minutes</span><span class="p">,</span> <span class="n">seconds</span><span class="p">)])]</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+    <span class="k">if</span> <span class="n">days</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">timedelta_parts</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="n">ut</span><span class="o">.</span><span class="n">pluralize</span><span class="p">(</span><span class="s1">&#39;day&#39;</span><span class="p">,</span> <span class="n">days</span><span class="p">))]</span>
+    <span class="k">if</span> <span class="n">weeks</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">timedelta_parts</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">weeks</span><span class="p">,</span> <span class="n">ut</span><span class="o">.</span><span class="n">pluralize</span><span class="p">(</span><span class="s1">&#39;week&#39;</span><span class="p">,</span> <span class="n">weeks</span><span class="p">))]</span>
+    <span class="k">if</span> <span class="n">years</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">timedelta_parts</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">years</span><span class="p">,</span> <span class="n">ut</span><span class="o">.</span><span class="n">pluralize</span><span class="p">(</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="n">years</span><span class="p">))]</span>
+    <span class="k">if</span> <span class="n">sign</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">timedelta_parts</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;-&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">timedelta_parts</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">approx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">approx</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">approx</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">timedelta_str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timedelta_parts</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span> <span class="p">:</span> <span class="p">(</span><span class="n">approx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">timedelta_str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timedelta_parts</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">timedelta_str</span></div>
+
+
+<div class="viewcode-block" id="get_posix_timedelta_str2"><a class="viewcode-back" href="../../utool.html#utool.util_time.get_posix_timedelta_str2">[docs]</a><span class="k">def</span> <span class="nf">get_posix_timedelta_str2</span><span class="p">(</span><span class="n">posixtime</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_posix_timedelta_str</span><span class="p">(</span><span class="n">posixtime</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="c1"># handle nones and nans</span>
+        <span class="k">return</span> <span class="s1">&#39;None&#39;</span></div>
+
+
+<span class="c1"># def get_simple_posix_timedelta_str(posixtime):</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    get_timedelta_str</span>
+
+<span class="c1">#    Returns:</span>
+<span class="c1">#        str: timedelta_str, formated time string</span>
+
+<span class="c1">#    CommandLine:</span>
+<span class="c1">#        python -m utool.util_time --test-get_posix_timedelta_str</span>
+
+<span class="c1">#    Example:</span>
+<span class="c1">#        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="c1">#        &gt;&gt;&gt; from utool.util_time import *  # NOQA</span>
+<span class="c1">#        &gt;&gt;&gt; posixtime_list = [13, 10.2, 10.2 ** 2, 10.2 ** 3, 10.2 ** 4, 10.2 ** 5, 10.2 ** 8]</span>
+<span class="c1">#        &gt;&gt;&gt; posixtime = posixtime_list[1]</span>
+<span class="c1">#        &gt;&gt;&gt; timedelta_str = [get_simple_posix_timedelta_str(posixtime) for posixtime in posixtime_list]</span>
+<span class="c1">#        &gt;&gt;&gt; result = (timedelta_str)</span>
+<span class="c1">#        &gt;&gt;&gt; print(result)</span>
+
+<span class="c1">#    Timeit::</span>
+<span class="c1">#        import datetime</span>
+<span class="c1">#        posixtime = 10.2 ** 8</span>
+<span class="c1">#        %timeit get_simple_posix_timedelta_str(posixtime)</span>
+<span class="c1">#        %timeit str(datetime.timedelta(seconds=posixtime))</span>
+
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    seconds_ = int(posixtime)</span>
+<span class="c1">#    minutes_, seconds    = divmod(seconds_, 60)</span>
+<span class="c1">#    hours_, minutes      = divmod(minutes_, 60)</span>
+<span class="c1">#    days_, hours         = divmod(hours_, 24)</span>
+<span class="c1">#    weeks_, days         = divmod(days_, 7)</span>
+<span class="c1">#    timedelta_str = &#39;:&#39;.join([&#39;%02d&#39; % _ for _ in (hours, minutes, seconds)])</span>
+<span class="c1">#    #if days_ &gt; 0:</span>
+<span class="c1">#    #    timedelta_str = &#39;%d days &#39; % (days,) + timedelta_str</span>
+<span class="c1">#    #if weeks_ &gt; 0:</span>
+<span class="c1">#    #    timedelta_str = &#39;%d weeks &#39; % (weeks_,) + timedelta_str</span>
+<span class="c1">#    return timedelta_str</span>
+
+
+<span class="c1"># def get_month():</span>
+<span class="c1">#    return datetime.datetime.now().month</span>
+
+
+<span class="c1"># def get_day():</span>
+<span class="c1">#    return datetime.datetime.now().day</span>
+
+
+<span class="c1"># def get_year():</span>
+<span class="c1">#    return datetime.datetime.now().year</span>
+
+
+<div class="viewcode-block" id="get_timestats_str"><a class="viewcode-back" href="../../utool.html#utool.util_time.get_timestats_str">[docs]</a><span class="k">def</span> <span class="nf">get_timestats_str</span><span class="p">(</span><span class="n">unixtime_list</span><span class="p">,</span> <span class="n">newlines</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">isutc</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        unixtime_list (list):</span>
+<span class="sd">        newlines (bool):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: timestat_str</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_time --test-get_timestats_str</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_time import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; unixtime_list = [0, 0 + 60 * 60 * 5 , 10 + 60 * 60 * 5, 100 + 60 * 60 * 5, 1000 + 60 * 60 * 5]</span>
+<span class="sd">        &gt;&gt;&gt; newlines = 1</span>
+<span class="sd">        &gt;&gt;&gt; full = False</span>
+<span class="sd">        &gt;&gt;&gt; timestat_str = get_timestats_str(unixtime_list, newlines, full=full, isutc=True)</span>
+<span class="sd">        &gt;&gt;&gt; result = ut.align(str(timestat_str), &#39;:&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        {</span>
+<span class="sd">            &#39;max&#39;  : &#39;1970/01/01 05:16:40&#39;,</span>
+<span class="sd">            &#39;mean&#39; : &#39;1970/01/01 04:03:42&#39;,</span>
+<span class="sd">            &#39;min&#39;  : &#39;1970/01/01 00:00:00&#39;,</span>
+<span class="sd">            &#39;range&#39;: &#39;5:16:40&#39;,</span>
+<span class="sd">            &#39;std&#39;  : &#39;2:02:01&#39;,</span>
+<span class="sd">        }</span>
+
+<span class="sd">    Example2:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_time import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; unixtime_list = [0, 0 + 60 * 60 * 5 , 10 + 60 * 60 * 5, 100 + 60 * 60 * 5, 1000 + 60 * 60 * 5, float(&#39;nan&#39;), 0]</span>
+<span class="sd">        &gt;&gt;&gt; newlines = 1</span>
+<span class="sd">        &gt;&gt;&gt; timestat_str = get_timestats_str(unixtime_list, newlines, isutc=True)</span>
+<span class="sd">        &gt;&gt;&gt; result = ut.align(str(timestat_str), &#39;:&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        {</span>
+<span class="sd">            &#39;max&#39;    : &#39;1970/01/01 05:16:40&#39;,</span>
+<span class="sd">            &#39;mean&#39;   : &#39;1970/01/01 03:23:05&#39;,</span>
+<span class="sd">            &#39;min&#39;    : &#39;1970/01/01 00:00:00&#39;,</span>
+<span class="sd">            &#39;nMax&#39;   : 1,</span>
+<span class="sd">            &#39;nMin&#39;   : 2,</span>
+<span class="sd">            &#39;num_nan&#39;: 1,</span>
+<span class="sd">            &#39;range&#39;  : &#39;5:16:40&#39;,</span>
+<span class="sd">            &#39;shape&#39;  : (7,),</span>
+<span class="sd">            &#39;std&#39;    : &#39;2:23:43&#39;,</span>
+<span class="sd">        }</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+    <span class="n">datetime_stats</span> <span class="o">=</span> <span class="n">get_timestats_dict</span><span class="p">(</span><span class="n">unixtime_list</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="n">full</span><span class="p">,</span> <span class="n">isutc</span><span class="o">=</span><span class="n">isutc</span><span class="p">)</span>
+    <span class="n">timestat_str</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">repr4</span><span class="p">(</span><span class="n">datetime_stats</span><span class="p">,</span> <span class="n">newlines</span><span class="o">=</span><span class="n">newlines</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">timestat_str</span></div>
+
+
+<div class="viewcode-block" id="get_timestats_dict"><a class="viewcode-back" href="../../utool.html#utool.util_time.get_timestats_dict">[docs]</a><span class="k">def</span> <span class="nf">get_timestats_dict</span><span class="p">(</span><span class="n">unixtime_list</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">isutc</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+    <span class="n">unixtime_stats</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">get_stats</span><span class="p">(</span><span class="n">unixtime_list</span><span class="p">,</span> <span class="n">use_nan</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">datetime_stats</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">unixtime_stats</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;empty_list&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="n">datetime_stats</span> <span class="o">=</span> <span class="n">unixtime_stats</span>
+        <span class="k">return</span> <span class="n">datetime_stats</span>
+    <span class="c1"># elif unixtime_stats.get(&#39;num_nan&#39;, 0) == unixtime_stats.get(&#39;shape&#39;)[0]:</span>
+    <span class="c1">#     datetime_stats = unixtime_stats</span>
+    <span class="c1">#     return datetime_stats</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">]:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">datetime_stats</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">unixtime_to_datetimestr</span><span class="p">(</span>
+                <span class="n">unixtime_stats</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">isutc</span><span class="o">=</span><span class="n">isutc</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">)</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="n">datetime_stats</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;NA&#39;</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="n">ut</span><span class="o">.</span><span class="n">printex</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;unixtime_stats&#39;</span><span class="p">])</span>
+            <span class="k">raise</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;std&#39;</span><span class="p">]:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">datetime_stats</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
+                <span class="n">ut</span><span class="o">.</span><span class="n">get_unix_timedelta</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">unixtime_stats</span><span class="p">[</span><span class="n">key</span><span class="p">])))</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">)</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="n">datetime_stats</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;NA&#39;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">datetime_stats</span><span class="p">[</span><span class="s1">&#39;range&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
+            <span class="n">ut</span><span class="o">.</span><span class="n">get_unix_timedelta</span><span class="p">(</span>
+                <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">unixtime_stats</span><span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">unixtime_stats</span><span class="p">[</span><span class="s1">&#39;min&#39;</span><span class="p">]))</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">)</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+        <span class="n">datetime_stats</span><span class="p">[</span><span class="s1">&#39;range&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;NA&#39;</span>
+
+    <span class="k">if</span> <span class="n">full</span><span class="p">:</span>
+        <span class="c1"># unused_keys = (set(unixtime_stats.keys()) - set(datetime_stats.keys())</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;nMax&#39;</span><span class="p">,</span> <span class="s1">&#39;num_nan&#39;</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">,</span> <span class="s1">&#39;nMin&#39;</span><span class="p">]:</span>
+            <span class="n">datetime_stats</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">unixtime_stats</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="c1"># print(&#39;Unused keys = %r&#39; % (set(unixtime_stats.keys()) - set(datetime_stats.keys()),))</span>
+    <span class="k">return</span> <span class="n">datetime_stats</span></div>
+
+
+<div class="viewcode-block" id="date_to_datetime"><a class="viewcode-back" href="../../utool.html#utool.util_time.date_to_datetime">[docs]</a><span class="k">def</span> <span class="nf">date_to_datetime</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    fraction is how much through the day you are. 0=start of the day, 1=end of the day.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">day_seconds</span> <span class="o">=</span> <span class="p">(</span><span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">total_seconds</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">day_seconds</span> <span class="o">*</span> <span class="n">fraction</span><span class="p">)</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">total_seconds</span><span class="p">)</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span> <span class="o">+</span> <span class="n">delta</span>
+    <span class="k">return</span> <span class="n">dt</span></div>
+
+
+<div class="viewcode-block" id="datetime_to_posixtime"><a class="viewcode-back" href="../../utool.html#utool.util_time.datetime_to_posixtime">[docs]</a><span class="k">def</span> <span class="nf">datetime_to_posixtime</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="n">posixtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">mktime</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">timetuple</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">posixtime</span></div>
+
+
+<span class="c1"># def datetime_to_posixtime(dt):</span>
+<span class="c1">#    return dt.toordinal()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -c &quot;import utool, utool.util_time; utool.doctest_funcs(utool.util_time, allexamples=True)&quot;</span>
+<span class="sd">        python -c &quot;import utool, utool.util_time; utool.doctest_funcs(utool.util_time)&quot;</span>
+<span class="sd">        python -m utool.util_time</span>
+<span class="sd">        python -m utool.util_time --allexamples</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">multiprocessing</span>
+
+    <span class="n">multiprocessing</span><span class="o">.</span><span class="n">freeze_support</span><span class="p">()</span>  <span class="c1"># for win32</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>  <span class="c1"># NOQA</span>
+
+    <span class="n">ut</span><span class="o">.</span><span class="n">doctest_funcs</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">wbia-vtool</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  <li><a href="../utool.html">utool</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wild Me.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

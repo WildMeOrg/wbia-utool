@@ -1,0 +1,440 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>utool.util_tags &#8212; wbia-vtool 3.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for utool.util_tags</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">import</span> <span class="nn">six</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">operator</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inject</span>
+
+<span class="nb">print</span><span class="p">,</span> <span class="n">rrr</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">util_inject</span><span class="o">.</span><span class="n">inject2</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="modify_tags"><a class="viewcode-back" href="../../utool.html#utool.util_tags.modify_tags">[docs]</a><span class="k">def</span> <span class="nf">modify_tags</span><span class="p">(</span>
+    <span class="n">tags_list</span><span class="p">,</span>
+    <span class="n">direct_map</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">regex_map</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">regex_aug</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">delete_unmapped</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">return_unmapped</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">return_map</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+    <span class="n">tag_vocab</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">tags_list</span><span class="p">))</span>
+    <span class="n">alias_map</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">odict</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">regex_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">alias_map</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">ut</span><span class="o">.</span><span class="n">build_alias_map</span><span class="p">(</span><span class="n">regex_map</span><span class="p">,</span> <span class="n">tag_vocab</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">direct_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">alias_map</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">odict</span><span class="p">(</span><span class="n">direct_map</span><span class="p">))</span>
+
+    <span class="n">new_tags_list</span> <span class="o">=</span> <span class="n">tags_list</span>
+    <span class="n">new_tags_list</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">alias_tags</span><span class="p">(</span><span class="n">new_tags_list</span><span class="p">,</span> <span class="n">alias_map</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">regex_aug</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">alias_aug</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">build_alias_map</span><span class="p">(</span><span class="n">regex_aug</span><span class="p">,</span> <span class="n">tag_vocab</span><span class="p">)</span>
+        <span class="n">aug_tags_list</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">alias_tags</span><span class="p">(</span><span class="n">new_tags_list</span><span class="p">,</span> <span class="n">alias_aug</span><span class="p">)</span>
+        <span class="n">new_tags_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">ut</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">t1</span> <span class="o">+</span> <span class="n">t2</span><span class="p">)</span> <span class="k">for</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">new_tags_list</span><span class="p">,</span> <span class="n">aug_tags_list</span><span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="n">unmapped</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">tag_vocab</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">alias_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+    <span class="k">if</span> <span class="n">delete_unmapped</span><span class="p">:</span>
+        <span class="n">new_tags_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">ut</span><span class="o">.</span><span class="n">setdiff</span><span class="p">(</span><span class="n">tags</span><span class="p">,</span> <span class="n">unmapped</span><span class="p">)</span> <span class="k">for</span> <span class="n">tags</span> <span class="ow">in</span> <span class="n">new_tags_list</span><span class="p">]</span>
+
+    <span class="n">toreturn</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">return_map</span><span class="p">:</span>
+        <span class="n">toreturn</span> <span class="o">=</span> <span class="p">(</span><span class="n">alias_map</span><span class="p">,)</span>
+
+    <span class="k">if</span> <span class="n">return_unmapped</span><span class="p">:</span>
+        <span class="n">toreturn</span> <span class="o">=</span> <span class="n">toreturn</span> <span class="o">+</span> <span class="p">(</span><span class="n">unmapped</span><span class="p">,)</span>
+
+    <span class="k">if</span> <span class="n">toreturn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">toreturn</span> <span class="o">=</span> <span class="n">new_tags_list</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">toreturn</span> <span class="o">=</span> <span class="p">(</span><span class="n">new_tags_list</span><span class="p">,)</span> <span class="o">+</span> <span class="n">toreturn</span>
+    <span class="k">return</span> <span class="n">toreturn</span></div>
+
+
+<div class="viewcode-block" id="tag_coocurrence"><a class="viewcode-back" href="../../utool.html#utool.util_tags.tag_coocurrence">[docs]</a><span class="k">def</span> <span class="nf">tag_coocurrence</span><span class="p">(</span><span class="n">tags_list</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+    <span class="n">co_occur_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">tags</span> <span class="ow">in</span> <span class="n">tags_list</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">combo</span> <span class="ow">in</span> <span class="n">ut</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">tags</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">combo</span><span class="p">))</span>
+            <span class="n">co_occur_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="n">co_occur</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">dict_hist</span><span class="p">(</span><span class="n">co_occur_list</span><span class="p">,</span> <span class="n">ordered</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1">#        co_occur[key] += 1</span>
+    <span class="c1"># co_occur = ut.odict(co_occur)</span>
+    <span class="k">return</span> <span class="n">co_occur</span></div>
+
+
+<div class="viewcode-block" id="tag_hist"><a class="viewcode-back" href="../../utool.html#utool.util_tags.tag_hist">[docs]</a><span class="k">def</span> <span class="nf">tag_hist</span><span class="p">(</span><span class="n">tags_list</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+    <span class="k">return</span> <span class="n">ut</span><span class="o">.</span><span class="n">dict_hist</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">tags_list</span><span class="p">),</span> <span class="n">ordered</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="build_alias_map"><a class="viewcode-back" href="../../utool.html#utool.util_tags.build_alias_map">[docs]</a><span class="k">def</span> <span class="nf">build_alias_map</span><span class="p">(</span><span class="n">regex_map</span><span class="p">,</span> <span class="n">tag_vocab</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Constructs explicit mapping. Order of items in regex map matters.</span>
+<span class="sd">    Items at top are given preference.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; tags_list = [[&#39;t1&#39;, &#39;t2&#39;], [], [&#39;t3&#39;], [&#39;t4&#39;, &#39;t5&#39;]]</span>
+<span class="sd">        &gt;&gt;&gt; tag_vocab = ut.flat_unique(*tags_list)</span>
+<span class="sd">        &gt;&gt;&gt; regex_map = [(&#39;t[3-4]&#39;, &#39;A9&#39;), (&#39;t0&#39;, &#39;a0&#39;)]</span>
+<span class="sd">        &gt;&gt;&gt; unmapped = list(set(tag_vocab) - set(alias_map.keys()))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+    <span class="kn">import</span> <span class="nn">re</span>
+
+    <span class="n">alias_map</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">odict</span><span class="p">([])</span>
+    <span class="k">for</span> <span class="n">pats</span><span class="p">,</span> <span class="n">new_tag</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">regex_map</span><span class="p">):</span>
+        <span class="n">pats</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">ensure_iterable</span><span class="p">(</span><span class="n">pats</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">pat</span> <span class="ow">in</span> <span class="n">pats</span><span class="p">:</span>
+            <span class="n">flags</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">pat</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tag_vocab</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">old_tag</span> <span class="ow">in</span> <span class="n">ut</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">tag_vocab</span><span class="p">,</span> <span class="n">flags</span><span class="p">):</span>
+                <span class="n">alias_map</span><span class="p">[</span><span class="n">old_tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_tag</span>
+    <span class="n">identity_map</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">take_column</span><span class="p">(</span><span class="n">regex_map</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">ut</span><span class="o">.</span><span class="n">filter_Nones</span><span class="p">(</span><span class="n">identity_map</span><span class="p">):</span>
+        <span class="n">alias_map</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">tag</span>
+    <span class="k">return</span> <span class="n">alias_map</span></div>
+
+
+<div class="viewcode-block" id="alias_tags"><a class="viewcode-back" href="../../utool.html#utool.util_tags.alias_tags">[docs]</a><span class="k">def</span> <span class="nf">alias_tags</span><span class="p">(</span><span class="n">tags_list</span><span class="p">,</span> <span class="n">alias_map</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    update tags to new values</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tags_list (list):</span>
+<span class="sd">        alias_map (list): list of 2-tuples with regex, value</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: updated tags</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_tags alias_tags --show</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_tags import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; tags_list = [[&#39;t1&#39;, &#39;t2&#39;], [], [&#39;t3&#39;], [&#39;t4&#39;, &#39;t5&#39;]]</span>
+<span class="sd">        &gt;&gt;&gt; ut.build_alias_map()</span>
+<span class="sd">        &gt;&gt;&gt; result = alias_tags(tags_list, alias_map)</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_alias_dict</span><span class="p">(</span><span class="n">tags</span><span class="p">):</span>
+        <span class="n">tags_</span> <span class="o">=</span> <span class="p">[</span><span class="n">alias_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tags_</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]))</span>
+
+    <span class="n">tags_list_</span> <span class="o">=</span> <span class="p">[</span><span class="n">_alias_dict</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span> <span class="k">for</span> <span class="n">tags</span> <span class="ow">in</span> <span class="n">tags_list</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">tags_list_</span></div>
+    <span class="c1"># def _fix_tags(tags):</span>
+    <span class="c1">#     return {six.text_type(t.lower()) for t in tags}</span>
+    <span class="c1"># tags_list_ = list(map(_fix_tags, tags_list))</span>
+    <span class="c1"># re_list = [re.compile(pat) for pat, val in alias_map]</span>
+    <span class="c1"># val_list = ut.take_column(alias_map, 0)</span>
+    <span class="c1"># def _alias_regex(tags):</span>
+    <span class="c1">#     new_tags = 0</span>
+    <span class="c1">#     for t in tags:</span>
+    <span class="c1">#         matched = [re_.match(t) is not None for re_ in re_list]</span>
+    <span class="c1">#         matched_idx = ut.where(matched)</span>
+    <span class="c1">#         assert len(matched_idx) &lt;= 1, &#39;more than one tag in %r matched pattern&#39; % (tags,)</span>
+    <span class="c1">#         if len(matched_idx) &gt; 0:</span>
+    <span class="c1">#             repl_tags = ut.take(val_list, matched_idx)</span>
+    <span class="c1">#             new_tags.extend(repl_tags)</span>
+    <span class="c1">#         else:</span>
+    <span class="c1">#             new_tags.append(t)</span>
+    <span class="c1">#     return new_tags</span>
+    <span class="c1"># # tags_list_ = [_alias_regex(tags) for tags in tags_list_]</span>
+    <span class="c1"># return tags_list_</span>
+
+
+<div class="viewcode-block" id="filterflags_general_tags"><a class="viewcode-back" href="../../utool.html#utool.util_tags.filterflags_general_tags">[docs]</a><span class="k">def</span> <span class="nf">filterflags_general_tags</span><span class="p">(</span>
+    <span class="n">tags_list</span><span class="p">,</span>
+    <span class="n">has_any</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">has_all</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">has_none</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">min_num</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_num</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">any_startswith</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">any_endswith</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">in_any</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">any_match</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">none_match</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">logic</span><span class="o">=</span><span class="s1">&#39;and&#39;</span><span class="p">,</span>
+    <span class="n">ignore_case</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    maybe integrate into utool? Seems pretty general</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tags_list (list):</span>
+<span class="sd">        has_any (None): (default = None)</span>
+<span class="sd">        has_all (None): (default = None)</span>
+<span class="sd">        min_num (None): (default = None)</span>
+<span class="sd">        max_num (None): (default = None)</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">        in_any should probably be ni_any</span>
+
+<span class="sd">    TODO: make this function more natural</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_tags --exec-filterflags_general_tags</span>
+<span class="sd">        python -m utool.util_tags --exec-filterflags_general_tags:0  --helpx</span>
+<span class="sd">        python -m utool.util_tags --exec-filterflags_general_tags:0</span>
+<span class="sd">        python -m utool.util_tags --exec-filterflags_general_tags:0  --none_match n</span>
+<span class="sd">        python -m utool.util_tags --exec-filterflags_general_tags:0  --has_none=n,o</span>
+<span class="sd">        python -m utool.util_tags --exec-filterflags_general_tags:1</span>
+<span class="sd">        python -m utool.util_tags --exec-filterflags_general_tags:2</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_tags import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; tags_list = [[&#39;v&#39;], [], [&#39;P&#39;], [&#39;P&#39;, &#39;o&#39;], [&#39;n&#39;, &#39;o&#39;], [], [&#39;n&#39;, &#39;N&#39;], [&#39;e&#39;, &#39;i&#39;, &#39;p&#39;, &#39;b&#39;, &#39;n&#39;], [&#39;q&#39;, &#39;v&#39;], [&#39;n&#39;], [&#39;n&#39;], [&#39;N&#39;]]</span>
+<span class="sd">        &gt;&gt;&gt; kwargs = ut.argparse_dict(ut.get_kwdefaults2(filterflags_general_tags), type_hint=list)</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;kwargs = %r&#39; % (kwargs,))</span>
+<span class="sd">        &gt;&gt;&gt; flags = filterflags_general_tags(tags_list, **kwargs)</span>
+<span class="sd">        &gt;&gt;&gt; print(flags)</span>
+<span class="sd">        &gt;&gt;&gt; result = ut.compress(tags_list, flags)</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;result = %r&#39; % (result,))</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_tags import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; tags_list = [[&#39;v&#39;], [], [&#39;P&#39;], [&#39;P&#39;], [&#39;n&#39;, &#39;o&#39;], [], [&#39;n&#39;, &#39;N&#39;], [&#39;e&#39;, &#39;i&#39;, &#39;p&#39;, &#39;b&#39;, &#39;n&#39;], [&#39;n&#39;], [&#39;n&#39;], [&#39;N&#39;]]</span>
+<span class="sd">        &gt;&gt;&gt; has_all = &#39;n&#39;</span>
+<span class="sd">        &gt;&gt;&gt; min_num = 1</span>
+<span class="sd">        &gt;&gt;&gt; flags = filterflags_general_tags(tags_list, has_all=has_all, min_num=min_num)</span>
+<span class="sd">        &gt;&gt;&gt; result = ut.compress(tags_list, flags)</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;result = %r&#39; % (result,))</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_tags import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; tags_list = [[&#39;vn&#39;], [&#39;vn&#39;, &#39;no&#39;], [&#39;P&#39;], [&#39;P&#39;], [&#39;n&#39;, &#39;o&#39;], [], [&#39;n&#39;, &#39;N&#39;], [&#39;e&#39;, &#39;i&#39;, &#39;p&#39;, &#39;b&#39;, &#39;n&#39;], [&#39;n&#39;], [&#39;n&#39;, &#39;nP&#39;], [&#39;NP&#39;]]</span>
+<span class="sd">        &gt;&gt;&gt; kwargs = {</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;any_endswith&#39;: &#39;n&#39;,</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;any_match&#39;: None,</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;any_startswith&#39;: &#39;n&#39;,</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;has_all&#39;: None,</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;has_any&#39;: None,</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;has_none&#39;: None,</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;max_num&#39;: 3,</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;min_num&#39;: 1,</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;none_match&#39;: [&#39;P&#39;],</span>
+<span class="sd">        &gt;&gt;&gt; }</span>
+<span class="sd">        &gt;&gt;&gt; flags = filterflags_general_tags(tags_list, **kwargs)</span>
+<span class="sd">        &gt;&gt;&gt; filtered = ut.compress(tags_list, flags)</span>
+<span class="sd">        &gt;&gt;&gt; result = (&#39;result = %s&#39; % (ut.repr2(filtered),))</span>
+<span class="sd">        result = [[&#39;vn&#39;, &#39;no&#39;], [&#39;n&#39;, &#39;o&#39;], [&#39;n&#39;, &#39;N&#39;], [&#39;n&#39;], [&#39;n&#39;, &#39;nP&#39;]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+    <span class="k">def</span> <span class="nf">_fix_tags</span><span class="p">(</span><span class="n">tags</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ignore_case</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">set</span><span class="p">([])</span> <span class="k">if</span> <span class="n">tags</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{</span><span class="n">six</span><span class="o">.</span><span class="n">text_type</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">set</span><span class="p">([])</span> <span class="k">if</span> <span class="n">tags</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{</span><span class="n">six</span><span class="o">.</span><span class="n">text_type</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">logic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logic</span> <span class="o">=</span> <span class="s1">&#39;and&#39;</span>
+
+    <span class="n">logic_func</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;and&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">,</span> <span class="s1">&#39;or&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">,}[</span><span class="n">logic</span><span class="p">]</span>
+
+    <span class="n">default_func</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;and&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">,</span> <span class="s1">&#39;or&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">,}[</span><span class="n">logic</span><span class="p">]</span>
+
+    <span class="n">tags_list_</span> <span class="o">=</span> <span class="p">[</span><span class="n">_fix_tags</span><span class="p">(</span><span class="n">tags_</span><span class="p">)</span> <span class="k">for</span> <span class="n">tags_</span> <span class="ow">in</span> <span class="n">tags_list</span><span class="p">]</span>
+    <span class="n">flags</span> <span class="o">=</span> <span class="n">default_func</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tags_list_</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">min_num</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">flags_</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">tags_</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">min_num</span> <span class="k">for</span> <span class="n">tags_</span> <span class="ow">in</span> <span class="n">tags_list_</span><span class="p">]</span>
+        <span class="n">logic_func</span><span class="p">(</span><span class="n">flags</span><span class="p">,</span> <span class="n">flags_</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">flags</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">max_num</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">flags_</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">tags_</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">max_num</span> <span class="k">for</span> <span class="n">tags_</span> <span class="ow">in</span> <span class="n">tags_list_</span><span class="p">]</span>
+        <span class="n">logic_func</span><span class="p">(</span><span class="n">flags</span><span class="p">,</span> <span class="n">flags_</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">flags</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">has_any</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">has_any</span> <span class="o">=</span> <span class="n">_fix_tags</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">ensure_iterable</span><span class="p">(</span><span class="n">has_any</span><span class="p">)))</span>
+        <span class="n">flags_</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">has_any</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">tags_</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">tags_</span> <span class="ow">in</span> <span class="n">tags_list_</span><span class="p">]</span>
+        <span class="n">logic_func</span><span class="p">(</span><span class="n">flags</span><span class="p">,</span> <span class="n">flags_</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">flags</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">has_none</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">has_none</span> <span class="o">=</span> <span class="n">_fix_tags</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">ensure_iterable</span><span class="p">(</span><span class="n">has_none</span><span class="p">)))</span>
+        <span class="n">flags_</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">has_none</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">tags_</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">tags_</span> <span class="ow">in</span> <span class="n">tags_list_</span><span class="p">]</span>
+        <span class="n">logic_func</span><span class="p">(</span><span class="n">flags</span><span class="p">,</span> <span class="n">flags_</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">flags</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">has_all</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">has_all</span> <span class="o">=</span> <span class="n">_fix_tags</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">ensure_iterable</span><span class="p">(</span><span class="n">has_all</span><span class="p">)))</span>
+        <span class="n">flags_</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">has_all</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">tags_</span><span class="p">))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">has_all</span><span class="p">)</span> <span class="k">for</span> <span class="n">tags_</span> <span class="ow">in</span> <span class="n">tags_list_</span>
+        <span class="p">]</span>
+        <span class="n">logic_func</span><span class="p">(</span><span class="n">flags</span><span class="p">,</span> <span class="n">flags_</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">flags</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_test_item</span><span class="p">(</span><span class="n">tags_</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">compare</span><span class="p">):</span>
+        <span class="n">t_flags</span> <span class="o">=</span> <span class="p">[</span><span class="nb">any</span><span class="p">([</span><span class="n">compare</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">])</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tags_</span><span class="p">]</span>
+        <span class="n">num_passed</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">t_flags</span><span class="p">)</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="n">num_passed</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">flag</span>
+
+    <span class="k">def</span> <span class="nf">_flag_tags</span><span class="p">(</span><span class="n">tags_list</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">compare</span><span class="p">):</span>
+        <span class="n">flags</span> <span class="o">=</span> <span class="p">[</span><span class="n">_test_item</span><span class="p">(</span><span class="n">tags_</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">compare</span><span class="p">)</span> <span class="k">for</span> <span class="n">tags_</span> <span class="ow">in</span> <span class="n">tags_list_</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">flags</span>
+
+    <span class="k">def</span> <span class="nf">_exec_filter</span><span class="p">(</span><span class="n">flags</span><span class="p">,</span> <span class="n">tags_list</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">compare</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">fields</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">ensure_iterable</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ignore_case</span><span class="p">:</span>
+                <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">]</span>
+            <span class="n">flags_</span> <span class="o">=</span> <span class="n">_flag_tags</span><span class="p">(</span><span class="n">tags_list</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">compare</span><span class="p">)</span>
+            <span class="n">logic_func</span><span class="p">(</span><span class="n">flags</span><span class="p">,</span> <span class="n">flags_</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">flags</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">flags</span>
+
+    <span class="n">flags</span> <span class="o">=</span> <span class="n">_exec_filter</span><span class="p">(</span>
+        <span class="n">flags</span><span class="p">,</span> <span class="n">tags_list</span><span class="p">,</span> <span class="n">any_startswith</span><span class="p">,</span> <span class="n">operator</span><span class="o">.</span><span class="n">gt</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">text_type</span><span class="o">.</span><span class="n">startswith</span>
+    <span class="p">)</span>
+
+    <span class="n">flags</span> <span class="o">=</span> <span class="n">_exec_filter</span><span class="p">(</span><span class="n">flags</span><span class="p">,</span> <span class="n">tags_list</span><span class="p">,</span> <span class="n">in_any</span><span class="p">,</span> <span class="n">operator</span><span class="o">.</span><span class="n">gt</span><span class="p">,</span> <span class="n">operator</span><span class="o">.</span><span class="n">contains</span><span class="p">)</span>
+
+    <span class="n">flags</span> <span class="o">=</span> <span class="n">_exec_filter</span><span class="p">(</span>
+        <span class="n">flags</span><span class="p">,</span> <span class="n">tags_list</span><span class="p">,</span> <span class="n">any_endswith</span><span class="p">,</span> <span class="n">operator</span><span class="o">.</span><span class="n">gt</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">text_type</span><span class="o">.</span><span class="n">endswith</span>
+    <span class="p">)</span>
+
+    <span class="n">flags</span> <span class="o">=</span> <span class="n">_exec_filter</span><span class="p">(</span>
+        <span class="n">flags</span><span class="p">,</span> <span class="n">tags_list</span><span class="p">,</span> <span class="n">any_match</span><span class="p">,</span> <span class="n">operator</span><span class="o">.</span><span class="n">gt</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">flags</span> <span class="o">=</span> <span class="n">_exec_filter</span><span class="p">(</span>
+        <span class="n">flags</span><span class="p">,</span> <span class="n">tags_list</span><span class="p">,</span> <span class="n">none_match</span><span class="p">,</span> <span class="n">operator</span><span class="o">.</span><span class="n">eq</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">flags</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_tags</span>
+<span class="sd">        python -m utool.util_tags --allexamples</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">multiprocessing</span>
+
+    <span class="n">multiprocessing</span><span class="o">.</span><span class="n">freeze_support</span><span class="p">()</span>  <span class="c1"># for win32</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>  <span class="c1"># NOQA</span>
+
+    <span class="n">ut</span><span class="o">.</span><span class="n">doctest_funcs</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">wbia-vtool</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  <li><a href="../utool.html">utool</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wild Me.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,312 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>utool.tests._oldtest_decor &#8212; wbia-vtool 3.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for utool.tests._oldtest_decor</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">utool</span>
+
+
+<div class="viewcode-block" id="func1"><a class="viewcode-back" href="../../../utool.tests.html#utool.tests._oldtest_decor.func1">[docs]</a><span class="k">def</span> <span class="nf">func1</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="func2"><a class="viewcode-back" href="../../../utool.tests.html#utool.tests._oldtest_decor.func2">[docs]</a><span class="k">def</span> <span class="nf">func2</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">arg4</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="func3"><a class="viewcode-back" href="../../../utool.tests.html#utool.tests._oldtest_decor.func3">[docs]</a><span class="k">def</span> <span class="nf">func3</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">arg4</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="func4"><a class="viewcode-back" href="../../../utool.tests.html#utool.tests._oldtest_decor.func4">[docs]</a><span class="k">def</span> <span class="nf">func4</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="func5"><a class="viewcode-back" href="../../../utool.tests.html#utool.tests._oldtest_decor.func5">[docs]</a><span class="k">def</span> <span class="nf">func5</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="func6"><a class="viewcode-back" href="../../../utool.tests.html#utool.tests._oldtest_decor.func6">[docs]</a><span class="k">def</span> <span class="nf">func6</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="decor"><a class="viewcode-back" href="../../../utool.tests.html#utool.tests._oldtest_decor.decor">[docs]</a><span class="k">def</span> <span class="nf">decor</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="nd">@utool</span><span class="o">.</span><span class="n">accepts_scalar_input2</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">testwrp</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="n">testwrp</span> <span class="o">=</span> <span class="n">utool</span><span class="o">.</span><span class="n">preserve_sig</span><span class="p">(</span><span class="n">testwrp</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">testwrp</span></div>
+
+
+<div class="viewcode-block" id="BoringTestClass"><a class="viewcode-back" href="../../../utool.tests.html#utool.tests._oldtest_decor.BoringTestClass">[docs]</a><span class="k">class</span> <span class="nc">BoringTestClass</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="BoringTestClass.method1"><a class="viewcode-back" href="../../../utool.tests.html#utool.tests._oldtest_decor.BoringTestClass.method1">[docs]</a>    <span class="nd">@decor</span>
+    <span class="k">def</span> <span class="nf">method1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;method1&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BoringTestClass.method2"><a class="viewcode-back" href="../../../utool.tests.html#utool.tests._oldtest_decor.BoringTestClass.method2">[docs]</a>    <span class="nd">@decor</span>
+    <span class="k">def</span> <span class="nf">method2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;343&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args_</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs_</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;method2&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;method2 a=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="p">,))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;method2 b=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">b</span><span class="p">,))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;method2 c=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">c</span><span class="p">,))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;method2 d=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">d</span><span class="p">,))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;method2 args_=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">args_</span><span class="p">,))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;method2 kwargs_=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">kwargs_</span><span class="p">,))</span></div>
+
+<div class="viewcode-block" id="BoringTestClass.method3"><a class="viewcode-back" href="../../../utool.tests.html#utool.tests._oldtest_decor.BoringTestClass.method3">[docs]</a>    <span class="nd">@decor</span>
+    <span class="k">def</span> <span class="nf">method3</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;method3&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BoringTestClass.getter_eggs"><a class="viewcode-back" href="../../../utool.tests.html#utool.tests._oldtest_decor.BoringTestClass.getter_eggs">[docs]</a>    <span class="nd">@decor</span>
+    <span class="k">def</span> <span class="nf">getter_eggs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eggs</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;getter_eggs&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;eggs = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">eggs</span><span class="p">,))</span></div>
+
+<div class="viewcode-block" id="BoringTestClass.getter_spam"><a class="viewcode-back" href="../../../utool.tests.html#utool.tests._oldtest_decor.BoringTestClass.getter_spam">[docs]</a>    <span class="nd">@decor</span>
+    <span class="k">def</span> <span class="nf">getter_spam</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spam_input_</span><span class="p">,</span> <span class="o">*</span><span class="n">spamargs</span><span class="p">,</span> <span class="o">**</span><span class="n">spamkwds</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;getter_spam&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;spam_input_ = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">spam_input_</span><span class="p">,))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;spamargs = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">spamargs</span><span class="p">,))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;spamkwds = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">spamkwds</span><span class="p">,))</span></div>
+
+<div class="viewcode-block" id="BoringTestClass.setter"><a class="viewcode-back" href="../../../utool.tests.html#utool.tests._oldtest_decor.BoringTestClass.setter">[docs]</a>    <span class="nd">@decor</span>
+    <span class="k">def</span> <span class="nf">setter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;setter&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;input_ = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">input_</span><span class="p">,))</span></div>
+
+<div class="viewcode-block" id="BoringTestClass.setter_special"><a class="viewcode-back" href="../../../utool.tests.html#utool.tests._oldtest_decor.BoringTestClass.setter_special">[docs]</a>    <span class="nd">@decor</span>
+    <span class="k">def</span> <span class="nf">setter_special</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;setter_special&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="print_argspec"><a class="viewcode-back" href="../../../utool.tests.html#utool.tests._oldtest_decor.print_argspec">[docs]</a><span class="k">def</span> <span class="nf">print_argspec</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;------------&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;func_name = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">func</span><span class="o">.</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="c1"># Extract argspec from orig function</span>
+    <span class="n">argspec</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getargspec</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="c1"># Get the function definition signature</span>
+    <span class="n">defsig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">formatargspec</span><span class="p">(</span><span class="o">*</span><span class="n">argspec</span><span class="p">)</span>
+    <span class="c1"># Get function call signature (no defaults)</span>
+    <span class="n">callsig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">formatargspec</span><span class="p">(</span><span class="o">*</span><span class="n">argspec</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;argspec = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">argspec</span><span class="p">,))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;callsig = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">callsig</span><span class="p">,))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;defsig = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">defsig</span><span class="p">,))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;------------&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_decorator_module"><a class="viewcode-back" href="../../../utool.tests.html#utool.tests._oldtest_decor.test_decorator_module">[docs]</a><span class="k">def</span> <span class="nf">test_decorator_module</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+    <span class="kn">import</span> <span class="nn">decorator</span>
+
+    <span class="n">ut</span><span class="o">.</span><span class="n">rrrr</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">testdecor</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="nd">@ut</span><span class="o">.</span><span class="n">on_exception_report_input</span>
+        <span class="nd">@ut</span><span class="o">.</span><span class="n">accepts_scalar_input2</span><span class="p">([</span><span class="mi">0</span><span class="p">])</span>
+        <span class="nd">@ut</span><span class="o">.</span><span class="n">ignores_exc_tb</span>
+        <span class="k">def</span> <span class="nf">testwrp</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;was wrapped&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">testwrp</span>
+
+    <span class="n">preserving_testdecor</span> <span class="o">=</span> <span class="n">decorator</span><span class="o">.</span><span class="n">decorator</span><span class="p">(</span><span class="n">testdecor</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">myfunction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listinput_</span><span class="p">,</span> <span class="n">arg1</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="s1">&#39; just a test function &#39;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">listinput_</span><span class="p">]</span>
+
+    <span class="n">wrapper</span> <span class="o">=</span> <span class="n">testdecor</span><span class="p">(</span><span class="n">myfunction</span><span class="p">)</span>
+    <span class="n">orig_func</span> <span class="o">=</span> <span class="n">myfunction</span>
+
+    <span class="n">_wrp_preserve0</span> <span class="o">=</span> <span class="n">preserving_testdecor</span><span class="p">(</span><span class="n">myfunction</span><span class="p">)</span>
+    <span class="n">_wrp_preserve1</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">preserve_sig</span><span class="p">(</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">orig_func</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">_wrp_preserve2</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">preserve_sig</span><span class="p">(</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">orig_func</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;___&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">get_func_sourcecode</span><span class="p">(</span><span class="n">_wrp_preserve0</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;___&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">get_func_sourcecode</span><span class="p">(</span><span class="n">_wrp_preserve1</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;___&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">get_func_sourcecode</span><span class="p">(</span><span class="n">_wrp_preserve2</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;___&#39;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;---&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">get_docstr</span><span class="p">(</span><span class="n">_wrp_preserve0</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;---&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">get_docstr</span><span class="p">(</span><span class="n">_wrp_preserve1</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;---&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">get_docstr</span><span class="p">(</span><span class="n">_wrp_preserve2</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;---&#39;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">repr4</span><span class="p">(</span><span class="n">_wrp_preserve2</span><span class="o">.</span><span class="n">_utinfo</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../utool.tests.html#utool.tests._oldtest_decor.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.tests.test_decor import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; result = main()</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;BEGINING TEST_DECOR&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Testing normal func&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="p">[</span><span class="n">func1</span><span class="p">,</span> <span class="n">func2</span><span class="p">,</span> <span class="n">func3</span><span class="p">,</span> <span class="n">func4</span><span class="p">,</span> <span class="n">func5</span><span class="p">,</span> <span class="n">func6</span><span class="p">]:</span>
+        <span class="n">print_argspec</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+
+    <span class="c1"># utool.rrrr()</span>
+    <span class="c1"># utool.util_decor.rrr()</span>
+
+    <span class="bp">self</span> <span class="o">=</span> <span class="n">BoringTestClass</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Testing class methods&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">method1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">method2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">getter_spam</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">getter_eggs</span><span class="p">]:</span>
+        <span class="n">print_argspec</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">im_func</span><span class="p">,</span> <span class="s1">&#39;_utinfo&#39;</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">im_func</span><span class="o">.</span><span class="n">_utinfo</span><span class="p">[</span><span class="s1">&#39;src&#39;</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">im_func</span><span class="o">.</span><span class="n">func_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&lt;&lt;&#39;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;---&#39;</span><span class="p">)</span>
+    <span class="n">print_argspec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">method2</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">method2</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;---&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">method2</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;---&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">method2</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;---&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">method2</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;---&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">method2</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;---&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">method2</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;---&#39;</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.tests.test_decor</span>
+<span class="sd">        python -m utool.tests.test_decor --allexamples</span>
+<span class="sd">        python -m utool.tests.test_decor --allexamples --noface --nosrc</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">multiprocessing</span>
+
+    <span class="n">multiprocessing</span><span class="o">.</span><span class="n">freeze_support</span><span class="p">()</span>  <span class="c1"># for win32</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>  <span class="c1"># NOQA</span>
+    <span class="kn">import</span> <span class="nn">sys</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">main</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ut</span><span class="o">.</span><span class="n">doctest_funcs</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">wbia-vtool</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../utool.html">utool package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../utool.html">utool</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wild Me.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

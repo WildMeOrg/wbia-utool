@@ -1,0 +1,167 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>utool.util_func &#8212; wbia-vtool 3.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for utool.util_func</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inject</span>
+
+<span class="nb">print</span><span class="p">,</span> <span class="n">rrr</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">util_inject</span><span class="o">.</span><span class="n">inject2</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="compose_functions"><a class="viewcode-back" href="../../utool.html#utool.util_func.compose_functions">[docs]</a><span class="k">def</span> <span class="nf">compose_functions</span><span class="p">(</span><span class="o">*</span><span class="n">func_list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Referenes:</span>
+<span class="sd">        https://mathieularose.com/function-composition-in-python/</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">apply_composition</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">compose</span>
+
+    <span class="n">composed_func</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">apply_composition</span><span class="p">,</span> <span class="n">func_list</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">composed_func</span></div>
+
+
+<div class="viewcode-block" id="identity"><a class="viewcode-back" href="../../utool.html#utool.util_func.identity">[docs]</a><span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="n">input_</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; identity function &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">input_</span></div>
+
+
+<span class="c1"># DEPRICATE EVERYTHING BELOW HERE</span>
+
+
+<span class="c1"># def uinput_1to1(func, input_):</span>
+<span class="c1">#    &quot;&quot;&quot; universal input (really just accept list or tuple as input to a list</span>
+<span class="c1">#    only function)</span>
+
+<span class="c1">#    Move to guitool</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    if isinstance(input_, (tuple, list)):</span>
+<span class="c1">#        output_ = list(map(func, input_))</span>
+<span class="c1">#    else:</span>
+<span class="c1">#        output_ = func(input_)</span>
+<span class="c1">#    return output_</span>
+
+
+<span class="c1"># def general_get(getter, index, **kwargs):</span>
+<span class="c1">#    &quot;&quot;&quot; Works with getter funcs or indexable read/write arrays &quot;&quot;&quot;</span>
+<span class="c1">#    if hasattr(getter, &#39;__getitem__&#39;):</span>
+<span class="c1">#        val = getter[index]</span>
+<span class="c1">#    else:</span>
+<span class="c1">#        val = getter(index, **kwargs)</span>
+<span class="c1">#    return val</span>
+
+
+<span class="c1"># def general_set(setter, index, val, **kwargs):</span>
+<span class="c1">#    &quot;&quot;&quot; Works with setter funcs or indexable read/write arrays &quot;&quot;&quot;</span>
+<span class="c1">#    if hasattr(setter, &#39;__setitem__&#39;):</span>
+<span class="c1">#        setter[index] = val</span>
+<span class="c1">#    else:</span>
+<span class="c1">#        setter(index, val, **kwargs)</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">wbia-vtool</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  <li><a href="../utool.html">utool</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wild Me.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

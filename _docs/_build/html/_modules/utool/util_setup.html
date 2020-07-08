@@ -1,0 +1,865 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>utool.util_setup &#8212; wbia-vtool 3.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for utool.util_setup</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># Utools for setup.py files</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">textwrap</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">splitext</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_cplat</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_path</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_io</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>
+
+<span class="c1"># from utool import util_dev</span>
+<span class="kn">from</span> <span class="nn">utool.util_dbg</span> <span class="k">import</span> <span class="n">printex</span>
+<span class="kn">from</span> <span class="nn">utool._internal</span> <span class="k">import</span> <span class="n">meta_util_arg</span>
+
+<span class="n">VERBOSE</span> <span class="o">=</span> <span class="n">meta_util_arg</span><span class="o">.</span><span class="n">VERBOSE</span>
+
+
+<div class="viewcode-block" id="SetupManager"><a class="viewcode-back" href="../../utool.html#utool.util_setup.SetupManager">[docs]</a><span class="k">class</span> <span class="nc">SetupManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helps with writing setup.py</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdclass</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">_register_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">setuptools</span>
+
+        <span class="k">class</span> <span class="nc">_WrapCommand</span><span class="p">(</span><span class="n">setuptools</span><span class="o">.</span><span class="n">Command</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            https://dankeder.com/posts/adding-custom-commands-to-setup-py/</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="n">description</span> <span class="o">=</span> <span class="n">name</span>
+            <span class="n">user_options</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">def</span> <span class="nf">initialize_options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="k">pass</span>
+
+            <span class="k">def</span> <span class="nf">finalize_options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="k">pass</span>
+
+            <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">):</span>
+                <span class="n">func</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdclass</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_WrapCommand</span>
+        <span class="c1"># self.cmdclass[name] = func</span>
+        <span class="c1"># TmpCommand</span>
+
+<div class="viewcode-block" id="SetupManager.register_command"><a class="viewcode-back" href="../../utool.html#utool.util_setup.SetupManager.register_command">[docs]</a>    <span class="k">def</span> <span class="nf">register_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+        <span class="k">if</span> <span class="n">ut</span><span class="o">.</span><span class="n">is_funclike</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="n">name</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">get_funcname</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_register_command</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">func</span>
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">def</span> <span class="nf">_wrap</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_register_command</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">_wrap</span></div>
+
+<div class="viewcode-block" id="SetupManager.get_cmdclass"><a class="viewcode-back" href="../../utool.html#utool.util_setup.SetupManager.get_cmdclass">[docs]</a>    <span class="k">def</span> <span class="nf">get_cmdclass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cmdclass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmdclass</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">cmdclass</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">get_cmdclass</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">cmdclass</span></div></div>
+
+
+<div class="viewcode-block" id="SETUP_PATTERNS"><a class="viewcode-back" href="../../utool.html#utool.util_setup.SETUP_PATTERNS">[docs]</a><span class="k">class</span> <span class="nc">SETUP_PATTERNS</span><span class="p">:</span>
+    <span class="n">clutter_pybuild</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;*.pyc&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;*.pyo&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">clutter_cyth</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;_*_cyth.o&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_*_cyth_bench.py&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;run_cyth_benchmarks.sh&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_*_cyth.c&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_*_cyth.pyd&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_*_cyth.pxd&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_*_cyth.html&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_*_cyth.pyx&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_*_cyth.so&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_*_cyth.dylib&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">chmod_test</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;test_*.py&#39;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="read_license"><a class="viewcode-back" href="../../utool.html#utool.util_setup.read_license">[docs]</a><span class="k">def</span> <span class="nf">read_license</span><span class="p">(</span><span class="n">license_file</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">license_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_</span><span class="p">:</span>
+            <span class="n">firstline</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+            <span class="n">license_type</span> <span class="o">=</span> <span class="n">firstline</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;License&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">license_type</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning no LICENCE file&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39;???&#39;</span></div>
+
+
+<div class="viewcode-block" id="build_pyo"><a class="viewcode-back" href="../../utool.html#utool.util_setup.build_pyo">[docs]</a><span class="k">def</span> <span class="nf">build_pyo</span><span class="p">(</span><span class="n">project_dirs</span><span class="p">):</span>
+    <span class="n">pyexe</span> <span class="o">=</span> <span class="n">util_cplat</span><span class="o">.</span><span class="n">python_executable</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">dir_</span> <span class="ow">in</span> <span class="n">project_dirs</span><span class="p">:</span>
+        <span class="c1"># command_args = [pyexe, &#39;-O&#39;, &#39;-m&#39;, &#39;compileall&#39;, dir_ + &#39;\*.py&#39;]</span>
+        <span class="n">command_args</span> <span class="o">=</span> <span class="p">[</span><span class="n">pyexe</span><span class="p">,</span> <span class="s1">&#39;-O&#39;</span><span class="p">,</span> <span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;compileall&#39;</span><span class="p">,</span> <span class="n">dir_</span><span class="p">]</span>
+        <span class="c1"># command = &#39; &#39;.join(command_args)</span>
+        <span class="c1"># os.system(command)</span>
+        <span class="n">util_cplat</span><span class="o">.</span><span class="n">shell</span><span class="p">(</span><span class="n">command_args</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="setup_chmod"><a class="viewcode-back" href="../../utool.html#utool.util_setup.setup_chmod">[docs]</a><span class="k">def</span> <span class="nf">setup_chmod</span><span class="p">(</span><span class="n">setup_fpath</span><span class="p">,</span> <span class="n">setup_dir</span><span class="p">,</span> <span class="n">chmod_patterns</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Gives files matching pattern the same chmod flags as setup.py &quot;&quot;&quot;</span>
+    <span class="c1"># st_mode = os.stat(setup_fpath).st_mode</span>
+    <span class="n">st_mode</span> <span class="o">=</span> <span class="mi">33277</span>
+    <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">chmod_patterns</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">fpath</span> <span class="ow">in</span> <span class="n">util_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">setup_dir</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[setup] chmod fpath=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">fpath</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">st_mode</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="assert_in_setup_repo"><a class="viewcode-back" href="../../utool.html#utool.util_setup.assert_in_setup_repo">[docs]</a><span class="k">def</span> <span class="nf">assert_in_setup_repo</span><span class="p">(</span><span class="n">setup_fpath</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; pass in __file__ from setup.py &quot;&quot;&quot;</span>
+    <span class="n">setup_dir</span><span class="p">,</span> <span class="n">setup_fname</span> <span class="o">=</span> <span class="n">split</span><span class="p">(</span><span class="n">setup_fpath</span><span class="p">)</span>
+    <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+    <span class="c1"># repo_dname = split(setup_dir)[1]</span>
+    <span class="c1"># print(&#39;cwd       = %r&#39; % (cwd))</span>
+    <span class="c1"># print(&#39;repo_dname = %r&#39; % repo_dname)</span>
+    <span class="c1"># print(&#39;setup_dir = %r&#39; % (setup_dir))</span>
+    <span class="c1"># print(&#39;setup_fname = %r&#39; % (setup_fname))</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">setup_fname</span> <span class="o">==</span> <span class="s1">&#39;setup.py&#39;</span><span class="p">,</span> <span class="s1">&#39;name is not setup.py&#39;</span>
+        <span class="c1"># assert name == &#39;&#39; or repo_dname == name,</span>
+        <span class="p">(</span><span class="s1">&#39;name=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">cwd</span> <span class="o">==</span> <span class="n">setup_dir</span><span class="p">,</span> <span class="s1">&#39;cwd is not setup_dir&#39;</span>
+        <span class="k">assert</span> <span class="n">exists</span><span class="p">(</span><span class="n">setup_dir</span><span class="p">),</span> <span class="s1">&#39;setup dir does not exist&#39;</span>
+        <span class="k">assert</span> <span class="n">exists</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">setup_dir</span><span class="p">,</span> <span class="s1">&#39;setup.py&#39;</span><span class="p">)),</span> <span class="s1">&#39;setup.py does not exist&#39;</span>
+    <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+        <span class="n">printex</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="s1">&#39;ERROR!: setup.py must be run from repository root&#39;</span><span class="p">)</span>
+        <span class="k">raise</span></div>
+
+
+<div class="viewcode-block" id="clean"><a class="viewcode-back" href="../../utool.html#utool.util_setup.clean">[docs]</a><span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="n">setup_dir</span><span class="p">,</span> <span class="n">clutter_patterns</span><span class="p">,</span> <span class="n">clutter_dirs</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[setup] clean()&#39;</span><span class="p">)</span>
+
+    <span class="n">clutter_patterns_</span> <span class="o">=</span> <span class="p">[</span><span class="n">pat</span> <span class="k">for</span> <span class="n">pat</span> <span class="ow">in</span> <span class="n">clutter_patterns</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">pat</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)]</span>
+    <span class="n">_clutter_dirs</span> <span class="o">=</span> <span class="p">[</span><span class="n">pat</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">pat</span> <span class="ow">in</span> <span class="n">clutter_patterns</span> <span class="k">if</span> <span class="n">pat</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)]</span>
+    <span class="n">clutter_dirs_</span> <span class="o">=</span> <span class="n">_clutter_dirs</span> <span class="o">+</span> <span class="n">clutter_dirs</span>
+
+    <span class="n">util_path</span><span class="o">.</span><span class="n">remove_files_in_dir</span><span class="p">(</span>
+        <span class="n">setup_dir</span><span class="p">,</span> <span class="n">clutter_patterns_</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">VERBOSE</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">dir_</span> <span class="ow">in</span> <span class="n">clutter_dirs_</span><span class="p">:</span>
+        <span class="n">util_path</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">dir_</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">VERBOSE</span><span class="p">,</span> <span class="n">print_exists</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+        <span class="c1"># util_path.remove_files_in_dir(dir_)</span>
+
+    <span class="c1"># for fpath in cython_files:</span>
+    <span class="c1">#    fname, ext = splitext(fpath)</span>
+    <span class="c1">#    for libext in util_cplat.LIB_EXT_LIST:</span>
+    <span class="c1">#        util_path.remove_file(fname + libext)</span>
+    <span class="c1">#    util_path.remove_file(fname + &#39;.c&#39;)</span>
+
+
+<span class="c1"># def build_cython(cython_files):</span>
+<span class="c1">#    &quot;&quot;&quot; doesn&#39;t work &quot;&quot;&quot;</span>
+<span class="c1">#    for fpath in cython_files:</span>
+<span class="c1">#        util_dev.compile_cython(fpath)</span>
+
+
+<span class="c1"># def translate_cyth():</span>
+<span class="c1">#     import cyth</span>
+<span class="c1">#     cyth.translate_all()</span>
+
+
+<div class="viewcode-block" id="get_numpy_include_dir"><a class="viewcode-back" href="../../utool.html#utool.util_setup.get_numpy_include_dir">[docs]</a><span class="k">def</span> <span class="nf">get_numpy_include_dir</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">get_include</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="find_ext_modules"><a class="viewcode-back" href="../../utool.html#utool.util_setup.find_ext_modules">[docs]</a><span class="k">def</span> <span class="nf">find_ext_modules</span><span class="p">(</span><span class="n">disable_warnings</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">setuptools</span> <span class="k">import</span> <span class="n">Extension</span>
+    <span class="kn">import</span> <span class="nn">utool</span>
+    <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">relpath</span>
+
+    <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+
+    <span class="c1"># CYTH      = &#39;cyth&#39; in sys.argv</span>
+    <span class="n">BEXT</span> <span class="o">=</span> <span class="s1">&#39;bext&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+    <span class="n">BUILD</span> <span class="o">=</span> <span class="s1">&#39;build&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+    <span class="n">BUILD_EXT</span> <span class="o">=</span> <span class="s1">&#39;build_ext&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+
+    <span class="c1"># if any([BEXT, CYTH]):</span>
+    <span class="c1">#     translate_cyth()  # translate cyth before finding ext modules</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">([</span><span class="n">BEXT</span><span class="p">,</span> <span class="n">BUILD</span><span class="p">,</span> <span class="n">BUILD_EXT</span><span class="p">]):</span>
+        <span class="c1"># dont find modules if they are not being built</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="c1"># pyx_list = utool.glob(cwd, &#39;*_cython.pyx&#39;, recursive=True)</span>
+    <span class="n">pyx_list</span> <span class="o">=</span> <span class="n">utool</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">cwd</span><span class="p">,</span> <span class="s1">&#39;*.pyx&#39;</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">disable_warnings</span><span class="p">:</span>
+        <span class="n">extra_compile_args</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;-Wno-format&#39;</span><span class="p">,</span> <span class="s1">&#39;-Wno-unused-function&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">extra_compile_args</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">ext_modules</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">pyx_abspath</span> <span class="ow">in</span> <span class="n">pyx_list</span><span class="p">:</span>
+        <span class="n">pyx_relpath</span> <span class="o">=</span> <span class="n">relpath</span><span class="p">(</span><span class="n">pyx_abspath</span><span class="p">,</span> <span class="n">cwd</span><span class="p">)</span>
+        <span class="n">pyx_modname</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">splitext</span><span class="p">(</span><span class="n">pyx_relpath</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[find_ext] Found Module:&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;   * pyx_modname = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pyx_modname</span><span class="p">,))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;   * pyx_relpath = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pyx_relpath</span><span class="p">,))</span>
+        <span class="n">extmod</span> <span class="o">=</span> <span class="n">Extension</span><span class="p">(</span>
+            <span class="n">pyx_modname</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">pyx_relpath</span><span class="p">],</span>
+            <span class="n">include_dirs</span><span class="o">=</span><span class="p">[</span><span class="n">get_numpy_include_dir</span><span class="p">()],</span>
+            <span class="n">extra_compile_args</span><span class="o">=</span><span class="n">extra_compile_args</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ext_modules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">extmod</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ext_modules</span></div>
+
+
+<div class="viewcode-block" id="find_packages"><a class="viewcode-back" href="../../utool.html#utool.util_setup.find_packages">[docs]</a><span class="k">def</span> <span class="nf">find_packages</span><span class="p">(</span><span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">maxdepth</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Finds all directories with an __init__.py file in them</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">utool</span>
+
+    <span class="k">if</span> <span class="n">utool</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s1">&#39;[util_setup] find_packages(recursive=</span><span class="si">%r</span><span class="s1">, maxdepth=</span><span class="si">%r</span><span class="s1">)&#39;</span>
+            <span class="o">%</span> <span class="p">(</span><span class="n">recursive</span><span class="p">,</span> <span class="n">maxdepth</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">relpath</span>
+
+    <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+    <span class="n">init_files</span> <span class="o">=</span> <span class="n">utool</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">cwd</span><span class="p">,</span> <span class="s1">&#39;__init__.py&#39;</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="n">recursive</span><span class="p">,</span> <span class="n">maxdepth</span><span class="o">=</span><span class="n">maxdepth</span><span class="p">)</span>
+    <span class="n">package_paths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">init_files</span><span class="p">))</span>
+    <span class="n">package_relpaths</span> <span class="o">=</span> <span class="p">[</span><span class="n">relpath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">cwd</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">package_paths</span><span class="p">]</span>
+
+    <span class="n">packages</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">package_relpaths</span><span class="p">:</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">utool</span><span class="o">.</span><span class="n">dirsplit</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="s1">&#39;__init__.py&#39;</span><span class="p">)):</span>
+            <span class="n">package</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+            <span class="n">packages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">package</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">packages</span></div>
+
+
+<div class="viewcode-block" id="get_cmdclass"><a class="viewcode-back" href="../../utool.html#utool.util_setup.get_cmdclass">[docs]</a><span class="k">def</span> <span class="nf">get_cmdclass</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; DEPRICATE &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">Cython.Distutils</span> <span class="k">import</span> <span class="n">build_ext</span>
+
+        <span class="n">cmdclass</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;build_ext&#39;</span><span class="p">:</span> <span class="n">build_ext</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">cmdclass</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s1">&#39;WARNING: Cython is not installed. This is only a problem if you are building C extensions&#39;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="p">{}</span></div>
+
+
+<div class="viewcode-block" id="parse_author"><a class="viewcode-back" href="../../utool.html#utool.util_setup.parse_author">[docs]</a><span class="k">def</span> <span class="nf">parse_author</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; TODO: this function should parse setup.py or a module for</span>
+<span class="sd">    the author variable</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s1">&#39;Jon Crall&#39;</span>  <span class="c1"># FIXME</span></div>
+
+
+<div class="viewcode-block" id="autogen_sphinx_apidoc"><a class="viewcode-back" href="../../utool.html#utool.util_setup.autogen_sphinx_apidoc">[docs]</a><span class="k">def</span> <span class="nf">autogen_sphinx_apidoc</span><span class="p">():</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    autogen_sphinx_docs.py</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        C:\Python27\Scripts\autogen_sphinx_docs.py</span>
+<span class="sd">        autogen_sphinx_docs.py</span>
+
+<span class="sd">        pip uninstall sphinx</span>
+<span class="sd">        pip install sphinx</span>
+<span class="sd">        pip install sphinxcontrib-napoleon</span>
+<span class="sd">        pip install sphinx --upgrade</span>
+<span class="sd">        pip install sphinxcontrib-napoleon --upgrade</span>
+
+<span class="sd">        cd C:\Python27\Scripts</span>
+<span class="sd">        ls C:\Python27\Scripts</span>
+
+<span class="sd">        python -c &quot;import sphinx; print(sphinx.__version__)&quot;</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_setup --exec-autogen_sphinx_apidoc</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; # SCRIPT</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_setup import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; autogen_sphinx_apidoc()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: assert sphinx-apidoc exe is found</span>
+    <span class="c1"># TODO: make find_exe work?</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+    <span class="k">def</span> <span class="nf">build_sphinx_apidoc_cmdstr</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;if this fails try: sudo pip install sphinx&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">apidoc</span> <span class="o">=</span> <span class="s1">&#39;sphinx-apidoc&#39;</span>
+        <span class="k">if</span> <span class="n">ut</span><span class="o">.</span><span class="n">WIN32</span><span class="p">:</span>
+            <span class="n">winprefix</span> <span class="o">=</span> <span class="s1">&#39;C:/Python27/Scripts/&#39;</span>
+            <span class="n">sphinx_apidoc_exe</span> <span class="o">=</span> <span class="n">winprefix</span> <span class="o">+</span> <span class="n">apidoc</span> <span class="o">+</span> <span class="s1">&#39;.exe&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sphinx_apidoc_exe</span> <span class="o">=</span> <span class="n">apidoc</span>
+        <span class="n">apidoc_argfmt_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">sphinx_apidoc_exe</span><span class="p">,</span>
+            <span class="s1">&#39;--force&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;--full&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;--maxdepth=&quot;</span><span class="si">{maxdepth}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;--doc-author=&quot;</span><span class="si">{author}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;--doc-version=&quot;</span><span class="si">{doc_version}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;--doc-release=&quot;</span><span class="si">{doc_release}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;--output-dir=&quot;_doc&quot;&#39;</span><span class="p">,</span>
+            <span class="c1">#&#39;--separate&#39;,  # Put documentation for each module on its own page</span>
+            <span class="s1">&#39;--private&#39;</span><span class="p">,</span>  <span class="c1"># Include &quot;_private&quot; modules</span>
+            <span class="s1">&#39;</span><span class="si">{pkgdir}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">outputdir</span> <span class="o">=</span> <span class="s1">&#39;_doc&#39;</span>
+        <span class="n">author</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">parse_author</span><span class="p">()</span>
+        <span class="n">packages</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">find_packages</span><span class="p">(</span><span class="n">maxdepth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">packages</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;directory must contain at least one package&#39;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">packages</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">packages</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span>
+                <span class="s1">&#39;FIXME I dont know what to do with more than one root package: </span><span class="si">%r</span><span class="s1">&#39;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">packages</span><span class="p">,)</span>
+            <span class="p">)</span>
+        <span class="n">pkgdir</span> <span class="o">=</span> <span class="n">packages</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">version</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">parse_package_for_version</span><span class="p">(</span><span class="n">pkgdir</span><span class="p">)</span>
+        <span class="n">modpath</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">truepath</span><span class="p">(</span><span class="n">pkgdir</span><span class="p">))</span>
+
+        <span class="n">apidoc_fmtdict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;author&#39;</span><span class="p">:</span> <span class="n">author</span><span class="p">,</span>
+            <span class="s1">&#39;maxdepth&#39;</span><span class="p">:</span> <span class="s1">&#39;8&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;pkgdir&#39;</span><span class="p">:</span> <span class="n">pkgdir</span><span class="p">,</span>
+            <span class="s1">&#39;doc_version&#39;</span><span class="p">:</span> <span class="n">version</span><span class="p">,</span>
+            <span class="s1">&#39;doc_release&#39;</span><span class="p">:</span> <span class="n">version</span><span class="p">,</span>
+            <span class="s1">&#39;outputdir&#39;</span><span class="p">:</span> <span class="n">outputdir</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">ut</span><span class="o">.</span><span class="n">assert_exists</span><span class="p">(</span><span class="s1">&#39;setup.py&#39;</span><span class="p">)</span>
+        <span class="n">ut</span><span class="o">.</span><span class="n">ensuredir</span><span class="p">(</span><span class="s1">&#39;_doc&#39;</span><span class="p">)</span>
+        <span class="n">apidoc_fmtstr</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">apidoc_argfmt_list</span><span class="p">)</span>
+        <span class="n">apidoc_cmdstr</span> <span class="o">=</span> <span class="n">apidoc_fmtstr</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">apidoc_fmtdict</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[util_setup] autogenerate sphinx docs for </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pkgdir</span><span class="p">,))</span>
+        <span class="k">if</span> <span class="n">ut</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">repr4</span><span class="p">(</span><span class="n">apidoc_fmtdict</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">apidoc_cmdstr</span><span class="p">,</span> <span class="n">modpath</span><span class="p">,</span> <span class="n">outputdir</span>
+
+    <span class="k">def</span> <span class="nf">build_conf_replstr</span><span class="p">():</span>
+        <span class="c1">#</span>
+        <span class="c1"># Make custom edits to conf.py</span>
+        <span class="c1"># FIXME:</span>
+        <span class="c1"># ext_search_text = ut.unindent(</span>
+        <span class="c1">#    r&#39;&#39;&#39;</span>
+        <span class="c1">#    extensions = [</span>
+        <span class="c1">#    [^\]]*</span>
+        <span class="c1">#    ]</span>
+        <span class="c1">#    &#39;&#39;&#39;)</span>
+        <span class="n">ext_search_text</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;extensions = \[[^/]*\]&#39;</span>
+        <span class="c1"># TODO: http://sphinx-doc.org/ext/math.html#module-sphinx.ext.pngmath</span>
+        <span class="c1">#&#39;sphinx.ext.mathjax&#39;,</span>
+        <span class="n">exclude_modules</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">ext_repl_text</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">codeblock</span><span class="p">(</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            MOCK_MODULES = {exclude_modules}</span>
+<span class="sd">            if len(MOCK_MODULES) &gt; 0:</span>
+<span class="sd">                import mock</span>
+<span class="sd">                for mod_name in MOCK_MODULES:</span>
+<span class="sd">                    sys.modules[mod_name] = mock.Mock()</span>
+
+<span class="sd">            extensions = [</span>
+<span class="sd">                &#39;sphinx.ext.autodoc&#39;,</span>
+<span class="sd">                &#39;sphinx.ext.viewcode&#39;,</span>
+<span class="sd">                # For LaTeX</span>
+<span class="sd">                &#39;sphinx.ext.pngmath&#39;,</span>
+<span class="sd">                # For Google Sytle Docstrs</span>
+<span class="sd">                # https://pypi.python.org/pypi/sphinxcontrib-napoleon</span>
+<span class="sd">                &#39;sphinxcontrib.napoleon&#39;,</span>
+<span class="sd">                #&#39;sphinx.ext.napoleon&#39;,</span>
+<span class="sd">            ]</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">exclude_modules</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">exclude_modules</span><span class="p">))</span>
+        <span class="c1"># theme_search = &#39;html_theme = \&#39;default\&#39;&#39;</span>
+        <span class="n">theme_search</span> <span class="o">=</span> <span class="s2">&quot;html_theme = &#39;[a-zA-Z_1-3]*&#39;&quot;</span>
+        <span class="n">theme_repl</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">codeblock</span><span class="p">(</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            import sphinx_rtd_theme</span>
+<span class="sd">            html_theme = &quot;sphinx_rtd_theme&quot;</span>
+<span class="sd">            html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+        <span class="p">)</span>
+        <span class="n">head_text</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">codeblock</span><span class="p">(</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            from sphinx.ext.autodoc import between</span>
+<span class="sd">            import sphinx_rtd_theme</span>
+<span class="sd">            import sys</span>
+<span class="sd">            import os</span>
+
+<span class="sd">            # Dont parse IBEIS args</span>
+<span class="sd">            os.environ[&#39;IBIES_PARSE_ARGS&#39;] = &#39;OFF&#39;</span>
+<span class="sd">            os.environ[&#39;UTOOL_AUTOGEN_SPHINX_RUNNING&#39;] = &#39;ON&#39;</span>
+
+<span class="sd">            sys.path.append(&#39;{modpath}&#39;)</span>
+<span class="sd">            sys.path.append(sys.path.insert(0, os.path.abspath(&quot;../&quot;)))</span>
+
+<span class="sd">            autosummary_generate = True</span>
+
+<span class="sd">            modindex_common_prefix = [&#39;_&#39;]</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">modpath</span><span class="o">=</span><span class="n">ut</span><span class="o">.</span><span class="n">truepath</span><span class="p">(</span><span class="n">modpath</span><span class="p">))</span>
+        <span class="n">tail_text</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">codeblock</span><span class="p">(</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            def setup(app):</span>
+<span class="sd">                # Register a sphinx.ext.autodoc.between listener to ignore everything</span>
+<span class="sd">                # between lines that contain the word IGNORE</span>
+<span class="sd">                app.connect(&#39;autodoc-process-docstring&#39;, between(&#39;^.*IGNORE.*$&#39;, exclude=True))</span>
+<span class="sd">                return app</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">ext_search_text</span><span class="p">,</span>
+            <span class="n">ext_repl_text</span><span class="p">,</span>
+            <span class="n">theme_search</span><span class="p">,</span>
+            <span class="n">theme_repl</span><span class="p">,</span>
+            <span class="n">head_text</span><span class="p">,</span>
+            <span class="n">tail_text</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">apidoc_cmdstr</span><span class="p">,</span> <span class="n">modpath</span><span class="p">,</span> <span class="n">outputdir</span> <span class="o">=</span> <span class="n">build_sphinx_apidoc_cmdstr</span><span class="p">()</span>
+    <span class="p">(</span>
+        <span class="n">ext_search_text</span><span class="p">,</span>
+        <span class="n">ext_repl_text</span><span class="p">,</span>
+        <span class="n">theme_search</span><span class="p">,</span>
+        <span class="n">theme_repl</span><span class="p">,</span>
+        <span class="n">head_text</span><span class="p">,</span>
+        <span class="n">tail_text</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">=</span> <span class="n">build_conf_replstr</span><span class="p">()</span>
+
+    <span class="n">dry</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">get_argflag</span><span class="p">(</span><span class="s1">&#39;--dry&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dry</span><span class="p">:</span>
+        <span class="c1"># Execute sphinx-apidoc</span>
+        <span class="n">ut</span><span class="o">.</span><span class="n">cmd</span><span class="p">(</span><span class="n">apidoc_cmdstr</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># sphinx-apidoc outputs conf.py to &lt;outputdir&gt;, add custom commands</span>
+        <span class="c1">#</span>
+        <span class="c1"># Change dir to &lt;outputdir&gt;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;chdir&#39;</span> <span class="o">+</span> <span class="n">outputdir</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">outputdir</span><span class="p">)</span>
+        <span class="n">conf_fname</span> <span class="o">=</span> <span class="s1">&#39;conf.py&#39;</span>
+        <span class="n">conf_text</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">read_from</span><span class="p">(</span><span class="n">conf_fname</span><span class="p">)</span>
+        <span class="n">conf_text</span> <span class="o">=</span> <span class="n">conf_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;import sys&#39;</span><span class="p">,</span> <span class="s1">&#39;import sys  # NOQA&#39;</span><span class="p">)</span>
+        <span class="n">conf_text</span> <span class="o">=</span> <span class="n">conf_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;import os&#39;</span><span class="p">,</span> <span class="s1">&#39;import os  # NOQA&#39;</span><span class="p">)</span>
+        <span class="n">conf_text</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">regex_replace</span><span class="p">(</span><span class="n">theme_search</span><span class="p">,</span> <span class="n">theme_repl</span><span class="p">,</span> <span class="n">conf_text</span><span class="p">)</span>
+        <span class="n">conf_text</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">regex_replace</span><span class="p">(</span><span class="n">ext_search_text</span><span class="p">,</span> <span class="n">ext_repl_text</span><span class="p">,</span> <span class="n">conf_text</span><span class="p">)</span>
+        <span class="n">conf_text</span> <span class="o">=</span> <span class="n">head_text</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">conf_text</span> <span class="o">+</span> <span class="n">tail_text</span>
+        <span class="n">ut</span><span class="o">.</span><span class="n">write_to</span><span class="p">(</span><span class="n">conf_fname</span><span class="p">,</span> <span class="n">conf_text</span><span class="p">)</span>
+        <span class="c1"># Make the documentation</span>
+        <span class="c1"># if ut.LINUX:</span>
+        <span class="c1">#    ut.cmd(&#39;make html&#39;, shell=True)</span>
+        <span class="c1"># if ut.WIN32:</span>
+        <span class="c1"># raw_input(&#39;waiting&#39;)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ut</span><span class="o">.</span><span class="n">get_argflag</span><span class="p">(</span><span class="s1">&#39;--nomake&#39;</span><span class="p">):</span>
+            <span class="n">ut</span><span class="o">.</span><span class="n">cmd</span><span class="p">(</span><span class="s1">&#39;make&#39;</span><span class="p">,</span> <span class="s1">&#39;html&#39;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">apidoc_cmdstr</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;cd &#39;</span> <span class="o">+</span> <span class="n">outputdir</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;manual edits of conf.py&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;make html&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NOOP"><a class="viewcode-back" href="../../utool.html#utool.util_setup.NOOP">[docs]</a><span class="k">def</span> <span class="nf">NOOP</span><span class="p">():</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="presetup_commands"><a class="viewcode-back" href="../../utool.html#utool.util_setup.presetup_commands">[docs]</a><span class="k">def</span> <span class="nf">presetup_commands</span><span class="p">(</span><span class="n">setup_fpath</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">VERBOSE</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[setup] presetup_commands()&#39;</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="c1"># Parse args</span>
+    <span class="n">project_dirs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;project_dirs&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">chmod_patterns</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;chmod_patterns&#39;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">clutter_dirs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;clutter_dirs&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">clutter_patterns</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;clutter_patterns&#39;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">build_command</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;build_command&#39;</span><span class="p">,</span> <span class="n">NOOP</span><span class="p">)</span>
+    <span class="c1"># Augment patterns with builtin patterns</span>
+    <span class="n">chmod_patterns</span> <span class="o">+=</span> <span class="n">SETUP_PATTERNS</span><span class="o">.</span><span class="n">chmod_test</span> <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;chmod_tests&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
+    <span class="n">clutter_patterns</span> <span class="o">+=</span> <span class="p">(</span>
+        <span class="n">SETUP_PATTERNS</span><span class="o">.</span><span class="n">clutter_pybuild</span> <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;clean_pybuild&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
+    <span class="p">)</span>
+    <span class="n">clutter_patterns</span> <span class="o">+=</span> <span class="p">(</span>
+        <span class="n">SETUP_PATTERNS</span><span class="o">.</span><span class="n">clutter_cyth</span> <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;clean_pybuild&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
+    <span class="p">)</span>
+    <span class="n">setup_fpath</span> <span class="o">=</span> <span class="n">util_path</span><span class="o">.</span><span class="n">truepath</span><span class="p">(</span><span class="n">setup_fpath</span><span class="p">)</span>
+    <span class="c1">#</span>
+    <span class="n">setup_dir</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="n">setup_fpath</span><span class="p">)</span>
+    <span class="n">build_dir</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">setup_dir</span><span class="p">,</span> <span class="s1">&#39;build&#39;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">setup_dir</span><span class="p">)</span>  <span class="c1"># change into setup directory</span>
+    <span class="n">assert_in_setup_repo</span><span class="p">(</span><span class="n">setup_fpath</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+    <span class="c1"># Augment clutter dirs</span>
+    <span class="k">if</span> <span class="n">clutter_dirs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">clutter_dirs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">clutter_dirs</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;build&#39;</span><span class="p">,</span> <span class="s1">&#39;dist&#39;</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.egg-info&#39;</span><span class="p">,</span> <span class="s1">&#39;__pycache__&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">project_dirs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">project_dirs</span> <span class="o">=</span> <span class="n">util_path</span><span class="o">.</span><span class="n">ls_moduledirs</span><span class="p">(</span><span class="n">setup_dir</span><span class="p">)</span>
+    <span class="c1"># Execute pre-setup commands based on argv</span>
+    <span class="c1"># BEXT = &#39;bext&#39; in sys.argv</span>
+    <span class="c1"># BUILD_EXT = &#39;build_ext&#39; in sys.argv</span>
+    <span class="c1"># CYTH = &#39;cyth&#39; in sys.argv</span>
+
+    <span class="c1"># if CYTH:</span>
+    <span class="c1">#    translate_cyth()</span>
+
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[:]):</span>
+        <span class="c1"># print(arg)</span>
+        <span class="c1"># Clean clutter files</span>
+        <span class="k">if</span> <span class="n">arg</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;clean&#39;</span><span class="p">]:</span>
+            <span class="n">clean</span><span class="p">(</span><span class="n">setup_dir</span><span class="p">,</span> <span class="n">clutter_patterns</span><span class="p">,</span> <span class="n">clutter_dirs</span><span class="p">)</span>
+            <span class="c1"># sys.exit(0)</span>
+        <span class="k">if</span> <span class="n">arg</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;build&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">build_dir</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;clean&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">VERBOSE</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[setup] Executing build command&#39;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">build_command</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                <span class="n">printex</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="s1">&#39;Error calling buildcommand from cwd=</span><span class="si">%r</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+                <span class="k">raise</span>
+        <span class="k">if</span> <span class="n">arg</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;versions&#39;</span><span class="p">]:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;+ ---&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Testing preqres package versions&#39;</span><span class="p">)</span>
+            <span class="n">install_requires</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;install_requires&#39;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="kn">import</span> <span class="nn">pip</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Checking install_requires = [</span><span class="se">\n</span><span class="si">%s</span><span class="se">\n</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">install_requires</span><span class="p">))</span>
+            <span class="n">pip</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="s1">&#39;show&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">depline</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">depline</span> <span class="ow">in</span> <span class="n">install_requires</span><span class="p">])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;L ___ Done Version Testing&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">arg</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;docs&#39;</span><span class="p">]:</span>
+            <span class="c1"># FIXME</span>
+            <span class="n">autogen_sphinx_apidoc</span><span class="p">()</span>
+        <span class="c1"># Build optimized files</span>
+        <span class="k">if</span> <span class="n">arg</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="s1">&#39;pyo&#39;</span><span class="p">]:</span>
+            <span class="n">build_pyo</span><span class="p">(</span><span class="n">project_dirs</span><span class="p">)</span>
+        <span class="c1"># Cythonize files</span>
+        <span class="c1"># if arg in [&#39;cython&#39;]:</span>
+        <span class="c1">#    build_cython(cython_files)</span>
+        <span class="c1"># Chmod files</span>
+        <span class="k">if</span> <span class="n">arg</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;chmod&#39;</span><span class="p">]:</span>
+            <span class="n">setup_chmod</span><span class="p">(</span><span class="n">setup_fpath</span><span class="p">,</span> <span class="n">setup_dir</span><span class="p">,</span> <span class="n">chmod_patterns</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;docs&#39;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;cyth&#39;</span><span class="p">)</span>
+        <span class="c1"># sys.argv.remove(&#39;--cyth-write&#39;)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># SUPER HACK</span>
+        <span class="c1"># aliases bext to build_ext --inplace</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;bext&#39;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;build_ext&#39;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;--inplace&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+
+<span class="n">presetup</span> <span class="o">=</span> <span class="n">presetup_commands</span>
+
+
+<span class="c1"># def parse_package_version(fpath=&#39;__init__.py&#39;, varname=&#39;__version__&#39;):</span>
+<span class="c1">#     &quot;&quot;&quot; Statically parse the version number from __init__.py &quot;&quot;&quot;</span>
+<span class="c1">#     # from os.path import dirname, join</span>
+<span class="c1">#     import ast</span>
+<span class="c1">#     # repo_dpath = dirname(__file__)</span>
+<span class="c1">#     # file_fpath = join(repo_dpath, &#39;wbia&#39;, &#39;__init__.py&#39;)</span>
+<span class="c1">#     # file_fpath = join(repo_dpath, &#39;wbia&#39;, &#39;control&#39;, &#39;DB_SCHEMA_CURRENT.py&#39;)</span>
+<span class="c1">#     with open(fpath) as file_:</span>
+<span class="c1">#         sourcecode = file_.read()</span>
+<span class="c1">#     pt = ast.parse(sourcecode)</span>
+
+<span class="c1">#     class VersionVisitor(ast.NodeVisitor):</span>
+<span class="c1">#         def visit_Assign(self, node):</span>
+<span class="c1">#             for target in node.targets:</span>
+<span class="c1">#                 if target.id == varname:</span>
+<span class="c1">#                     self.version = node.value.s</span>
+<span class="c1">#     visitor = VersionVisitor()</span>
+<span class="c1">#     visitor.visit(pt)</span>
+<span class="c1">#     return visitor.version</span>
+
+
+<div class="viewcode-block" id="parse_package_for_version"><a class="viewcode-back" href="../../utool.html#utool.util_setup.parse_package_for_version">[docs]</a><span class="k">def</span> <span class="nf">parse_package_for_version</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Searches for a variable named __version__ in name&#39;s __init__.py file and</span>
+<span class="sd">    returns the value.  This function parses the source text. It does not load</span>
+<span class="sd">    the module.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_regex</span>
+
+    <span class="n">init_fpath</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;__init__.py&#39;</span><span class="p">)</span>
+    <span class="n">version_errmsg</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        You must include a __version__ variable</span>
+<span class="sd">        in %s\&#39;s __init__.py file.</span>
+<span class="sd">        Try something like:</span>
+<span class="sd">        __version__ = &#39;1.0.0.dev1&#39; &quot;&quot;&quot;</span>
+        <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,)</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">init_fpath</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="n">version_errmsg</span><span class="p">)</span>
+    <span class="n">val_regex</span> <span class="o">=</span> <span class="n">util_regex</span><span class="o">.</span><span class="n">named_field</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="s1">&#39;[0-9a-zA-Z.]+&#39;</span><span class="p">)</span>
+    <span class="n">regexstr</span> <span class="o">=</span> <span class="s1">&#39;__version__ *= *[</span><span class="se">\&#39;</span><span class="s1">&quot;]&#39;</span> <span class="o">+</span> <span class="n">val_regex</span>
+
+    <span class="k">def</span> <span class="nf">parse_version</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+        <span class="c1"># Helper</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">match_dict</span> <span class="o">=</span> <span class="n">util_regex</span><span class="o">.</span><span class="n">regex_parse</span><span class="p">(</span><span class="n">regexstr</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">match_dict</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Find the version  in the text of the source</span>
+    <span class="c1"># version = &#39;UNKNOWN_VERSION&#39;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">init_fpath</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">file_</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;__version__&#39;</span><span class="p">):</span>
+                <span class="n">version</span> <span class="o">=</span> <span class="n">parse_version</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">version</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">version</span>
+    <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="n">version_errmsg</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">__infer_setup_kwargs</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Implicitly build kwargs based on standard info &quot;&quot;&quot;</span>
+    <span class="c1"># Get project name from the module</span>
+    <span class="c1"># if &#39;name&#39; not in kwargs:</span>
+    <span class="c1">#    kwargs[&#39;name&#39;] = module.__name__</span>
+    <span class="c1"># else:</span>
+    <span class="c1">#    raise AssertionError(&#39;must specify module name!&#39;)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+    <span class="c1"># Our projects depend on utool</span>
+    <span class="c1"># if kwargs[&#39;name&#39;] != &#39;utool&#39;:</span>
+    <span class="c1">#    install_requires = kwargs.get(&#39;install_requires&#39;, [])</span>
+    <span class="c1">#    if &#39;utool&#39; not in install_requires:</span>
+    <span class="c1">#        install_requires.append(&#39;utool&#39;)</span>
+    <span class="c1">#    kwargs[&#39;install_requires&#39;] = install_requires</span>
+
+    <span class="n">packages</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;packages&#39;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">packages</span><span class="p">:</span>
+        <span class="n">packages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;packages&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">packages</span>
+
+    <span class="k">if</span> <span class="s1">&#39;version&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">version</span> <span class="o">=</span> <span class="n">parse_package_for_version</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">version</span>
+
+    <span class="c1"># Parse version</span>
+    <span class="c1"># if &#39;version&#39; not in kwargs:</span>
+    <span class="c1">#    if module is None:</span>
+    <span class="c1">#        version_errmsg = &#39;You must include a version (preferably one that matches the __version__ variable in your modules init file&#39;</span>
+    <span class="c1">#        raise AssertionError(version_errmsg)</span>
+    <span class="c1">#    else:</span>
+    <span class="c1"># Parse license</span>
+    <span class="k">if</span> <span class="s1">&#39;license&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;license&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">read_license</span><span class="p">(</span><span class="s1">&#39;LICENSE&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="c1"># Parse readme</span>
+    <span class="k">if</span> <span class="s1">&#39;long_description&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;long_description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse_readme</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="parse_readme"><a class="viewcode-back" href="../../utool.html#utool.util_setup.parse_readme">[docs]</a><span class="k">def</span> <span class="nf">parse_readme</span><span class="p">(</span><span class="n">readmefile</span><span class="o">=</span><span class="s1">&#39;README.md&#39;</span><span class="p">):</span>
+    <span class="c1"># DEPRICATE</span>
+    <span class="k">return</span> <span class="n">util_io</span><span class="o">.</span><span class="n">read_from</span><span class="p">(</span><span class="n">readmefile</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="setuptools_setup"><a class="viewcode-back" href="../../utool.html#utool.util_setup.setuptools_setup">[docs]</a><span class="k">def</span> <span class="nf">setuptools_setup</span><span class="p">(</span><span class="n">setup_fpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="c1"># TODO: Learn this better</span>
+    <span class="c1"># https://docs.python.org/3.1/distutils/apiref.html</span>
+    <span class="c1"># https://pythonhosted.org/an_example_pypi_project/setuptools.html</span>
+    <span class="c1"># https://docs.python.org/2/distutils/setupscript.html https://docs.python.org/2/distutils/setupscript.html</span>
+    <span class="c1"># Useful documentation: http://bashelton.com/2009/04/setuptools-tutorial/#setup.py-package_dir</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Arguments which can be passed to setuptools::</span>
+
+<span class="sd">        ============       =====            ===========</span>
+<span class="sd">        Install-Data       Value            Description</span>
+<span class="sd">        ------------       -----            -----------</span>
+<span class="sd">        *packages          strlist          a list of packages modules to be distributed</span>
+<span class="sd">        py_modules         strlist          a list of singlefile modules to be distributed</span>
+<span class="sd">        scripts            strlist          a list of standalone scripts to build and install</span>
+<span class="sd">        *install_requires  list             e.g: [&#39;distribute == 0.7.3&#39;, &#39;numpy&#39;, &#39;matplotlib&#39;]</span>
+<span class="sd">        data_files         strlist          a list of data files to install</span>
+<span class="sd">        zip_safe           bool             install efficiently installed as a zipped module?</span>
+<span class="sd">        namespace_packages list             packages without meaningful __init__.py&#39;s</span>
+<span class="sd">        package_dir        dict             keys are packagenames (&#39;&#39; is the root)</span>
+<span class="sd">        package_data       dict             keys are foldernames, values are a list of globstrs</span>
+<span class="sd">        *entry_pionts      dict             installs a script {&#39;console_scripts&#39;: [&#39;script_name_to_install = entry_module:entry_function&#39;]}</span>
+
+<span class="sd">        ============       =====            ===========</span>
+<span class="sd">        Meta-Data          Value            Description</span>
+<span class="sd">        ------------       -----            -----------</span>
+<span class="sd">        name               short string     (&#39;name of the package&#39;)</span>
+<span class="sd">        version            short string     (&#39;version of this release&#39;)</span>
+<span class="sd">        author             short string     (&#39;package authors name&#39;)</span>
+<span class="sd">        author_email       email address    (&#39;email address of the package author&#39;)</span>
+<span class="sd">        maintainer         short string     (&#39;package maintainers name&#39;)</span>
+<span class="sd">        maintainer_email   email address    (&#39;email address of the package maintainer&#39;)</span>
+<span class="sd">        url                URL              (&#39;home page for the package&#39;)</span>
+<span class="sd">        description        short string     (&#39;short, summary description of the package&#39;)</span>
+<span class="sd">        long_description   long string      (&#39;longer description of the package&#39;)</span>
+<span class="sd">        download_url       URL              (&#39;location where the package may be downloaded&#39;)</span>
+<span class="sd">        classifiers        list of strings  (&#39;a list of classifiers&#39;)</span>
+<span class="sd">        platforms          list of strings  (&#39;a list of platforms&#39;)</span>
+<span class="sd">        license            short string     (&#39;license for the package&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">utool.util_inject</span> <span class="k">import</span> <span class="n">inject_colored_exceptions</span>
+
+    <span class="n">inject_colored_exceptions</span><span class="p">()</span>  <span class="c1"># Fluffly, but nice</span>
+    <span class="k">if</span> <span class="n">VERBOSE</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">util_str</span><span class="o">.</span><span class="n">repr4</span><span class="p">(</span><span class="n">kwargs</span><span class="p">))</span>
+    <span class="n">__infer_setup_kwargs</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">presetup_commands</span><span class="p">(</span><span class="n">setup_fpath</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">VERBOSE</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">util_str</span><span class="o">.</span><span class="n">repr4</span><span class="p">(</span><span class="n">kwargs</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">kwargs</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_setup</span>
+<span class="sd">        python -m utool.util_setup --allexamples</span>
+<span class="sd">        python -m utool.util_setup --allexamples --noface --nosrc</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">multiprocessing</span>
+
+    <span class="n">multiprocessing</span><span class="o">.</span><span class="n">freeze_support</span><span class="p">()</span>  <span class="c1"># for win32</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>  <span class="c1"># NOQA</span>
+
+    <span class="n">ut</span><span class="o">.</span><span class="n">doctest_funcs</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">wbia-vtool</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  <li><a href="../utool.html">utool</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wild Me.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

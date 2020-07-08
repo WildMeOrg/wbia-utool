@@ -1,0 +1,598 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>utool._internal package &#8212; wbia-vtool 3.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="utool.experimental package" href="utool.experimental.html" />
+    <link rel="prev" title="utool package" href="utool.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="utool-internal-package">
+<h1>utool._internal package<a class="headerlink" href="#utool-internal-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-utool._internal.meta_util_arg">
+<span id="utool-internal-meta-util-arg-module"></span><h2>utool._internal.meta_util_arg module<a class="headerlink" href="#module-utool._internal.meta_util_arg" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="utool._internal.meta_util_arg.get_argflag">
+<code class="descclassname">utool._internal.meta_util_arg.</code><code class="descname">get_argflag</code><span class="sig-paren">(</span><em>flag</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/meta_util_arg.html#get_argflag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.meta_util_arg.get_argflag" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.meta_util_arg.get_argval">
+<code class="descclassname">utool._internal.meta_util_arg.</code><code class="descname">get_argval</code><span class="sig-paren">(</span><em>argstr</em>, <em>type_=None</em>, <em>default=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/meta_util_arg.html#get_argval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.meta_util_arg.get_argval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a value of an argument specified on the command line after some flag</p>
+<dl class="docutils">
+<dt>CommandLine:</dt>
+<dd>python -c “import utool; print([(type(x), x) for x in [utool.get_argval(‘–quest’)]])” –quest=”holy grail”
+python -c “import utool; print([(type(x), x) for x in [utool.get_argval(‘–quest’)]])” –quest=”42”
+python -c “import utool; print([(type(x), x) for x in [utool.get_argval(‘–quest’)]])” –quest=42
+python -c “import utool; print([(type(x), x) for x in [utool.get_argval(‘–quest’)]])” –quest 42
+python -c “import utool; print([(type(x), x) for x in [utool.get_argval(‘–quest’, float)]])” –quest 42</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># DISABLE_DOCTEST</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">utool.util_arg</span> <span class="k">import</span> <span class="o">*</span>  <span class="c1"># NOQA</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;--spam&#39;</span><span class="p">,</span> <span class="s1">&#39;eggs&#39;</span><span class="p">,</span> <span class="s1">&#39;--quest=holy grail&#39;</span><span class="p">,</span> <span class="s1">&#39;--ans=42&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_argval</span><span class="p">(</span><span class="s1">&#39;--spam&#39;</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="go">eggs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_argval</span><span class="p">(</span><span class="s1">&#39;--quest&#39;</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="go">holy grail</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_argval</span><span class="p">(</span><span class="s1">&#39;--ans&#39;</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="go">42</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="module-utool._internal.meta_util_cache">
+<span id="utool-internal-meta-util-cache-module"></span><h2>utool._internal.meta_util_cache module<a class="headerlink" href="#module-utool._internal.meta_util_cache" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="utool._internal.meta_util_cache.global_cache_read">
+<code class="descclassname">utool._internal.meta_util_cache.</code><code class="descname">global_cache_read</code><span class="sig-paren">(</span><em>key</em>, <em>appname=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/meta_util_cache.html#global_cache_read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.meta_util_cache.global_cache_read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-utool._internal.meta_util_constants">
+<span id="utool-internal-meta-util-constants-module"></span><h2>utool._internal.meta_util_constants module<a class="headerlink" href="#module-utool._internal.meta_util_constants" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-utool._internal.meta_util_cplat">
+<span id="utool-internal-meta-util-cplat-module"></span><h2>utool._internal.meta_util_cplat module<a class="headerlink" href="#module-utool._internal.meta_util_cplat" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="utool._internal.meta_util_cplat.get_app_resource_dir">
+<code class="descclassname">utool._internal.meta_util_cplat.</code><code class="descname">get_app_resource_dir</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/meta_util_cplat.html#get_app_resource_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.meta_util_cplat.get_app_resource_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a writable directory for an application
+Input: appname - the name of the application</p>
+<blockquote>
+<div><a href="#id1"><span class="problematic" id="id2">*</span></a>args, - any other subdirectories may be specified</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.meta_util_cplat.get_resource_dir">
+<code class="descclassname">utool._internal.meta_util_cplat.</code><code class="descname">get_resource_dir</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/meta_util_cplat.html#get_resource_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.meta_util_cplat.get_resource_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a directory which should be writable for any application</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-utool._internal.meta_util_dbg">
+<span id="utool-internal-meta-util-dbg-module"></span><h2>utool._internal.meta_util_dbg module<a class="headerlink" href="#module-utool._internal.meta_util_dbg" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="utool._internal.meta_util_dbg.get_caller_lineno">
+<code class="descclassname">utool._internal.meta_util_dbg.</code><code class="descname">get_caller_lineno</code><span class="sig-paren">(</span><em>N=0</em>, <em>strict=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/meta_util_dbg.html#get_caller_lineno"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.meta_util_dbg.get_caller_lineno" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.meta_util_dbg.get_caller_name">
+<code class="descclassname">utool._internal.meta_util_dbg.</code><code class="descname">get_caller_name</code><span class="sig-paren">(</span><em>N=0</em>, <em>strict=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/meta_util_dbg.html#get_caller_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.meta_util_dbg.get_caller_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standalone version of get_caller_name</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.meta_util_dbg.get_stack_frame">
+<code class="descclassname">utool._internal.meta_util_dbg.</code><code class="descname">get_stack_frame</code><span class="sig-paren">(</span><em>N=0</em>, <em>strict=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/meta_util_dbg.html#get_stack_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.meta_util_dbg.get_stack_frame" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-utool._internal.meta_util_git">
+<span id="utool-internal-meta-util-git-module"></span><h2>utool._internal.meta_util_git module<a class="headerlink" href="#module-utool._internal.meta_util_git" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-utool._internal.meta_util_iter">
+<span id="utool-internal-meta-util-iter-module"></span><h2>utool._internal.meta_util_iter module<a class="headerlink" href="#module-utool._internal.meta_util_iter" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="utool._internal.meta_util_iter.ensure_iterable">
+<code class="descclassname">utool._internal.meta_util_iter.</code><code class="descname">ensure_iterable</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/meta_util_iter.html#ensure_iterable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.meta_util_iter.ensure_iterable" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>obj</strong> (<em>scalar</em><em> or </em><em>iterable</em>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">obj if it was iterable otherwise [obj]</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">it3erable</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>CommandLine:</dt>
+<dd>python -m utool._internal.meta_util_iter –test-ensure_iterable</dd>
+<dt>Timeit:</dt>
+<dd>%timeit ut.ensure_iterable([1])
+%timeit ut.ensure_iterable(1)
+%timeit ut.ensure_iterable(np.array(1))
+%timeit ut.ensure_iterable([1])
+%timeit [1]</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># DISABLE_DOCTEST</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">utool._internal.meta_util_iter</span> <span class="k">import</span> <span class="o">*</span>  <span class="c1"># NOQA</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># build test data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,),</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># execute function</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">ensure_iterable</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">obj_list</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># verify results</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="go">[[3], [3], [&#39;3&#39;], (3,), [3, 4, 5]]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.meta_util_iter.isiterable">
+<code class="descclassname">utool._internal.meta_util_iter.</code><code class="descname">isiterable</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/meta_util_iter.html#isiterable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.meta_util_iter.isiterable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns if the object can be iterated over and is NOT a string
+# TODO: implement isscalar similar to numpy</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>obj</strong> (<em>scalar</em><em> or </em><em>iterable</em>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>CommandLine:</dt>
+<dd>python -m utool._internal.meta_util_iter –test-isiterable</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># DISABLE_DOCTEST</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">utool._internal.meta_util_iter</span> <span class="k">import</span> <span class="o">*</span>  <span class="c1"># NOQA</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># build test data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,),</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># execute function</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">isiterable</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">obj_list</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># verify results</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="go">[False, True, False, True, True]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.meta_util_iter.isscalar">
+<code class="descclassname">utool._internal.meta_util_iter.</code><code class="descname">isscalar</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/meta_util_iter.html#isscalar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.meta_util_iter.isscalar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-utool._internal.meta_util_path">
+<span id="utool-internal-meta-util-path-module"></span><h2>utool._internal.meta_util_path module<a class="headerlink" href="#module-utool._internal.meta_util_path" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="utool._internal.meta_util_path.ensuredir">
+<code class="descclassname">utool._internal.meta_util_path.</code><code class="descname">ensuredir</code><span class="sig-paren">(</span><em>dpath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/meta_util_path.html#ensuredir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.meta_util_path.ensuredir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.meta_util_path.truepath">
+<code class="descclassname">utool._internal.meta_util_path.</code><code class="descname">truepath</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/meta_util_path.html#truepath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.meta_util_path.truepath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalizes and returns absolute path with so specs</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.meta_util_path.unixjoin">
+<code class="descclassname">utool._internal.meta_util_path.</code><code class="descname">unixjoin</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/meta_util_path.html#unixjoin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.meta_util_path.unixjoin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like os.path.join, but uses forward slashes on win32</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.meta_util_path.unixpath">
+<code class="descclassname">utool._internal.meta_util_path.</code><code class="descname">unixpath</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/meta_util_path.html#unixpath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.meta_util_path.unixpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>TODO: rename to unix_truepath
+Corrects fundamental problems with windows paths.~</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-utool._internal.meta_util_six">
+<span id="utool-internal-meta-util-six-module"></span><h2>utool._internal.meta_util_six module<a class="headerlink" href="#module-utool._internal.meta_util_six" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="utool._internal.meta_util_six.ensure_unicode">
+<code class="descclassname">utool._internal.meta_util_six.</code><code class="descname">ensure_unicode</code><span class="sig-paren">(</span><em>str_</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/meta_util_six.html#ensure_unicode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.meta_util_six.ensure_unicode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.meta_util_six.get_funccode">
+<code class="descclassname">utool._internal.meta_util_six.</code><code class="descname">get_funccode</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/meta_util_six.html#get_funccode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.meta_util_six.get_funccode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.meta_util_six.get_funcdoc">
+<code class="descclassname">utool._internal.meta_util_six.</code><code class="descname">get_funcdoc</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/meta_util_six.html#get_funcdoc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.meta_util_six.get_funcdoc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.meta_util_six.get_funcglobals">
+<code class="descclassname">utool._internal.meta_util_six.</code><code class="descname">get_funcglobals</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/meta_util_six.html#get_funcglobals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.meta_util_six.get_funcglobals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.meta_util_six.get_funcname">
+<code class="descclassname">utool._internal.meta_util_six.</code><code class="descname">get_funcname</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/meta_util_six.html#get_funcname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.meta_util_six.get_funcname" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.meta_util_six.set_funcdoc">
+<code class="descclassname">utool._internal.meta_util_six.</code><code class="descname">set_funcdoc</code><span class="sig-paren">(</span><em>func</em>, <em>newdoc</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/meta_util_six.html#set_funcdoc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.meta_util_six.set_funcdoc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.meta_util_six.set_funcname">
+<code class="descclassname">utool._internal.meta_util_six.</code><code class="descname">set_funcname</code><span class="sig-paren">(</span><em>func</em>, <em>newname</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/meta_util_six.html#set_funcname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.meta_util_six.set_funcname" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-utool._internal.py2_syntax_funcs">
+<span id="utool-internal-py2-syntax-funcs-module"></span><h2>utool._internal.py2_syntax_funcs module<a class="headerlink" href="#module-utool._internal.py2_syntax_funcs" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="utool._internal.py2_syntax_funcs.ignores_exc_tb">
+<code class="descclassname">utool._internal.py2_syntax_funcs.</code><code class="descname">ignores_exc_tb</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/py2_syntax_funcs.html#ignores_exc_tb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.py2_syntax_funcs.ignores_exc_tb" title="Permalink to this definition">¶</a></dt>
+<dd><p>PYTHON 2 ONLY VERSION – needs to be in its own file for syntactic reasons</p>
+<p>ignore_exc_tb decorates a function and remove both itself
+and the function from any exception traceback that occurs.</p>
+<p>This is useful to decorate other trivial decorators
+which are polluting your stacktrace.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-utool._internal.randomwrap">
+<span id="utool-internal-randomwrap-module"></span><h2>utool._internal.randomwrap module<a class="headerlink" href="#module-utool._internal.randomwrap" title="Permalink to this headline">¶</a></h2>
+<p>This is a minimal Python client for Mads Haahr’s random number generator at www.random.org</p>
+<p># This tiny set of functions only implements a subset of the HTTP interface available. In particular it only uses the ‘live’
+# random number generator, and doesn’t offer the option of using the alternative ‘stored’ random
+# number sets. However, it should be obvious how to extend it by sending requests with different parameters.
+# The web service code is modelled on Mark Pilgrim’s “Dive into Python” tutorial at <a class="reference external" href="http://www.diveintopython.org/http_web_services">http://www.diveintopython.org/http_web_services</a>
+# This client by George Dunbar, University of Warwick (Copyright George Dunbar, 2008)
+# It is distributed under the Gnu General Public License.</p>
+<blockquote>
+<div><p>This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.</p>
+<p>This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.</p>
+<p>See &lt;<a class="reference external" href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt; for a copy of the GNU General Public License.
+For use that falls outside this license, please contact me.</p>
+</div></blockquote>
+<p>To use in a python script or at the interactive prompt
+(randomwrapy.py has to be in the Python search path, of course):</p>
+<p>from randomwrapy import *</p>
+<dl class="docutils">
+<dt>rnumlistwithoutreplacement(0, 12)</dt>
+<dd># returns a list of the integers 0 - 12 inclusive, in a random order</dd>
+<dt>rnumlistwithreplacement(12, 5)</dt>
+<dd># returns 12 integers from the range [0, 5]</dd>
+<dt>rnumlistwithreplacement(12, 5, 2)</dt>
+<dd># returns 12 integers from the range [2, 5]</dd>
+<dt>rrandom()</dt>
+<dd># returns a random float in the range [0, 1]</dd>
+<dt>reportquota()</dt>
+<dd># tells you how many bits you have available; visit www.random.org/quota for more information</dd>
+</dl>
+<p>Arguments where given are (must be) numbers, of course.
+There is almost no error checking in these scripts! For example, if
+the web site is down, Python will simply raise an exception and report the
+http error code. See worldrandom.py for an alternative implementation
+that goes a little further with error checking.</p>
+<dl class="function">
+<dt id="utool._internal.randomwrap.build_request_parameterNR">
+<code class="descclassname">utool._internal.randomwrap.</code><code class="descname">build_request_parameterNR</code><span class="sig-paren">(</span><em>min</em>, <em>max</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/randomwrap.html#build_request_parameterNR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.randomwrap.build_request_parameterNR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.randomwrap.build_request_parameterWR">
+<code class="descclassname">utool._internal.randomwrap.</code><code class="descname">build_request_parameterWR</code><span class="sig-paren">(</span><em>howmany</em>, <em>min</em>, <em>max</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/randomwrap.html#build_request_parameterWR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.randomwrap.build_request_parameterWR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.randomwrap.checkquota">
+<code class="descclassname">utool._internal.randomwrap.</code><code class="descname">checkquota</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/randomwrap.html#checkquota"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.randomwrap.checkquota" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.randomwrap.reportquota">
+<code class="descclassname">utool._internal.randomwrap.</code><code class="descname">reportquota</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/randomwrap.html#reportquota"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.randomwrap.reportquota" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.randomwrap.rnumlistwithoutreplacement">
+<code class="descclassname">utool._internal.randomwrap.</code><code class="descname">rnumlistwithoutreplacement</code><span class="sig-paren">(</span><em>min</em>, <em>max</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/randomwrap.html#rnumlistwithoutreplacement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.randomwrap.rnumlistwithoutreplacement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a randomly ordered list of the integers between min and max</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.randomwrap.rnumlistwithreplacement">
+<code class="descclassname">utool._internal.randomwrap.</code><code class="descname">rnumlistwithreplacement</code><span class="sig-paren">(</span><em>howmany</em>, <em>max</em>, <em>min=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/randomwrap.html#rnumlistwithreplacement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.randomwrap.rnumlistwithreplacement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of howmany integers with a maximum value = max.
+The minimum value defaults to zero.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.randomwrap.rrandom">
+<code class="descclassname">utool._internal.randomwrap.</code><code class="descname">rrandom</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/randomwrap.html#rrandom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.randomwrap.rrandom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the next random number in the range [0.0, 1.0].
+Returns a float.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-utool._internal.util_importer">
+<span id="utool-internal-util-importer-module"></span><h2>utool._internal.util_importer module<a class="headerlink" href="#module-utool._internal.util_importer" title="Permalink to this headline">¶</a></h2>
+<p>NEEDS CLEANUP SO IT EITHER DOES THE IMPORTS OR GENERATES THE FILE</p>
+<p>python -c “import utool”</p>
+<dl class="function">
+<dt id="utool._internal.util_importer.dynamic_import">
+<code class="descclassname">utool._internal.util_importer.</code><code class="descname">dynamic_import</code><span class="sig-paren">(</span><em>modname</em>, <em>import_tuples</em>, <em>developing=True</em>, <em>ignore_froms=[]</em>, <em>dump=False</em>, <em>ignore_startswith=[]</em>, <em>ignore_endswith=[]</em>, <em>ignore_list=[]</em>, <em>check_not_imported=True</em>, <em>return_initstr=False</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/util_importer.html#dynamic_import"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.util_importer.dynamic_import" title="Permalink to this definition">¶</a></dt>
+<dd><p>MAIN ENTRY POINT</p>
+<p>Dynamically import listed util libraries and their attributes.
+Create reload_subs function.</p>
+<p>Using __import__ like this is typically not considered good style However,
+it is better than import * and this will generate the good file text that
+can be used when the module is ‘frozen”</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>init_inject_str - by default all imports are executed in this</dt>
+<dd>function and only the remainig code needed to be executed is
+returned to define the reload logic.</dd>
+<dt>str, str: init_inject_str, init_str - if return_initstr is True then</dt>
+<dd>also returns init_str defining the from imports.</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Ignore:</dt>
+<dd>ignore_startswith = []
+ignore_endswith = []
+check_not_imported = True
+verbose = True</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.util_importer.make_import_tuples">
+<code class="descclassname">utool._internal.util_importer.</code><code class="descname">make_import_tuples</code><span class="sig-paren">(</span><em>module_path</em>, <em>exclude_modnames=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/util_importer.html#make_import_tuples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.util_importer.make_import_tuples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Infer the import_tuples from a module_path</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool._internal.util_importer.make_initstr">
+<code class="descclassname">utool._internal.util_importer.</code><code class="descname">make_initstr</code><span class="sig-paren">(</span><em>modname</em>, <em>import_tuples</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/_internal/util_importer.html#make_initstr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool._internal.util_importer.make_initstr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Just creates the string representation. Does no importing.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="utool-internal-win32-send-keys-module">
+<h2>utool._internal.win32_send_keys module<a class="headerlink" href="#utool-internal-win32-send-keys-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-utool._internal">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-utool._internal" title="Permalink to this headline">¶</a></h2>
+<p>Need to hack to make work for internal modules and reload subs properly</p>
+<dl class="docutils">
+<dt>Regen Command:</dt>
+<dd>cd /home/joncrall/code/utool/utool/_internal
+makeinit.py -x win32_send_keys</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">wbia-vtool</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="utool.html">utool package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="utool.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">utool._internal package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-utool._internal.meta_util_arg">utool._internal.meta_util_arg module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-utool._internal.meta_util_cache">utool._internal.meta_util_cache module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-utool._internal.meta_util_constants">utool._internal.meta_util_constants module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-utool._internal.meta_util_cplat">utool._internal.meta_util_cplat module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-utool._internal.meta_util_dbg">utool._internal.meta_util_dbg module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-utool._internal.meta_util_git">utool._internal.meta_util_git module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-utool._internal.meta_util_iter">utool._internal.meta_util_iter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-utool._internal.meta_util_path">utool._internal.meta_util_path module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-utool._internal.meta_util_six">utool._internal.meta_util_six module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-utool._internal.py2_syntax_funcs">utool._internal.py2_syntax_funcs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-utool._internal.randomwrap">utool._internal.randomwrap module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-utool._internal.util_importer">utool._internal.util_importer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#utool-internal-win32-send-keys-module">utool._internal.win32_send_keys module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-utool._internal">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="utool.experimental.html">utool.experimental package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="utool.tests.html">utool.tests package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.DynamicStruct">utool.DynamicStruct module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.Preferences">utool.Preferences module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.Printable">utool.Printable module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.__main__">utool.__main__ module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool._version">utool._version module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.oldalg">utool.oldalg module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.sandbox">utool.sandbox module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_alg">utool.util_alg module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_aliases">utool.util_aliases module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_arg">utool.util_arg module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_assert">utool.util_assert module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_autogen">utool.util_autogen module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_cache">utool.util_cache module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_class">utool.util_class module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_config">utool.util_config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_const">utool.util_const module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_cplat">utool.util_cplat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_csv">utool.util_csv module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_dbg">utool.util_dbg module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_decor">utool.util_decor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_depricated">utool.util_depricated module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_dev">utool.util_dev module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_dict">utool.util_dict module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_func">utool.util_func module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_git">utool.util_git module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_grabdata">utool.util_grabdata module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_graph">utool.util_graph module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_gridsearch">utool.util_gridsearch module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_hash">utool.util_hash module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_import">utool.util_import module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_inject">utool.util_inject module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_inspect">utool.util_inspect module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_io">utool.util_io module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_ipynb">utool.util_ipynb module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_iter">utool.util_iter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_latex">utool.util_latex module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_list">utool.util_list module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_logging">utool.util_logging module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_num">utool.util_num module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_numpy">utool.util_numpy module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_parallel">utool.util_parallel module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_path">utool.util_path module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_print">utool.util_print module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_profile">utool.util_profile module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_progress">utool.util_progress module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_project">utool.util_project module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_regex">utool.util_regex module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_resources">utool.util_resources module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_set">utool.util_set module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_setup">utool.util_setup module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_six">utool.util_six module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_sqlite">utool.util_sqlite module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_str">utool.util_str module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_sysreq">utool.util_sysreq module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_tags">utool.util_tags module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_tests">utool.util_tests module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_time">utool.util_time module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_type">utool.util_type module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_ubuntu">utool.util_ubuntu module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_web">utool.util_web module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_win32">utool.util_win32 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="utool.html">utool package</a><ul>
+      <li>Previous: <a href="utool.html" title="previous chapter">utool package</a></li>
+      <li>Next: <a href="utool.experimental.html" title="next chapter">utool.experimental package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wild Me.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/utool._internal.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

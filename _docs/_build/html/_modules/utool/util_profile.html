@@ -1,0 +1,352 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>utool.util_profile &#8212; wbia-vtool 3.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for utool.util_profile</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Cleaning script for the output of utool profiling</span>
+
+<span class="sd">Removes profiled output of code that never ran</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="nb">range</span><span class="p">,</span> <span class="n">cStringIO</span>
+<span class="kn">import</span> <span class="nn">six</span>
+<span class="kn">import</span> <span class="nn">operator</span>
+<span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">input_fname = &#39;raw_profile.dev.py.2014-09-23_18-28-57.raw.prof&#39;</span>
+<span class="sd">input_fname = &#39;raw_profile.qt_inc_automatch.py.2014-12-23_11-31-53.raw.prof&#39;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="Profiler"><a class="viewcode-back" href="../../utool.html#utool.util_profile.Profiler">[docs]</a><span class="k">class</span> <span class="nc">Profiler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">line_profiler</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lineprof</span> <span class="o">=</span> <span class="n">line_profiler</span><span class="o">.</span><span class="n">LineProfiler</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="n">wrapper</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineprof</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="c1"># wrapper = ut.preserve_sig(wrapper, func)</span>
+        <span class="k">return</span> <span class="n">wrapper</span>
+
+<div class="viewcode-block" id="Profiler.get_output"><a class="viewcode-back" href="../../utool.html#utool.util_profile.Profiler.get_output">[docs]</a>    <span class="k">def</span> <span class="nf">get_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">file_</span> <span class="o">=</span> <span class="n">cStringIO</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lineprof</span><span class="o">.</span><span class="n">print_stats</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="n">file_</span><span class="p">,</span> <span class="n">stripzeros</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">file_</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">output_text</span><span class="p">,</span> <span class="n">summary_text</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">clean_line_profile_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">output_text</span></div></div>
+
+
+<div class="viewcode-block" id="make_profiler"><a class="viewcode-back" href="../../utool.html#utool.util_profile.make_profiler">[docs]</a><span class="k">def</span> <span class="nf">make_profiler</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">line_profiler</span>
+
+    <span class="n">profile</span> <span class="o">=</span> <span class="n">line_profiler</span><span class="o">.</span><span class="n">LineProfiler</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">profile</span></div>
+
+
+<div class="viewcode-block" id="get_profile_text"><a class="viewcode-back" href="../../utool.html#utool.util_profile.get_profile_text">[docs]</a><span class="k">def</span> <span class="nf">get_profile_text</span><span class="p">(</span><span class="n">profile</span><span class="p">):</span>
+    <span class="n">file_</span> <span class="o">=</span> <span class="n">cStringIO</span><span class="p">()</span>
+    <span class="n">profile</span><span class="o">.</span><span class="n">print_stats</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="n">file_</span><span class="p">,</span> <span class="n">stripzeros</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">file_</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">output_text</span><span class="p">,</span> <span class="n">summary_text</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">clean_line_profile_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output_text</span><span class="p">,</span> <span class="n">summary_text</span></div>
+
+
+<div class="viewcode-block" id="dump_profile_text"><a class="viewcode-back" href="../../utool.html#utool.util_profile.dump_profile_text">[docs]</a><span class="k">def</span> <span class="nf">dump_profile_text</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Dumping Profile Information&#39;</span><span class="p">)</span>
+    <span class="n">profile</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">PROFILE_FUNC</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">output_text</span><span class="p">,</span> <span class="n">summary_text</span> <span class="o">=</span> <span class="n">get_profile_text</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;profile is not on&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># profile.dump_stats(&#39;out.lprof&#39;)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">summary_text</span><span class="p">)</span>
+        <span class="n">ut</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="s1">&#39;profile_output.txt&#39;</span><span class="p">,</span> <span class="n">output_text</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">summary_text</span><span class="p">)</span>
+        <span class="n">ut</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span>
+            <span class="s1">&#39;profile_output.</span><span class="si">%s</span><span class="s1">.txt&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">get_timestamp</span><span class="p">()),</span>
+            <span class="n">output_text</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">summary_text</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">__dbg_list</span><span class="p">(</span><span class="n">profile_block_list</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">profile_block_list</span><span class="p">:</span>
+        <span class="n">newline</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">twoline</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="n">newline</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">head</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="p">(</span><span class="n">newline</span> <span class="o">+</span> <span class="n">twoline</span><span class="p">)]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">head</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="parse_rawprofile_blocks"><a class="viewcode-back" href="../../utool.html#utool.util_profile.parse_rawprofile_blocks">[docs]</a><span class="k">def</span> <span class="nf">parse_rawprofile_blocks</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Split the file into blocks along delimters and and put delimeters back in</span>
+<span class="sd">    the list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># The total time reported in the raw output is from pystone not kernprof</span>
+    <span class="c1"># The pystone total time is actually the average time spent in the function</span>
+    <span class="n">delim</span> <span class="o">=</span> <span class="s1">&#39;Total time: &#39;</span>
+    <span class="n">delim2</span> <span class="o">=</span> <span class="s1">&#39;Pystone time: &#39;</span>
+    <span class="c1"># delim = &#39;File: &#39;</span>
+    <span class="n">profile_block_list</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">regex_split</span><span class="p">(</span><span class="s1">&#39;^&#39;</span> <span class="o">+</span> <span class="n">delim</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">ix</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">profile_block_list</span><span class="p">)):</span>
+        <span class="n">profile_block_list</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span> <span class="o">=</span> <span class="n">delim2</span> <span class="o">+</span> <span class="n">profile_block_list</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">profile_block_list</span></div>
+
+
+<div class="viewcode-block" id="get_block_totaltime"><a class="viewcode-back" href="../../utool.html#utool.util_profile.get_block_totaltime">[docs]</a><span class="k">def</span> <span class="nf">get_block_totaltime</span><span class="p">(</span><span class="n">block</span><span class="p">):</span>
+    <span class="n">time_line</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">regex_search</span><span class="p">(</span><span class="s1">&#39;Pystone time: [0-9.]* s&#39;</span><span class="p">,</span> <span class="n">block</span><span class="p">)</span>
+    <span class="n">time_str</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">regex_search</span><span class="p">(</span><span class="s1">&#39;[0-9.]+&#39;</span><span class="p">,</span> <span class="n">time_line</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">time_str</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">time_str</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="get_block_id"><a class="viewcode-back" href="../../utool.html#utool.util_profile.get_block_id">[docs]</a><span class="k">def</span> <span class="nf">get_block_id</span><span class="p">(</span><span class="n">block</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">re</span>
+
+    <span class="n">fpath_regex</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">named_field</span><span class="p">(</span><span class="s1">&#39;fpath&#39;</span><span class="p">,</span> <span class="s1">&#39;\S+&#39;</span><span class="p">)</span>
+    <span class="n">funcname_regex</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">named_field</span><span class="p">(</span><span class="s1">&#39;funcname&#39;</span><span class="p">,</span> <span class="s1">&#39;\S+&#39;</span><span class="p">)</span>
+    <span class="n">lineno_regex</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">named_field</span><span class="p">(</span><span class="s1">&#39;lineno&#39;</span><span class="p">,</span> <span class="s1">&#39;[0-9]+&#39;</span><span class="p">)</span>
+
+    <span class="n">fileline_regex</span> <span class="o">=</span> <span class="s1">&#39;File: &#39;</span> <span class="o">+</span> <span class="n">fpath_regex</span> <span class="o">+</span> <span class="s1">&#39;$&#39;</span>
+    <span class="n">funcline_regex</span> <span class="o">=</span> <span class="s1">&#39;Function: &#39;</span> <span class="o">+</span> <span class="n">funcname_regex</span> <span class="o">+</span> <span class="s1">&#39; at line &#39;</span> <span class="o">+</span> <span class="n">lineno_regex</span> <span class="o">+</span> <span class="s1">&#39;$&#39;</span>
+    <span class="n">fileline_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">fileline_regex</span><span class="p">,</span> <span class="n">block</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
+    <span class="n">funcline_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">funcline_regex</span><span class="p">,</span> <span class="n">block</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fileline_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">funcline_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fpath</span> <span class="o">=</span> <span class="n">fileline_match</span><span class="o">.</span><span class="n">groupdict</span><span class="p">()[</span><span class="s1">&#39;fpath&#39;</span><span class="p">]</span>
+        <span class="n">funcname</span> <span class="o">=</span> <span class="n">funcline_match</span><span class="o">.</span><span class="n">groupdict</span><span class="p">()[</span><span class="s1">&#39;funcname&#39;</span><span class="p">]</span>
+        <span class="n">lineno</span> <span class="o">=</span> <span class="n">funcline_match</span><span class="o">.</span><span class="n">groupdict</span><span class="p">()[</span><span class="s1">&#39;lineno&#39;</span><span class="p">]</span>
+        <span class="n">block_id</span> <span class="o">=</span> <span class="n">funcname</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">fpath</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">lineno</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">block_id</span> <span class="o">=</span> <span class="s1">&#39;None:None:None&#39;</span>
+    <span class="k">return</span> <span class="n">block_id</span></div>
+
+
+<div class="viewcode-block" id="parse_timemap_from_blocks"><a class="viewcode-back" href="../../utool.html#utool.util_profile.parse_timemap_from_blocks">[docs]</a><span class="k">def</span> <span class="nf">parse_timemap_from_blocks</span><span class="p">(</span><span class="n">profile_block_list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build a map from times to line_profile blocks</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">prefix_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">timemap</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">ddict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">ix</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">profile_block_list</span><span class="p">)):</span>
+        <span class="n">block</span> <span class="o">=</span> <span class="n">profile_block_list</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span>
+        <span class="n">total_time</span> <span class="o">=</span> <span class="n">get_block_totaltime</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+        <span class="c1"># Blocks without time go at the front of sorted output</span>
+        <span class="k">if</span> <span class="n">total_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">prefix_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+        <span class="c1"># Blocks that are not run are not appended to output</span>
+        <span class="k">elif</span> <span class="n">total_time</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">timemap</span><span class="p">[</span><span class="n">total_time</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">prefix_list</span><span class="p">,</span> <span class="n">timemap</span></div>
+
+
+<div class="viewcode-block" id="get_summary"><a class="viewcode-back" href="../../utool.html#utool.util_profile.get_summary">[docs]</a><span class="k">def</span> <span class="nf">get_summary</span><span class="p">(</span><span class="n">profile_block_list</span><span class="p">,</span> <span class="n">maxlines</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    References:</span>
+<span class="sd">        https://github.com/rkern/line_profiler</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">time_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_block_totaltime</span><span class="p">(</span><span class="n">block</span><span class="p">)</span> <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">profile_block_list</span><span class="p">]</span>
+    <span class="n">time_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">time</span> <span class="k">if</span> <span class="n">time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">time</span> <span class="ow">in</span> <span class="n">time_list</span><span class="p">]</span>
+    <span class="n">blockid_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_block_id</span><span class="p">(</span><span class="n">block</span><span class="p">)</span> <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">profile_block_list</span><span class="p">]</span>
+    <span class="n">sortx</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">list_argsort</span><span class="p">(</span><span class="n">time_list</span><span class="p">)</span>
+    <span class="n">sorted_time_list</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">time_list</span><span class="p">,</span> <span class="n">sortx</span><span class="p">)</span>
+    <span class="n">sorted_blockid_list</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">blockid_list</span><span class="p">,</span> <span class="n">sortx</span><span class="p">)</span>
+
+    <span class="n">aligned_blockid_list</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">util_str</span><span class="o">.</span><span class="n">align_lines</span><span class="p">(</span><span class="n">sorted_blockid_list</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">)</span>
+    <span class="n">summary_lines</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;</span><span class="si">%6.2f</span><span class="s1"> seconds - &#39;</span> <span class="o">%</span> <span class="n">time</span><span class="p">)</span> <span class="o">+</span> <span class="n">line</span>
+        <span class="k">for</span> <span class="n">time</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sorted_time_list</span><span class="p">,</span> <span class="n">aligned_blockid_list</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="c1"># summary_header = ut.codeblock(</span>
+    <span class="c1">#    &#39;&#39;&#39;</span>
+    <span class="c1">#    CLEANED PROFILE OUPUT</span>
+
+    <span class="c1">#    The Pystone timings are not from kernprof, so they may include kernprof</span>
+    <span class="c1">#    overhead, whereas kernprof timings do not (unless the line being</span>
+    <span class="c1">#    profiled is also decorated with kernrof)</span>
+
+    <span class="c1">#    The kernprof times are reported in Timer Units</span>
+
+    <span class="c1">#    &#39;&#39;&#39;)</span>
+    <span class="n">summary_lines_</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">listclip</span><span class="p">(</span><span class="n">summary_lines</span><span class="p">,</span> <span class="n">maxlines</span><span class="p">,</span> <span class="n">fromback</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">summary_text</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">summary_lines_</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">summary_text</span></div>
+
+
+<div class="viewcode-block" id="fix_rawprofile_blocks"><a class="viewcode-back" href="../../utool.html#utool.util_profile.fix_rawprofile_blocks">[docs]</a><span class="k">def</span> <span class="nf">fix_rawprofile_blocks</span><span class="p">(</span><span class="n">profile_block_list</span><span class="p">):</span>
+    <span class="c1"># TODO: finish function. should multiply times by</span>
+    <span class="c1"># Timer unit to get true second profiling</span>
+    <span class="c1"># profile_block_list_new = []</span>
+    <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">profile_block_list</span><span class="p">:</span>
+        <span class="n">block_lines</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">sep</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;=&#39;</span> <span class="o">*</span> <span class="mi">62</span><span class="p">]</span>
+
+        <span class="k">def</span> <span class="nf">split_block_at_sep</span><span class="p">(</span><span class="n">block_lines</span><span class="p">,</span> <span class="n">sep</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">pos</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">block_lines</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">sep</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">pos</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">header_lines</span> <span class="o">=</span> <span class="n">block_lines</span><span class="p">[:</span><span class="n">pos</span><span class="p">]</span>
+                    <span class="n">body_lines</span> <span class="o">=</span> <span class="n">block_lines</span><span class="p">[</span><span class="n">pos</span><span class="p">:]</span>
+                    <span class="k">return</span> <span class="n">header_lines</span><span class="p">,</span> <span class="n">body_lines</span>
+            <span class="k">return</span> <span class="n">block_lines</span><span class="p">,</span> <span class="kc">None</span>
+
+        <span class="n">header_lines</span><span class="p">,</span> <span class="n">body_lines</span> <span class="o">=</span> <span class="n">split_block_at_sep</span><span class="p">(</span><span class="n">block_lines</span><span class="p">,</span> <span class="n">sep</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="clean_line_profile_text"><a class="viewcode-back" href="../../utool.html#utool.util_profile.clean_line_profile_text">[docs]</a><span class="k">def</span> <span class="nf">clean_line_profile_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sorts the output from line profile by execution time</span>
+<span class="sd">    Removes entries which were not run</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#</span>
+    <span class="n">profile_block_list</span> <span class="o">=</span> <span class="n">parse_rawprofile_blocks</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="c1"># profile_block_list = fix_rawprofile_blocks(profile_block_list)</span>
+    <span class="c1"># ---</span>
+    <span class="c1"># FIXME can be written much nicer</span>
+    <span class="n">prefix_list</span><span class="p">,</span> <span class="n">timemap</span> <span class="o">=</span> <span class="n">parse_timemap_from_blocks</span><span class="p">(</span><span class="n">profile_block_list</span><span class="p">)</span>
+    <span class="c1"># Sort the blocks by time</span>
+    <span class="n">sorted_lists</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="n">timemap</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">newlist</span> <span class="o">=</span> <span class="n">prefix_list</span><span class="p">[:]</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">sorted_lists</span><span class="p">:</span>
+        <span class="n">newlist</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+    <span class="c1"># Rejoin output text</span>
+    <span class="n">output_text</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">newlist</span><span class="p">)</span>
+    <span class="c1"># ---</span>
+    <span class="c1"># Hack in a profile summary</span>
+    <span class="n">summary_text</span> <span class="o">=</span> <span class="n">get_summary</span><span class="p">(</span><span class="n">profile_block_list</span><span class="p">)</span>
+    <span class="n">output_text</span> <span class="o">=</span> <span class="n">output_text</span>
+    <span class="k">return</span> <span class="n">output_text</span><span class="p">,</span> <span class="n">summary_text</span></div>
+
+
+<div class="viewcode-block" id="clean_lprof_file"><a class="viewcode-back" href="../../utool.html#utool.util_profile.clean_lprof_file">[docs]</a><span class="k">def</span> <span class="nf">clean_lprof_file</span><span class="p">(</span><span class="n">input_fname</span><span class="p">,</span> <span class="n">output_fname</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Reads a .lprof file and cleans it &quot;&quot;&quot;</span>
+    <span class="c1"># Read the raw .lprof text dump</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">read_from</span><span class="p">(</span><span class="n">input_fname</span><span class="p">)</span>
+    <span class="c1"># Sort and clean the text</span>
+    <span class="n">output_text</span> <span class="o">=</span> <span class="n">clean_line_profile_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output_text</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_profile</span>
+<span class="sd">        python -m utool.util_profile --allexamples</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">multiprocessing</span>
+
+    <span class="n">multiprocessing</span><span class="o">.</span><span class="n">freeze_support</span><span class="p">()</span>  <span class="c1"># for win32</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>  <span class="c1"># NOQA</span>
+
+    <span class="n">ut</span><span class="o">.</span><span class="n">doctest_funcs</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">wbia-vtool</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  <li><a href="../utool.html">utool</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wild Me.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

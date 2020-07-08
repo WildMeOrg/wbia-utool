@@ -1,0 +1,385 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>utool.util_sysreq &#8212; wbia-vtool 3.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for utool.util_sysreq</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">split</span><span class="p">,</span> <span class="n">exists</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">dirname</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inject</span>
+<span class="kn">from</span> <span class="nn">utool._internal</span> <span class="k">import</span> <span class="n">meta_util_arg</span>
+
+<span class="nb">print</span><span class="p">,</span> <span class="n">rrr</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">util_inject</span><span class="o">.</span><span class="n">inject2</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="in_virtual_env"><a class="viewcode-back" href="../../utool.html#utool.util_sysreq.in_virtual_env">[docs]</a><span class="k">def</span> <span class="nf">in_virtual_env</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    returns True if you are running inside a python virtual environment.</span>
+<span class="sd">    (DOES NOT WORK IF IN IPYTHON AND USING A VIRTUALENV)</span>
+
+<span class="sd">    sys.prefix gives the location of the virtualenv</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">        It seems IPython does not respect virtual environments properly.</span>
+<span class="sd">        TODO: find a solution</span>
+<span class="sd">        http://stackoverflow.com/questions/7335992/ipython-and-virtualenv-ignoring-site-packages</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        http://stackoverflow.com/questions/1871549/python-determine-if-running-inside-virtualenv</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_sysreq in_virtual_env</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_sysreq import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; result = in_virtual_env()</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">sys</span>
+
+    <span class="n">has_venv</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s1">&#39;real_prefix&#39;</span><span class="p">):</span>
+        <span class="c1"># For virtualenv module</span>
+        <span class="n">has_venv</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s1">&#39;base_prefix&#39;</span><span class="p">):</span>
+        <span class="c1"># For venv module</span>
+        <span class="n">has_venv</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">base_prefix</span> <span class="o">!=</span> <span class="n">sys</span><span class="o">.</span><span class="n">prefix</span>
+    <span class="k">return</span> <span class="n">has_venv</span></div>
+
+
+<div class="viewcode-block" id="get_site_packages_dir"><a class="viewcode-back" href="../../utool.html#utool.util_sysreq.get_site_packages_dir">[docs]</a><span class="k">def</span> <span class="nf">get_site_packages_dir</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_sysreq get_site_packages_dir</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">        It seems IPython does not respect virtual environments properly.</span>
+<span class="sd">        TODO: find a solution</span>
+<span class="sd">        http://stackoverflow.com/questions/7335992/ipython-and-virtualenv-ignoring-site-packages</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">distutils.sysconfig</span>
+
+    <span class="k">return</span> <span class="n">distutils</span><span class="o">.</span><span class="n">sysconfig</span><span class="o">.</span><span class="n">get_python_lib</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="get_global_dist_packages_dir"><a class="viewcode-back" href="../../utool.html#utool.util_sysreq.get_global_dist_packages_dir">[docs]</a><span class="k">def</span> <span class="nf">get_global_dist_packages_dir</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Attempts to work around virtualenvs and find the system dist_pacakges.</span>
+<span class="sd">    Essentially this is implmenented as a lookuptable</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ut</span><span class="o">.</span><span class="n">in_virtual_env</span><span class="p">():</span>
+        <span class="c1"># Non venv case</span>
+        <span class="k">return</span> <span class="n">get_site_packages_dir</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">candidates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ut</span><span class="o">.</span><span class="n">LINUX</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">sys</span>
+
+            <span class="n">candidates</span> <span class="o">+=</span> <span class="p">[</span>
+                <span class="s1">&#39;/usr/lib/python</span><span class="si">%s</span><span class="s1">/dist-packages&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],),</span>
+                <span class="s1">&#39;/usr/lib/python</span><span class="si">%s</span><span class="s1">/dist-packages&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">],),</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ut</span><span class="o">.</span><span class="n">checkpath</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="get_local_dist_packages_dir"><a class="viewcode-back" href="../../utool.html#utool.util_sysreq.get_local_dist_packages_dir">[docs]</a><span class="k">def</span> <span class="nf">get_local_dist_packages_dir</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Attempts to work around virtualenvs and find the system dist_pacakges.</span>
+<span class="sd">    Essentially this is implmenented as a lookuptable</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ut</span><span class="o">.</span><span class="n">in_virtual_env</span><span class="p">():</span>
+        <span class="c1"># Non venv case</span>
+        <span class="k">return</span> <span class="n">get_site_packages_dir</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">candidates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ut</span><span class="o">.</span><span class="n">LINUX</span><span class="p">:</span>
+            <span class="n">candidates</span> <span class="o">+=</span> <span class="p">[</span>
+                <span class="s1">&#39;/usr/local/lib/python2.7/dist-packages&#39;</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ut</span><span class="o">.</span><span class="n">checkpath</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="is_running_as_root"><a class="viewcode-back" href="../../utool.html#utool.util_sysreq.is_running_as_root">[docs]</a><span class="k">def</span> <span class="nf">is_running_as_root</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    References:</span>
+<span class="sd">        http://stackoverflow.com/questions/5721529/running-python-script-as-root-with-sudo-what-is-the-username-of-the-effectiv</span>
+<span class="sd">        http://stackoverflow.com/questions/2806897/what-is-the-best-practices-for-checking-if-the-user-of-a-python-script-has-root</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;USER&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;root&#39;</span></div>
+
+
+<div class="viewcode-block" id="locate_path"><a class="viewcode-back" href="../../utool.html#utool.util_sysreq.locate_path">[docs]</a><span class="k">def</span> <span class="nf">locate_path</span><span class="p">(</span><span class="n">dname</span><span class="p">,</span> <span class="n">recurse_down</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Search for a path &quot;&quot;&quot;</span>
+    <span class="n">tried_fpaths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">root_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+    <span class="k">while</span> <span class="n">root_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dpath</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">dname</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">dpath</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">dpath</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tried_fpaths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dpath</span><span class="p">)</span>
+        <span class="n">_new_root</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="n">root_dir</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_new_root</span> <span class="o">==</span> <span class="n">root_dir</span><span class="p">:</span>
+            <span class="n">root_dir</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">root_dir</span> <span class="o">=</span> <span class="n">_new_root</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">recurse_down</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Cannot locate dname=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dname</span><span class="p">,)</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">[sysreq!] Checked: &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tried_fpaths</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ensure_in_pythonpath"><a class="viewcode-back" href="../../utool.html#utool.util_sysreq.ensure_in_pythonpath">[docs]</a><span class="k">def</span> <span class="nf">ensure_in_pythonpath</span><span class="p">(</span><span class="n">dname</span><span class="p">):</span>
+    <span class="n">dname_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">split</span><span class="p">(</span><span class="n">dpath</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">dpath</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">dname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dname_list</span><span class="p">:</span>
+        <span class="n">dpath</span> <span class="o">=</span> <span class="n">locate_path</span><span class="p">(</span><span class="n">dname</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">meta_util_arg</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[sysreq] appending </span><span class="si">%r</span><span class="s1"> to PYTHONPATH&#39;</span> <span class="o">%</span> <span class="n">dpath</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dpath</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">meta_util_arg</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[sysreq] PYTHONPATH has </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">dname</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="total_purge_developed_repo"><a class="viewcode-back" href="../../utool.html#utool.util_sysreq.total_purge_developed_repo">[docs]</a><span class="k">def</span> <span class="nf">total_purge_developed_repo</span><span class="p">(</span><span class="n">repodir</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Outputs commands to help purge a repo</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        repodir (str): path to developed repository</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_sysreq total_purge_installed_repo --show</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        repodir = ut.truepath(&#39;~/code/Lasagne&#39;)</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_sysreq import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; repodir = ut.get_argval(&#39;--repodir&#39;, default=None)</span>
+<span class="sd">        &gt;&gt;&gt; result = total_purge_installed_repo(repodir)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">repodir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+
+    <span class="n">repo</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">util_git</span><span class="o">.</span><span class="n">Repo</span><span class="p">(</span><span class="n">dpath</span><span class="o">=</span><span class="n">repodir</span><span class="p">)</span>
+
+    <span class="n">user</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;USER&#39;</span><span class="p">]</span>
+
+    <span class="n">fmtdict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span>
+        <span class="n">modname</span><span class="o">=</span><span class="n">repo</span><span class="o">.</span><span class="n">modname</span><span class="p">,</span>
+        <span class="n">reponame</span><span class="o">=</span><span class="n">repo</span><span class="o">.</span><span class="n">reponame</span><span class="p">,</span>
+        <span class="n">dpath</span><span class="o">=</span><span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">,</span>
+        <span class="n">global_site_pkgs</span><span class="o">=</span><span class="n">ut</span><span class="o">.</span><span class="n">get_global_dist_packages_dir</span><span class="p">(),</span>
+        <span class="n">local_site_pkgs</span><span class="o">=</span><span class="n">ut</span><span class="o">.</span><span class="n">get_local_dist_packages_dir</span><span class="p">(),</span>
+        <span class="n">venv_site_pkgs</span><span class="o">=</span><span class="n">ut</span><span class="o">.</span><span class="n">get_site_packages_dir</span><span class="p">(),</span>
+    <span class="p">)</span>
+
+    <span class="n">commands</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">_</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">fmtdict</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="s1">&#39;pip uninstall </span><span class="si">{modname}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;sudo -H pip uninstall </span><span class="si">{modname}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;sudo pip uninstall </span><span class="si">{modname}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;easy_install -m </span><span class="si">{modname}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cd </span><span class="si">{dpath}</span><span class="s1"> &amp;&amp; python setup.py develop --uninstall&#39;</span><span class="p">,</span>
+            <span class="c1"># If they still exist try chowning to current user</span>
+            <span class="s1">&#39;sudo chown -R </span><span class="si">{user}</span><span class="s1">:</span><span class="si">{user}</span><span class="s1"> </span><span class="si">{dpath}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Normal uninstall commands&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">commands</span><span class="p">))</span>
+
+    <span class="n">possible_link_paths</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">_</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">fmtdict</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="s1">&#39;</span><span class="si">{dpath}</span><span class="s1">/</span><span class="si">{modname}</span><span class="s1">.egg-info&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;</span><span class="si">{dpath}</span><span class="s1">/build&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;</span><span class="si">{venv_site_pkgs}</span><span class="s1">/</span><span class="si">{reponame}</span><span class="s1">.egg-info&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;</span><span class="si">{local_site_pkgs}</span><span class="s1">/</span><span class="si">{reponame}</span><span class="s1">.egg-info&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;</span><span class="si">{venv_site_pkgs}</span><span class="s1">/</span><span class="si">{reponame}</span><span class="s1">.egg-info&#39;</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">]</span>
+    <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">basename</span>
+
+    <span class="n">existing_link_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">possible_link_paths</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;# Delete paths and eggs&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">existing_link_paths</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">ut</span><span class="o">.</span><span class="n">get_file_info</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="s1">&#39;owner&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">user</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;sudo /bin/rm -rf </span><span class="si">{path}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;/bin/rm -rf </span><span class="si">{path}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">))</span>
+        <span class="c1"># ut.delete(path)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;# Make sure nothing is in the easy install paths&#39;</span><span class="p">)</span>
+    <span class="n">easyinstall_paths</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">_</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">fmtdict</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="s1">&#39;</span><span class="si">{venv_site_pkgs}</span><span class="s1">/easy-install.pth&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;</span><span class="si">{local_site_pkgs}</span><span class="s1">/easy-install.pth&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;</span><span class="si">{venv_site_pkgs}</span><span class="s1">/easy-install.pth&#39;</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">easyinstall_paths</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="n">easy_install_list</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">readfrom</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">easy_install_list_</span> <span class="o">=</span> <span class="p">[</span><span class="n">basename</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">easy_install_list</span><span class="p">]</span>
+            <span class="n">index1</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">listfind</span><span class="p">(</span><span class="n">easy_install_list_</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">reponame</span><span class="p">)</span>
+            <span class="n">index2</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">listfind</span><span class="p">(</span><span class="n">easy_install_list_</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">modname</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">index1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">index2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Found at index1=</span><span class="si">%r</span><span class="s1">, index=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">index1</span><span class="p">,</span> <span class="n">index2</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">ut</span><span class="o">.</span><span class="n">get_file_info</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="s1">&#39;owner&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">user</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;sudo gvim </span><span class="si">{path}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;gvim </span><span class="si">{path}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">))</span>
+
+    <span class="n">checkcmds</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">_</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">fmtdict</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;python -c &quot;import </span><span class="si">{modname}</span><span class="s1">; print(</span><span class="si">{modname}</span><span class="s1">.__file__)&quot;&#39;</span><span class="p">]</span>
+    <span class="p">]</span>
+    <span class="kn">import</span> <span class="nn">sys</span>
+
+    <span class="k">assert</span> <span class="n">repo</span><span class="o">.</span><span class="n">modname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;# CHECK STATUS&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="n">checkcmds</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span></div>
+        <span class="c1"># ut.cmd(cmd, verbose=False)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_sysreq</span>
+<span class="sd">        python -m utool.util_sysreq --allexamples</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">multiprocessing</span>
+
+    <span class="n">multiprocessing</span><span class="o">.</span><span class="n">freeze_support</span><span class="p">()</span>  <span class="c1"># for win32</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>  <span class="c1"># NOQA</span>
+
+    <span class="n">ut</span><span class="o">.</span><span class="n">doctest_funcs</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">wbia-vtool</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  <li><a href="../utool.html">utool</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wild Me.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

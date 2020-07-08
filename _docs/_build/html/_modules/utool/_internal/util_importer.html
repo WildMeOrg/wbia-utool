@@ -1,0 +1,631 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>utool._internal.util_importer &#8212; wbia-vtool 3.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for utool._internal.util_importer</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">NEEDS CLEANUP SO IT EITHER DOES THE IMPORTS OR GENERATES THE FILE</span>
+
+<span class="sd">python -c &quot;import utool&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">import</span> <span class="nn">textwrap</span>
+
+<span class="c1"># import types</span>
+
+<span class="c1"># DEBUG_IMPORTS = &#39;--debug-imports&#39; in sys.argv</span>
+<span class="c1"># ----------</span>
+<span class="c1"># EXECUTORS</span>
+<span class="c1"># ----------</span>
+
+
+<span class="k">def</span> <span class="nf">__excecute_imports</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">modname</span><span class="p">,</span> <span class="n">imports</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Module Imports &quot;&quot;&quot;</span>
+    <span class="c1"># level: -1 is a the Python2 import strategy</span>
+    <span class="c1"># level:  0 is a the Python3 absolute import</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[UTIL_IMPORT] EXECUTING </span><span class="si">%d</span><span class="s1"> IMPORT TUPLES&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">imports</span><span class="p">),))</span>
+    <span class="n">level</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">imports</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">level</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span> <span class="nb">locals</span><span class="p">(),</span> <span class="n">fromlist</span><span class="o">=</span><span class="p">[],</span> <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">level</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># FIXME: should support unicode. Maybe just a python2 thing</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span>
+                <span class="n">modname</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span> <span class="nb">locals</span><span class="p">(),</span> <span class="n">fromlist</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)],</span> <span class="n">level</span><span class="o">=</span><span class="n">level</span>
+            <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">__execute_fromimport</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">modname</span><span class="p">,</span> <span class="n">import_tuples</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Module From Imports &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[UTIL_IMPORT] EXECUTING </span><span class="si">%d</span><span class="s1"> FROM IMPORT TUPLES&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">import_tuples</span><span class="p">),))</span>
+    <span class="n">from_imports</span> <span class="o">=</span> <span class="n">__get_from_imports</span><span class="p">(</span><span class="n">import_tuples</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">fromlist</span> <span class="ow">in</span> <span class="n">from_imports</span><span class="p">:</span>
+        <span class="n">full_modname</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">modname</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">full_modname</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span> <span class="nb">locals</span><span class="p">(),</span> <span class="n">fromlist</span><span class="o">=</span><span class="n">fromlist</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">attrname</span> <span class="ow">in</span> <span class="n">fromlist</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">attrname</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">attrname</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">from_imports</span>
+
+
+<span class="k">def</span> <span class="nf">__execute_fromimport_star</span><span class="p">(</span>
+    <span class="n">module</span><span class="p">,</span>
+    <span class="n">modname</span><span class="p">,</span>
+    <span class="n">import_tuples</span><span class="p">,</span>
+    <span class="n">ignore_list</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">ignore_startswith</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">ignore_endswith</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">check_not_imported</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">veryverbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Effectively import * statements</span>
+
+<span class="sd">    The dynamic_import must happen before any * imports otherwise it wont catch</span>
+<span class="sd">    anything.</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        ignore_startswith = []</span>
+<span class="sd">        ignore_endswith = []</span>
+<span class="sd">        check_not_imported = False</span>
+<span class="sd">        verbose = True</span>
+<span class="sd">        veryverbose = True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[UTIL_IMPORT] EXECUTE </span><span class="si">%d</span><span class="s1"> FROMIMPORT STAR TUPLES.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">import_tuples</span><span class="p">),))</span>
+    <span class="n">from_imports</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Explicitly ignore these special functions (usually stdlib functions)</span>
+    <span class="n">ignoreset</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="s1">&#39;print&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;print_&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;printDBG&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;rrr&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;profile&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;print_function&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;absolute_import&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;division&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;zip&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;map&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;range&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;list&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;zip_longest&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;filter&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;filterfalse&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dirname&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;realpath&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;join&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;exists&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;normpath&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;splitext&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;expanduser&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;relpath&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;isabs&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;commonprefix&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;basename&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;input&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;reduce&#39;</span><span class="p">,</span>
+            <span class="c1">#&#39;OrderedDict&#39;,</span>
+            <span class="c1">#&#39;product&#39;,</span>
+        <span class="p">]</span>
+        <span class="o">+</span> <span class="n">ignore_list</span>
+    <span class="p">)</span>
+    <span class="c1">#&#39;isdir&#39;, &#39;isfile&#39;, &#39;</span>
+
+    <span class="c1"># def is_defined_by_module2(item, module):</span>
+    <span class="c1">#    belongs = False</span>
+    <span class="c1">#    if hasattr(item, &#39;__module__&#39;):</span>
+    <span class="c1">#        belongs = item.__module__ == module.__name__</span>
+    <span class="c1">#    elif hasattr(item, &#39;func_globals&#39;):</span>
+    <span class="c1">#        belongs = item.func_globals[&#39;__name__&#39;] == module.__name__</span>
+    <span class="c1">#    return belongs</span>
+
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">fromlist</span> <span class="ow">in</span> <span class="n">import_tuples</span><span class="p">:</span>
+        <span class="c1"># absname = modname + &#39;.&#39; + name</span>
+        <span class="n">child_module</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">modname</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">]</span>
+        <span class="c1"># Check if the variable already belongs to the module</span>
+        <span class="n">varset</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">vars</span><span class="p">(</span><span class="n">module</span><span class="p">))</span> <span class="k">if</span> <span class="n">check_not_imported</span> <span class="k">else</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">fromset</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">fromlist</span><span class="p">)</span> <span class="k">if</span> <span class="n">fromlist</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="k">def</span> <span class="nf">valid_attrname</span><span class="p">(</span><span class="n">attrname</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Guess if the attrname is valid based on its name</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">is_forced</span> <span class="o">=</span> <span class="n">attrname</span> <span class="ow">in</span> <span class="n">fromset</span>
+            <span class="n">is_private</span> <span class="o">=</span> <span class="n">attrname</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+            <span class="n">is_conflit</span> <span class="o">=</span> <span class="n">attrname</span> <span class="ow">in</span> <span class="n">varset</span>
+            <span class="n">is_module</span> <span class="o">=</span> <span class="n">attrname</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span>  <span class="c1"># Isn&#39;t fool proof (next step is)</span>
+            <span class="n">is_ignore1</span> <span class="o">=</span> <span class="n">attrname</span> <span class="ow">in</span> <span class="n">ignoreset</span>
+            <span class="n">is_ignore2</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">attrname</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span> <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="n">ignore_startswith</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">is_ignore3</span> <span class="o">=</span> <span class="nb">any</span><span class="p">([</span><span class="n">attrname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">suffix</span><span class="p">)</span> <span class="k">for</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="n">ignore_endswith</span><span class="p">])</span>
+            <span class="n">is_ignore</span> <span class="o">=</span> <span class="nb">any</span><span class="p">((</span><span class="n">is_ignore1</span><span class="p">,</span> <span class="n">is_ignore2</span><span class="p">,</span> <span class="n">is_ignore3</span><span class="p">))</span>
+            <span class="n">is_valid</span> <span class="o">=</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">((</span><span class="n">is_ignore</span><span class="p">,</span> <span class="n">is_private</span><span class="p">,</span> <span class="n">is_conflit</span><span class="p">,</span> <span class="n">is_module</span><span class="p">))</span>
+            <span class="c1"># is_valid = is_valid and is_defined_by_module2(getattr(child_module, attrname), child_module)</span>
+            <span class="k">return</span> <span class="n">is_forced</span> <span class="ow">or</span> <span class="n">is_valid</span>
+
+        <span class="n">allattrs</span> <span class="o">=</span> <span class="nb">dir</span><span class="p">(</span><span class="n">child_module</span><span class="p">)</span>
+        <span class="n">fromlist_</span> <span class="o">=</span> <span class="p">[</span><span class="n">attrname</span> <span class="k">for</span> <span class="n">attrname</span> <span class="ow">in</span> <span class="n">allattrs</span> <span class="k">if</span> <span class="n">valid_attrname</span><span class="p">(</span><span class="n">attrname</span><span class="p">)]</span>
+        <span class="c1"># if verbose:</span>
+        <span class="c1">#    print(&#39;[UTIL_IMPORT]     name=%r, len(allattrs)=%d&#39; % (name, len(allattrs)))</span>
+        <span class="c1"># if verbose:</span>
+        <span class="c1">#    print(&#39;[UTIL_IMPORT]     name=%r, len(fromlist_)=%d&#39; % (name, len(fromlist_)))</span>
+        <span class="n">valid_fromlist_</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">attrname</span> <span class="ow">in</span> <span class="n">fromlist_</span><span class="p">:</span>
+            <span class="n">attrval</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">child_module</span><span class="p">,</span> <span class="n">attrname</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Disallow fromimport modules</span>
+                <span class="n">forced</span> <span class="o">=</span> <span class="n">attrname</span> <span class="ow">in</span> <span class="n">fromset</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">forced</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">attrval</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">veryverbose</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[UTIL_IMPORT] not importing: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">attrname</span><span class="p">)</span>
+                    <span class="k">continue</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">if</span> <span class="n">veryverbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[UTIL_IMPORT] </span><span class="si">%s</span><span class="s1"> is importing: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">attrname</span><span class="p">))</span>
+            <span class="n">valid_fromlist_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attrname</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">attrname</span><span class="p">,</span> <span class="n">attrval</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s1">&#39;[UTIL_IMPORT]     name=</span><span class="si">%r</span><span class="s1">, len(valid_fromlist_)=</span><span class="si">%d</span><span class="s1">&#39;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_fromlist_</span><span class="p">))</span>
+            <span class="p">)</span>
+        <span class="n">from_imports</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">valid_fromlist_</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">from_imports</span>
+
+
+<span class="c1"># ----------</span>
+<span class="c1"># PARSERS</span>
+<span class="c1"># ----------</span>
+
+
+<span class="k">def</span> <span class="nf">__get_from_imports</span><span class="p">(</span><span class="n">import_tuples</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns import names and fromlist</span>
+<span class="sd">    import_tuples are specified as</span>
+<span class="sd">    (name, fromlist, ispackage)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">from_imports</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">tup</span> <span class="ow">in</span> <span class="n">import_tuples</span>
+        <span class="k">if</span> <span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">from_imports</span>
+
+
+<span class="c1"># ----------</span>
+<span class="c1"># STRING MAKERS</span>
+<span class="c1"># ----------</span>
+
+
+<span class="k">def</span> <span class="nf">_initstr</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">imports</span><span class="p">,</span> <span class="n">from_imports</span><span class="p">,</span> <span class="n">inject_execstr</span><span class="p">,</span> <span class="n">withheader</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Calls the other string makers &quot;&quot;&quot;</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="n">_make_module_header</span><span class="p">()</span> <span class="k">if</span> <span class="n">withheader</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">import_str</span> <span class="o">=</span> <span class="n">_make_imports_str</span><span class="p">(</span><span class="n">imports</span><span class="p">,</span> <span class="n">modname</span><span class="p">)</span>
+    <span class="n">fromimport_str</span> <span class="o">=</span> <span class="n">_make_fromimport_str</span><span class="p">(</span><span class="n">from_imports</span><span class="p">,</span> <span class="n">modname</span><span class="p">)</span>
+    <span class="n">initstr</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">str_</span>
+            <span class="k">for</span> <span class="n">str_</span> <span class="ow">in</span> <span class="p">[</span><span class="n">header</span><span class="p">,</span> <span class="n">import_str</span><span class="p">,</span> <span class="n">fromimport_str</span><span class="p">,</span> <span class="n">inject_execstr</span><span class="p">,]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">str_</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">initstr</span>
+
+
+<span class="k">def</span> <span class="nf">_make_module_header</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="s1">&#39;# flake8: noqa&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;from __future__ import absolute_import, division, print_function, unicode_literals&#39;</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_make_imports_str</span><span class="p">(</span><span class="n">imports</span><span class="p">,</span> <span class="n">rootmodname</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
+    <span class="n">imports_fmtstr</span> <span class="o">=</span> <span class="s1">&#39;from </span><span class="si">{rootmodname}</span><span class="s1"> import </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rootmodname</span><span class="o">=</span><span class="n">rootmodname</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">imports_fmtstr</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">imports</span><span class="p">])</span>
+
+
+<span class="k">def</span> <span class="nf">_make_fromimport_str</span><span class="p">(</span><span class="n">from_imports</span><span class="p">,</span> <span class="n">rootmodname</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>
+
+    <span class="k">if</span> <span class="n">rootmodname</span> <span class="o">==</span> <span class="s1">&#39;.&#39;</span><span class="p">:</span>
+        <span class="c1"># dot is already taken care of in fmtstr</span>
+        <span class="n">rootmodname</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">_pack_fromimport</span><span class="p">(</span><span class="n">tup</span><span class="p">):</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">fromlist</span> <span class="o">=</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">from_module_str</span> <span class="o">=</span> <span class="s1">&#39;from </span><span class="si">{rootmodname}</span><span class="s1">.</span><span class="si">{name}</span><span class="s1"> import (&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">rootmodname</span><span class="o">=</span><span class="n">rootmodname</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+        <span class="p">)</span>
+        <span class="n">newline_prefix</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">from_module_str</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fromlist</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">rawstr</span> <span class="o">=</span> <span class="n">from_module_str</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fromlist</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;,)&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rawstr</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="c1"># not sure why this isn&#39;t 76? &gt;= maybe?</span>
+        <span class="n">packstr</span> <span class="o">=</span> <span class="n">util_str</span><span class="o">.</span><span class="n">pack_into</span><span class="p">(</span>
+            <span class="n">rawstr</span><span class="p">,</span> <span class="n">textwidth</span><span class="o">=</span><span class="mi">75</span><span class="p">,</span> <span class="n">newline_prefix</span><span class="o">=</span><span class="n">newline_prefix</span><span class="p">,</span> <span class="n">break_words</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">packstr</span>
+
+    <span class="n">from_str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">_pack_fromimport</span><span class="p">,</span> <span class="n">from_imports</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">from_str</span>
+
+
+<span class="k">def</span> <span class="nf">_inject_execstr</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">import_tuples</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Injection and Reload String Defs &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">modname</span> <span class="o">==</span> <span class="s1">&#39;utool&#39;</span><span class="p">:</span>
+        <span class="c1"># Special case import of the util_inject module</span>
+        <span class="n">injecter</span> <span class="o">=</span> <span class="s1">&#39;util_inject&#39;</span>
+        <span class="n">injecter_import</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Normal case implicit import of util_inject</span>
+        <span class="n">injecter_import</span> <span class="o">=</span> <span class="s1">&#39;import utool&#39;</span>
+        <span class="n">injecter</span> <span class="o">=</span> <span class="s1">&#39;utool&#39;</span>
+    <span class="n">injectstr_fmt</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        # STARTBLOCK</span>
+<span class="sd">        {injecter_import}</span>
+<span class="sd">        print, rrr, profile = {injecter}.inject2(__name__, &#39;[{modname}]&#39;)</span>
+
+
+<span class="sd">        def reassign_submodule_attributes(verbose=1):</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+<span class="sd">            Updates attributes in the __init__ modules with updated attributes</span>
+<span class="sd">            in the submodules.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+<span class="sd">            import sys</span>
+<span class="sd">            if verbose and &#39;--quiet&#39; not in sys.argv:</span>
+<span class="sd">                print(&#39;dev reimport&#39;)</span>
+<span class="sd">            # Self import</span>
+<span class="sd">            import {modname}</span>
+<span class="sd">            # Implicit reassignment.</span>
+<span class="sd">            seen_ = set([])</span>
+<span class="sd">            for tup in IMPORT_TUPLES:</span>
+<span class="sd">                if len(tup) &gt; 2 and tup[2]:</span>
+<span class="sd">                    continue  # dont import package names</span>
+<span class="sd">                submodname, fromimports = tup[0:2]</span>
+<span class="sd">                submod = getattr({modname}, submodname)</span>
+<span class="sd">                for attr in dir(submod):</span>
+<span class="sd">                    if attr.startswith(&#39;_&#39;):</span>
+<span class="sd">                        continue</span>
+<span class="sd">                    if attr in seen_:</span>
+<span class="sd">                        # This just holds off bad behavior</span>
+<span class="sd">                        # but it does mimic normal util_import behavior</span>
+<span class="sd">                        # which is good</span>
+<span class="sd">                        continue</span>
+<span class="sd">                    seen_.add(attr)</span>
+<span class="sd">                    setattr({modname}, attr, getattr(submod, attr))</span>
+
+
+<span class="sd">        def reload_subs(verbose=1):</span>
+<span class="sd">            &quot;&quot;&quot; Reloads {modname} and submodules &quot;&quot;&quot;</span>
+<span class="sd">            if verbose:</span>
+<span class="sd">                print(&#39;Reloading {modname} submodules&#39;)</span>
+<span class="sd">            rrr(verbose &gt; 1)</span>
+<span class="sd">            def wrap_fbrrr(mod):</span>
+<span class="sd">                def fbrrr(*args, **kwargs):</span>
+<span class="sd">                    &quot;&quot;&quot; fallback reload &quot;&quot;&quot;</span>
+<span class="sd">                    if verbose &gt; 0:</span>
+<span class="sd">                        print(&#39;Auto-reload (using rrr) not setup for mod=%r&#39; % (mod,))</span>
+<span class="sd">                return fbrrr</span>
+<span class="sd">            def get_rrr(mod):</span>
+<span class="sd">                if hasattr(mod, &#39;rrr&#39;):</span>
+<span class="sd">                    return mod.rrr</span>
+<span class="sd">                else:</span>
+<span class="sd">                    return wrap_fbrrr(mod)</span>
+<span class="sd">            def get_reload_subs(mod):</span>
+<span class="sd">                return getattr(mod, &#39;reload_subs&#39;, wrap_fbrrr(mod))</span>
+<span class="sd">            {reload_body}</span>
+<span class="sd">            rrr(verbose &gt; 1)</span>
+<span class="sd">            try:</span>
+<span class="sd">                # hackish way of propogating up the new reloaded submodule attributes</span>
+<span class="sd">                reassign_submodule_attributes(verbose=verbose)</span>
+<span class="sd">            except Exception as ex:</span>
+<span class="sd">                print(ex)</span>
+<span class="sd">        rrrr = reload_subs</span>
+<span class="sd">        # ENDBLOCK</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+    <span class="p">)</span>
+    <span class="n">injectstr_fmt</span> <span class="o">=</span> <span class="n">injectstr_fmt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;# STARTBLOCK&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">injectstr_fmt</span> <span class="o">=</span> <span class="n">injectstr_fmt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;# ENDBLOCK&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">rrrdir_fmt</span> <span class="o">=</span> <span class="s1">&#39;    get_reload_subs(</span><span class="si">{modname}</span><span class="s1">)(verbose=verbose)&#39;</span>
+    <span class="n">rrrfile_fmt</span> <span class="o">=</span> <span class="s1">&#39;    get_rrr(</span><span class="si">{modname}</span><span class="s1">)(verbose &gt; 1)&#39;</span>
+
+    <span class="k">def</span> <span class="nf">_reload_command</span><span class="p">(</span><span class="n">tup</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tup</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">tup</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">rrrdir_fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">modname</span><span class="o">=</span><span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">rrrfile_fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">modname</span><span class="o">=</span><span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">reload_body</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">_reload_command</span><span class="p">,</span> <span class="n">import_tuples</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">format_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;modname&#39;</span><span class="p">:</span> <span class="n">modname</span><span class="p">,</span>
+        <span class="s1">&#39;reload_body&#39;</span><span class="p">:</span> <span class="n">reload_body</span><span class="p">,</span>
+        <span class="s1">&#39;injecter&#39;</span><span class="p">:</span> <span class="n">injecter</span><span class="p">,</span>
+        <span class="s1">&#39;injecter_import&#39;</span><span class="p">:</span> <span class="n">injecter_import</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">inject_execstr</span> <span class="o">=</span> <span class="n">injectstr_fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">format_dict</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">inject_execstr</span>
+
+
+<span class="c1"># ----------</span>
+<span class="c1"># PUBLIC FUNCTIONS</span>
+<span class="c1"># ----------</span>
+
+
+<div class="viewcode-block" id="dynamic_import"><a class="viewcode-back" href="../../../utool._internal.html#utool._internal.util_importer.dynamic_import">[docs]</a><span class="k">def</span> <span class="nf">dynamic_import</span><span class="p">(</span>
+    <span class="n">modname</span><span class="p">,</span>
+    <span class="n">import_tuples</span><span class="p">,</span>
+    <span class="n">developing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">ignore_froms</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">dump</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">ignore_startswith</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">ignore_endswith</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">ignore_list</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">check_not_imported</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">return_initstr</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    MAIN ENTRY POINT</span>
+
+<span class="sd">    Dynamically import listed util libraries and their attributes.</span>
+<span class="sd">    Create reload_subs function.</span>
+
+<span class="sd">    Using __import__ like this is typically not considered good style However,</span>
+<span class="sd">    it is better than import * and this will generate the good file text that</span>
+<span class="sd">    can be used when the module is &#39;frozen&quot;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: init_inject_str - by default all imports are executed in this</span>
+<span class="sd">            function and only the remainig code needed to be executed is</span>
+<span class="sd">            returned to define the reload logic.</span>
+
+<span class="sd">        str, str: init_inject_str, init_str - if return_initstr is True then</span>
+<span class="sd">            also returns init_str defining the from imports.</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        ignore_startswith = []</span>
+<span class="sd">        ignore_endswith = []</span>
+<span class="sd">        check_not_imported = True</span>
+<span class="sd">        verbose = True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[UTIL_IMPORT] Running Dynamic Imports for modname=</span><span class="si">%r</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="n">modname</span><span class="p">)</span>
+    <span class="c1"># Get the module that will be imported into</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">modname</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">modname</span><span class="p">)</span>
+    <span class="c1"># List of modules to be imported</span>
+    <span class="n">imports</span> <span class="o">=</span> <span class="p">[</span><span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">tup</span> <span class="ow">in</span> <span class="n">import_tuples</span><span class="p">]</span>
+    <span class="c1"># Import the modules</span>
+    <span class="n">__excecute_imports</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">modname</span><span class="p">,</span> <span class="n">imports</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+    <span class="c1"># If developing do explicit import stars</span>
+    <span class="k">if</span> <span class="n">developing</span><span class="p">:</span>
+        <span class="n">from_imports</span> <span class="o">=</span> <span class="n">__execute_fromimport_star</span><span class="p">(</span>
+            <span class="n">module</span><span class="p">,</span>
+            <span class="n">modname</span><span class="p">,</span>
+            <span class="n">import_tuples</span><span class="p">,</span>
+            <span class="n">ignore_list</span><span class="o">=</span><span class="n">ignore_list</span><span class="p">,</span>
+            <span class="n">ignore_startswith</span><span class="o">=</span><span class="n">ignore_startswith</span><span class="p">,</span>
+            <span class="n">ignore_endswith</span><span class="o">=</span><span class="n">ignore_endswith</span><span class="p">,</span>
+            <span class="n">check_not_imported</span><span class="o">=</span><span class="n">check_not_imported</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">from_imports</span> <span class="o">=</span> <span class="n">__execute_fromimport</span><span class="p">(</span>
+            <span class="n">module</span><span class="p">,</span> <span class="n">modname</span><span class="p">,</span> <span class="n">import_tuples</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+        <span class="p">)</span>
+
+    <span class="n">inject_execstr</span> <span class="o">=</span> <span class="n">_inject_execstr</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">import_tuples</span><span class="p">)</span>
+
+    <span class="c1"># If requested: print what the __init__ module should look like</span>
+    <span class="n">dump_requested</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s1">&#39;--dump-</span><span class="si">%s</span><span class="s1">-init&#39;</span> <span class="o">%</span> <span class="n">modname</span><span class="p">)</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+        <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;--print-</span><span class="si">%s</span><span class="s1">-init&#39;</span> <span class="o">%</span> <span class="n">modname</span><span class="p">)</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+    <span class="p">)</span> <span class="ow">or</span> <span class="n">dump</span>
+    <span class="n">overwrite_requested</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;--update-</span><span class="si">%s</span><span class="s1">-init&#39;</span> <span class="o">%</span> <span class="n">modname</span><span class="p">)</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[UTIL_IMPORT] Finished Dynamic Imports for modname=</span><span class="si">%r</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="n">modname</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">dump_requested</span><span class="p">:</span>
+        <span class="n">is_main_proc</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">current_process</span><span class="p">()</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;MainProcess&#39;</span>
+        <span class="k">if</span> <span class="n">is_main_proc</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>
+
+            <span class="n">initstr</span> <span class="o">=</span> <span class="n">_initstr</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">imports</span><span class="p">,</span> <span class="n">from_imports</span><span class="p">,</span> <span class="n">inject_execstr</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">util_str</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="n">initstr</span><span class="p">))</span>
+    <span class="c1"># Overwrite the __init__.py file with new explicit imports</span>
+    <span class="k">if</span> <span class="n">overwrite_requested</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        SeeAlso:</span>
+<span class="sd">            util_inject.inject_python_code</span>
+<span class="sd">            util_str.replace_between_tags</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">is_main_proc</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">current_process</span><span class="p">()</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;MainProcess&#39;</span>
+        <span class="k">if</span> <span class="n">is_main_proc</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>
+            <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">exists</span>
+
+            <span class="n">initstr</span> <span class="o">=</span> <span class="n">_initstr</span><span class="p">(</span>
+                <span class="n">modname</span><span class="p">,</span> <span class="n">imports</span><span class="p">,</span> <span class="n">from_imports</span><span class="p">,</span> <span class="n">inject_execstr</span><span class="p">,</span> <span class="n">withheader</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+            <span class="n">new_else</span> <span class="o">=</span> <span class="n">util_str</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="n">initstr</span><span class="p">)</span>
+            <span class="c1"># print(new_else)</span>
+            <span class="c1"># Get path to init file so we can overwrite it</span>
+            <span class="n">init_fpath</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;__init__.py&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;attempting to update: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">init_fpath</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">exists</span><span class="p">(</span><span class="n">init_fpath</span><span class="p">)</span>
+            <span class="n">new_lines</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">editing</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">updated</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="c1"># start_tag = &#39;# &lt;AUTOGEN_INIT&gt;&#39;</span>
+            <span class="c1"># end_tag = &#39;# &lt;/AUTOGEN_INIT&gt;&#39;</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">init_fpath</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_</span><span class="p">:</span>
+                <span class="c1"># text = file_.read()</span>
+                <span class="n">lines</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">editing</span><span class="p">:</span>
+                        <span class="n">new_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;# &lt;AUTOGEN_INIT&gt;&#39;</span><span class="p">):</span>
+                        <span class="n">new_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">new_else</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">    # &lt;/AUTOGEN_INIT&gt;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                        <span class="n">editing</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="n">updated</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;# &lt;/AUTOGEN_INIT&gt;&#39;</span><span class="p">):</span>
+                        <span class="n">editing</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="c1"># TODO:</span>
+            <span class="c1"># new_text = util_str.replace_between_tags(text, new_else, start_tag, end_tag)</span>
+            <span class="k">if</span> <span class="n">updated</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;writing updated file: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">init_fpath</span><span class="p">)</span>
+                <span class="n">new_text</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_lines</span><span class="p">)</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">init_fpath</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_</span><span class="p">:</span>
+                    <span class="n">file_</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">new_text</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;no write hook for file: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">init_fpath</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">return_initstr</span><span class="p">:</span>
+        <span class="n">initstr</span> <span class="o">=</span> <span class="n">_initstr</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">imports</span><span class="p">,</span> <span class="n">from_imports</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">withheader</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">inject_execstr</span><span class="p">,</span> <span class="n">initstr</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">inject_execstr</span></div>
+
+
+<div class="viewcode-block" id="make_initstr"><a class="viewcode-back" href="../../../utool._internal.html#utool._internal.util_importer.make_initstr">[docs]</a><span class="k">def</span> <span class="nf">make_initstr</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">import_tuples</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Just creates the string representation. Does no importing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">imports</span> <span class="o">=</span> <span class="p">[</span><span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">tup</span> <span class="ow">in</span> <span class="n">import_tuples</span><span class="p">]</span>
+    <span class="n">from_imports</span> <span class="o">=</span> <span class="n">__get_from_imports</span><span class="p">(</span><span class="n">import_tuples</span><span class="p">)</span>
+    <span class="n">inject_execstr</span> <span class="o">=</span> <span class="n">_inject_execstr</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">import_tuples</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_initstr</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">imports</span><span class="p">,</span> <span class="n">from_imports</span><span class="p">,</span> <span class="n">inject_execstr</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="make_import_tuples"><a class="viewcode-back" href="../../../utool._internal.html#utool._internal.util_importer.make_import_tuples">[docs]</a><span class="k">def</span> <span class="nf">make_import_tuples</span><span class="p">(</span><span class="n">module_path</span><span class="p">,</span> <span class="n">exclude_modnames</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="sd">&quot;&quot;&quot; Infer the import_tuples from a module_path &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_path</span>
+
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">private</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">module_list</span> <span class="o">=</span> <span class="n">util_path</span><span class="o">.</span><span class="n">ls_modulefiles</span><span class="p">(</span><span class="n">module_path</span><span class="p">,</span> <span class="n">noext</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">package_list</span> <span class="o">=</span> <span class="n">util_path</span><span class="o">.</span><span class="n">ls_moduledirs</span><span class="p">(</span><span class="n">module_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">exclude_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">exclude_modnames</span><span class="p">)</span>
+    <span class="n">module_import_tuples</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">modname</span> <span class="ow">in</span> <span class="n">module_list</span> <span class="k">if</span> <span class="n">modname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_set</span>
+    <span class="p">]</span>
+    <span class="n">package_import_tuples</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">modname</span> <span class="ow">in</span> <span class="n">package_list</span> <span class="k">if</span> <span class="n">modname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_set</span>
+    <span class="p">]</span>
+    <span class="n">import_tuples</span> <span class="o">=</span> <span class="n">module_import_tuples</span> <span class="o">+</span> <span class="n">package_import_tuples</span>
+    <span class="k">return</span> <span class="n">import_tuples</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">wbia-vtool</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../utool.html">utool package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../utool.html">utool</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wild Me.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

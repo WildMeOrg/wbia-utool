@@ -1,0 +1,1071 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>utool.experimental.dynamic_connectivity &#8212; wbia-vtool 3.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for utool.experimental.dynamic_connectivity</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># UNFINISHED - do not use</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">import</span> <span class="nn">collections</span>  <span class="c1"># NOQA</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+<span class="nb">print</span><span class="p">,</span> <span class="n">rrr</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">inject2</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="c1"># import bintrees</span>
+<span class="c1"># import rbtree</span>
+
+
+<div class="viewcode-block" id="euler_tour_dfs"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.euler_tour_dfs">[docs]</a><span class="k">def</span> <span class="nf">euler_tour_dfs</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; adaptation of networkx dfs &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># produce edges for all components</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">G</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># produce edges for components with source</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">source</span><span class="p">]</span>
+    <span class="n">yielder</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">start</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+        <span class="n">stack</span> <span class="o">=</span> <span class="p">[(</span><span class="n">start</span><span class="p">,</span> <span class="nb">iter</span><span class="p">(</span><span class="n">G</span><span class="p">[</span><span class="n">start</span><span class="p">]))]</span>
+        <span class="k">while</span> <span class="n">stack</span><span class="p">:</span>
+            <span class="n">parent</span><span class="p">,</span> <span class="n">children</span> <span class="o">=</span> <span class="n">stack</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">child</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">children</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">child</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+                    <span class="c1"># yielder += [[parent, child]]</span>
+                    <span class="n">yielder</span> <span class="o">+=</span> <span class="p">[</span><span class="n">parent</span><span class="p">]</span>
+                    <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+                    <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">child</span><span class="p">,</span> <span class="nb">iter</span><span class="p">(</span><span class="n">G</span><span class="p">[</span><span class="n">child</span><span class="p">])))</span>
+            <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">stack</span><span class="p">:</span>
+                    <span class="n">last</span> <span class="o">=</span> <span class="n">stack</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">yielder</span> <span class="o">+=</span> <span class="p">[</span><span class="n">last</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                <span class="n">stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">yielder</span></div>
+
+
+<div class="viewcode-block" id="comparison"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.comparison">[docs]</a><span class="nd">@profile</span>
+<span class="k">def</span> <span class="nf">comparison</span><span class="p">():</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.experimental.dynamic_connectivity comparison --profile</span>
+<span class="sd">        python -m utool.experimental.dynamic_connectivity comparison</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">12</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">20</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="mi">3</span>
+
+    <span class="kn">import</span> <span class="nn">utool</span>
+
+    <span class="k">for</span> <span class="n">timer</span> <span class="ow">in</span> <span class="n">utool</span><span class="o">.</span><span class="n">Timerit</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="s1">&#39;old bst version (PY)&#39;</span><span class="p">):</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">balanced_tree</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+        <span class="bp">self</span> <span class="o">=</span> <span class="n">TestETT</span><span class="o">.</span><span class="n">from_tree</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s1">&#39;bst&#39;</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">timer</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delete_edge_bst_version</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">bstjoin</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="kn">import</span> <span class="nn">utool</span>
+
+    <span class="k">for</span> <span class="n">timer</span> <span class="ow">in</span> <span class="n">utool</span><span class="o">.</span><span class="n">Timerit</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="s1">&#39;new bst version (PY) (with join)&#39;</span><span class="p">):</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">balanced_tree</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+        <span class="bp">self</span> <span class="o">=</span> <span class="n">TestETT</span><span class="o">.</span><span class="n">from_tree</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s1">&#39;bst&#39;</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">timer</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delete_edge_bst_version</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">bstjoin</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="kn">import</span> <span class="nn">utool</span>
+
+    <span class="k">for</span> <span class="n">timer</span> <span class="ow">in</span> <span class="n">utool</span><span class="o">.</span><span class="n">Timerit</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="s1">&#39;old bst version (C)&#39;</span><span class="p">):</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">balanced_tree</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+        <span class="bp">self</span> <span class="o">=</span> <span class="n">TestETT</span><span class="o">.</span><span class="n">from_tree</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s1">&#39;bst&#39;</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">timer</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delete_edge_bst_version</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">bstjoin</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="kn">import</span> <span class="nn">utool</span>
+
+    <span class="k">for</span> <span class="n">timer</span> <span class="ow">in</span> <span class="n">utool</span><span class="o">.</span><span class="n">Timerit</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="s1">&#39;new bst version (C) (with join)&#39;</span><span class="p">):</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">balanced_tree</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+        <span class="bp">self</span> <span class="o">=</span> <span class="n">TestETT</span><span class="o">.</span><span class="n">from_tree</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s1">&#39;bst&#39;</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">timer</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delete_edge_bst_version</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">bstjoin</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="kn">import</span> <span class="nn">utool</span>
+
+    <span class="k">for</span> <span class="n">timer</span> <span class="ow">in</span> <span class="n">utool</span><span class="o">.</span><span class="n">Timerit</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="s1">&#39;list version&#39;</span><span class="p">):</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">balanced_tree</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+        <span class="bp">self</span> <span class="o">=</span> <span class="n">TestETT</span><span class="o">.</span><span class="n">from_tree</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s1">&#39;list&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">timer</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delete_edge_list_version</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="TestETT"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.TestETT">[docs]</a><span class="k">class</span> <span class="nc">TestETT</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="sd">    raise NotImplementedError()</span>
+
+<span class="sd">    hg clone https://bitbucket.org/mozman/bintrees</span>
+
+<span class="sd">    git clone git@github.com:Erotemic/bintrees.git</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        https://courses.csail.mit.edu/6.851/spring07/scribe/lec05.pdf</span>
+<span class="sd">        http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.192.8615&amp;rep=rep1&amp;type=pdf</span>
+<span class="sd">        http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.208.2351&amp;rep=rep1&amp;type=pdf</span>
+<span class="sd">        https://en.wikipedia.org/wiki/Euler_tour_technique</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.experimental.dynamic_connectivity import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; edges = [(1, 2), (1, 6), (1, 5), (2, 3), (2, 4)]</span>
+<span class="sd">        &gt;&gt;&gt; edges = [</span>
+<span class="sd">        &gt;&gt;&gt;     (&#39;R&#39;, &#39;A&#39;), (&#39;R&#39;, &#39;B&#39;),</span>
+<span class="sd">        &gt;&gt;&gt;     (&#39;B&#39;, &#39;C&#39;), (&#39;C&#39;, &#39;D&#39;), (&#39;C&#39;, &#39;E&#39;),</span>
+<span class="sd">        &gt;&gt;&gt;     (&#39;B&#39;, &#39;F&#39;), (&#39;B&#39;, &#39;G&#39;),</span>
+<span class="sd">        &gt;&gt;&gt; ]</span>
+<span class="sd">        &gt;&gt;&gt; mst = nx.Graph(edges)</span>
+<span class="sd">        &gt;&gt;&gt; #mst = nx.balanced_tree(2, 11)</span>
+<span class="sd">        &gt;&gt;&gt; self = TestETT.from_tree(mst)</span>
+<span class="sd">        &gt;&gt;&gt; import wbia.plottool as pt</span>
+<span class="sd">        &gt;&gt;&gt; pt.qt4ensure()</span>
+<span class="sd">        &gt;&gt;&gt; pt.show_nx(mst)</span>
+
+<span class="sd">        &gt;&gt;&gt; mst = nx.balanced_tree(2, 4)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="TestETT.from_tree"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.TestETT.from_tree">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@profile</span>
+    <span class="k">def</span> <span class="nf">from_tree</span><span class="p">(</span><span class="n">TestETT</span><span class="p">,</span> <span class="n">mst</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s1">&#39;bst&#39;</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.experimental.dynamic_connectivity import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; mst = nx.balanced_tree(2, 4)</span>
+<span class="sd">        &gt;&gt;&gt; self = TestETT.from_tree(mst)</span>
+<span class="sd">        &gt;&gt;&gt; import wbia.plottool as pt</span>
+<span class="sd">        &gt;&gt;&gt; pt.qt4ensure()</span>
+<span class="sd">        &gt;&gt;&gt; pt.show_nx(self.to_networkx(), pnum=(2, 1, 1), fnum=1)</span>
+
+<span class="sd">        &gt;&gt;&gt; a, b = 2, 5</span>
+<span class="sd">        &gt;&gt;&gt; other = self.delete_edge_bst_version(a, b)</span>
+<span class="sd">        &gt;&gt;&gt; pt.show_nx(other.to_networkx(), pnum=(2, 1, 1), fnum=2)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tour</span> <span class="o">=</span> <span class="n">euler_tour_dfs</span><span class="p">(</span><span class="n">mst</span><span class="p">)</span>
+        <span class="bp">self</span> <span class="o">=</span> <span class="n">TestETT</span><span class="o">.</span><span class="n">from_tour</span><span class="p">(</span><span class="n">tour</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="TestETT.from_tour"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.TestETT.from_tour">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@profile</span>
+    <span class="k">def</span> <span class="nf">from_tour</span><span class="p">(</span><span class="n">TestETT</span><span class="p">,</span> <span class="n">tour</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s1">&#39;bst&#39;</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">bintrees</span>
+
+        <span class="bp">self</span> <span class="o">=</span> <span class="n">TestETT</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fast</span> <span class="o">=</span> <span class="n">fast</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">version</span>
+
+        <span class="k">if</span> <span class="n">version</span> <span class="o">==</span> <span class="s1">&#39;bst&#39;</span><span class="p">:</span>
+            <span class="c1"># self.tour = tour</span>
+            <span class="k">if</span> <span class="n">fast</span><span class="p">:</span>
+                <span class="n">tree</span> <span class="o">=</span> <span class="n">bintrees</span><span class="o">.</span><span class="n">FastAVLTree</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">tour</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tree</span> <span class="o">=</span> <span class="n">bintrees</span><span class="o">.</span><span class="n">AVLTree</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">tour</span><span class="p">))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span> <span class="o">=</span> <span class="n">first_lookup</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span> <span class="o">=</span> <span class="n">last_lookup</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">tree</span><span class="o">.</span><span class="n">iter_items</span><span class="p">():</span>
+                <span class="c1"># node = avl_node.value</span>
+                <span class="k">if</span> <span class="n">node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">first_lookup</span><span class="p">:</span>
+                    <span class="c1"># first_lookup[node] = avl_node.key</span>
+                    <span class="n">first_lookup</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
+                <span class="c1"># last_lookup[node] = avl_node.key</span>
+                <span class="n">last_lookup</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tour_tree</span> <span class="o">=</span> <span class="n">tree</span>
+        <span class="k">elif</span> <span class="n">version</span> <span class="o">==</span> <span class="s1">&#39;sortedcontainers&#39;</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; from utool.experimental.dynamic_connectivity import *  # NOQA</span>
+<span class="sd">            &gt;&gt;&gt; mst = nx.balanced_tree(2, 4)</span>
+<span class="sd">            &gt;&gt;&gt; tour = euler_tour_dfs(mst)</span>
+<span class="sd">            &gt;&gt;&gt; self = TestETT()</span>
+
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="kn">import</span> <span class="nn">sortedcontainers</span>
+
+            <span class="n">tour_order</span> <span class="o">=</span> <span class="n">sortedcontainers</span><span class="o">.</span><span class="n">SortedList</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">tour</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">i</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tour_order</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">i</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tour_order</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tour_order</span> <span class="o">=</span> <span class="n">tour_order</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tour</span> <span class="o">=</span> <span class="n">tour</span>
+            <span class="n">tour_order</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">tour</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">i</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tour_order</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">i</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tour_order</span><span class="p">)</span>
+            <span class="n">tour_order</span><span class="o">.</span><span class="n">bisect_left</span><span class="p">((</span><span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="TestETT.delete_edge_bst_version"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.TestETT.delete_edge_bst_version">[docs]</a>    <span class="nd">@profile</span>
+    <span class="k">def</span> <span class="nf">delete_edge_bst_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">bstjoin</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        a, b = (2, 5)</span>
+<span class="sd">        print(self.first_lookup[a] &gt; self.first_lookup[b])</span>
+<span class="sd">        tree = self.tour_tree</span>
+<span class="sd">        list(tree.item_slice(k1, k2))</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span><span class="p">[</span><span class="n">b</span><span class="p">]:</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span>
+
+        <span class="n">o_a1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+        <span class="n">o_a2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+        <span class="n">o_b1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+        <span class="n">o_b2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">o_a1</span> <span class="o">&lt;</span> <span class="n">o_b1</span>
+        <span class="c1"># assert o_b1 &lt; o_b2</span>
+        <span class="k">assert</span> <span class="n">o_b2</span> <span class="o">&lt;</span> <span class="n">o_a2</span>
+
+        <span class="k">if</span> <span class="n">bstjoin</span><span class="p">:</span>
+            <span class="c1"># splice out the inside contiguous range inplace</span>
+            <span class="n">inside</span><span class="p">,</span> <span class="n">outside</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tour_tree</span><span class="o">.</span><span class="n">splice_inplace</span><span class="p">(</span><span class="n">o_b1</span><span class="p">,</span> <span class="n">o_b2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># Remove unneeded values</span>
+            <span class="n">outside</span> <span class="o">=</span> <span class="n">outside</span><span class="o">.</span><span class="n">splice_inplace</span><span class="p">(</span><span class="n">o_b1</span><span class="p">,</span> <span class="n">o_a2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">other</span> <span class="o">=</span> <span class="n">TestETT</span><span class="p">()</span>
+            <span class="n">other</span><span class="o">.</span><span class="n">tour_tree</span> <span class="o">=</span> <span class="n">inside</span>
+            <span class="c1"># We can reuse these pointers without any modification</span>
+            <span class="n">other</span><span class="o">.</span><span class="n">first_lookup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span>
+            <span class="n">other</span><span class="o">.</span><span class="n">first_lookup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span>
+            <span class="c1"># Should make an O(n) cleanup step at some point</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># ET(T2) inner - is given by the interval of ET (o_b1, o_b2)</span>
+            <span class="c1"># Smaller compoment is reconstructed</span>
+            <span class="c1"># in amortized O(log(n)) time</span>
+            <span class="n">t2_slice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tour_tree</span><span class="p">[</span><span class="n">o_b1</span> <span class="p">:</span> <span class="n">o_b2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">t2_tour</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">t2_slice</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">TestETT</span><span class="o">.</span><span class="n">from_tour</span><span class="p">(</span><span class="n">t2_tour</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fast</span><span class="p">)</span>
+
+            <span class="c1"># ET(T1) outer - is given by splicing out of ET the sequence</span>
+            <span class="c1"># (o_b1, o_a2)</span>
+            <span class="n">t1_splice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tour_tree</span><span class="p">[</span><span class="n">o_b1</span> <span class="p">:</span> <span class="n">o_a2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tour_tree</span><span class="o">.</span><span class="n">remove_items</span><span class="p">(</span><span class="n">t1_splice</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">other</span></div>
+
+<div class="viewcode-block" id="TestETT.delete_edge_list_version"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.TestETT.delete_edge_list_version">[docs]</a>    <span class="nd">@profile</span>
+    <span class="k">def</span> <span class="nf">delete_edge_list_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span><span class="p">[</span><span class="n">b</span><span class="p">]:</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span>
+
+        <span class="n">o_a1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+        <span class="n">o_a2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+        <span class="n">o_b1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+        <span class="n">o_b2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">o_a1</span> <span class="o">&lt;</span> <span class="n">o_b1</span>
+        <span class="c1"># assert o_b1 &lt; o_b2</span>
+        <span class="k">assert</span> <span class="n">o_b2</span> <span class="o">&lt;</span> <span class="n">o_a2</span>
+
+        <span class="n">t2_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tour</span><span class="p">[</span><span class="n">o_b1</span> <span class="p">:</span> <span class="n">o_b2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">other</span> <span class="o">=</span> <span class="n">TestETT</span><span class="o">.</span><span class="n">from_tour</span><span class="p">(</span><span class="n">t2_list</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fast</span><span class="p">)</span>
+
+        <span class="c1"># ET(T1) outer - is given by splicing out of ET the sequence</span>
+        <span class="c1"># (o_b1, o_a2)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tour</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tour</span><span class="p">[:</span><span class="n">o_b1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tour</span><span class="p">[</span><span class="n">o_a2</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
+        <span class="c1"># need to recompute lookups O(n) style</span>
+        <span class="c1"># maybe we can do better?</span>
+        <span class="c1"># Keep old keys</span>
+        <span class="k">if</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">tour_order</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tour</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">i</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tour_order</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">i</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tour_order</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">other</span></div>
+
+<div class="viewcode-block" id="TestETT.reroot"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.TestETT.reroot">[docs]</a>    <span class="k">def</span> <span class="nf">reroot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        s = 3</span>
+<span class="sd">        s = &#39;B&#39;</span>
+
+<span class="sd">        Let os denote any occurrence of s.</span>
+<span class="sd">        Splice out the first part of the sequence ending with the occurrence before os,</span>
+<span class="sd">        remove its first occurrence (or),</span>
+<span class="sd">        and tack this on to the end of the sequence which now begins with os.</span>
+<span class="sd">        Add a new occurrence os to the end.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Splice out the first part of the sequence ending with the occurrence before os</span>
+        <span class="c1"># remove its first occurrence (or),</span>
+        <span class="n">o_s1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+        <span class="n">splice1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tour</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">o_s1</span><span class="p">]</span>
+        <span class="n">rest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tour</span><span class="p">[</span><span class="n">o_s1</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
+        <span class="n">new_tour</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">+</span> <span class="n">rest</span> <span class="o">+</span> <span class="n">splice1</span> <span class="o">+</span> <span class="p">[</span><span class="n">s</span><span class="p">]</span>
+        <span class="n">new_tree</span> <span class="o">=</span> <span class="n">TestETT</span><span class="o">.</span><span class="n">from_tour</span><span class="p">(</span><span class="n">new_tour</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fast</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_tree</span></div>
+
+<div class="viewcode-block" id="TestETT.to_networkx"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.TestETT.to_networkx">[docs]</a>    <span class="k">def</span> <span class="nf">to_networkx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+        <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">itertwo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tour</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="TestETT.join_trees"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.TestETT.join_trees">[docs]</a>    <span class="k">def</span> <span class="nf">join_trees</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">e</span><span class="p">):</span>
+        <span class="k">pass</span></div></div>
+
+
+<span class="c1"># class AVLMaster(object):</span>
+<span class="c1">#     def __init__(self, master=None):</span>
+<span class="c1">#         self.master = None</span>
+
+
+<span class="c1"># class AVLKey(object):</span>
+<span class="c1">#     def __init__(self, master=None):</span>
+<span class="c1">#         self.master = None</span>
+
+
+<div class="viewcode-block" id="EulerTourList"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.EulerTourList">[docs]</a><span class="k">class</span> <span class="nc">EulerTourList</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    load-list representation of an Euler tour inspired by sortedcontainers</span>
+
+<span class="sd">    this doesnt work for the same reason keyed bintrees dont work</span>
+
+<span class="sd">    the indexing needs to be implicit, but this has explicit indexes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="n">load</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">first</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_len</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cumlen</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lists</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_load</span> <span class="o">=</span> <span class="n">load</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_twice</span> <span class="o">=</span> <span class="n">load</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_half</span> <span class="o">=</span> <span class="n">load</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_offset</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">iterable</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">itertools</span> <span class="k">as</span> <span class="nn">it</span>
+
+        <span class="k">return</span> <span class="n">it</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lists</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;EulerTourList(&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+
+<div class="viewcode-block" id="EulerTourList.join"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.EulerTourList.join">[docs]</a>    <span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            other (?):</span>
+
+<span class="sd">        CommandLine:</span>
+<span class="sd">            python -m sortedcontainers.sortedlist join2</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; from utool.experimental.dynamic_connectivity import *  # NOQA</span>
+<span class="sd">            &gt;&gt;&gt; self = EulerTourList([1, 2, 3, 2, 4, 2, 1], load=3)</span>
+<span class="sd">            &gt;&gt;&gt; other = EulerTourList([0, 5, 9, 5, 0], load=3)</span>
+<span class="sd">            &gt;&gt;&gt; result = self.join(other)</span>
+<span class="sd">            &gt;&gt;&gt; print(result)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_load</span><span class="p">,</span> <span class="s1">&#39;loads must be the same&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lists</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">_lists</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cumlen</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">c</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_len</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">_cumlen</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_len</span> <span class="o">+=</span> <span class="n">other</span><span class="o">.</span><span class="n">_len</span></div>
+
+<div class="viewcode-block" id="EulerTourList.split"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.EulerTourList.split">[docs]</a>    <span class="k">def</span> <span class="nf">split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">left_part</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lists</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="n">pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">right_part</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lists</span><span class="p">[</span><span class="n">pos</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span> <span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">left_last</span> <span class="o">=</span> <span class="n">left_part</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">right_first</span> <span class="o">=</span> <span class="n">left_part</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">idx</span><span class="p">:]</span>
+
+        <span class="k">if</span> <span class="n">left_last</span><span class="p">:</span>
+            <span class="n">left_part</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">left_last</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">left_part</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">right_first</span><span class="p">:</span>
+            <span class="n">right_part</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">right_first</span><span class="p">)</span>
+
+        <span class="n">other</span> <span class="o">=</span> <span class="n">EulerTourList</span><span class="p">()</span>
+        <span class="n">other</span><span class="o">.</span><span class="n">_list</span> <span class="o">=</span> <span class="n">right_part</span></div>
+
+<div class="viewcode-block" id="EulerTourList.append"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.EulerTourList.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="EulerTourList.update"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.EulerTourList.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">):</span>
+        <span class="n">_lists</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lists</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+
+        <span class="n">_load</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load</span>
+        <span class="n">_lists</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">pos</span> <span class="p">:</span> <span class="p">(</span><span class="n">pos</span> <span class="o">+</span> <span class="n">_load</span><span class="p">)]</span> <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">),</span> <span class="n">_load</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cumlen</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">_lists</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="EulerTourTree"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.EulerTourTree">[docs]</a><span class="k">class</span> <span class="nc">EulerTourTree</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.experimental.dynamic_connectivity EulerTourTree --show</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.experimental.dynamic_connectivity import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; #mst = nx.balanced_tree(2, 2)</span>
+<span class="sd">        &gt;&gt;&gt; edges = [</span>
+<span class="sd">        &gt;&gt;&gt;     (&#39;R&#39;, &#39;A&#39;), (&#39;R&#39;, &#39;B&#39;),</span>
+<span class="sd">        &gt;&gt;&gt;     (&#39;B&#39;, &#39;C&#39;), (&#39;C&#39;, &#39;D&#39;), (&#39;C&#39;, &#39;E&#39;),</span>
+<span class="sd">        &gt;&gt;&gt;     (&#39;B&#39;, &#39;F&#39;), (&#39;B&#39;, &#39;G&#39;),</span>
+<span class="sd">        &gt;&gt;&gt; ]</span>
+<span class="sd">        &gt;&gt;&gt; mst = nx.Graph(edges)</span>
+<span class="sd">        &gt;&gt;&gt; self = EulerTourTree.from_tree(mst)</span>
+<span class="sd">        &gt;&gt;&gt; import wbia.plottool as pt</span>
+<span class="sd">        &gt;&gt;&gt; pt.qt4ensure()</span>
+<span class="sd">        &gt;&gt;&gt; fnum = 1</span>
+<span class="sd">        &gt;&gt;&gt; pnum_ = pt.make_pnum_nextgen(1, 3)</span>
+<span class="sd">        &gt;&gt;&gt; pt.show_nx(mst, pnum=pnum_(), fnum=fnum)</span>
+<span class="sd">        &gt;&gt;&gt; pt.show_nx(self.to_networkx(), pnum=pnum_(), fnum=fnum)</span>
+<span class="sd">        &gt;&gt;&gt; pt.show_nx(self.tour_tree.to_networkx(labels=[&#39;key&#39;, &#39;value&#39;]), pnum=pnum_(), fnum=fnum)</span>
+<span class="sd">        &gt;&gt;&gt; print(self.tour)</span>
+<span class="sd">        &gt;&gt;&gt; print(self.first_lookup)</span>
+<span class="sd">        &gt;&gt;&gt; print(self.last_lookup)</span>
+<span class="sd">        &gt;&gt;&gt; ut.show_if_requested()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># node attributes in reprsented graph</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># structure stored in auxillary graph</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tour_tree</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># self.tour = None</span>
+
+<div class="viewcode-block" id="EulerTourTree.to_networkx"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.EulerTourTree.to_networkx">[docs]</a>    <span class="k">def</span> <span class="nf">to_networkx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+        <span class="c1"># n = list(self.tour_tree._traverse_nodes())[0]</span>
+
+        <span class="c1"># return nx.Graph(ut.itertwo(self.tour))</span>
+        <span class="c1"># In order traversal of the tree is the tour order</span>
+        <span class="c1"># return nx.Graph(ut.itertwo(self.tour_tree.values()))</span>
+        <span class="n">tour</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tour_tree</span><span class="o">.</span><span class="n">_traverse_nodes</span><span class="p">())</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">itertwo</span><span class="p">(</span><span class="n">tour</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">graph</span></div>
+
+<div class="viewcode-block" id="EulerTourTree.find_root"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.EulerTourTree.find_root">[docs]</a>    <span class="k">def</span> <span class="nf">find_root</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="EulerTourTree.from_tree"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.EulerTourTree.from_tree">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@profile</span>
+    <span class="k">def</span> <span class="nf">from_tree</span><span class="p">(</span><span class="n">EulerTourTree</span><span class="p">,</span> <span class="n">mst</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">tour</span> <span class="o">=</span> <span class="n">euler_tour_dfs</span><span class="p">(</span><span class="n">mst</span><span class="p">)</span>
+        <span class="bp">self</span> <span class="o">=</span> <span class="n">EulerTourTree</span><span class="o">.</span><span class="n">from_tour</span><span class="p">(</span><span class="n">tour</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="EulerTourTree.from_tour"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.EulerTourTree.from_tour">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@profile</span>
+    <span class="k">def</span> <span class="nf">from_tour</span><span class="p">(</span><span class="n">EulerTourTree</span><span class="p">,</span> <span class="n">tour</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">bintrees</span>
+
+        <span class="bp">self</span> <span class="o">=</span> <span class="n">EulerTourTree</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fast</span> <span class="o">=</span> <span class="n">fast</span>
+
+        <span class="k">if</span> <span class="n">fast</span><span class="p">:</span>
+            <span class="n">tour_tree</span> <span class="o">=</span> <span class="n">bintrees</span><span class="o">.</span><span class="n">FastAVLTree</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">tour</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tour_tree</span> <span class="o">=</span> <span class="n">bintrees</span><span class="o">.</span><span class="n">AVLTree</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">tour</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span> <span class="o">=</span> <span class="n">first_lookup</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span> <span class="o">=</span> <span class="n">last_lookup</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">tour_tree</span><span class="o">.</span><span class="n">iter_items</span><span class="p">():</span>
+            <span class="c1"># node = avl_node.value</span>
+            <span class="k">if</span> <span class="n">node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">first_lookup</span><span class="p">:</span>
+                <span class="c1"># first_lookup[node] = avl_node.key</span>
+                <span class="n">first_lookup</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
+            <span class="c1"># last_lookup[node] = avl_node.key</span>
+            <span class="n">last_lookup</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">tour_tree</span> <span class="o">=</span> <span class="n">tour_tree</span>
+        <span class="c1"># self.tour = tour</span>
+        <span class="n">tour_order</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">tour</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">i</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tour_order</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">i</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tour_order</span><span class="p">)</span>
+        <span class="c1"># tour_order.bisect_left((7, 0))</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="EulerTourTree.join"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.EulerTourTree.join">[docs]</a>    <span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="EulerTourTree.cut"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.EulerTourTree.cut">[docs]</a>    <span class="nd">@profile</span>
+    <span class="k">def</span> <span class="nf">cut</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">bstjoin</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        cuts edge (a, b) into two parts because this is a tree</span>
+
+<span class="sd">        a, b = (2, 5)</span>
+<span class="sd">        print(self.first_lookup[a] &gt; self.first_lookup[b])</span>
+<span class="sd">        tree = self.tour_tree</span>
+<span class="sd">        list(tree.item_slice(k1, k2))</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span><span class="p">[</span><span class="n">b</span><span class="p">]:</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span>
+
+        <span class="n">o_a1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+        <span class="n">o_a2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+        <span class="n">o_b1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+        <span class="n">o_b2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">o_a1</span> <span class="o">&lt;</span> <span class="n">o_b1</span>
+        <span class="c1"># assert o_b1 &lt; o_b2</span>
+        <span class="k">assert</span> <span class="n">o_b2</span> <span class="o">&lt;</span> <span class="n">o_a2</span>
+
+        <span class="c1"># splice out the inside contiguous range inplace</span>
+        <span class="n">inside</span><span class="p">,</span> <span class="n">outside</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tour_tree</span><span class="o">.</span><span class="n">splice_inplace</span><span class="p">(</span><span class="n">o_b1</span><span class="p">,</span> <span class="n">o_b2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># Remove unneeded values</span>
+        <span class="n">outside</span> <span class="o">=</span> <span class="n">outside</span><span class="o">.</span><span class="n">splice_inplace</span><span class="p">(</span><span class="n">o_b1</span><span class="p">,</span> <span class="n">o_a2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">other</span> <span class="o">=</span> <span class="n">EulerTourTree</span><span class="p">()</span>
+        <span class="n">other</span><span class="o">.</span><span class="n">tour_tree</span> <span class="o">=</span> <span class="n">inside</span>
+        <span class="c1"># We can reuse these pointers without any modification</span>
+        <span class="n">other</span><span class="o">.</span><span class="n">first_lookup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span>
+        <span class="n">other</span><span class="o">.</span><span class="n">first_lookup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span>
+        <span class="c1"># Should make an O(n) cleanup step at some point</span>
+        <span class="k">return</span> <span class="n">other</span></div>
+
+<div class="viewcode-block" id="EulerTourTree.reroot"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.EulerTourTree.reroot">[docs]</a>    <span class="k">def</span> <span class="nf">reroot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        s = 3</span>
+<span class="sd">        s = &#39;B&#39;</span>
+
+<span class="sd">        Let os denote any occurrence of s.</span>
+<span class="sd">        Splice out the first part of the sequence ending with the occurrence before os,</span>
+<span class="sd">        remove its first occurrence (or),</span>
+<span class="sd">        and tack this on to the end of the sequence which now begins with os.</span>
+<span class="sd">        Add a new occurrence os to the end.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Splice out the first part of the sequence ending with the occurrence before os</span>
+        <span class="c1"># remove its first occurrence (or),</span>
+        <span class="n">o_s1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+        <span class="n">splice1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tour</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">o_s1</span><span class="p">]</span>
+        <span class="n">rest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tour</span><span class="p">[</span><span class="n">o_s1</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
+        <span class="n">new_tour</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">+</span> <span class="n">rest</span> <span class="o">+</span> <span class="n">splice1</span> <span class="o">+</span> <span class="p">[</span><span class="n">s</span><span class="p">]</span>
+        <span class="n">new_tree</span> <span class="o">=</span> <span class="n">TestETT</span><span class="o">.</span><span class="n">from_tour</span><span class="p">(</span><span class="n">new_tour</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fast</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_tree</span></div></div>
+
+
+<div class="viewcode-block" id="BinaryNode"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.BinaryNode">[docs]</a><span class="k">class</span> <span class="nc">BinaryNode</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span> <span class="o">=</span> <span class="p">[</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dir</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">left</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@left</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">left</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">other</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">right</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="nd">@right</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">right</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">other</span>
+
+<div class="viewcode-block" id="BinaryNode.set_child"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.BinaryNode.set_child">[docs]</a>    <span class="k">def</span> <span class="nf">set_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">dir_</span><span class="p">):</span>
+        <span class="n">other</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">dir_</span><span class="p">]</span> <span class="o">=</span> <span class="n">other</span></div></div>
+
+
+<div class="viewcode-block" id="EulerTourForest"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.EulerTourForest">[docs]</a><span class="k">class</span> <span class="nc">EulerTourForest</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aux_trees</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">first</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># import bintrees</span>
+        <span class="c1"># self._cls = bintrees.AVLTree</span>
+
+<div class="viewcode-block" id="EulerTourForest.has_node"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.EulerTourForest.has_node">[docs]</a>    <span class="k">def</span> <span class="nf">has_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">first</span></div>
+
+<div class="viewcode-block" id="EulerTourForest.add_node"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.EulerTourForest.add_node">[docs]</a>    <span class="k">def</span> <span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_node</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+            <span class="n">binnode</span> <span class="o">=</span> <span class="n">BinaryNode</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">aux_trees</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">binnode</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">first</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">binnode</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">binnode</span></div>
+
+<div class="viewcode-block" id="EulerTourForest.find_root"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.EulerTourForest.find_root">[docs]</a>    <span class="k">def</span> <span class="nf">find_root</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">first</span><span class="p">[</span><span class="n">node</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="EulerTourForest.reroot"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.EulerTourForest.reroot">[docs]</a>    <span class="k">def</span> <span class="nf">reroot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">old</span> <span class="o">==</span> <span class="n">new</span>
+        <span class="k">return</span> <span class="n">new</span></div>
+
+<div class="viewcode-block" id="EulerTourForest.add_edge"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.EulerTourForest.add_edge">[docs]</a>    <span class="k">def</span> <span class="nf">add_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        self = EulerTourForest()</span>
+<span class="sd">        self.add_node(1)</span>
+<span class="sd">        self.add_node(2)</span>
+<span class="sd">        u, v = 1, 2</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># ubin = self.find_root(u)</span>
+        <span class="n">ru</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_root</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">rv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_root</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="n">ru</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reroot</span><span class="p">(</span><span class="n">ru</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+        <span class="n">rv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reroot</span><span class="p">(</span><span class="n">rv</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+        <span class="n">ubin</span><span class="o">.</span><span class="n">set_child</span><span class="p">(</span><span class="n">vbin</span><span class="p">)</span>
+
+        <span class="k">pass</span></div></div>
+
+
+<div class="viewcode-block" id="DummyEulerTourForest"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.DummyEulerTourForest">[docs]</a><span class="k">class</span> <span class="nc">DummyEulerTourForest</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    maintain a forests of euler tour trees</span>
+
+<span class="sd">    This is a bad implementation, but will let us use the DynConnGraph api</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># mapping from root node to tree</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trees</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_check_node_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;only primative int/str objects can be nodes&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DummyEulerTourForest.add_node"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.DummyEulerTourForest.add_node">[docs]</a>    <span class="k">def</span> <span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_node_type</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_root</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">root</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># self.trees[node] = EulerTourTree(node)</span>
+            <span class="n">new_root</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+            <span class="n">new_root</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trees</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_root</span></div>
+
+<div class="viewcode-block" id="DummyEulerTourForest.has_edge"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.DummyEulerTourForest.has_edge">[docs]</a>    <span class="k">def</span> <span class="nf">has_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">tree</span><span class="o">.</span><span class="n">has_edge</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">tree</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="DummyEulerTourForest.find_root"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.DummyEulerTourForest.find_root">[docs]</a>    <span class="k">def</span> <span class="nf">find_root</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">subgraph</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trees</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">subgraph</span><span class="o">.</span><span class="n">has_node</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">root</span></div>
+
+<div class="viewcode-block" id="DummyEulerTourForest.subtree"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.DummyEulerTourForest.subtree">[docs]</a>    <span class="k">def</span> <span class="nf">subtree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_root</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="n">subtree</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trees</span><span class="p">[</span><span class="n">root</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">subtree</span></div>
+
+<div class="viewcode-block" id="DummyEulerTourForest.remove_edge"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.DummyEulerTourForest.remove_edge">[docs]</a>    <span class="k">def</span> <span class="nf">remove_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="n">ru</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_root</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">rv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_root</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">ru</span> <span class="o">==</span> <span class="n">rv</span>
+        <span class="n">subtree</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trees</span><span class="p">[</span><span class="n">ru</span><span class="p">]</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">trees</span><span class="p">[</span><span class="n">ru</span><span class="p">]</span>
+        <span class="n">subtree</span><span class="o">.</span><span class="n">remove_edge</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">new_tree</span> <span class="ow">in</span> <span class="n">nx</span><span class="o">.</span><span class="n">connected_component_subgraphs</span><span class="p">(</span><span class="n">subtree</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">new_tree</span><span class="o">.</span><span class="n">has_node</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">trees</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_tree</span>
+            <span class="k">elif</span> <span class="n">new_tree</span><span class="o">.</span><span class="n">has_node</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">trees</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_tree</span></div>
+        <span class="c1"># raise NotImplementedError(&#39;remove edge&#39;)</span>
+
+<div class="viewcode-block" id="DummyEulerTourForest.add_edge"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.DummyEulerTourForest.add_edge">[docs]</a>    <span class="k">def</span> <span class="nf">add_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[euler_tour_forest] add_edge(</span><span class="si">%r</span><span class="s1">, </span><span class="si">%r</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_edge</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+            <span class="k">return</span>
+        <span class="n">ru</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_root</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">rv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_root</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ru</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+            <span class="n">ru</span> <span class="o">=</span> <span class="n">u</span>
+        <span class="k">if</span> <span class="n">rv</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">rv</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">assert</span> <span class="n">ru</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">rv</span><span class="p">,</span> <span class="s1">&#39;u=</span><span class="si">%r</span><span class="s1">, v=</span><span class="si">%r</span><span class="s1"> not disjoint, can only join disjoint edges&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">u</span><span class="p">,</span>
+            <span class="n">v</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">ru</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trees</span><span class="p">,</span> <span class="s1">&#39;ru must be a root node&#39;</span>
+        <span class="k">assert</span> <span class="n">rv</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trees</span><span class="p">,</span> <span class="s1">&#39;rv must be a root node&#39;</span>
+        <span class="n">subtree1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trees</span><span class="p">[</span><span class="n">ru</span><span class="p">]</span>
+        <span class="n">subtree2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trees</span><span class="p">[</span><span class="n">rv</span><span class="p">]</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">trees</span><span class="p">[</span><span class="n">rv</span><span class="p">]</span>
+        <span class="n">new_tree</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">subtree1</span><span class="p">,</span> <span class="n">subtree2</span><span class="p">)</span>
+        <span class="n">new_tree</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trees</span><span class="p">[</span><span class="n">ru</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_tree</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">new_tree</span><span class="o">.</span><span class="n">nodes</span><span class="p">()))</span>
+        <span class="k">assert</span> <span class="n">nx</span><span class="o">.</span><span class="n">is_connected</span><span class="p">(</span><span class="n">new_tree</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">nx</span><span class="o">.</span><span class="n">is_tree</span><span class="p">(</span><span class="n">new_tree</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DummyEulerTourForest.components"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.DummyEulerTourForest.components">[docs]</a>    <span class="k">def</span> <span class="nf">components</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">trees</span><span class="o">.</span><span class="n">values</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DummyEulerTourForest.to_networkx"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.DummyEulerTourForest.to_networkx">[docs]</a>    <span class="k">def</span> <span class="nf">to_networkx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">compose_all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">graph</span></div></div>
+
+
+<div class="viewcode-block" id="DynConnGraph"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.DynConnGraph">[docs]</a><span class="k">class</span> <span class="nc">DynConnGraph</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stores a spanning forest with Euler Tour Trees</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        https://courses.csail.mit.edu/6.851/spring14/lectures/L20.pdf</span>
+<span class="sd">        https://courses.csail.mit.edu/6.851/spring14/lectures/L20.html</span>
+<span class="sd">        http://cs.stackexchange.com/questions/33595/what-is-the-most-efficient-algorithm-and-data-structure-for-maintaining-connecte</span>
+
+<span class="sd">        https://www.cs.princeton.edu/courses/archive/fall03/cs528/handouts/Poly%20logarithmic.pdf</span>
+
+<span class="sd">        DEFINES ET-Trees</span>
+<span class="sd">        http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.192.8615&amp;rep=rep1&amp;type=pdf</span>
+
+<span class="sd">        https://www.cs.princeton.edu/courses/archive/fall03/cs528/handouts/Poly%20logarithmic.pdf</span>
+<span class="sd">        http://courses.csail.mit.edu/6.851/spring12/scribe/L20.pdf</span>
+<span class="sd">        http://courses.csail.mit.edu/6.854/16/Projects/B/dynamic-graphs-survey.pdf</span>
+<span class="sd">        http://dl.acm.org/citation.cfm?id=502095</span>
+<span class="sd">        http://delivery.acm.org/10.1145/510000/502095/p723-holm.pdf?ip=128.213.17.14&amp;id=502095&amp;acc=ACTIVE%20SERVICE&amp;key=7777116298C9657D%2EAF047EA360787914%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35&amp;CFID=905563744&amp;CFTOKEN=37809688&amp;__acm__=1488222284_4ae91dd7a761430ee714f0c69c17b772</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">        Paper uses level 0 at top, but video lecture uses floor(log(n)) as top.</span>
+
+<span class="sd">        All edges start at level floor(log(n)).</span>
+<span class="sd">        The level of each edge will change over time, but cannot decrease below zero.</span>
+
+
+<span class="sd">    Notes:</span>
+<span class="sd">        Going to store</span>
+
+<span class="sd">        Let G[i] = subgraph graph at level i. (</span>
+<span class="sd">            contains only edges of level i or greater)</span>
+<span class="sd">        Let F[i] be Euler tour forest to correspond with G[i].</span>
+
+<span class="sd">        G[log(n)] = full graph</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">        Invariant 1 Every connected component of G_i has at most 2^i vertices.</span>
+<span class="sd">        Invariant 2 F[0] ⊆ F[1] ⊆ F[2] ⊆ ... ⊆ F[log(n)].</span>
+<span class="sd">            In other words:</span>
+<span class="sd">                F[i] = F[log(n)] ∩ G_i, and</span>
+<span class="sd">                F[log(n)] is the minimum spanning forest of G_{log(n)},</span>
+<span class="sd">                where the weight of an edge is its level.</span>
+
+<span class="sd">                F[0] is a maximum spanning forest if using 0 as top level</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.experimental.dynamic_connectivity DynConnGraph --show</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.experimental.dynamic_connectivity import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import networkx as nx</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; import wbia.plottool as pt</span>
+<span class="sd">        &gt;&gt;&gt; graph = nx.Graph([</span>
+<span class="sd">        &gt;&gt;&gt;    (0, 1), (0, 2), (0, 3), (1, 3), (2, 4), (3, 4), (2, 3),</span>
+<span class="sd">        &gt;&gt;&gt;    (5, 6), (5, 7), (5, 8), (6, 8), (7, 9), (8, 9), (7, 8),</span>
+<span class="sd">        &gt;&gt;&gt; ])</span>
+<span class="sd">        &gt;&gt;&gt; graph = nx.generators.cycle_graph(5)</span>
+<span class="sd">        &gt;&gt;&gt; self = DynConnGraph(graph)</span>
+<span class="sd">        &gt;&gt;&gt; pt.qtensure()</span>
+<span class="sd">        &gt;&gt;&gt; pt.show_nx(self.graph, fnum=1)</span>
+<span class="sd">        &gt;&gt;&gt; self.show_internals(fnum=2)</span>
+<span class="sd">        &gt;&gt;&gt; self.remove_edge(1, 2)</span>
+<span class="sd">        &gt;&gt;&gt; self.show_internals(fnum=3)</span>
+<span class="sd">        &gt;&gt;&gt; self.remove_edge(3, 4)</span>
+<span class="sd">        &gt;&gt;&gt; self.show_internals(fnum=4)</span>
+<span class="sd">        &gt;&gt;&gt; ut.show_if_requested()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DynConnGraph.show_internals"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.DynConnGraph.show_internals">[docs]</a>    <span class="k">def</span> <span class="nf">show_internals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fnum</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">wbia.plottool</span> <span class="k">as</span> <span class="nn">pt</span>
+
+        <span class="n">pt</span><span class="o">.</span><span class="n">qtensure</span><span class="p">()</span>
+
+        <span class="n">pnum_</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">make_pnum_nextgen</span><span class="p">(</span><span class="n">nRows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nCols</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forests</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">level</span><span class="p">,</span> <span class="n">forest</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forests</span><span class="p">):</span>
+            <span class="n">pt</span><span class="o">.</span><span class="n">show_nx</span><span class="p">(</span>
+                <span class="n">forest</span><span class="o">.</span><span class="n">to_networkx</span><span class="p">(),</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;level=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">level</span><span class="p">,),</span> <span class="n">fnum</span><span class="o">=</span><span class="n">fnum</span><span class="p">,</span> <span class="n">pnum</span><span class="o">=</span><span class="n">pnum_</span><span class="p">()</span>
+            <span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_init_forests</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        F[i] is a spanning forest of G[i].</span>
+<span class="sd">        F[i] is stored as an EulerTourTree</span>
+
+<span class="sd">        F[floor(log(n))] - used to support connectivity queries</span>
+
+<span class="sd">        F[0] has fewest edges</span>
+<span class="sd">        F[log(n)] has most edges</span>
+
+<span class="sd">        Invariant 2 F[0] ⊆ F[1] ⊆ F[2] ⊆ ... ⊆ F[log(n)].</span>
+<span class="sd">            In other words:</span>
+<span class="sd">                F[i] = F[log(n)] ∩ G_i, and</span>
+<span class="sd">                F[log(n)] is the minimum spanning forest of G_{log(n)},</span>
+<span class="sd">                where the weight of an edge is its level.</span>
+<span class="sd">            F[i] is a min. spanning forest w.r.t level, otherwise invariant 2 is not satisfied</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">):</span>
+        <span class="c1"># List of forests at each level</span>
+        <span class="c1"># self.graph = graph</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forests</span> <span class="o">=</span> <span class="p">[</span><span class="n">DummyEulerTourForest</span><span class="p">()]</span>
+
+        <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+        <span class="c1"># self.n = graph.number_of_nodes()</span>
+        <span class="c1"># stores the level of each edges</span>
+        <span class="c1"># First add all tree edges at level 0</span>
+        <span class="c1"># Then add non-tree edges at higher levels</span>
+        <span class="c1"># Store each forest as a nx.Graph?</span>
+
+        <span class="c1"># forests = []</span>
+        <span class="c1"># current_level = list(nx.connected_component_subgraphs(graph))</span>
+        <span class="c1"># while current_level:</span>
+        <span class="c1">#     next_level = []</span>
+        <span class="c1">#     for subgraph in current_level:</span>
+        <span class="c1">#         mst = nx.minimum_spanning_tree(subgraph)</span>
+        <span class="c1">#         # mst_tour = find_euler_tour(mst)</span>
+        <span class="c1">#         forests.append(mst)</span>
+        <span class="c1">#         residual = nx.difference(subgraph, mst)</span>
+        <span class="c1">#         if residual.number_of_edges():</span>
+        <span class="c1">#             next_level.append(residual)</span>
+        <span class="c1">#     current_level = next_level</span>
+        <span class="c1">#     print(&#39;current_level = %r&#39; % (current_level,))</span>
+
+<div class="viewcode-block" id="DynConnGraph.add_edge"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.DynConnGraph.add_edge">[docs]</a>    <span class="k">def</span> <span class="nf">add_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        O(log(n))</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># print(&#39;add_edge u, v = %r, %r&#39; % (u, v,))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">has_edge</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+            <span class="k">return</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">has_node</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">Fi</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forests</span><span class="p">:</span>
+                <span class="n">Fi</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="c1"># First set the level of (u, v) to 0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">level</span><span class="p">[(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># update the adjacency lists of u and v</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="c1"># If u and v are in separate trees in F_0, add e to F_0</span>
+        <span class="n">ru</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forests</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">find_root</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">rv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forests</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">find_root</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ru</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">rv</span><span class="p">:</span>
+            <span class="c1"># If they are in different connected compoments merge compoments</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">forests</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DynConnGraph.remove_edge"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.DynConnGraph.remove_edge">[docs]</a>    <span class="k">def</span> <span class="nf">remove_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Using notation where 0 is top level</span>
+
+<span class="sd">        Intuitively speaking, when the level of a nontree edge is increased, it</span>
+<span class="sd">        is because we have discovered that its end points are close enough in F</span>
+<span class="sd">        to fit in a smaller tree on a higher level.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Remove (u, v) from represented graph</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Dynamically removing uv=(</span><span class="si">%r</span><span class="s1">, </span><span class="si">%r</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">remove_edge</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="c1"># Remove edge e = (u, v) from all graphs.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">forests</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">has_edge</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+            <span class="c1"># If (u, v) is a non-tree edge, simply delete it.</span>
+            <span class="c1"># Nothing else to do.</span>
+            <span class="k">return</span>
+        <span class="c1"># If (u, v) is a tree edge we delete it and search for a replacement.</span>
+        <span class="c1"># Delete from all higher levels</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">forests</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">remove_edge</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+        <span class="c1"># Determine if another edge that connects u and v exists.</span>
+        <span class="c1"># (This must be an edge r, level[r] &lt;= level[e])</span>
+        <span class="c1"># (Find max possible level[r] &lt;= level[e])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span>
+            <span class="c1"># Tu != Tw b/c (u, v) was just deleted from all forests</span>
+            <span class="n">Tu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forests</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">subtree</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Tu = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">Tu</span><span class="o">.</span><span class="n">nodes</span><span class="p">()),))</span>
+            <span class="n">Tv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forests</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">subtree</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Tv = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">Tv</span><span class="o">.</span><span class="n">nodes</span><span class="p">()),))</span>
+            <span class="c1"># Relabel so len(Tu) &lt;= len(Tv)</span>
+            <span class="c1"># This ensures len(Tu) &lt; 2 ** (floor(log(n)) - i)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">Tu</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">Tv</span><span class="p">):</span>
+                <span class="n">Tu</span><span class="p">,</span> <span class="n">Tv</span> <span class="o">=</span> <span class="n">Tv</span><span class="p">,</span> <span class="n">Tu</span>
+                <span class="c1"># Note len(Tu) &lt;= 2 * (len(Tu) + len(Tv) + 1)</span>
+            <span class="c1"># We can afford to push all of Tu&#39;s edges to the next level and</span>
+            <span class="c1"># still preserve invariant 1.</span>
+            <span class="n">seen_</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">Tu</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+                <span class="c1"># Visit all edges INCIDENT (in real graph) to nodes in Tu.</span>
+                <span class="c1"># This lets us find non-tree edges to make a tree edge</span>
+                <span class="n">seen_</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">seen_</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="c1"># print(&#39;Check replacement edge xy=(%r, %r)&#39; % (x, y))</span>
+                    <span class="k">if</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">Tv</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;* Found replacement xy=(</span><span class="si">%r</span><span class="s1">, </span><span class="si">%r</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+                        <span class="c1"># edge (x, y) is a replacement edge.</span>
+                        <span class="c1"># add (x, y) to prev forests F[0:i+1]</span>
+                        <span class="c1"># This is the only place edges are added to forets of</span>
+                        <span class="c1"># higher levels.</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forests</span><span class="p">)</span> <span class="o">==</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">forests</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DummyEulerTourForest</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">()))</span>
+                        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">):</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;* Add replacment to F[j=</span><span class="si">%r</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="p">,))</span>
+                            <span class="c1"># Need euler tree augmentation for outgoing level edges</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">forests</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+                        <span class="k">return</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;* Charging xy=(</span><span class="si">%r</span><span class="s1">, </span><span class="si">%r</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+                        <span class="c1"># charge --- add (x, y) to next level</span>
+                        <span class="c1"># this pays for our search in an amortized sense</span>
+                        <span class="c1"># (ie, the next search at this level wont consider this)</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forests</span><span class="p">)</span> <span class="o">==</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">forests</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DummyEulerTourForest</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">()))</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">forests</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">has_edge</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">forests</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+                        <span class="c1">#     # assert False, &#39;we got it, should add it?&#39;</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">level</span><span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="DynConnGraph.is_connected"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.dynamic_connectivity.DynConnGraph.is_connected">[docs]</a>    <span class="k">def</span> <span class="nf">is_connected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if vertices u and v are connected.</span>
+<span class="sd">        Query top level forest F[0] to see if u and v are in the same tree.</span>
+<span class="sd">        This can be done by checking F_{log(n)} if Findroot(u) = Findroot(v).</span>
+<span class="sd">        This costs O(log(n) / log(log(n))) using B-tree based Euler-Tour trees.</span>
+<span class="sd">        but this trades off with a O(log^2(n)/log(log(n))) update</span>
+<span class="sd">        This is O(log(n)) otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ru</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forests</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">find_root</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">rv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forests</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">find_root</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ru</span> <span class="o">==</span> <span class="n">rv</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m wbia.algo.hots.dynamic_connectivity</span>
+<span class="sd">        python -m wbia.algo.hots.dynamic_connectivity --allexamples</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">multiprocessing</span>
+
+    <span class="n">multiprocessing</span><span class="o">.</span><span class="n">freeze_support</span><span class="p">()</span>  <span class="c1"># for win32</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>  <span class="c1"># NOQA</span>
+
+    <span class="n">ut</span><span class="o">.</span><span class="n">doctest_funcs</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">wbia-vtool</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../utool.html">utool package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../utool.html">utool</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wild Me.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

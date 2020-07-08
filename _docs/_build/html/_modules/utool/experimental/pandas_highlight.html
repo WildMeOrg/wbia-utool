@@ -1,0 +1,355 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>utool.experimental.pandas_highlight &#8212; wbia-vtool 3.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for utool.experimental.pandas_highlight</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>  <span class="c1"># NOQA</span>
+
+<span class="c1"># print, rrr, profile = ut.inject2(__name__)</span>
+
+
+<div class="viewcode-block" id="monkey_to_str_columns"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.pandas_highlight.monkey_to_str_columns">[docs]</a><span class="k">def</span> <span class="nf">monkey_to_str_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">latex</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+    <span class="n">frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_frame</span>
+    <span class="n">highlight_func</span> <span class="o">=</span> <span class="s1">&#39;max&#39;</span>
+    <span class="n">highlight_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">highlight_cols</span>
+
+    <span class="n">highlight_func</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span>
+    <span class="c1"># lets us highlight more than one</span>
+
+    <span class="n">highlight_func</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">argmax</span><span class="p">,</span> <span class="n">multi</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">colvalues</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="n">highlight_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">colvalues</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="n">highlight_cols</span><span class="p">]</span>
+
+    <span class="n">perrow_colxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">highlight_func</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">colvalues</span><span class="p">]</span>
+
+    <span class="n">n_rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">colvalues</span><span class="p">)</span>
+    <span class="n">n_cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">highlight_cols</span><span class="p">)</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">)</span>
+    <span class="n">multi_index</span> <span class="o">=</span> <span class="p">[(</span><span class="n">rx</span><span class="p">,</span> <span class="n">cx</span><span class="p">)</span> <span class="k">for</span> <span class="n">rx</span><span class="p">,</span> <span class="n">cxs</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">perrow_colxs</span><span class="p">)</span> <span class="k">for</span> <span class="n">cx</span> <span class="ow">in</span> <span class="n">cxs</span><span class="p">]</span>
+    <span class="n">flat_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel_multi_index</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">multi_index</span><span class="p">)),</span> <span class="n">shape</span><span class="p">)</span>
+    <span class="n">flags2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+    <span class="n">flags2d</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="n">flat_idxs</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="c1"># np.unravel_index(flat_idxs, shape)</span>
+
+    <span class="k">def</span> <span class="nf">color_func</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">level</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">latex</span><span class="p">:</span>
+                <span class="n">n_indent</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">get_indentation</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+                <span class="n">newval</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="n">n_indent</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">textbf{&#39;</span> <span class="o">+</span> <span class="n">val</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span>
+                <span class="k">return</span> <span class="n">newval</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">ut</span><span class="o">.</span><span class="n">color_text</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">val</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_make_fixed_width</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">formats</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">_make_fixed_width</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="n">_make_fixed_width</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">formats</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">_make_fixed_width</span>
+
+    <span class="n">frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_frame</span>
+    <span class="n">str_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_formatted_index</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+    <span class="n">str_columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_formatted_column_labels</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
+        <span class="n">stringified</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+            <span class="n">cheader</span> <span class="o">=</span> <span class="n">str_columns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">max_colwidth</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_space</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adj</span><span class="o">.</span><span class="n">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">cheader</span><span class="p">))</span>
+            <span class="n">fmt_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_col</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">fmt_values</span> <span class="o">=</span> <span class="n">_make_fixed_width</span><span class="p">(</span>
+                <span class="n">fmt_values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">justify</span><span class="p">,</span> <span class="n">minimum</span><span class="o">=</span><span class="n">max_colwidth</span><span class="p">,</span> <span class="n">adj</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">adj</span>
+            <span class="p">)</span>
+            <span class="n">max_len</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">adj</span><span class="o">.</span><span class="n">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fmt_values</span><span class="p">]),</span> <span class="n">max_colwidth</span><span class="p">)</span>
+            <span class="n">cheader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adj</span><span class="o">.</span><span class="n">justify</span><span class="p">(</span><span class="n">cheader</span><span class="p">,</span> <span class="n">max_len</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">justify</span><span class="p">)</span>
+
+            <span class="c1"># Apply custom coloring</span>
+            <span class="c1"># cflags = flags2d.T[i]</span>
+            <span class="c1"># fmt_values = [color_func(val, level) for val, level in zip(fmt_values, cflags)]</span>
+
+            <span class="n">stringified</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cheader</span> <span class="o">+</span> <span class="n">fmt_values</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">stringified</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+            <span class="n">fmt_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_col</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">fmt_values</span> <span class="o">=</span> <span class="n">_make_fixed_width</span><span class="p">(</span>
+                <span class="n">fmt_values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">justify</span><span class="p">,</span> <span class="n">minimum</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_space</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">),</span> <span class="n">adj</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">adj</span>
+            <span class="p">)</span>
+
+            <span class="n">stringified</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fmt_values</span><span class="p">)</span>
+
+    <span class="n">strcols</span> <span class="o">=</span> <span class="n">stringified</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+        <span class="n">strcols</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">str_index</span><span class="p">)</span>
+
+    <span class="c1"># Add ... to signal truncated</span>
+    <span class="n">truncate_h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">truncate_h</span>
+    <span class="n">truncate_v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">truncate_v</span>
+
+    <span class="k">if</span> <span class="n">truncate_h</span><span class="p">:</span>
+        <span class="n">col_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_col_num</span>
+        <span class="c1"># infer from column header</span>
+        <span class="n">col_width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adj</span><span class="o">.</span><span class="n">len</span><span class="p">(</span><span class="n">strcols</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">tr_size_col</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">strcols</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tr_col_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;...&#39;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="n">col_width</span><span class="p">)]</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">str_index</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="n">truncate_v</span><span class="p">:</span>
+        <span class="n">n_header_rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">str_index</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="n">row_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_row_num</span>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">strcols</span><span class="p">):</span>
+            <span class="c1"># infer from above row</span>
+            <span class="n">cwidth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adj</span><span class="o">.</span><span class="n">len</span><span class="p">(</span><span class="n">strcols</span><span class="p">[</span><span class="n">ix</span><span class="p">][</span><span class="n">row_num</span><span class="p">])</span>
+            <span class="n">is_dot_col</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">truncate_h</span><span class="p">:</span>
+                <span class="n">is_dot_col</span> <span class="o">=</span> <span class="n">ix</span> <span class="o">==</span> <span class="n">col_num</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">cwidth</span> <span class="o">&gt;</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">is_dot_col</span><span class="p">:</span>
+                <span class="n">my_str</span> <span class="o">=</span> <span class="s1">&#39;...&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">my_str</span> <span class="o">=</span> <span class="s1">&#39;..&#39;</span>
+
+            <span class="k">if</span> <span class="n">ix</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">dot_mode</span> <span class="o">=</span> <span class="s1">&#39;left&#39;</span>
+            <span class="k">elif</span> <span class="n">is_dot_col</span><span class="p">:</span>
+                <span class="n">cwidth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adj</span><span class="o">.</span><span class="n">len</span><span class="p">(</span><span class="n">strcols</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">tr_size_col</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">dot_mode</span> <span class="o">=</span> <span class="s1">&#39;center&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dot_mode</span> <span class="o">=</span> <span class="s1">&#39;right&#39;</span>
+            <span class="n">dot_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adj</span><span class="o">.</span><span class="n">justify</span><span class="p">([</span><span class="n">my_str</span><span class="p">],</span> <span class="n">cwidth</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">dot_mode</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">strcols</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">row_num</span> <span class="o">+</span> <span class="n">n_header_rows</span><span class="p">,</span> <span class="n">dot_str</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">cx_</span> <span class="ow">in</span> <span class="n">highlight_cols</span><span class="p">:</span>
+        <span class="n">cx</span> <span class="o">=</span> <span class="n">cx_</span> <span class="o">+</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">strcols</span><span class="p">[</span><span class="n">cx</span><span class="p">]</span>
+        <span class="c1"># Offset for the column header and possible index name</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">has_index_names</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">rx_</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">col</span><span class="p">[</span><span class="n">base</span><span class="p">:]):</span>
+            <span class="n">rx</span> <span class="o">=</span> <span class="n">rx_</span> <span class="o">+</span> <span class="n">base</span>
+            <span class="n">strcols</span><span class="p">[</span><span class="n">cx</span><span class="p">][</span><span class="n">rx</span><span class="p">]</span> <span class="o">=</span> <span class="n">color_func</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">flags2d</span><span class="p">[</span><span class="n">rx_</span><span class="p">,</span> <span class="n">cx_</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">strcols</span></div>
+
+
+<div class="viewcode-block" id="to_string_monkey"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.pandas_highlight.to_string_monkey">[docs]</a><span class="k">def</span> <span class="nf">to_string_monkey</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">highlight_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">latex</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;  monkey patch to pandas to highlight the maximum value in specified</span>
+<span class="sd">    cols of a row</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; from utool.experimental.pandas_highlight import *</span>
+<span class="sd">        &gt;&gt;&gt; import pandas as pd</span>
+<span class="sd">        &gt;&gt;&gt; df = pd.DataFrame(</span>
+<span class="sd">        &gt;&gt;&gt;     np.array([[ 0.9,         0.86886931,  0.86842073,  0.9       ],</span>
+<span class="sd">        &gt;&gt;&gt;               [ 0.34196218,  0.34289191,  0.34206377,  0.34252863],</span>
+<span class="sd">        &gt;&gt;&gt;               [ 0.34827074,  0.34827074,  0.34827074,  0.34827074],</span>
+<span class="sd">        &gt;&gt;&gt;               [ 0.76979453,  0.77214855,  0.77547518,  0.38850962]]),</span>
+<span class="sd">        &gt;&gt;&gt;     columns=[&#39;sum(fgweights)&#39;, &#39;sum(weighted_ratio)&#39;, &#39;len(matches)&#39;, &#39;score_lnbnn_1vM&#39;],</span>
+<span class="sd">        &gt;&gt;&gt;     index=[&#39;match_state(match-v-rest)&#39;, &#39;match_state(nomatch-v-rest)&#39;, &#39;match_state(notcomp-v-rest)&#39;, &#39;photobomb_state&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; )</span>
+<span class="sd">        &gt;&gt;&gt; highlight_cols = &#39;all&#39;</span>
+<span class="sd">        &gt;&gt;&gt; print(to_string_monkey(df, highlight_cols))</span>
+<span class="sd">        &gt;&gt;&gt; print(to_string_monkey(df, highlight_cols, latex=True))</span>
+
+<span class="sd">    ut.editfile(pd.io.formats.printing.adjoin)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+        <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+        <span class="kn">import</span> <span class="nn">six</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">highlight_cols</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="n">highlight_cols</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+            <span class="n">highlight_cols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+        <span class="c1"># kwds = dict(buf=None, columns=None, col_space=None, header=True,</span>
+        <span class="c1">#             index=True, na_rep=&#39;NaN&#39;, formatters=None,</span>
+        <span class="c1">#             float_format=None, sparsify=None, index_names=True,</span>
+        <span class="c1">#             justify=None, line_width=None, max_rows=None,</span>
+        <span class="c1">#             max_cols=None, show_dimensions=False)</span>
+        <span class="c1"># self = pd.formats.format.DataFrameFormatter(df, **kwds)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">formats</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">DataFrameFormatter</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="bp">self</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">formats</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">DataFrameFormatter</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">highlight_cols</span> <span class="o">=</span> <span class="n">highlight_cols</span>
+
+        <span class="k">def</span> <span class="nf">monkey</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">monkey_to_str_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">latex</span><span class="o">=</span><span class="n">latex</span><span class="p">)</span>
+
+        <span class="n">ut</span><span class="o">.</span><span class="n">inject_func_as_method</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">monkey</span><span class="p">,</span> <span class="s1">&#39;_to_str_columns&#39;</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">strip_ansi</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="kn">import</span> <span class="nn">re</span>
+
+            <span class="n">ansi_escape</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\x1b[^m]*m&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ansi_escape</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">justify_ansi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">,</span> <span class="n">max_len</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;left&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">max_len</span> <span class="o">+</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">strip_ansi</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;center&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="n">max_len</span> <span class="o">+</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">strip_ansi</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="n">max_len</span> <span class="o">+</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">strip_ansi</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">]</span>
+
+        <span class="n">ut</span><span class="o">.</span><span class="n">inject_func_as_method</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">adj</span><span class="p">,</span> <span class="n">justify_ansi</span><span class="p">,</span> <span class="s1">&#39;justify&#39;</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">strlen_ansii</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">strlen</span><span class="p">(</span><span class="n">strip_ansi</span><span class="p">(</span><span class="n">text</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span>
+
+        <span class="n">ut</span><span class="o">.</span><span class="n">inject_func_as_method</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adj</span><span class="p">,</span> <span class="n">strlen_ansii</span><span class="p">,</span> <span class="s1">&#39;len&#39;</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">strlen</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">strlen_ansii</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">adj</span><span class="p">)</span>  <span class="c1"># NOQA</span>
+            <span class="n">justfunc</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">justify_ansi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">adj</span><span class="p">)</span>  <span class="c1"># NOQA</span>
+            <span class="c1"># Essentially what to_string does</span>
+            <span class="n">strcols</span> <span class="o">=</span> <span class="n">monkey_to_str_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="c1"># texts = strcols[2]</span>
+            <span class="n">space</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">lists</span> <span class="o">=</span> <span class="n">strcols</span>
+            <span class="n">str_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adj</span><span class="o">.</span><span class="n">adjoin</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="o">*</span><span class="n">lists</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">str_</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">strip_ansi</span><span class="p">(</span><span class="n">str_</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">buf</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+        <span class="c1"># hack because adjoin is not working correctly with injected strlen</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)])</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+        <span class="n">ut</span><span class="o">.</span><span class="n">printex</span><span class="p">(</span>
+            <span class="s1">&#39;pandas monkey-patch is broken: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)),</span> <span class="n">tb</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">iswarning</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">df</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="pandas_repr"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.pandas_highlight.pandas_repr">[docs]</a><span class="k">def</span> <span class="nf">pandas_repr</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;columns&#39;</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()),</span>
+        <span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()),</span>
+    <span class="p">]</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="s1">&#39;pd.DataFrame(&#39;</span>
+    <span class="n">footer</span> <span class="o">=</span> <span class="s1">&#39;)&#39;</span>
+
+    <span class="n">arg_parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">ut</span><span class="o">.</span><span class="n">hz_str</span><span class="p">(</span><span class="s1">&#39;    &#39;</span><span class="p">,</span> <span class="n">ut</span><span class="o">.</span><span class="n">repr2</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span> <span class="k">if</span> <span class="n">arg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="n">kwarg_parts</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">ut</span><span class="o">.</span><span class="n">hz_str</span><span class="p">(</span><span class="s1">&#39;    </span><span class="si">{}</span><span class="s1">=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">ut</span><span class="o">.</span><span class="n">repr2</span><span class="p">(</span><span class="n">val</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">kwargs</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="p">]</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="s1">&#39;,</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">arg_parts</span> <span class="o">+</span> <span class="n">kwarg_parts</span><span class="p">)</span>
+    <span class="n">dfrepr</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">header</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">footer</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">dfrepr</span><span class="p">)</span>
+    <span class="k">pass</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">wbia-vtool</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../utool.html">utool package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../utool.html">utool</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wild Me.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

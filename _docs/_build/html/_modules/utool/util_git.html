@@ -1,0 +1,1231 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>utool.util_git &#8212; wbia-vtool 3.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for utool.util_git</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">TODO: export from utool</span>
+
+<span class="sd">        python -m utool.util_inspect check_module_usage --pat=&quot;util_git.py&quot;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">six</span>
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="nb">zip</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">isdir</span><span class="p">,</span> <span class="n">basename</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_dev</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inject</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_class</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_path</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_decor</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_list</span>
+
+<span class="nb">print</span><span class="p">,</span> <span class="n">rrr</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">util_inject</span><span class="o">.</span><span class="n">inject2</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_syscmd</span><span class="p">(</span><span class="n">cmdstr</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;RUN&gt; &#39;</span> <span class="o">+</span> <span class="n">cmdstr</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmdstr</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_cd</span><span class="p">(</span><span class="n">dir_</span><span class="p">):</span>
+    <span class="n">dir_</span> <span class="o">=</span> <span class="n">util_path</span><span class="o">.</span><span class="n">truepath</span><span class="p">(</span><span class="n">dir_</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&gt; cd &#39;</span> <span class="o">+</span> <span class="n">dir_</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">dir_</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="RepoManager"><a class="viewcode-back" href="../../utool.html#utool.util_git.RepoManager">[docs]</a><span class="nd">@six</span><span class="o">.</span><span class="n">add_metaclass</span><span class="p">(</span><span class="n">util_class</span><span class="o">.</span><span class="n">ReloadingMetaclass</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">RepoManager</span><span class="p">(</span><span class="n">util_dev</span><span class="o">.</span><span class="n">NiceRepr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Batch git operations on multiple repos</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="n">rman</span><span class="p">,</span>
+        <span class="n">repo_urls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">code_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">userid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">permitted_repos</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">pythoncmd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">userid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">userid</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">permitted_repos</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">permitted_repos</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">rman</span><span class="o">.</span><span class="n">permitted_repos</span> <span class="o">=</span> <span class="n">permitted_repos</span>
+        <span class="n">rman</span><span class="o">.</span><span class="n">code_dir</span> <span class="o">=</span> <span class="n">code_dir</span>
+        <span class="n">rman</span><span class="o">.</span><span class="n">userid</span> <span class="o">=</span> <span class="n">userid</span>
+        <span class="n">rman</span><span class="o">.</span><span class="n">repos</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">rman</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
+        <span class="n">rman</span><span class="o">.</span><span class="n">pythoncmd</span> <span class="o">=</span> <span class="n">pythoncmd</span>
+
+        <span class="k">if</span> <span class="n">repo_urls</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rman</span><span class="o">.</span><span class="n">add_repos</span><span class="p">(</span><span class="n">repo_urls</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RepoManager.union"><a class="viewcode-back" href="../../utool.html#utool.util_git.RepoManager.union">[docs]</a>    <span class="k">def</span> <span class="nf">union</span><span class="p">(</span><span class="n">rman</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="n">RepoManager</span><span class="p">()</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">userid</span> <span class="o">=</span> <span class="n">rman</span><span class="o">.</span><span class="n">userid</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">code_dir</span> <span class="o">=</span> <span class="n">rman</span><span class="o">.</span><span class="n">code_dir</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">permitted_repos</span> <span class="o">=</span> <span class="n">rman</span><span class="o">.</span><span class="n">permitted_repos</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">permitted_repos</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">repos</span> <span class="o">=</span> <span class="n">rman</span><span class="o">.</span><span class="n">repos</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">repos</span>
+        <span class="k">return</span> <span class="n">new</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">repo_urls</span><span class="p">(</span><span class="n">rman</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">repo</span><span class="o">.</span><span class="n">url</span> <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">rman</span><span class="o">.</span><span class="n">repos</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">repo_dirs</span><span class="p">(</span><span class="n">rman</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">repo</span><span class="o">.</span><span class="n">url</span> <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">rman</span><span class="o">.</span><span class="n">repos</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__nice__</span><span class="p">(</span><span class="n">rman</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;(num=</span><span class="si">%d</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rman</span><span class="o">.</span><span class="n">repo_urls</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="n">rman</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">rman</span><span class="o">.</span><span class="n">repos</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">repo</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">repo</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RepoManager.ensure"><a class="viewcode-back" href="../../utool.html#utool.util_git.RepoManager.ensure">[docs]</a>    <span class="k">def</span> <span class="nf">ensure</span><span class="p">(</span><span class="n">rman</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Ensuring that respos are checked out&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">rman</span><span class="o">.</span><span class="n">repos</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">repo</span><span class="o">.</span><span class="n">url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">repo</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="RepoManager.add_repo"><a class="viewcode-back" href="../../utool.html#utool.util_git.RepoManager.add_repo">[docs]</a>    <span class="k">def</span> <span class="nf">add_repo</span><span class="p">(</span><span class="n">rman</span><span class="p">,</span> <span class="n">repo</span><span class="p">):</span>
+        <span class="n">repo</span><span class="o">.</span><span class="n">_fix_url</span><span class="p">(</span><span class="n">rman</span><span class="o">.</span><span class="n">userid</span><span class="p">,</span> <span class="n">rman</span><span class="o">.</span><span class="n">permitted_repos</span><span class="p">)</span>
+        <span class="n">rman</span><span class="o">.</span><span class="n">repos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RepoManager.add_repos"><a class="viewcode-back" href="../../utool.html#utool.util_git.RepoManager.add_repos">[docs]</a>    <span class="k">def</span> <span class="nf">add_repos</span><span class="p">(</span><span class="n">rman</span><span class="p">,</span> <span class="n">repo_urls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">code_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">code_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">code_dir</span> <span class="o">=</span> <span class="n">rman</span><span class="o">.</span><span class="n">code_dir</span>
+        <span class="k">assert</span> <span class="n">code_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;Must specify the checkout code_dir&#39;</span>
+        <span class="n">repos</span> <span class="o">=</span> <span class="p">[</span><span class="n">Repo</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">code_dir</span><span class="p">,</span> <span class="n">pythoncmd</span><span class="o">=</span><span class="n">rman</span><span class="o">.</span><span class="n">pythoncmd</span><span class="p">)</span> <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">repo_urls</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">repos</span><span class="p">:</span>
+            <span class="n">repo</span><span class="o">.</span><span class="n">_fix_url</span><span class="p">(</span><span class="n">rman</span><span class="o">.</span><span class="n">userid</span><span class="p">,</span> <span class="n">rman</span><span class="o">.</span><span class="n">permitted_repos</span><span class="p">)</span>
+        <span class="n">rman</span><span class="o">.</span><span class="n">repos</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">repos</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RepoManager.issue"><a class="viewcode-back" href="../../utool.html#utool.util_git.RepoManager.issue">[docs]</a>    <span class="k">def</span> <span class="nf">issue</span><span class="p">(</span><span class="n">rman</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">sudo</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Runs a command on all of managed repos &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;+------- GG_COMMAND -------&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;| sudo=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">sudo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;| command=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">command</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">rman</span><span class="o">.</span><span class="n">repos</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">):</span>
+                <span class="n">repo</span><span class="o">.</span><span class="n">issue</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">sudo</span><span class="o">=</span><span class="n">sudo</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Repo </span><span class="si">%r</span><span class="s1"> not found&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">repo</span><span class="p">,))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;L___ FINISHED GG_COMMAND ___&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RepoManager.check_importable"><a class="viewcode-back" href="../../utool.html#utool.util_git.RepoManager.check_importable">[docs]</a>    <span class="k">def</span> <span class="nf">check_importable</span><span class="p">(</span><span class="n">rman</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+        <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39; </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">rman</span><span class="o">.</span><span class="n">label</span> <span class="k">if</span> <span class="n">rman</span><span class="o">.</span><span class="n">label</span> <span class="k">else</span> <span class="n">rman</span><span class="o">.</span><span class="n">label</span>
+        <span class="n">missing</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Checking if</span><span class="si">%s</span><span class="s1"> modules are importable&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">label</span><span class="p">,))</span>
+        <span class="n">msg_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">recommended_fixes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">rman</span><span class="o">.</span><span class="n">repos</span><span class="p">:</span>
+            <span class="n">flag</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">check_importable</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">flag</span><span class="p">:</span>
+                <span class="n">msg_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="s1">&#39;  * !!!</span><span class="si">%s</span><span class="s1"> REPO </span><span class="si">%s</span><span class="s1"> HAS IMPORT ISSUES&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">label</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="n">repo</span><span class="p">,)</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;undefined symbol&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">ex</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">]):</span>
+                    <span class="n">recommended_fixes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;rebuild&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">recommended_fixes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ut</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
+                    <span class="n">msg_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s1">&#39;    &#39;</span><span class="p">))</span>
+                <span class="n">missing</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ut</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
+                    <span class="n">msg_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s1">&#39;    &#39;</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">msg_list</span><span class="p">))</span>
+        <span class="n">problems</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">missing</span><span class="p">,</span> <span class="n">recommended_fixes</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">problems</span></div>
+
+<div class="viewcode-block" id="RepoManager.check_installed"><a class="viewcode-back" href="../../utool.html#utool.util_git.RepoManager.check_installed">[docs]</a>    <span class="k">def</span> <span class="nf">check_installed</span><span class="p">(</span><span class="n">rman</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+        <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39; </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">rman</span><span class="o">.</span><span class="n">label</span> <span class="k">if</span> <span class="n">rman</span><span class="o">.</span><span class="n">label</span> <span class="k">else</span> <span class="n">rman</span><span class="o">.</span><span class="n">label</span>
+        <span class="n">missing</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">msg_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Checking if</span><span class="si">%s</span><span class="s1"> modules are installed&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">label</span><span class="p">,))</span>
+        <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">rman</span><span class="o">.</span><span class="n">repos</span><span class="p">:</span>
+            <span class="n">flag</span><span class="p">,</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">check_installed</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">flag</span><span class="p">:</span>
+                <span class="n">msg_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="s1">&#39;  * !!!</span><span class="si">%s</span><span class="s1"> REPO </span><span class="si">%s</span><span class="s1"> NEEDS TO BE INSTALLED&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">label</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="n">repo</span><span class="p">,)</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">ut</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
+                    <span class="n">msg_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s1">&#39;    &#39;</span><span class="p">))</span>
+                <span class="n">missing</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
+            <span class="c1"># else:</span>
+            <span class="c1">#     print(&#39;  * found%s module = %s&#39; % (label, repo,))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">msg_list</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">missing</span></div>
+
+<div class="viewcode-block" id="RepoManager.check_cpp_build"><a class="viewcode-back" href="../../utool.html#utool.util_git.RepoManager.check_cpp_build">[docs]</a>    <span class="k">def</span> <span class="nf">check_cpp_build</span><span class="p">(</span><span class="n">rman</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+        <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39; </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">rman</span><span class="o">.</span><span class="n">label</span> <span class="k">if</span> <span class="n">rman</span><span class="o">.</span><span class="n">label</span> <span class="k">else</span> <span class="n">rman</span><span class="o">.</span><span class="n">label</span>
+        <span class="n">missing</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Checking if</span><span class="si">%s</span><span class="s1"> modules are built&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">label</span><span class="p">,))</span>
+        <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">rman</span><span class="o">.</span><span class="n">repos</span><span class="p">:</span>
+            <span class="n">flag</span><span class="p">,</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">check_cpp_build</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">flag</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  * !!!</span><span class="si">%s</span><span class="s1"> REPO </span><span class="si">%s</span><span class="s1"> NEEDS TO BE BUILT&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">label</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="n">repo</span><span class="p">,))</span>
+                <span class="k">if</span> <span class="n">ut</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s1">&#39;    &#39;</span><span class="p">))</span>
+                <span class="n">missing</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">missing</span></div>
+
+<div class="viewcode-block" id="RepoManager.custom_build"><a class="viewcode-back" href="../../utool.html#utool.util_git.RepoManager.custom_build">[docs]</a>    <span class="k">def</span> <span class="nf">custom_build</span><span class="p">(</span><span class="n">rman</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Custom Build&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">rman</span><span class="o">.</span><span class="n">repos</span><span class="p">:</span>
+            <span class="n">script</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_script</span><span class="p">(</span><span class="s1">&#39;build&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">script</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">script</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="RepoManager.custom_install"><a class="viewcode-back" href="../../utool.html#utool.util_git.RepoManager.custom_install">[docs]</a>    <span class="k">def</span> <span class="nf">custom_install</span><span class="p">(</span><span class="n">rman</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Custom Install&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">rman</span><span class="o">.</span><span class="n">repos</span><span class="p">:</span>
+            <span class="n">script</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_script</span><span class="p">(</span><span class="s1">&#39;install&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">script</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">script</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="RepoManager.only_with_pysetup"><a class="viewcode-back" href="../../utool.html#utool.util_git.RepoManager.only_with_pysetup">[docs]</a>    <span class="k">def</span> <span class="nf">only_with_pysetup</span><span class="p">(</span><span class="n">rman</span><span class="p">):</span>
+        <span class="n">rman2</span> <span class="o">=</span> <span class="n">RepoManager</span><span class="p">()</span>
+        <span class="n">rman2</span><span class="o">.</span><span class="n">code_dir</span> <span class="o">=</span> <span class="n">rman</span><span class="o">.</span><span class="n">code_dir</span>
+        <span class="n">rman2</span><span class="o">.</span><span class="n">permitted_repos</span> <span class="o">=</span> <span class="n">rman</span><span class="o">.</span><span class="n">permitted_repos</span>
+        <span class="n">rman2</span><span class="o">.</span><span class="n">code_dir</span> <span class="o">=</span> <span class="n">rman</span><span class="o">.</span><span class="n">code_dir</span>
+        <span class="n">rman2</span><span class="o">.</span><span class="n">userid</span> <span class="o">=</span> <span class="n">rman</span><span class="o">.</span><span class="n">userid</span>
+        <span class="n">rman2</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">rman</span><span class="o">.</span><span class="n">label</span>
+        <span class="n">rman2</span><span class="o">.</span><span class="n">repos</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">repo</span>
+            <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">rman</span><span class="o">.</span><span class="n">repos</span>
+            <span class="k">if</span> <span class="n">repo</span><span class="o">.</span><span class="n">dpath</span> <span class="ow">and</span> <span class="n">exists</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">,</span> <span class="s1">&#39;setup.py&#39;</span><span class="p">))</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">rman2</span></div></div>
+
+
+<div class="viewcode-block" id="Repo"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo">[docs]</a><span class="nd">@six</span><span class="o">.</span><span class="n">add_metaclass</span><span class="p">(</span><span class="n">util_class</span><span class="o">.</span><span class="n">ReloadingMetaclass</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Repo</span><span class="p">(</span><span class="n">util_dev</span><span class="o">.</span><span class="n">NiceRepr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handles a Python module repository</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">code_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">modname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pythoncmd</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># modname might need to be called egg?</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+        <span class="k">if</span> <span class="n">url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s1">&#39;.git@&#39;</span> <span class="ow">in</span> <span class="n">url</span><span class="p">:</span>
+            <span class="c1"># parse out specific branch</span>
+            <span class="n">repo</span><span class="o">.</span><span class="n">default_branch</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;@&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">repo</span><span class="o">.</span><span class="n">default_branch</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">repo</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span>
+        <span class="n">repo</span><span class="o">.</span><span class="n">_modname</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">modname</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">modname</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">repo</span><span class="o">.</span><span class="n">_modname_hints</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">ensure_iterable</span><span class="p">(</span><span class="n">modname</span><span class="p">)</span>
+        <span class="n">repo</span><span class="o">.</span><span class="n">dpath</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">repo</span><span class="o">.</span><span class="n">scripts</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">pythoncmd</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">sys</span>
+
+            <span class="n">pythoncmd</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">executable</span>
+        <span class="n">repo</span><span class="o">.</span><span class="n">pythoncmd</span> <span class="o">=</span> <span class="n">pythoncmd</span>
+
+        <span class="k">if</span> <span class="n">dpath</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">repo</span><span class="o">.</span><span class="n">url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">code_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dpath</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">code_dir</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">reponame</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dpath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">repo</span><span class="o">.</span><span class="n">dpath</span> <span class="o">=</span> <span class="n">util_path</span><span class="o">.</span><span class="n">unixpath</span><span class="p">(</span><span class="n">dpath</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Repo.infer_info"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.infer_info">[docs]</a>    <span class="k">def</span> <span class="nf">infer_info</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">repo</span><span class="o">.</span><span class="n">url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">repo</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">as_gitpython</span><span class="p">()</span><span class="o">.</span><span class="n">remotes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">urls</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+    <span class="c1"># --- GIT PYTHON STUFF ---</span>
+
+<div class="viewcode-block" id="Repo.as_gitpython"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.as_gitpython">[docs]</a>    <span class="nd">@util_decor</span><span class="o">.</span><span class="n">memoize</span>
+    <span class="k">def</span> <span class="nf">as_gitpython</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; pip install gitpython &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">git</span>
+
+        <span class="n">gitrepo</span> <span class="o">=</span> <span class="n">git</span><span class="o">.</span><span class="n">Repo</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">gitrepo</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">remotes</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="n">remotes</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">as_gitpython</span><span class="p">()</span><span class="o">.</span><span class="n">remotes</span>
+        <span class="n">remote_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">remote</span> <span class="ow">in</span> <span class="n">remotes</span><span class="p">:</span>
+            <span class="k">pass</span>
+            <span class="n">remote_info</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">_remote_info</span><span class="p">(</span><span class="n">remote</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">remote_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">remote_info</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
+                <span class="n">remote_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">remote_info</span>
+        <span class="k">return</span> <span class="n">remote_dict</span>
+
+    <span class="k">def</span> <span class="nf">_remote_info</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">remote</span><span class="p">):</span>
+        <span class="n">OLD</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">OLD</span><span class="p">:</span>
+            <span class="n">remote_details</span> <span class="o">=</span> <span class="n">remote</span><span class="o">.</span><span class="n">repo</span><span class="o">.</span><span class="n">git</span><span class="o">.</span><span class="n">remote</span><span class="p">(</span><span class="s1">&#39;get-url&#39;</span><span class="p">,</span> <span class="n">remote</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;--push&#39;</span><span class="p">)</span>
+            <span class="c1"># TODO push into gitpython</span>
+            <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">remote_details</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">urls</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">remote</span><span class="o">.</span><span class="n">urls</span><span class="p">)</span>
+
+        <span class="c1"># urls = list(remote.urls)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">urls</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[git] WARNING: repo </span><span class="si">%r</span><span class="s1"> has no remote urls&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">repo</span><span class="p">,))</span>
+            <span class="n">remote_info</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">urls</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[git] WARNING: repo </span><span class="si">%r</span><span class="s1"> has multiple urls&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">repo</span><span class="p">,))</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">urls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;github.com:/&#39;</span><span class="p">,</span> <span class="s1">&#39;github.com:&#39;</span><span class="p">)</span>
+            <span class="n">remote_info</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">url_parts</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;[@/:]&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+            <span class="c1"># TODO: parse what format the url is in, ssh/http/https</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">util_list</span><span class="o">.</span><span class="n">listfind</span><span class="p">(</span><span class="n">url_parts</span><span class="p">,</span> <span class="s1">&#39;github.com&#39;</span><span class="p">)</span>
+            <span class="n">remote_info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">remote</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">remote_info</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">url</span>
+            <span class="k">if</span> <span class="n">idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">username</span> <span class="o">=</span> <span class="n">url_parts</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">remote_info</span><span class="p">[</span><span class="s1">&#39;host&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;github&#39;</span>
+                <span class="n">remote_info</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">username</span>
+        <span class="k">return</span> <span class="n">remote_info</span>
+
+    <span class="k">def</span> <span class="nf">_ensure_remote_exists</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">remote_name</span><span class="p">,</span> <span class="n">remote_url</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Remote the remote if it is not in the correct format</span>
+        <span class="k">if</span> <span class="n">fmt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">remote_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;git@&#39;</span><span class="p">):</span>
+                <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;ssh&#39;</span>
+            <span class="k">elif</span> <span class="n">remote_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;https://&#39;</span><span class="p">):</span>
+                <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;https&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;bad format&#39;</span><span class="p">)</span>
+        <span class="n">gitrepo</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">as_gitpython</span><span class="p">()</span>
+        <span class="n">remotes</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">remotes</span>
+        <span class="n">incorrect_version</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">remote_url</span> <span class="ow">in</span> <span class="n">remotes</span><span class="p">:</span>
+            <span class="c1"># Check correct version (SSH or HTTPS)</span>
+            <span class="n">wildme_remote_</span> <span class="o">=</span> <span class="n">remotes</span><span class="p">[</span><span class="n">remote_url</span><span class="p">]</span>
+            <span class="n">wildme_url_</span> <span class="o">=</span> <span class="n">wildme_remote_</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
+            <span class="n">is_ssh</span> <span class="o">=</span> <span class="s1">&#39;@&#39;</span> <span class="ow">in</span> <span class="n">wildme_url_</span>
+            <span class="n">incorrect_version</span> <span class="o">=</span> <span class="p">(</span><span class="n">is_ssh</span> <span class="ow">and</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s1">&#39;https&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+                <span class="ow">not</span> <span class="n">is_ssh</span> <span class="ow">and</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s1">&#39;ssh&#39;</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">incorrect_version</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="s1">&#39;  * Deleting bad version remote </span><span class="si">%r</span><span class="s1">: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">remote_name</span><span class="p">,</span> <span class="n">remote_url</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">gitrepo</span><span class="o">.</span><span class="n">delete_remote</span><span class="p">(</span><span class="n">remote_name</span><span class="p">)</span>
+
+        <span class="c1"># Ensure there is a remote under the wildme name</span>
+        <span class="k">if</span> <span class="n">remote_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">repo</span><span class="o">.</span><span class="n">remotes</span> <span class="ow">or</span> <span class="n">incorrect_version</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  * Create remote </span><span class="si">%r</span><span class="s1">: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">remote_name</span><span class="p">,</span> <span class="n">remote_url</span><span class="p">))</span>
+            <span class="n">gitrepo</span><span class="o">.</span><span class="n">create_remote</span><span class="p">(</span><span class="n">remote_name</span><span class="p">,</span> <span class="n">remote_url</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">incorrect_version</span>
+
+    <span class="k">def</span> <span class="nf">_new_remote_url</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reponame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+        <span class="k">if</span> <span class="n">reponame</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">reponame</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">reponame</span>
+        <span class="k">if</span> <span class="n">host</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">host</span> <span class="o">=</span> <span class="s1">&#39;github.com&#39;</span>
+        <span class="k">if</span> <span class="n">fmt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;ssh&#39;</span>
+        <span class="k">if</span> <span class="n">host</span> <span class="o">==</span> <span class="s1">&#39;github.com&#39;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">user</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;github needs a user&#39;</span>
+        <span class="n">url_fmts</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;https&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;https://&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;ssh&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;git@&#39;</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">),</span>
+        <span class="p">}</span>
+        <span class="n">prefix</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="n">url_fmts</span><span class="p">[</span><span class="n">fmt</span><span class="p">]</span>
+        <span class="n">user_</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">user</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">prefix</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">user_</span><span class="p">,</span> <span class="n">reponame</span><span class="p">,</span> <span class="s1">&#39;.git&#39;</span><span class="p">]</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">filter_Nones</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">url</span>
+
+<div class="viewcode-block" id="Repo.reset_branch_to_remote"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.reset_branch_to_remote">[docs]</a>    <span class="k">def</span> <span class="nf">reset_branch_to_remote</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">branch</span><span class="p">,</span> <span class="n">hard</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        does a git reset --hard to whatever remote the branch is assigned to</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">remote</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_branch_remote</span><span class="p">(</span><span class="n">branch</span><span class="p">)</span>
+        <span class="n">kw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">remote</span><span class="o">=</span><span class="n">remote</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="n">branch</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">hard</span><span class="p">:</span>
+            <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;flags&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;--hard&#39;</span>
+        <span class="n">repo</span><span class="o">.</span><span class="n">issue</span><span class="p">(</span><span class="s1">&#39;git reset </span><span class="si">{flags}</span><span class="s1"> </span><span class="si">{remote}</span><span class="s1">/</span><span class="si">{branch}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Repo.get_branch_remote"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.get_branch_remote">[docs]</a>    <span class="k">def</span> <span class="nf">get_branch_remote</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">branch</span><span class="p">):</span>
+        <span class="n">gitrepo</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">as_gitpython</span><span class="p">()</span>
+        <span class="n">gitbranch</span> <span class="o">=</span> <span class="n">gitrepo</span><span class="o">.</span><span class="n">branches</span><span class="p">[</span><span class="n">branch</span><span class="p">]</span>
+        <span class="n">remote</span> <span class="o">=</span> <span class="n">gitbranch</span><span class="o">.</span><span class="n">tracking_branch</span><span class="p">()</span><span class="o">.</span><span class="n">remote_name</span>
+        <span class="k">return</span> <span class="n">remote</span></div>
+
+<div class="viewcode-block" id="Repo.set_branch_remote"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.set_branch_remote">[docs]</a>    <span class="k">def</span> <span class="nf">set_branch_remote</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">branch</span><span class="p">,</span> <span class="n">remote</span><span class="p">,</span> <span class="n">remote_branch</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">remote_branch</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">remote_branch</span> <span class="o">=</span> <span class="n">branch</span>
+        <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;git branch --set-upstream-to=</span><span class="si">{remote}</span><span class="s1">/</span><span class="si">{remote_branch}</span><span class="s1"> </span><span class="si">{branch}</span><span class="s1"> &#39;</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">branch</span><span class="o">=</span><span class="n">branch</span><span class="p">,</span> <span class="n">remote</span><span class="o">=</span><span class="n">remote</span><span class="p">,</span> <span class="n">remote_branch</span><span class="o">=</span><span class="n">remote_branch</span><span class="p">)</span>
+        <span class="n">repo</span><span class="o">.</span><span class="n">issue</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">active_branch</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">repo</span><span class="o">.</span><span class="n">as_gitpython</span><span class="p">()</span><span class="o">.</span><span class="n">active_branch</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">active_remote</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="n">branch</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">as_gitpython</span><span class="p">()</span><span class="o">.</span><span class="n">active_branch</span>
+        <span class="n">tracking_branch</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">tracking_branch</span><span class="p">()</span>
+        <span class="n">remote_info</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">remote</span> <span class="ow">in</span> <span class="n">repo</span><span class="o">.</span><span class="n">as_gitpython</span><span class="p">()</span><span class="o">.</span><span class="n">remotes</span><span class="p">:</span>
+            <span class="k">pass</span>
+            <span class="k">if</span> <span class="n">remote</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">tracking_branch</span><span class="o">.</span><span class="n">remote_name</span><span class="p">:</span>
+                <span class="n">remote_info</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">_remote_info</span><span class="p">(</span><span class="n">remote</span><span class="p">)</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">remote_info</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">active_tracking_remote_head</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="n">branch</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">as_gitpython</span><span class="p">()</span><span class="o">.</span><span class="n">active_branch</span>
+        <span class="n">tracking_branch</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">tracking_branch</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">tracking_branch</span><span class="o">.</span><span class="n">remote_head</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">active_tracking_branch_name</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="n">branch</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">as_gitpython</span><span class="p">()</span><span class="o">.</span><span class="n">active_branch</span>
+        <span class="n">tracking_branch</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">tracking_branch</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">tracking_branch</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">branches</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="n">gitrepo</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">as_gitpython</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">branch</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">gitrepo</span><span class="o">.</span><span class="n">branches</span><span class="p">]</span>
+
+    <span class="c1"># --- &lt;/GIT PYTHON STUFF&gt; ---</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">aliases</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="n">aliases</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">repo</span><span class="o">.</span><span class="n">_modname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">aliases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">_modname</span><span class="p">)</span>
+        <span class="n">aliases</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">_modname_hints</span><span class="p">[:])</span>
+        <span class="c1"># if repo.dpath and exists(repo.dpath):</span>
+        <span class="c1">#     reponame = repo._find_modname_from_repo()</span>
+        <span class="c1">#     if reponame is not None:</span>
+        <span class="c1">#         aliases.append(reponame)</span>
+        <span class="n">aliases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">reponame</span><span class="p">)</span>
+        <span class="n">aliases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">reponame</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+        <span class="n">aliases</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">aliases</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">aliases</span>
+
+    <span class="k">def</span> <span class="nf">__nice__</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="n">reponame</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">reponame</span>
+        <span class="n">modname</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">modname</span>
+        <span class="c1"># if modname is False:</span>
+        <span class="c1">#     print(repo.__dict__)</span>
+        <span class="k">if</span> <span class="n">modname</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">modname</span> <span class="o">==</span> <span class="n">reponame</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">reponame</span><span class="p">,)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;(</span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">reponame</span><span class="p">,</span> <span class="n">modname</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">modname</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="c1"># import utool as ut</span>
+        <span class="n">modname</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">repo</span><span class="o">.</span><span class="n">_modname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">modname</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">_modname</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">_modname_hints</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">modname</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">_modname_hints</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">modname</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">modname</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">reponame</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">repo</span><span class="o">.</span><span class="n">dpath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">reponame</span> <span class="o">=</span> <span class="n">basename</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">repo</span><span class="o">.</span><span class="n">url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">url_parts</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;[/:]&#39;</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+            <span class="n">reponame</span> <span class="o">=</span> <span class="n">url_parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.git&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">repo</span><span class="o">.</span><span class="n">_modname_hints</span><span class="p">:</span>
+            <span class="n">reponame</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">_modname_hints</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;No way to infer (or even guess) repository name!&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">reponame</span>
+
+    <span class="k">def</span> <span class="nf">_find_modname_from_repo</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+        <span class="n">packages</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">get_submodules_from_dpath</span><span class="p">(</span>
+            <span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">,</span> <span class="n">only_packages</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">packages</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">modname</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">get_modname_from_modpath</span><span class="p">(</span><span class="n">packages</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">modname</span>
+
+<div class="viewcode-block" id="Repo.add_script"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.add_script">[docs]</a>    <span class="k">def</span> <span class="nf">add_script</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">script</span><span class="p">):</span>
+        <span class="n">repo</span><span class="o">.</span><span class="n">scripts</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">script</span></div>
+
+<div class="viewcode-block" id="Repo.clone"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.clone">[docs]</a>    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[git] check repo exists at </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">recursive</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="s1">&#39;--recursive&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">):</span>
+            <span class="n">_cd</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;repo.default_branch = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">default_branch</span><span class="p">,))</span>
+            <span class="k">if</span> <span class="n">repo</span><span class="o">.</span><span class="n">default_branch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">args</span> <span class="o">+=</span> <span class="s1">&#39; -b </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">default_branch</span><span class="p">)</span>
+            <span class="n">_syscmd</span><span class="p">(</span><span class="s1">&#39;git clone </span><span class="si">{args}</span><span class="s1"> </span><span class="si">{url}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">repo</span><span class="o">.</span><span class="n">url</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Repo.owner"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.owner">[docs]</a>    <span class="k">def</span> <span class="nf">owner</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="n">url_parts</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;[/:]&#39;</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">owner</span> <span class="o">=</span> <span class="n">url_parts</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">owner</span></div>
+
+<div class="viewcode-block" id="Repo.is_owner"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.is_owner">[docs]</a>    <span class="k">def</span> <span class="nf">is_owner</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">userid</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">userid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">repo</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">userid</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_fix_url</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">userid</span><span class="p">,</span> <span class="n">permitted_repos</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="n">is_owner</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">is_owner</span><span class="p">(</span><span class="n">userid</span><span class="p">)</span>
+        <span class="n">is_contrib</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">reponame</span> <span class="ow">in</span> <span class="n">permitted_repos</span>
+        <span class="k">if</span> <span class="n">is_owner</span> <span class="ow">or</span> <span class="n">is_contrib</span><span class="p">:</span>
+            <span class="n">repo</span><span class="o">.</span><span class="n">_ensure_ssh_format</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Repo.change_url_format"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.change_url_format">[docs]</a>    <span class="k">def</span> <span class="nf">change_url_format</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">out_type</span><span class="o">=</span><span class="s1">&#39;ssh&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Changes the url format for committing &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">url</span>
+        <span class="n">url_parts</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;[/:]&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+        <span class="n">in_type</span> <span class="o">=</span> <span class="n">url_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">url_fmts</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;https&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.com/&#39;</span><span class="p">,</span> <span class="s1">&#39;https://&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;ssh&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.com:&#39;</span><span class="p">,</span> <span class="s1">&#39;git@&#39;</span><span class="p">),</span>
+        <span class="p">}</span>
+        <span class="n">url_fmts</span><span class="p">[</span><span class="s1">&#39;git&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">url_fmts</span><span class="p">[</span><span class="s1">&#39;ssh&#39;</span><span class="p">]</span>
+        <span class="n">new_repo_url</span> <span class="o">=</span> <span class="n">url</span>
+        <span class="k">for</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">url_fmts</span><span class="p">[</span><span class="n">in_type</span><span class="p">],</span> <span class="n">url_fmts</span><span class="p">[</span><span class="n">out_type</span><span class="p">]):</span>
+            <span class="n">new_repo_url</span> <span class="o">=</span> <span class="n">new_repo_url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span>
+        <span class="c1"># Inplace change</span>
+        <span class="n">repo</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">new_repo_url</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;new format repo.url = </span><span class="si">{!r}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">url</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Repo.check_importable"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.check_importable">[docs]</a>    <span class="k">def</span> <span class="nf">check_importable</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+        <span class="c1"># import utool as ut</span>
+        <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">tried</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">modname</span> <span class="ow">in</span> <span class="n">repo</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
+            <span class="n">tried</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">modname</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">ut</span><span class="o">.</span><span class="n">import_modname</span><span class="p">(</span><span class="n">modname</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>  <span class="c1"># NOQA</span>
+                <span class="n">tried</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">&#39; but got ImportError&#39;</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
+                <span class="k">pass</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>  <span class="c1"># NOQA</span>
+                <span class="n">tried</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">&#39; but got AttributeError&#39;</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">tried</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">&#39; and it worked&#39;</span>
+                <span class="k">break</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;tried </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tried</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">found</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">errors</span></div>
+
+<div class="viewcode-block" id="Repo.is_cloned"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.is_cloned">[docs]</a>    <span class="k">def</span> <span class="nf">is_cloned</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">exists</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Repo.check_installed"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.check_installed">[docs]</a>    <span class="k">def</span> <span class="nf">check_installed</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+        <span class="n">found</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">tried</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">modname</span> <span class="ow">in</span> <span class="n">repo</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
+            <span class="n">tried</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">modname</span><span class="p">)</span>
+            <span class="n">found</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">check_module_installed</span><span class="p">(</span><span class="n">modname</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">found</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;tried </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tried</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">found</span><span class="p">,</span> <span class="n">msg</span></div>
+
+<div class="viewcode-block" id="Repo.check_cpp_build"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.check_cpp_build">[docs]</a>    <span class="k">def</span> <span class="nf">check_cpp_build</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+        <span class="n">script</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_script</span><span class="p">(</span><span class="s1">&#39;build&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">script</span><span class="o">.</span><span class="n">is_fpath_valid</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">repo</span><span class="o">.</span><span class="n">modname</span> <span class="o">==</span> <span class="s1">&#39;pyflann&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;cant detect flann cpp&#39;</span>
+            <span class="c1"># hack, this doesnt quite do it</span>
+            <span class="n">pat</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span> <span class="o">+</span> <span class="n">ut</span><span class="o">.</span><span class="n">util_cplat</span><span class="o">.</span><span class="n">get_pylib_ext</span><span class="p">()</span>
+            <span class="n">dynlibs</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">dpath</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">repo</span><span class="o">.</span><span class="n">modname</span><span class="p">,</span> <span class="n">pat</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Could not find any dynamic libraries&#39;</span>
+            <span class="n">flag</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dynlibs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">flag</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;passed, but didnt expect anything&#39;</span>
+        <span class="k">return</span> <span class="n">flag</span><span class="p">,</span> <span class="n">msg</span></div>
+
+<div class="viewcode-block" id="Repo.get_script"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.get_script">[docs]</a>    <span class="k">def</span> <span class="nf">get_script</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">type_</span><span class="p">):</span>
+        <span class="k">class</span> <span class="nc">Script</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+            <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">script</span><span class="p">):</span>
+                <span class="n">script</span><span class="o">.</span><span class="n">type_</span> <span class="o">=</span> <span class="n">type_</span>
+                <span class="n">script</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">script</span><span class="o">.</span><span class="n">fpath</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">script</span><span class="o">.</span><span class="n">cmake</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">def</span> <span class="nf">is_fpath_valid</span><span class="p">(</span><span class="n">script</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">script</span><span class="o">.</span><span class="n">fpath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">exists</span><span class="p">(</span><span class="n">script</span><span class="o">.</span><span class="n">fpath</span><span class="p">)</span>
+
+            <span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span><span class="n">script</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">script</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="n">script</span><span class="o">.</span><span class="n">is_fpath_valid</span><span class="p">()</span>
+
+            <span class="k">def</span> <span class="nf">exec_</span><span class="p">(</span><span class="n">script</span><span class="p">):</span>
+                <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;+**** exec </span><span class="si">%s</span><span class="s1"> script *******&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">script</span><span class="o">.</span><span class="n">type_</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;repo = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">repo</span><span class="p">,))</span>
+                <span class="k">with</span> <span class="n">ut</span><span class="o">.</span><span class="n">ChdirContext</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">script</span><span class="o">.</span><span class="n">is_fpath_valid</span><span class="p">():</span>
+                        <span class="n">normbuild_flag</span> <span class="o">=</span> <span class="s1">&#39;--no-rmbuild&#39;</span>
+                        <span class="k">if</span> <span class="n">ut</span><span class="o">.</span><span class="n">get_argflag</span><span class="p">(</span><span class="n">normbuild_flag</span><span class="p">):</span>
+                            <span class="n">ut</span><span class="o">.</span><span class="n">cmd</span><span class="p">(</span><span class="n">script</span><span class="o">.</span><span class="n">fpath</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">normbuild_flag</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">ut</span><span class="o">.</span><span class="n">cmd</span><span class="p">(</span><span class="n">script</span><span class="o">.</span><span class="n">fpath</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">script</span><span class="o">.</span><span class="n">text</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ABOUT TO EXECUTE&#39;</span><span class="p">)</span>
+                            <span class="n">ut</span><span class="o">.</span><span class="n">print_code</span><span class="p">(</span><span class="n">script</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s1">&#39;bash&#39;</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">ut</span><span class="o">.</span><span class="n">are_you_sure</span><span class="p">(</span><span class="s1">&#39;execute above script?&#39;</span><span class="p">):</span>
+                                <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span>
+
+                                <span class="n">scriptdir</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">ensure_app_resource_dir</span><span class="p">(</span>
+                                    <span class="s1">&#39;utool&#39;</span><span class="p">,</span> <span class="s1">&#39;build_scripts&#39;</span>
+                                <span class="p">)</span>
+                                <span class="n">script_path</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span>
+                                    <span class="n">scriptdir</span><span class="p">,</span>
+                                    <span class="s1">&#39;script_&#39;</span>
+                                    <span class="o">+</span> <span class="n">script</span><span class="o">.</span><span class="n">type_</span>
+                                    <span class="o">+</span> <span class="s1">&#39;_&#39;</span>
+                                    <span class="o">+</span> <span class="n">ut</span><span class="o">.</span><span class="n">hashstr27</span><span class="p">(</span><span class="n">script</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+                                    <span class="o">+</span> <span class="s1">&#39;.sh&#39;</span><span class="p">,</span>
+                                <span class="p">)</span>
+                                <span class="n">ut</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">script_path</span><span class="p">,</span> <span class="n">script</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+                                <span class="n">_</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">cmd</span><span class="p">(</span><span class="s1">&#39;bash &#39;</span><span class="p">,</span> <span class="n">script_path</span><span class="p">)</span>  <span class="c1"># NOQA</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CANT QUITE EXECUTE THIS YET&#39;</span><span class="p">)</span>
+                            <span class="n">ut</span><span class="o">.</span><span class="n">print_code</span><span class="p">(</span><span class="n">script</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s1">&#39;bash&#39;</span><span class="p">)</span>
+                <span class="c1"># os.system(scriptname)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;L**** exec </span><span class="si">%s</span><span class="s1"> script *******&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">script</span><span class="o">.</span><span class="n">type_</span><span class="p">))</span>
+
+        <span class="n">script</span> <span class="o">=</span> <span class="n">Script</span><span class="p">()</span>
+        <span class="n">script</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">scripts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">type_</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">script</span><span class="o">.</span><span class="n">text</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">type_</span> <span class="o">==</span> <span class="s1">&#39;build&#39;</span> <span class="ow">and</span> <span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;win32&#39;</span><span class="p">):</span>
+                <span class="c1"># vtool --rebuild-sver didnt work with this line</span>
+                <span class="c1"># scriptname = &#39;./mingw_build.bat&#39;</span>
+                <span class="n">fpath</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">,</span> <span class="s1">&#39;mingw_build.bat&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">fpath</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">,</span> <span class="s1">&#39;unix_build.sh&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">fpath</span><span class="p">):</span>
+                <span class="n">script</span><span class="o">.</span><span class="n">fpath</span> <span class="o">=</span> <span class="n">fpath</span>
+
+            <span class="n">cmake</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">,</span> <span class="s1">&#39;CMakeLists.txt&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">cmake</span><span class="p">):</span>
+                <span class="n">script</span><span class="o">.</span><span class="n">cmake</span> <span class="o">=</span> <span class="n">cmake</span>
+
+        <span class="k">return</span> <span class="n">script</span></div>
+
+<div class="viewcode-block" id="Repo.has_script"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.has_script">[docs]</a>    <span class="k">def</span> <span class="nf">has_script</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">type_</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_script</span><span class="p">(</span><span class="n">type_</span><span class="p">)</span><span class="o">.</span><span class="n">is_valid</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Repo.custom_build"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.custom_build">[docs]</a>    <span class="k">def</span> <span class="nf">custom_build</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="n">script</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_script</span><span class="p">(</span><span class="s1">&#39;build&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">script</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">script</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Repo.custom_install"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.custom_install">[docs]</a>    <span class="k">def</span> <span class="nf">custom_install</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="n">script</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_script</span><span class="p">(</span><span class="s1">&#39;install&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">script</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">script</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span></div>
+        <span class="c1"># TODO:</span>
+        <span class="c1"># import utool as ut</span>
+        <span class="c1"># ut.print_code(repo.install_script, &#39;bash&#39;)</span>
+
+<div class="viewcode-block" id="Repo.issue"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.issue">[docs]</a>    <span class="k">def</span> <span class="nf">issue</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">sudo</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dry</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="s1">&#39;raise&#39;</span><span class="p">,</span> <span class="n">return_out</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        issues a command on a repo</span>
+
+<span class="sd">        CommandLine:</span>
+<span class="sd">            python -m utool.util_git --exec-repocmd</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">            &gt;&gt;&gt; from utool.util_git import *  # NOQA</span>
+<span class="sd">            &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">            &gt;&gt;&gt; repo = dirname(ut.get_modpath(ut, prefer_pkg=True))</span>
+<span class="sd">            &gt;&gt;&gt; command = &#39;git status&#39;</span>
+<span class="sd">            &gt;&gt;&gt; sudo = False</span>
+<span class="sd">            &gt;&gt;&gt; result = repocmd(repo, command, sudo)</span>
+<span class="sd">            &gt;&gt;&gt; print(result)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+        <span class="k">if</span> <span class="n">ut</span><span class="o">.</span><span class="n">WIN32</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="ow">not</span> <span class="n">sudo</span><span class="p">,</span> <span class="s1">&#39;cant sudo on windows&#39;</span>
+        <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s1">&#39;short_status&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">repo</span><span class="o">.</span><span class="n">short_status</span><span class="p">()</span>
+        <span class="n">command_list</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">ensure_iterable</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+        <span class="n">cmdstr</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">        &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">cmd_</span> <span class="k">for</span> <span class="n">cmd_</span> <span class="ow">in</span> <span class="n">command_list</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">dry</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;+--- *** repocmd(</span><span class="si">%s</span><span class="s1">) *** &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cmdstr</span><span class="p">,))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;repo=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">ut</span><span class="o">.</span><span class="n">color_text</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">,</span> <span class="s1">&#39;yellow&#39;</span><span class="p">))</span>
+        <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">with</span> <span class="n">repo</span><span class="o">.</span><span class="n">chdir_context</span><span class="p">():</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">command_list</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">dry</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">sudo</span> <span class="ow">or</span> <span class="n">ut</span><span class="o">.</span><span class="n">WIN32</span><span class="p">:</span>
+                    <span class="c1"># ret = os.system(cmd)</span>
+                    <span class="n">cmdinfo</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">cmd2</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">verbout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="n">out</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">ret</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">cmdinfo</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;out&#39;</span><span class="p">,</span> <span class="s1">&#39;err&#39;</span><span class="p">,</span> <span class="s1">&#39;ret&#39;</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># cmdinfo = ut.cmd2(&#39;sudo &#39; + cmd, verbose=1)</span>
+                    <span class="n">out</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">ret</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">cmd</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">sudo</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ret(</span><span class="si">%d</span><span class="s1">) = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">ret</span><span class="p">,))</span>
+                <span class="k">if</span> <span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">error</span> <span class="o">==</span> <span class="s1">&#39;raise&#39;</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Failed command </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cmd</span><span class="p">,))</span>
+                    <span class="k">elif</span> <span class="n">error</span> <span class="o">==</span> <span class="s1">&#39;return&#39;</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">out</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;unknown flag error=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">error</span><span class="p">,))</span>
+                <span class="k">if</span> <span class="n">return_out</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">out</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">dry</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;L____&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Repo.chdir_context"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.chdir_context">[docs]</a>    <span class="k">def</span> <span class="nf">chdir_context</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+        <span class="k">return</span> <span class="n">ut</span><span class="o">.</span><span class="n">ChdirContext</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Repo.pull2"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.pull2">[docs]</a>    <span class="k">def</span> <span class="nf">pull2</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pulls and automatically overwrites conflict files.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;git pull --no-edit&#39;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">issue</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="s1">&#39;return&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">overwrite</span> <span class="ow">and</span> <span class="n">out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">repo</span><span class="o">.</span><span class="n">_handle_overwrite_error</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+            <span class="c1"># Retry</span>
+            <span class="n">repo</span><span class="o">.</span><span class="n">issue</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Repo.checkout2"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.checkout2">[docs]</a>    <span class="k">def</span> <span class="nf">checkout2</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">branch</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checkout `branch` and automatically overwrites conflict files.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;git checkout </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">branch</span><span class="p">,)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">issue</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="s1">&#39;return&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">overwrite</span> <span class="ow">and</span> <span class="n">out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">repo</span><span class="o">.</span><span class="n">_handle_overwrite_error</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+            <span class="n">repo</span><span class="o">.</span><span class="n">_handle_abort_merge_rebase</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+            <span class="c1"># Retry</span>
+            <span class="n">repo</span><span class="o">.</span><span class="n">issue</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_parse_merge_conflict_fpaths</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">out</span><span class="p">):</span>
+        <span class="n">fpaths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+                <span class="n">pref</span> <span class="o">=</span> <span class="s1">&#39;CONFLICT (content): Merge conflict in &#39;</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">pref</span><span class="p">):</span>
+                    <span class="n">fpaths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">,</span> <span class="n">line</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">pref</span><span class="p">)</span> <span class="p">:]))</span>
+        <span class="k">return</span> <span class="n">fpaths</span>
+
+    <span class="k">def</span> <span class="nf">_handle_abort_merge_rebase</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">out</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">out</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;error: you need to resolve your current index first&#39;</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">repo</span><span class="o">.</span><span class="n">issue</span><span class="p">(</span><span class="s1">&#39;git merge --abort&#39;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">repo</span><span class="o">.</span><span class="n">issue</span><span class="p">(</span><span class="s1">&#39;git rebase --abort&#39;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">_handle_overwrite_error</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">out</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+        <span class="c1"># parse stdout to handle the error</span>
+        <span class="k">if</span> <span class="n">out</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
+            <span class="s1">&#39;error: The following untracked working tree files would be overwritten&#39;</span>
+        <span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[ut.git] handling overwrite error&#39;</span><span class="p">)</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">fpaths</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Please move or remove them before you can merge&#39;</span><span class="p">):</span>
+                    <span class="k">break</span>
+                <span class="n">fpaths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span>
+                <span class="n">ut</span><span class="o">.</span><span class="n">remove_file_list</span><span class="p">(</span><span class="n">fpaths</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Repo.short_status"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.short_status">[docs]</a>    <span class="k">def</span> <span class="nf">short_status</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        CommandLine:</span>
+<span class="sd">            python -m utool.util_git short_status</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">            &gt;&gt;&gt; from utool.util_git import *  # NOQA</span>
+<span class="sd">            &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">            &gt;&gt;&gt; repo = Repo(dpath=ut.truepath(&#39;.&#39;))</span>
+<span class="sd">            &gt;&gt;&gt; result = repo.short_status()</span>
+<span class="sd">            &gt;&gt;&gt; print(result)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+        <span class="n">prefix</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">dpath</span>
+        <span class="k">with</span> <span class="n">ut</span><span class="o">.</span><span class="n">ChdirContext</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="n">out</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">ret</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">cmd</span><span class="p">(</span><span class="s1">&#39;git status&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="c1"># parse git status</span>
+            <span class="n">is_clean_msg1</span> <span class="o">=</span> <span class="s1">&#39;Your branch is up-to-date with&#39;</span>
+            <span class="n">is_clean_msgs</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s1">&#39;nothing to commit, working directory clean&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;nothing to commit, working tree clean&#39;</span><span class="p">,</span>
+            <span class="p">]</span>
+            <span class="n">msg2</span> <span class="o">=</span> <span class="s1">&#39;nothing added to commit but untracked files present&#39;</span>
+
+            <span class="n">needs_commit_msgs</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s1">&#39;Changes to be committed&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;Changes not staged for commit&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;Your branch is ahead of&#39;</span><span class="p">,</span>
+            <span class="p">]</span>
+
+            <span class="n">suffix</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="k">if</span> <span class="n">is_clean_msg1</span> <span class="ow">in</span> <span class="n">out</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="n">msg</span> <span class="ow">in</span> <span class="n">out</span> <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">is_clean_msgs</span><span class="p">):</span>
+                <span class="n">suffix</span> <span class="o">+=</span> <span class="n">ut</span><span class="o">.</span><span class="n">color_text</span><span class="p">(</span><span class="s1">&#39;is clean&#39;</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">msg2</span> <span class="ow">in</span> <span class="n">out</span><span class="p">:</span>
+                <span class="n">suffix</span> <span class="o">+=</span> <span class="n">ut</span><span class="o">.</span><span class="n">color_text</span><span class="p">(</span><span class="s1">&#39;has untracked files&#39;</span><span class="p">,</span> <span class="s1">&#39;yellow&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">msg</span> <span class="ow">in</span> <span class="n">out</span> <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">needs_commit_msgs</span><span class="p">):</span>
+                <span class="n">suffix</span> <span class="o">+=</span> <span class="n">ut</span><span class="o">.</span><span class="n">color_text</span><span class="p">(</span><span class="s1">&#39;has changes&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">suffix</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Repo.python_develop"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.python_develop">[docs]</a>    <span class="k">def</span> <span class="nf">python_develop</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+        <span class="n">repo</span><span class="o">.</span><span class="n">issue</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="si">{pythoncmd}</span><span class="s1"> -m pip install -e </span><span class="si">{dpath}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">pythoncmd</span><span class="o">=</span><span class="n">repo</span><span class="o">.</span><span class="n">pythoncmd</span><span class="p">,</span> <span class="n">dpath</span><span class="o">=</span><span class="n">repo</span><span class="o">.</span><span class="n">dpath</span>
+            <span class="p">),</span>
+            <span class="n">sudo</span><span class="o">=</span><span class="ow">not</span> <span class="n">ut</span><span class="o">.</span><span class="n">in_virtual_env</span><span class="p">(),</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Repo.is_gitrepo"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.is_gitrepo">[docs]</a>    <span class="k">def</span> <span class="nf">is_gitrepo</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+        <span class="n">gitdir</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">,</span> <span class="s1">&#39;.git&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">exists</span><span class="p">(</span><span class="n">gitdir</span><span class="p">)</span> <span class="ow">and</span> <span class="n">isdir</span><span class="p">(</span><span class="n">gitdir</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Repo.pull"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.pull">[docs]</a>    <span class="k">def</span> <span class="nf">pull</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">has_submods</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Pulling: &#39;</span> <span class="o">+</span> <span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">)</span>
+        <span class="n">_cd</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">dpath</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">repo</span><span class="o">.</span><span class="n">is_gitrepo</span><span class="p">(),</span> <span class="s1">&#39;cannot pull a nongit repo&#39;</span>
+        <span class="n">_syscmd</span><span class="p">(</span><span class="s1">&#39;git pull&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">has_submods</span><span class="p">:</span>
+            <span class="n">_syscmd</span><span class="p">(</span><span class="s1">&#39;git submodule init&#39;</span><span class="p">)</span>
+            <span class="n">_syscmd</span><span class="p">(</span><span class="s1">&#39;git submodule update&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Repo.rename_branch"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.rename_branch">[docs]</a>    <span class="k">def</span> <span class="nf">rename_branch</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">old_branch_name</span><span class="p">,</span> <span class="n">new_branch_name</span><span class="p">,</span> <span class="n">remote</span><span class="o">=</span><span class="s1">&#39;origin&#39;</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        References:</span>
+<span class="sd">            http://stackoverflow.com/questions/1526794/rename?answertab=votes#tab-top</span>
+<span class="sd">            http://stackoverflow.com/questions/9524933/renaming-a-branch-in-github</span>
+
+<span class="sd">        CommandLine:</span>
+<span class="sd">            python -m utool.util_git --test-rename_branch --old=mymaster --new=wbia_master</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">            &gt;&gt;&gt; # SCRIPT</span>
+<span class="sd">            &gt;&gt;&gt; from utool.util_git import *  # NOQA</span>
+<span class="sd">            &gt;&gt;&gt; repo = ut.get_argval(&#39;--repo&#39;, str, &#39;.&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; remote = ut.get_argval(&#39;--remote&#39;, str, &#39;origin&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; old_branch_name = ut.get_argval(&#39;--old&#39;, str, None)</span>
+<span class="sd">            &gt;&gt;&gt; new_branch_name = ut.get_argval(&#39;--new&#39;, str, None)</span>
+<span class="sd">            &gt;&gt;&gt; rename_branch(old_branch_name, new_branch_name, repo, remote)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">repo</span><span class="o">.</span><span class="n">is_gitrepo</span><span class="p">(),</span> <span class="s1">&#39;cannot pull a nongit repo&#39;</span>
+        <span class="n">fmtdict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">remote</span><span class="o">=</span><span class="n">remote</span><span class="p">,</span>
+            <span class="n">old_branch_name</span><span class="o">=</span><span class="n">old_branch_name</span><span class="p">,</span>
+            <span class="n">new_branch_name</span><span class="o">=</span><span class="n">new_branch_name</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">command_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;git checkout </span><span class="si">{old_branch_name}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">fmtdict</span><span class="p">),</span>
+            <span class="c1"># rename branch</span>
+            <span class="s1">&#39;git branch -m </span><span class="si">{old_branch_name}</span><span class="s1"> </span><span class="si">{new_branch_name}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">fmtdict</span><span class="p">),</span>
+            <span class="c1"># delete old branch</span>
+            <span class="s1">&#39;git push </span><span class="si">{remote}</span><span class="s1"> :</span><span class="si">{old_branch_name}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">fmtdict</span><span class="p">),</span>
+            <span class="c1"># push new branch</span>
+            <span class="s1">&#39;git push </span><span class="si">{remote}</span><span class="s1"> </span><span class="si">{new_branch_name}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">fmtdict</span><span class="p">),</span>
+        <span class="p">]</span>
+        <span class="n">repo</span><span class="o">.</span><span class="n">issue</span><span class="p">(</span><span class="n">command_list</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Repo.resolve_conflicts"><a class="viewcode-back" href="../../utool.html#utool.util_git.Repo.resolve_conflicts">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">resolve_conflicts</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">strat</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parses merge conflits and takes either version</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+        <span class="kn">import</span> <span class="nn">re</span>
+
+        <span class="n">top_pat</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="s1">&#39;&lt;&#39;</span> <span class="o">*</span> <span class="mi">7</span><span class="p">)</span>
+        <span class="n">mid_pat</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="s1">&#39;=&#39;</span> <span class="o">*</span> <span class="mi">7</span><span class="p">)</span>
+        <span class="n">bot_pat</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="s1">&#39;&gt;&#39;</span> <span class="o">*</span> <span class="mi">7</span><span class="p">)</span>
+        <span class="n">flags</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span>
+        <span class="c1"># Pattern to remove the top part</span>
+        <span class="n">theirs_pat1</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^</span><span class="si">%s</span><span class="s1">.*?</span><span class="si">%s</span><span class="s1">.*?$</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">top_pat</span><span class="p">,</span> <span class="n">mid_pat</span><span class="p">),</span> <span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">)</span>
+        <span class="n">theirs_pat2</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^</span><span class="si">%s</span><span class="s1">.*?$</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">bot_pat</span><span class="p">),</span> <span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">)</span>
+        <span class="c1"># Pattern to remove the bottom part</span>
+        <span class="n">ours_pat1</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^</span><span class="si">%s</span><span class="s1">.*?</span><span class="si">%s</span><span class="s1">.*?$</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">mid_pat</span><span class="p">,</span> <span class="n">bot_pat</span><span class="p">),</span> <span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">)</span>
+        <span class="n">ours_pat2</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^</span><span class="si">%s</span><span class="s1">.*?$</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">top_pat</span><span class="p">),</span> <span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">)</span>
+        <span class="n">strat_pats</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;theirs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">theirs_pat1</span><span class="p">,</span> <span class="n">theirs_pat2</span><span class="p">],</span>
+            <span class="s1">&#39;ours&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">ours_pat1</span><span class="p">,</span> <span class="n">ours_pat2</span><span class="p">],</span>
+        <span class="p">}</span>
+
+        <span class="n">text_in</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">readfrom</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span>
+        <span class="n">text_out</span> <span class="o">=</span> <span class="n">text_in</span>
+        <span class="n">strat</span> <span class="o">=</span> <span class="s1">&#39;ours&#39;</span>
+        <span class="n">strat</span> <span class="o">=</span> <span class="s1">&#39;theirs&#39;</span>
+        <span class="k">for</span> <span class="n">pat</span> <span class="ow">in</span> <span class="n">strat_pats</span><span class="p">[</span><span class="n">strat</span><span class="p">]:</span>
+            <span class="n">text_out</span> <span class="o">=</span> <span class="n">pat</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">text_out</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">ut</span><span class="o">.</span><span class="n">print_difftext</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">difftext</span><span class="p">(</span><span class="n">text_in</span><span class="p">,</span> <span class="n">text_out</span><span class="p">,</span> <span class="n">num_context_lines</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">force</span><span class="p">:</span>
+            <span class="n">ut</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">text_out</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="git_sequence_editor_squash"><a class="viewcode-back" href="../../utool.html#utool.util_git.git_sequence_editor_squash">[docs]</a><span class="k">def</span> <span class="nf">git_sequence_editor_squash</span><span class="p">(</span><span class="n">fpath</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    squashes wip messages</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_git --exec-git_sequence_editor_squash</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; # SCRIPT</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_git import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; fpath = ut.get_argval(&#39;--fpath&#39;, str, default=None)</span>
+<span class="sd">        &gt;&gt;&gt; git_sequence_editor_squash(fpath)</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        text = ut.codeblock(</span>
+<span class="sd">            &#39;&#39;&#39;</span>
+<span class="sd">            pick 852aa05 better doctest for tips</span>
+<span class="sd">            pick 3c779b8 wip</span>
+<span class="sd">            pick 02bc21d wip</span>
+<span class="sd">            pick 1853828 Fixed root tablename</span>
+<span class="sd">            pick 9d50233 doctest updates</span>
+<span class="sd">            pick 66230a5 wip</span>
+<span class="sd">            pick c612e98 wip</span>
+<span class="sd">            pick b298598 Fixed tablename error</span>
+<span class="sd">            pick 1120a87 wip</span>
+<span class="sd">            pick f6c4838 wip</span>
+<span class="sd">            pick 7f92575 wip</span>
+<span class="sd">            &#39;&#39;&#39;)</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        def squash_consecutive_commits_with_same_message():</span>
+<span class="sd">            # http://stackoverflow.com/questions/8226278/git-alias-to-squash-all-commits-with-a-particular-commit-message</span>
+<span class="sd">            # Can do interactively with this. Can it be done automatically and pay attention to</span>
+<span class="sd">            # Timestamps etc?</span>
+<span class="sd">            git rebase --interactive HEAD~40 --autosquash</span>
+<span class="sd">            git rebase --interactive $(git merge-base HEAD master) --autosquash</span>
+
+<span class="sd">            # Lookbehind correct version</span>
+<span class="sd">            %s/\([a-z]* [a-z0-9]* wip\n\)\@&lt;=pick \([a-z0-9]*\) wip/squash \2 wip/gc</span>
+
+<span class="sd">           # THE FULL NON-INTERACTIVE AUTOSQUASH SCRIPT</span>
+<span class="sd">           # TODO: Dont squash if there is a one hour timedelta between commits</span>
+
+<span class="sd">           GIT_EDITOR=&quot;cat $1&quot; GIT_SEQUENCE_EDITOR=&quot;python -m utool.util_git --exec-git_sequence_editor_squash \</span>
+<span class="sd">                   --fpath $1&quot; git rebase -i $(git rev-list HEAD | tail -n 1) --autosquash --no-verify</span>
+<span class="sd">           GIT_EDITOR=&quot;cat $1&quot; GIT_SEQUENCE_EDITOR=&quot;python -m utool.util_git --exec-git_sequence_editor_squash \</span>
+<span class="sd">                   --fpath $1&quot; git rebase -i HEAD~10 --autosquash --no-verify</span>
+
+<span class="sd">           GIT_EDITOR=&quot;cat $1&quot; GIT_SEQUENCE_EDITOR=&quot;python -m utool.util_git --exec-git_sequence_editor_squash \</span>
+<span class="sd">                   --fpath $1&quot; git rebase -i $(git merge-base HEAD master) --autosquash --no-verify</span>
+
+<span class="sd">           # 14d778fa30a93f85c61f34d09eddb6d2cafd11e2</span>
+<span class="sd">           # c509a95d4468ebb61097bd9f4d302367424772a3</span>
+<span class="sd">           # b0ffc26011e33378ee30730c5e0ef1994bfe1a90</span>
+<span class="sd">           # GIT_SEQUENCE_EDITOR=&lt;script&gt; git rebase -i &lt;params&gt;</span>
+<span class="sd">           # GIT_SEQUENCE_EDITOR=&quot;echo &#39;FOOBAR $1&#39; &quot; git rebase -i HEAD~40 --autosquash</span>
+<span class="sd">           # git checkout master</span>
+<span class="sd">           # git branch -D tmp</span>
+<span class="sd">           # git checkout -b tmp</span>
+<span class="sd">           # option to get the tail commit</span>
+<span class="sd">           $(git rev-list HEAD | tail -n 1)</span>
+<span class="sd">           # GIT_SEQUENCE_EDITOR=&quot;python -m utool.util_git --exec-git_sequence_editor_squash \</span>
+<span class="sd">                   --fpath $1&quot; git rebase -i HEAD~40 --autosquash</span>
+<span class="sd">           # GIT_SEQUENCE_EDITOR=&quot;python -m utool.util_git --exec-git_sequence_editor_squash \</span>
+<span class="sd">                   --fpath $1&quot; git rebase -i HEAD~40 --autosquash --no-verify</span>
+<span class="sd">           &lt;params&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># print(sys.argv)</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+    <span class="n">text</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">read_from</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span>
+    <span class="c1"># print(&#39;fpath = %r&#39; % (fpath,))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="c1"># Doesnt work because of fixed witdth requirement</span>
+    <span class="c1"># search = (ut.util_regex.positive_lookbehind(&#39;[a-z]* [a-z0-9]* wip\n&#39;) + &#39;pick &#39; +</span>
+    <span class="c1">#           ut.reponamed_field(&#39;hash&#39;, &#39;[a-z0-9]*&#39;) + &#39; wip&#39;)</span>
+    <span class="c1"># repl = (&#39;squash &#39; + ut.bref_field(&#39;hash&#39;) + &#39; wip&#39;)</span>
+    <span class="c1"># import re</span>
+    <span class="c1"># new_text = re.sub(search, repl, text, flags=re.MULTILINE)</span>
+    <span class="c1"># print(new_text)</span>
+    <span class="n">prev_msg</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">prev_dt</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">new_lines</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">get_commit_date</span><span class="p">(</span><span class="n">hashid</span><span class="p">):</span>
+        <span class="n">out</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">ret</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">cmd</span><span class="p">(</span>
+            <span class="s1">&#39;git show -s --format=</span><span class="si">%c</span><span class="s1">i &#39;</span> <span class="o">+</span> <span class="n">hashid</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">pad_stdout</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># from datetime import datetime</span>
+        <span class="kn">from</span> <span class="nn">dateutil</span> <span class="k">import</span> <span class="n">parser</span>
+
+        <span class="c1"># print(&#39;out = %r&#39; % (out,))</span>
+        <span class="n">stamp</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="c1"># print(&#39;stamp = %r&#39; % (stamp,))</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">stamp</span><span class="p">)</span>
+        <span class="c1"># dt = datetime.strptime(stamp, &#39;%Y-%m-%d %H:%M:%S %Z&#39;)</span>
+        <span class="c1"># print(&#39;dt = %r&#39; % (dt,))</span>
+        <span class="k">return</span> <span class="n">dt</span>
+
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+        <span class="n">commit_line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">commit_line</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">prev_msg</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">prev_dt</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">new_lines</span> <span class="o">+=</span> <span class="p">[</span><span class="n">line</span><span class="p">]</span>
+            <span class="k">continue</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">commit_line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">hashid</span> <span class="o">=</span> <span class="n">commit_line</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">commit_line</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">get_commit_date</span><span class="p">(</span><span class="n">hashid</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">prev_msg</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">prev_dt</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">new_lines</span> <span class="o">+=</span> <span class="p">[</span><span class="n">line</span><span class="p">]</span>
+            <span class="k">continue</span>
+        <span class="n">orig_msg</span> <span class="o">=</span> <span class="n">msg</span>
+        <span class="n">can_squash</span> <span class="o">=</span> <span class="n">action</span> <span class="o">==</span> <span class="s1">&#39;pick&#39;</span> <span class="ow">and</span> <span class="n">msg</span> <span class="o">==</span> <span class="s1">&#39;wip&#39;</span> <span class="ow">and</span> <span class="n">prev_msg</span> <span class="o">==</span> <span class="s1">&#39;wip&#39;</span>
+        <span class="k">if</span> <span class="n">prev_dt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">prev_msg</span> <span class="o">==</span> <span class="s1">&#39;wip&#39;</span><span class="p">:</span>
+            <span class="n">tdelta</span> <span class="o">=</span> <span class="n">dt</span> <span class="o">-</span> <span class="n">prev_dt</span>
+            <span class="c1"># Only squash closely consecutive commits</span>
+            <span class="n">threshold_minutes</span> <span class="o">=</span> <span class="mi">45</span>
+            <span class="n">td_min</span> <span class="o">=</span> <span class="n">tdelta</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mf">60.0</span>
+            <span class="c1"># print(tdelta)</span>
+            <span class="n">can_squash</span> <span class="o">&amp;=</span> <span class="n">td_min</span> <span class="o">&lt;</span> <span class="n">threshold_minutes</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span> <span class="o">+</span> <span class="s1">&#39; -- tdelta=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">get_timedelta_str</span><span class="p">(</span><span class="n">tdelta</span><span class="p">),)</span>
+        <span class="k">if</span> <span class="n">can_squash</span><span class="p">:</span>
+            <span class="n">new_line</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;squash&#39;</span><span class="p">,</span> <span class="n">hashid</span><span class="p">,</span> <span class="n">msg</span><span class="p">])</span>
+            <span class="n">new_lines</span> <span class="o">+=</span> <span class="p">[</span><span class="n">new_line</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_lines</span> <span class="o">+=</span> <span class="p">[</span><span class="n">line</span><span class="p">]</span>
+        <span class="n">prev_msg</span> <span class="o">=</span> <span class="n">orig_msg</span>
+        <span class="n">prev_dt</span> <span class="o">=</span> <span class="n">dt</span>
+    <span class="n">new_text</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_lines</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_commit_date</span><span class="p">(</span><span class="n">hashid</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">cmd</span><span class="p">(</span><span class="s1">&#39;git show -s --format=</span><span class="si">%c</span><span class="s1">i &#39;</span> <span class="o">+</span> <span class="n">hashid</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;out = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">out</span><span class="p">,))</span>
+
+    <span class="c1"># print(&#39;Dry run&#39;)</span>
+    <span class="c1"># ut.dump_autogen_code(fpath, new_text)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">new_text</span><span class="p">)</span>
+    <span class="n">ut</span><span class="o">.</span><span class="n">write_to</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">new_text</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="std_build_command"><a class="viewcode-back" href="../../utool.html#utool.util_git.std_build_command">[docs]</a><span class="k">def</span> <span class="nf">std_build_command</span><span class="p">(</span><span class="n">repo</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    DEPRICATE</span>
+<span class="sd">    My standard build script names.</span>
+
+<span class="sd">    Calls mingw_build.bat on windows and unix_build.sh  on unix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;+**** stdbuild *******&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;repo = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">repo</span><span class="p">,))</span>
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;win32&#39;</span><span class="p">):</span>
+        <span class="c1"># vtool --rebuild-sver didnt work with this line</span>
+        <span class="c1"># scriptname = &#39;./mingw_build.bat&#39;</span>
+        <span class="n">scriptname</span> <span class="o">=</span> <span class="s1">&#39;mingw_build.bat&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">scriptname</span> <span class="o">=</span> <span class="s1">&#39;./unix_build.sh&#39;</span>
+    <span class="k">if</span> <span class="n">repo</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="c1"># default to cwd</span>
+        <span class="n">repo</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
+    <span class="n">ut</span><span class="o">.</span><span class="n">assert_exists</span><span class="p">(</span><span class="n">scriptname</span><span class="p">)</span>
+    <span class="n">normbuild_flag</span> <span class="o">=</span> <span class="s1">&#39;--no-rmbuild&#39;</span>
+    <span class="k">if</span> <span class="n">ut</span><span class="o">.</span><span class="n">get_argflag</span><span class="p">(</span><span class="n">normbuild_flag</span><span class="p">):</span>
+        <span class="n">scriptname</span> <span class="o">+=</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">normbuild_flag</span>
+    <span class="c1"># Execute build</span>
+    <span class="n">ut</span><span class="o">.</span><span class="n">cmd</span><span class="p">(</span><span class="n">scriptname</span><span class="p">)</span>
+    <span class="c1"># os.system(scriptname)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;L**** stdbuild *******&#39;</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_git</span>
+<span class="sd">        python -m utool.util_git --allexamples</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">multiprocessing</span>
+
+    <span class="n">multiprocessing</span><span class="o">.</span><span class="n">freeze_support</span><span class="p">()</span>  <span class="c1"># for win32</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>  <span class="c1"># NOQA</span>
+
+    <span class="n">ut</span><span class="o">.</span><span class="n">doctest_funcs</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">wbia-vtool</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  <li><a href="../utool.html">utool</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wild Me.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

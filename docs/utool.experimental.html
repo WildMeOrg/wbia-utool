@@ -1,0 +1,1209 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>utool.experimental package &#8212; wbia-vtool 3.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="utool.tests package" href="utool.tests.html" />
+    <link rel="prev" title="utool._internal package" href="utool._internal.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="utool-experimental-package">
+<h1>utool.experimental package<a class="headerlink" href="#utool-experimental-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-utool.experimental.bytecode_optimizations">
+<span id="utool-experimental-bytecode-optimizations-module"></span><h2>utool.experimental.bytecode_optimizations module<a class="headerlink" href="#module-utool.experimental.bytecode_optimizations" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-utool.experimental.dynamic_connectivity">
+<span id="utool-experimental-dynamic-connectivity-module"></span><h2>utool.experimental.dynamic_connectivity module<a class="headerlink" href="#module-utool.experimental.dynamic_connectivity" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="utool.experimental.dynamic_connectivity.BinaryNode">
+<em class="property">class </em><code class="descclassname">utool.experimental.dynamic_connectivity.</code><code class="descname">BinaryNode</code><span class="sig-paren">(</span><em>value</em>, <em>parent=None</em>, <em>left=None</em>, <em>right=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#BinaryNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.BinaryNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="utool.experimental.dynamic_connectivity.BinaryNode.left">
+<code class="descname">left</code><a class="headerlink" href="#utool.experimental.dynamic_connectivity.BinaryNode.left" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="utool.experimental.dynamic_connectivity.BinaryNode.right">
+<code class="descname">right</code><a class="headerlink" href="#utool.experimental.dynamic_connectivity.BinaryNode.right" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.BinaryNode.set_child">
+<code class="descname">set_child</code><span class="sig-paren">(</span><em>other</em>, <em>dir_</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#BinaryNode.set_child"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.BinaryNode.set_child" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="utool.experimental.dynamic_connectivity.DummyEulerTourForest">
+<em class="property">class </em><code class="descclassname">utool.experimental.dynamic_connectivity.</code><code class="descname">DummyEulerTourForest</code><span class="sig-paren">(</span><em>nodes=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#DummyEulerTourForest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.DummyEulerTourForest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>maintain a forests of euler tour trees</p>
+<p>This is a bad implementation, but will let us use the DynConnGraph api</p>
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.DummyEulerTourForest.add_edge">
+<code class="descname">add_edge</code><span class="sig-paren">(</span><em>u</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#DummyEulerTourForest.add_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.DummyEulerTourForest.add_edge" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.DummyEulerTourForest.add_node">
+<code class="descname">add_node</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#DummyEulerTourForest.add_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.DummyEulerTourForest.add_node" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.DummyEulerTourForest.components">
+<code class="descname">components</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#DummyEulerTourForest.components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.DummyEulerTourForest.components" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.DummyEulerTourForest.find_root">
+<code class="descname">find_root</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#DummyEulerTourForest.find_root"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.DummyEulerTourForest.find_root" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.DummyEulerTourForest.has_edge">
+<code class="descname">has_edge</code><span class="sig-paren">(</span><em>u</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#DummyEulerTourForest.has_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.DummyEulerTourForest.has_edge" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.DummyEulerTourForest.remove_edge">
+<code class="descname">remove_edge</code><span class="sig-paren">(</span><em>u</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#DummyEulerTourForest.remove_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.DummyEulerTourForest.remove_edge" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.DummyEulerTourForest.subtree">
+<code class="descname">subtree</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#DummyEulerTourForest.subtree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.DummyEulerTourForest.subtree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.DummyEulerTourForest.to_networkx">
+<code class="descname">to_networkx</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#DummyEulerTourForest.to_networkx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.DummyEulerTourForest.to_networkx" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="utool.experimental.dynamic_connectivity.DynConnGraph">
+<em class="property">class </em><code class="descclassname">utool.experimental.dynamic_connectivity.</code><code class="descname">DynConnGraph</code><span class="sig-paren">(</span><em>graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#DynConnGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.DynConnGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Stores a spanning forest with Euler Tour Trees</p>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://courses.csail.mit.edu/6.851/spring14/lectures/L20.pdf">https://courses.csail.mit.edu/6.851/spring14/lectures/L20.pdf</a>
+<a class="reference external" href="https://courses.csail.mit.edu/6.851/spring14/lectures/L20.html">https://courses.csail.mit.edu/6.851/spring14/lectures/L20.html</a>
+<a class="reference external" href="http://cs.stackexchange.com/questions/33595/what-is-the-most-efficient-algorithm-and-data-structure-for-maintaining-connecte">http://cs.stackexchange.com/questions/33595/what-is-the-most-efficient-algorithm-and-data-structure-for-maintaining-connecte</a></p>
+<p><a class="reference external" href="https://www.cs.princeton.edu/courses/archive/fall03/cs528/handouts/Poly%20logarithmic.pdf">https://www.cs.princeton.edu/courses/archive/fall03/cs528/handouts/Poly%20logarithmic.pdf</a></p>
+<p>DEFINES ET-Trees
+<a class="reference external" href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.192.8615&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.192.8615&amp;rep=rep1&amp;type=pdf</a></p>
+<p><a class="reference external" href="https://www.cs.princeton.edu/courses/archive/fall03/cs528/handouts/Poly%20logarithmic.pdf">https://www.cs.princeton.edu/courses/archive/fall03/cs528/handouts/Poly%20logarithmic.pdf</a>
+<a class="reference external" href="http://courses.csail.mit.edu/6.851/spring12/scribe/L20.pdf">http://courses.csail.mit.edu/6.851/spring12/scribe/L20.pdf</a>
+<a class="reference external" href="http://courses.csail.mit.edu/6.854/16/Projects/B/dynamic-graphs-survey.pdf">http://courses.csail.mit.edu/6.854/16/Projects/B/dynamic-graphs-survey.pdf</a>
+<a class="reference external" href="http://dl.acm.org/citation.cfm?id=502095">http://dl.acm.org/citation.cfm?id=502095</a>
+<a class="reference external" href="http://delivery.acm.org/10.1145/510000/502095/p723-holm.pdf?ip=128.213.17.14&amp;id=502095&amp;acc=ACTIVE%20SERVICE&amp;key=7777116298C9657D%2EAF047EA360787914%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35&amp;CFID=905563744&amp;CFTOKEN=37809688&amp;__acm__=1488222284_4ae91dd7a761430ee714f0c69c17b772">http://delivery.acm.org/10.1145/510000/502095/p723-holm.pdf?ip=128.213.17.14&amp;id=502095&amp;acc=ACTIVE%20SERVICE&amp;key=7777116298C9657D%2EAF047EA360787914%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35&amp;CFID=905563744&amp;CFTOKEN=37809688&amp;__acm__=1488222284_4ae91dd7a761430ee714f0c69c17b772</a></p>
+<p class="rubric">Notes</p>
+<p>Paper uses level 0 at top, but video lecture uses floor(log(n)) as top.</p>
+<p>All edges start at level floor(log(n)).
+The level of each edge will change over time, but cannot decrease below zero.</p>
+<p class="rubric">Notes</p>
+<p>Going to store</p>
+<dl class="docutils">
+<dt>Let G[i] = subgraph graph at level i. (</dt>
+<dd>contains only edges of level i or greater)</dd>
+</dl>
+<p>Let F[i] be Euler tour forest to correspond with G[i].</p>
+<p>G[log(n)] = full graph</p>
+<p class="rubric">Notes</p>
+<p>Invariant 1 Every connected component of G_i has at most 2^i vertices.
+Invariant 2 F[0] ⊆ F[1] ⊆ F[2] ⊆ … ⊆ F[log(n)].</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>In other words:</dt>
+<dd><p class="first">F[i] = F[log(n)] ∩ G_i, and
+F[log(n)] is the minimum spanning forest of G_{log(n)},
+where the weight of an edge is its level.</p>
+<p class="last">F[0] is a maximum spanning forest if using 0 as top level</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt>CommandLine:</dt>
+<dd>python -m utool.experimental.dynamic_connectivity DynConnGraph –show</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># DISABLE_DOCTEST</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">utool.experimental.dynamic_connectivity</span> <span class="k">import</span> <span class="o">*</span>  <span class="c1"># NOQA</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">wbia.plottool</span> <span class="k">as</span> <span class="nn">pt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">generators</span><span class="o">.</span><span class="n">cycle_graph</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span> <span class="o">=</span> <span class="n">DynConnGraph</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pt</span><span class="o">.</span><span class="n">qtensure</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pt</span><span class="o">.</span><span class="n">show_nx</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">fnum</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span><span class="o">.</span><span class="n">show_internals</span><span class="p">(</span><span class="n">fnum</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span><span class="o">.</span><span class="n">remove_edge</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span><span class="o">.</span><span class="n">show_internals</span><span class="p">(</span><span class="n">fnum</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span><span class="o">.</span><span class="n">remove_edge</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span><span class="o">.</span><span class="n">show_internals</span><span class="p">(</span><span class="n">fnum</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ut</span><span class="o">.</span><span class="n">show_if_requested</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.DynConnGraph.add_edge">
+<code class="descname">add_edge</code><span class="sig-paren">(</span><em>u</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#DynConnGraph.add_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.DynConnGraph.add_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>O(log(n))</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.DynConnGraph.is_connected">
+<code class="descname">is_connected</code><span class="sig-paren">(</span><em>u</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#DynConnGraph.is_connected"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.DynConnGraph.is_connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if vertices u and v are connected.
+Query top level forest F[0] to see if u and v are in the same tree.
+This can be done by checking F_{log(n)} if Findroot(u) = Findroot(v).
+This costs O(log(n) / log(log(n))) using B-tree based Euler-Tour trees.
+but this trades off with a O(log^2(n)/log(log(n))) update
+This is O(log(n)) otherwise</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.DynConnGraph.remove_edge">
+<code class="descname">remove_edge</code><span class="sig-paren">(</span><em>u</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#DynConnGraph.remove_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.DynConnGraph.remove_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Using notation where 0 is top level</p>
+<p>Intuitively speaking, when the level of a nontree edge is increased, it
+is because we have discovered that its end points are close enough in F
+to fit in a smaller tree on a higher level.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.DynConnGraph.show_internals">
+<code class="descname">show_internals</code><span class="sig-paren">(</span><em>fnum=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#DynConnGraph.show_internals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.DynConnGraph.show_internals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="utool.experimental.dynamic_connectivity.EulerTourForest">
+<em class="property">class </em><code class="descclassname">utool.experimental.dynamic_connectivity.</code><code class="descname">EulerTourForest</code><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#EulerTourForest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.EulerTourForest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.EulerTourForest.add_edge">
+<code class="descname">add_edge</code><span class="sig-paren">(</span><em>u</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#EulerTourForest.add_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.EulerTourForest.add_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>self = EulerTourForest()
+self.add_node(1)
+self.add_node(2)
+u, v = 1, 2</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.EulerTourForest.add_node">
+<code class="descname">add_node</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#EulerTourForest.add_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.EulerTourForest.add_node" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.EulerTourForest.find_root">
+<code class="descname">find_root</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#EulerTourForest.find_root"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.EulerTourForest.find_root" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.EulerTourForest.has_node">
+<code class="descname">has_node</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#EulerTourForest.has_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.EulerTourForest.has_node" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.EulerTourForest.reroot">
+<code class="descname">reroot</code><span class="sig-paren">(</span><em>old</em>, <em>new</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#EulerTourForest.reroot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.EulerTourForest.reroot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="utool.experimental.dynamic_connectivity.EulerTourList">
+<em class="property">class </em><code class="descclassname">utool.experimental.dynamic_connectivity.</code><code class="descname">EulerTourList</code><span class="sig-paren">(</span><em>iterable</em>, <em>load=1000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#EulerTourList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.EulerTourList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>load-list representation of an Euler tour inspired by sortedcontainers</p>
+<p>this doesnt work for the same reason keyed bintrees dont work</p>
+<p>the indexing needs to be implicit, but this has explicit indexes</p>
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.EulerTourList.append">
+<code class="descname">append</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#EulerTourList.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.EulerTourList.append" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.EulerTourList.join">
+<code class="descname">join</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#EulerTourList.join"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.EulerTourList.join" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – </td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>CommandLine:</dt>
+<dd>python -m sortedcontainers.sortedlist join2</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">utool.experimental.dynamic_connectivity</span> <span class="k">import</span> <span class="o">*</span>  <span class="c1"># NOQA</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span> <span class="o">=</span> <span class="n">EulerTourList</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">load</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">other</span> <span class="o">=</span> <span class="n">EulerTourList</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">load</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.EulerTourList.split">
+<code class="descname">split</code><span class="sig-paren">(</span><em>pos</em>, <em>idx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#EulerTourList.split"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.EulerTourList.split" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.EulerTourList.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>iterable</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#EulerTourList.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.EulerTourList.update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="utool.experimental.dynamic_connectivity.EulerTourTree">
+<em class="property">class </em><code class="descclassname">utool.experimental.dynamic_connectivity.</code><code class="descname">EulerTourTree</code><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#EulerTourTree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.EulerTourTree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="docutils">
+<dt>CommandLine:</dt>
+<dd>python -m utool.experimental.dynamic_connectivity EulerTourTree –show</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># DISABLE_DOCTEST</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">utool.experimental.dynamic_connectivity</span> <span class="k">import</span> <span class="o">*</span>  <span class="c1"># NOQA</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#mst = nx.balanced_tree(2, 2)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edges</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mst</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span> <span class="o">=</span> <span class="n">EulerTourTree</span><span class="o">.</span><span class="n">from_tree</span><span class="p">(</span><span class="n">mst</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">wbia.plottool</span> <span class="k">as</span> <span class="nn">pt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pt</span><span class="o">.</span><span class="n">qt4ensure</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fnum</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pnum_</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">make_pnum_nextgen</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pt</span><span class="o">.</span><span class="n">show_nx</span><span class="p">(</span><span class="n">mst</span><span class="p">,</span> <span class="n">pnum</span><span class="o">=</span><span class="n">pnum_</span><span class="p">(),</span> <span class="n">fnum</span><span class="o">=</span><span class="n">fnum</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pt</span><span class="o">.</span><span class="n">show_nx</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_networkx</span><span class="p">(),</span> <span class="n">pnum</span><span class="o">=</span><span class="n">pnum_</span><span class="p">(),</span> <span class="n">fnum</span><span class="o">=</span><span class="n">fnum</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pt</span><span class="o">.</span><span class="n">show_nx</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tour_tree</span><span class="o">.</span><span class="n">to_networkx</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">]),</span> <span class="n">pnum</span><span class="o">=</span><span class="n">pnum_</span><span class="p">(),</span> <span class="n">fnum</span><span class="o">=</span><span class="n">fnum</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tour</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ut</span><span class="o">.</span><span class="n">show_if_requested</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.EulerTourTree.cut">
+<code class="descname">cut</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>bstjoin=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#EulerTourTree.cut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.EulerTourTree.cut" title="Permalink to this definition">¶</a></dt>
+<dd><p>cuts edge (a, b) into two parts because this is a tree</p>
+<p>a, b = (2, 5)
+print(self.first_lookup[a] &gt; self.first_lookup[b])
+tree = self.tour_tree
+list(tree.item_slice(k1, k2))</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.EulerTourTree.find_root">
+<code class="descname">find_root</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#EulerTourTree.find_root"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.EulerTourTree.find_root" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="utool.experimental.dynamic_connectivity.EulerTourTree.from_tour">
+<em class="property">classmethod </em><code class="descname">from_tour</code><span class="sig-paren">(</span><em>tour</em>, <em>fast=False</em>, <em>start=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#EulerTourTree.from_tour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.EulerTourTree.from_tour" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="utool.experimental.dynamic_connectivity.EulerTourTree.from_tree">
+<em class="property">classmethod </em><code class="descname">from_tree</code><span class="sig-paren">(</span><em>mst</em>, <em>fast=True</em>, <em>start=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#EulerTourTree.from_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.EulerTourTree.from_tree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.EulerTourTree.join">
+<code class="descname">join</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#EulerTourTree.join"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.EulerTourTree.join" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.EulerTourTree.reroot">
+<code class="descname">reroot</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#EulerTourTree.reroot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.EulerTourTree.reroot" title="Permalink to this definition">¶</a></dt>
+<dd><p>s = 3
+s = ‘B’</p>
+<p>Let os denote any occurrence of s.
+Splice out the first part of the sequence ending with the occurrence before os,
+remove its first occurrence (or),
+and tack this on to the end of the sequence which now begins with os.
+Add a new occurrence os to the end.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.EulerTourTree.to_networkx">
+<code class="descname">to_networkx</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#EulerTourTree.to_networkx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.EulerTourTree.to_networkx" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="utool.experimental.dynamic_connectivity.TestETT">
+<em class="property">class </em><code class="descclassname">utool.experimental.dynamic_connectivity.</code><code class="descname">TestETT</code><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#TestETT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.TestETT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>raise NotImplementedError()</p>
+<p>hg clone <a class="reference external" href="https://bitbucket.org/mozman/bintrees">https://bitbucket.org/mozman/bintrees</a></p>
+<p>git clone <a class="reference external" href="mailto:git&#37;&#52;&#48;github&#46;com">git<span>&#64;</span>github<span>&#46;</span>com</a>:Erotemic/bintrees.git</p>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://courses.csail.mit.edu/6.851/spring07/scribe/lec05.pdf">https://courses.csail.mit.edu/6.851/spring07/scribe/lec05.pdf</a>
+<a class="reference external" href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.192.8615&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.192.8615&amp;rep=rep1&amp;type=pdf</a>
+<a class="reference external" href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.208.2351&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.208.2351&amp;rep=rep1&amp;type=pdf</a>
+<a class="reference external" href="https://en.wikipedia.org/wiki/Euler_tour_technique">https://en.wikipedia.org/wiki/Euler_tour_technique</a></p>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># DISABLE_DOCTEST</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">utool.experimental.dynamic_connectivity</span> <span class="k">import</span> <span class="o">*</span>  <span class="c1"># NOQA</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edges</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edges</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mst</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#mst = nx.balanced_tree(2, 11)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span> <span class="o">=</span> <span class="n">TestETT</span><span class="o">.</span><span class="n">from_tree</span><span class="p">(</span><span class="n">mst</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">wbia.plottool</span> <span class="k">as</span> <span class="nn">pt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pt</span><span class="o">.</span><span class="n">qt4ensure</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pt</span><span class="o">.</span><span class="n">show_nx</span><span class="p">(</span><span class="n">mst</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mst</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">balanced_tree</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.TestETT.delete_edge_bst_version">
+<code class="descname">delete_edge_bst_version</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>bstjoin=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#TestETT.delete_edge_bst_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.TestETT.delete_edge_bst_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>a, b = (2, 5)
+print(self.first_lookup[a] &gt; self.first_lookup[b])
+tree = self.tour_tree
+list(tree.item_slice(k1, k2))</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.TestETT.delete_edge_list_version">
+<code class="descname">delete_edge_list_version</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#TestETT.delete_edge_list_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.TestETT.delete_edge_list_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="utool.experimental.dynamic_connectivity.TestETT.from_tour">
+<em class="property">classmethod </em><code class="descname">from_tour</code><span class="sig-paren">(</span><em>tour</em>, <em>version='bst'</em>, <em>fast=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#TestETT.from_tour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.TestETT.from_tour" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="utool.experimental.dynamic_connectivity.TestETT.from_tree">
+<em class="property">classmethod </em><code class="descname">from_tree</code><span class="sig-paren">(</span><em>mst</em>, <em>version='bst'</em>, <em>fast=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#TestETT.from_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.TestETT.from_tree" title="Permalink to this definition">¶</a></dt>
+<dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># DISABLE_DOCTEST</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">utool.experimental.dynamic_connectivity</span> <span class="k">import</span> <span class="o">*</span>  <span class="c1"># NOQA</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mst</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">balanced_tree</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span> <span class="o">=</span> <span class="n">TestETT</span><span class="o">.</span><span class="n">from_tree</span><span class="p">(</span><span class="n">mst</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">wbia.plottool</span> <span class="k">as</span> <span class="nn">pt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pt</span><span class="o">.</span><span class="n">qt4ensure</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pt</span><span class="o">.</span><span class="n">show_nx</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_networkx</span><span class="p">(),</span> <span class="n">pnum</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">fnum</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">other</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delete_edge_bst_version</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pt</span><span class="o">.</span><span class="n">show_nx</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">to_networkx</span><span class="p">(),</span> <span class="n">pnum</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">fnum</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.TestETT.join_trees">
+<code class="descname">join_trees</code><span class="sig-paren">(</span><em>t1</em>, <em>t2</em>, <em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#TestETT.join_trees"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.TestETT.join_trees" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.TestETT.reroot">
+<code class="descname">reroot</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#TestETT.reroot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.TestETT.reroot" title="Permalink to this definition">¶</a></dt>
+<dd><p>s = 3
+s = ‘B’</p>
+<p>Let os denote any occurrence of s.
+Splice out the first part of the sequence ending with the occurrence before os,
+remove its first occurrence (or),
+and tack this on to the end of the sequence which now begins with os.
+Add a new occurrence os to the end.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.dynamic_connectivity.TestETT.to_networkx">
+<code class="descname">to_networkx</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#TestETT.to_networkx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.TestETT.to_networkx" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.dynamic_connectivity.comparison">
+<code class="descclassname">utool.experimental.dynamic_connectivity.</code><code class="descname">comparison</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#comparison"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.comparison" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>CommandLine:</dt>
+<dd>python -m utool.experimental.dynamic_connectivity comparison –profile
+python -m utool.experimental.dynamic_connectivity comparison</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.dynamic_connectivity.euler_tour_dfs">
+<code class="descclassname">utool.experimental.dynamic_connectivity.</code><code class="descname">euler_tour_dfs</code><span class="sig-paren">(</span><em>G</em>, <em>source=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/dynamic_connectivity.html#euler_tour_dfs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.dynamic_connectivity.euler_tour_dfs" title="Permalink to this definition">¶</a></dt>
+<dd><p>adaptation of networkx dfs</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-utool.experimental.euler_tour_tree_avl">
+<span id="utool-experimental-euler-tour-tree-avl-module"></span><h2>utool.experimental.euler_tour_tree_avl module<a class="headerlink" href="#module-utool.experimental.euler_tour_tree_avl" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="utool.experimental.euler_tour_tree_avl.EulerTourTree">
+<em class="property">class </em><code class="descclassname">utool.experimental.euler_tour_tree_avl.</code><code class="descname">EulerTourTree</code><span class="sig-paren">(</span><em>iterable=None</em>, <em>root=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#EulerTourTree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.EulerTourTree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="utool.html#utool.util_dev.NiceRepr" title="utool.util_dev.NiceRepr"><code class="xref py py-class docutils literal notranslate"><span class="pre">utool.util_dev.NiceRepr</span></code></a></p>
+<p>TODO: generalize out the binary tree sequence part</p>
+<dl class="docutils">
+<dt>CommandLine:</dt>
+<dd>python -m utool.experimental.euler_tour_tree_avl EulerTourTree</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Randomized Dynamic Graph Algorithms with Polylogarithmic Time per Operation
+Henzinger and King 1995
+<a class="reference external" href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.192.8615&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.192.8615&amp;rep=rep1&amp;type=pdf</a></p>
+<dl class="docutils">
+<dt>Ignore:</dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># DISABLE_DOCTEST</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">utool.experimental.euler_tour_tree_avl</span> <span class="k">import</span> <span class="o">*</span>  <span class="c1"># NOQA</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ETT</span> <span class="o">=</span> <span class="n">EulerTourTree</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span> <span class="o">=</span> <span class="n">ETT</span><span class="p">([</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span><span class="o">.</span><span class="n">_assert_nodes</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">other</span> <span class="o">=</span> <span class="n">ETT</span><span class="p">([</span><span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">other2</span> <span class="o">=</span> <span class="n">ETT</span><span class="p">([</span><span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new</span> <span class="o">=</span> <span class="bp">self</span> <span class="o">+</span> <span class="n">other</span> <span class="o">+</span> <span class="n">other2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="bp">self</span> <span class="o">+</span> <span class="n">other</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">new</span> <span class="o">+</span> <span class="bp">self</span> <span class="o">+</span> <span class="bp">self</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span><span class="o">.</span><span class="n">print_tree</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#other.print_tree()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#self.print_tree()</span>
+</pre></div>
+</div>
+</dd>
+<dt>Ignore:</dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># DISABLE_DOCTEST</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">utool.experimental.euler_tour_tree_avl</span> <span class="k">import</span> <span class="o">*</span>  <span class="c1"># NOQA</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edges</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tour</span> <span class="o">=</span> <span class="n">euler_tour</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">edges</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tour</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span> <span class="o">=</span> <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">tour</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="n">tour</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="method">
+<dt id="utool.experimental.euler_tour_tree_avl.EulerTourTree.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#EulerTourTree.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.EulerTourTree.copy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.euler_tour_tree_avl.EulerTourTree.get_ascii_tree">
+<code class="descname">get_ascii_tree</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#EulerTourTree.get_ascii_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.EulerTourTree.get_ascii_tree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.euler_tour_tree_avl.EulerTourTree.get_node">
+<code class="descname">get_node</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#EulerTourTree.get_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.EulerTourTree.get_node" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.euler_tour_tree_avl.EulerTourTree.join">
+<code class="descname">join</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#EulerTourTree.join"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.EulerTourTree.join" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.euler_tour_tree_avl.EulerTourTree.min_elem">
+<code class="descname">min_elem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#EulerTourTree.min_elem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.EulerTourTree.min_elem" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.euler_tour_tree_avl.EulerTourTree.print_tree">
+<code class="descname">print_tree</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#EulerTourTree.print_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.EulerTourTree.print_tree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="utool.experimental.euler_tour_tree_avl.EulerTourTree.repr_tree">
+<code class="descname">repr_tree</code><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.EulerTourTree.repr_tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>reconstruct represented tree as a DiGraph to
+preserve the current rootedness</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.euler_tour_tree_avl.EulerTourTree.reroot">
+<code class="descname">reroot</code><span class="sig-paren">(</span><em>first_node</em>, <em>last_node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#EulerTourTree.reroot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.EulerTourTree.reroot" title="Permalink to this definition">¶</a></dt>
+<dd><p class="rubric">Notes</p>
+<p>● Pick any occurrence of the new root r.
+● Split the tour into A and B, where B is the
+part of the tour before r.
+● Delete the first node of A and append r.
+● Concatenate B and A.</p>
+<dl class="docutils">
+<dt>To change the root of T from r to s:</dt>
+<dd>Let os denote any occurrence of s.
+Splice out the first part of the sequence ending with the
+occurrence before or,
+remove its first occurrence (or), and
+tack this on to the end of the sequence which now begins with os.
+Add a new occurrence os to the end.</dd>
+<dt>CommandLine:</dt>
+<dd>python -m utool.experimental.euler_tour_tree_avl reroot</dd>
+<dt>Ignore:</dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># DISABLE_DOCTEST</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">utool.experimental.euler_tour_tree_avl</span> <span class="k">import</span> <span class="o">*</span>  <span class="c1"># NOQA</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edges</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edges</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">balanced_tree</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">edges</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tour</span> <span class="o">=</span> <span class="n">euler_tour</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">edges</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span> <span class="o">=</span> <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">tour</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;old_tour = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_traverse_nodes</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_root_val</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="p">)[</span><span class="mi">445</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tour</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_root_val</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;new_root_val = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">new_root_val</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">first_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span><span class="p">[</span><span class="n">new_root_val</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">last_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span><span class="p">[</span><span class="n">new_root_val</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span><span class="o">.</span><span class="n">reroot</span><span class="p">(</span><span class="n">first_node</span><span class="p">,</span> <span class="n">last_node</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;new_tour = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ut</span><span class="o">.</span><span class="n">quit_if_noshow</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ut</span><span class="o">.</span><span class="n">show_if_requested</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.euler_tour_tree_avl.EulerTourTree.show_nx">
+<code class="descname">show_nx</code><span class="sig-paren">(</span><em>labels=['value'], edge_labels=False, fnum=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#EulerTourTree.show_nx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.EulerTourTree.show_nx" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.euler_tour_tree_avl.EulerTourTree.to_networkx">
+<code class="descname">to_networkx</code><span class="sig-paren">(</span><em>labels=None</em>, <em>edge_labels=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#EulerTourTree.to_networkx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.EulerTourTree.to_networkx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a networkx representation of the binary search tree.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.euler_tour_tree_avl.EulerTourTree.values">
+<code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#EulerTourTree.values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.EulerTourTree.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="utool.experimental.euler_tour_tree_avl.Node">
+<em class="property">class </em><code class="descclassname">utool.experimental.euler_tour_tree_avl.</code><code class="descname">Node</code><span class="sig-paren">(</span><em>key=None</em>, <em>value=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#Node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.Node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="utool.html#utool.util_dev.NiceRepr" title="utool.util_dev.NiceRepr"><code class="xref py py-class docutils literal notranslate"><span class="pre">utool.util_dev.NiceRepr</span></code></a></p>
+<p>Internal object, represents a tree node.</p>
+<dl class="method">
+<dt id="utool.experimental.euler_tour_tree_avl.Node.free">
+<code class="descname">free</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#Node.free"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.Node.free" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all references.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="utool.experimental.euler_tour_tree_avl.Node.kids">
+<code class="descname">kids</code><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.Node.kids" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="utool.experimental.euler_tour_tree_avl.Node.set_child">
+<code class="descname">set_child</code><span class="sig-paren">(</span><em>direction</em>, <em>other</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#Node.set_child"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.Node.set_child" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="utool.experimental.euler_tour_tree_avl.Node.val">
+<code class="descname">val</code><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.Node.val" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="utool.experimental.euler_tour_tree_avl.Node.xdata">
+<code class="descname">xdata</code><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.Node.xdata" title="Permalink to this definition">¶</a></dt>
+<dd><p>compatibility with the C node_t struct</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.euler_tour_tree_avl.ascii_tree">
+<code class="descclassname">utool.experimental.euler_tour_tree_avl.</code><code class="descname">ascii_tree</code><span class="sig-paren">(</span><em>root</em>, <em>name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#ascii_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.ascii_tree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.euler_tour_tree_avl.avl_insert_dir">
+<code class="descclassname">utool.experimental.euler_tour_tree_avl.</code><code class="descname">avl_insert_dir</code><span class="sig-paren">(</span><em>root</em>, <em>new_node</em>, <em>direction=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#avl_insert_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.avl_insert_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inserts a single node all the way to the left (direction=1) or right (direction=1)</p>
+<dl class="docutils">
+<dt>CommandLine:</dt>
+<dd>python -m utool.experimental.euler_tour_tree_avl avl_insert_dir –show
+python -m utool.experimental.euler_tour_tree_avl avl_insert_dir</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># DISABLE_DOCTEST</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">utool.experimental.euler_tour_tree_avl</span> <span class="k">import</span> <span class="o">*</span>  <span class="c1"># NOQA</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s1">&#39;A&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s1">&#39;B&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_root</span> <span class="o">=</span> <span class="n">avl_insert_dir</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">new_node</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_root</span> <span class="o">=</span> <span class="n">avl_insert_dir</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">Node</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s1">&#39;Z&#39;</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">new_root</span><span class="p">)</span><span class="o">.</span><span class="n">_assert_nodes</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">ut</span><span class="o">.</span><span class="n">chr_range</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">new_root</span> <span class="o">=</span> <span class="n">avl_insert_dir</span><span class="p">(</span><span class="n">new_root</span><span class="p">,</span> <span class="n">Node</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">v</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="bp">self</span> <span class="o">=</span> <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">new_root</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="bp">self</span><span class="o">.</span><span class="n">_assert_nodes</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new</span> <span class="o">=</span> <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">new_root</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ut</span><span class="o">.</span><span class="n">quit_if_noshow</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ut</span><span class="o">.</span><span class="n">qtensure</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new</span><span class="o">.</span><span class="n">show_nx</span><span class="p">(</span><span class="n">edge_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ut</span><span class="o">.</span><span class="n">show_if_requested</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#ascii_tree(root)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#print(result)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.euler_tour_tree_avl.avl_join">
+<code class="descclassname">utool.experimental.euler_tour_tree_avl.</code><code class="descname">avl_join</code><span class="sig-paren">(</span><em>t1</em>, <em>t2</em>, <em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#avl_join"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.avl_join" title="Permalink to this definition">¶</a></dt>
+<dd><p>Joins two trees <cite>t1</cite> and <cite>t1</cite> with an intermediate key-value pair</p>
+<dl class="docutils">
+<dt>CommandLine:</dt>
+<dd>python -m utool.experimental.euler_tour_tree_avl avl_join</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># DISABLE_DOCTEST</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">utool.experimental.euler_tour_tree_avl</span> <span class="k">import</span> <span class="o">*</span>  <span class="c1"># NOQA</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span> <span class="o">=</span> <span class="n">EulerTourTree</span><span class="p">([</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">other</span> <span class="o">=</span> <span class="n">EulerTourTree</span><span class="p">([</span><span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s1">&#39;Q&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span> <span class="o">=</span> <span class="n">avl_join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new</span> <span class="o">=</span> <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">root</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;new = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">new</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ut</span><span class="o">.</span><span class="n">quit_if_noshow</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span><span class="o">.</span><span class="n">print_tree</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">other</span><span class="o">.</span><span class="n">print_tree</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new</span><span class="o">.</span><span class="n">print_tree</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># DISABLE_DOCTEST</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">utool.experimental.euler_tour_tree_avl</span> <span class="k">import</span> <span class="o">*</span>  <span class="c1"># NOQA</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span> <span class="o">=</span> <span class="n">EulerTourTree</span><span class="p">([</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="s1">&#39;J&#39;</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">other</span> <span class="o">=</span> <span class="n">EulerTourTree</span><span class="p">([</span><span class="s1">&#39;X&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s1">&#39;Q&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span> <span class="o">=</span> <span class="n">avl_join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new</span> <span class="o">=</span> <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">root</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;new = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">new</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ut</span><span class="o">.</span><span class="n">quit_if_noshow</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ut</span><span class="o">.</span><span class="n">qtensure</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#self.show_nx(fnum=1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#other.show_nx(fnum=2)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new</span><span class="o">.</span><span class="n">show_nx</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Running Time:</dt>
+<dd>O(abs(r(t1) - r(t2)))
+O(abs(height(t1) - height(t2)))</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.euler_tour_tree_avl.avl_join2">
+<code class="descclassname">utool.experimental.euler_tour_tree_avl.</code><code class="descname">avl_join2</code><span class="sig-paren">(</span><em>t1</em>, <em>t2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#avl_join2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.avl_join2" title="Permalink to this definition">¶</a></dt>
+<dd><p>join two trees without any intermediate key</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">new_root</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#utool.experimental.euler_tour_tree_avl.Node" title="utool.experimental.euler_tour_tree_avl.Node">Node</a></td>
+</tr>
+</tbody>
+</table>
+<p>O(log(n) + log(m)) = O(r(t1) + r(t2))</p>
+<p>For AVL-Trees the rank r(t1) = height(t1) - 1</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.euler_tour_tree_avl.avl_join_dir_recursive">
+<code class="descclassname">utool.experimental.euler_tour_tree_avl.</code><code class="descname">avl_join_dir_recursive</code><span class="sig-paren">(</span><em>t1</em>, <em>t2</em>, <em>node</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#avl_join_dir_recursive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.avl_join_dir_recursive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursive version of join_left and join_right
+TODO: make this iterative using a stack</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.euler_tour_tree_avl.avl_new_top">
+<code class="descclassname">utool.experimental.euler_tour_tree_avl.</code><code class="descname">avl_new_top</code><span class="sig-paren">(</span><em>t1</em>, <em>t2</em>, <em>top</em>, <em>direction=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#avl_new_top"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.avl_new_top" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>if direction == 0:</dt>
+<dd>(t1, t2) is (left, right)</dd>
+<dt>if direction == 1:</dt>
+<dd>(t1, t2) is (right, left)</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.euler_tour_tree_avl.avl_release_kids">
+<code class="descclassname">utool.experimental.euler_tour_tree_avl.</code><code class="descname">avl_release_kids</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#avl_release_kids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.avl_release_kids" title="Permalink to this definition">¶</a></dt>
+<dd><p>splits a node from its kids maintaining parent pointers</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.euler_tour_tree_avl.avl_release_parent">
+<code class="descclassname">utool.experimental.euler_tour_tree_avl.</code><code class="descname">avl_release_parent</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#avl_release_parent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.avl_release_parent" title="Permalink to this definition">¶</a></dt>
+<dd><p>removes the parent of a child</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.euler_tour_tree_avl.avl_rotate_double">
+<code class="descclassname">utool.experimental.euler_tour_tree_avl.</code><code class="descname">avl_rotate_double</code><span class="sig-paren">(</span><em>root</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#avl_rotate_double"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.avl_rotate_double" title="Permalink to this definition">¶</a></dt>
+<dd><p>Double rotation, either 0 (left) or 1 (right).</p>
+<dl class="docutils">
+<dt>Figure:</dt>
+<dd><blockquote class="first">
+<div><blockquote>
+<div>c,1 (right)
+———–&gt;</div></blockquote>
+<p>a              a             c</p>
+</div></blockquote>
+<p>/      b,0     /     a,1    /            b       —&gt;   b      –&gt;  b      a
+           /</p>
+<blockquote class="last">
+<div>c          c</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.euler_tour_tree_avl.avl_rotate_single">
+<code class="descclassname">utool.experimental.euler_tour_tree_avl.</code><code class="descname">avl_rotate_single</code><span class="sig-paren">(</span><em>root</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#avl_rotate_single"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.avl_rotate_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Single rotation, either 0 (left) or 1 (right).</p>
+<dl class="docutils">
+<dt>Figure:</dt>
+<dd><blockquote class="first">
+<div>a,0 (left)
+———-&gt;</div></blockquote>
+<dl class="last docutils">
+<dt>a                   b</dt>
+<dd><dl class="first last docutils">
+<dt>               /               b             a       c</dt>
+<dd>c</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>a = root
+save = root.right</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.euler_tour_tree_avl.avl_split">
+<code class="descclassname">utool.experimental.euler_tour_tree_avl.</code><code class="descname">avl_split</code><span class="sig-paren">(</span><em>root</em>, <em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#avl_split"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.avl_split" title="Permalink to this definition">¶</a></dt>
+<dd><p>O(log(n))</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>root</strong> (<a class="reference internal" href="#utool.experimental.euler_tour_tree_avl.Node" title="utool.experimental.euler_tour_tree_avl.Node"><em>Node</em></a>) – tree root</li>
+<li><strong>node</strong> (<a class="reference internal" href="#utool.experimental.euler_tour_tree_avl.Node" title="utool.experimental.euler_tour_tree_avl.Node"><em>Node</em></a>) – node to split at</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>(tl, tr, node)</dt>
+<dd><p class="first last">tl contains all keys in the tree less than node
+tr contains all keys in the tree greater than node
+node is the node we split out</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">puple</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>CommandLine:</dt>
+<dd>python -m utool.experimental.euler_tour_tree_avl avl_split</dd>
+<dt>Ignore:</dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">utool.experimental.euler_tour_tree_avl</span> <span class="k">import</span> <span class="o">*</span>  <span class="c1"># NOQA</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span> <span class="o">=</span> <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">chr_range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span><span class="o">.</span><span class="n">print_tree</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">part1</span><span class="p">,</span> <span class="n">part2</span><span class="p">,</span> <span class="n">bnode</span> <span class="o">=</span> <span class="n">avl_split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ascii_tree</span><span class="p">(</span><span class="n">part1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ascii_tree</span><span class="p">(</span><span class="n">part2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ascii_tree</span><span class="p">(</span><span class="n">bnode</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Ignore:</dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">utool.experimental.euler_tour_tree_avl</span> <span class="k">import</span> <span class="o">*</span>  <span class="c1"># NOQA</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_avl_split</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.euler_tour_tree_avl.avl_split_first">
+<code class="descclassname">utool.experimental.euler_tour_tree_avl.</code><code class="descname">avl_split_first</code><span class="sig-paren">(</span><em>root</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#avl_split_first"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.avl_split_first" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the minimum element from the tree</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">new_root, first_node</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+</tr>
+</tbody>
+</table>
+<p>O(log(n)) = O(height(root))</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.euler_tour_tree_avl.avl_split_last">
+<code class="descclassname">utool.experimental.euler_tour_tree_avl.</code><code class="descname">avl_split_last</code><span class="sig-paren">(</span><em>root</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#avl_split_last"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.avl_split_last" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the maximum element from the tree</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">new_root, last_node</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+</tr>
+</tbody>
+</table>
+<p>O(log(n)) = O(height(root))</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.euler_tour_tree_avl.avl_split_old">
+<code class="descclassname">utool.experimental.euler_tour_tree_avl.</code><code class="descname">avl_split_old</code><span class="sig-paren">(</span><em>root</em>, <em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#avl_split_old"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.avl_split_old" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.euler_tour_tree_avl.backtrace_root">
+<code class="descclassname">utool.experimental.euler_tour_tree_avl.</code><code class="descname">backtrace_root</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#backtrace_root"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.backtrace_root" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Ignore:</dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">utool.experimental.euler_tour_tree_avl</span> <span class="k">import</span> <span class="o">*</span>  <span class="c1"># NOQA</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span> <span class="o">=</span> <span class="n">EulerTourTree</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span><span class="o">.</span><span class="n">_assert_nodes</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span><span class="o">.</span><span class="n">print_tree</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;node = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">node</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rpath</span> <span class="o">=</span> <span class="n">backtrace_root</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;rpath = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">rpath</span><span class="p">,))</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.euler_tour_tree_avl.euler_tour">
+<code class="descclassname">utool.experimental.euler_tour_tree_avl.</code><code class="descname">euler_tour</code><span class="sig-paren">(</span><em>G</em>, <em>node=None</em>, <em>seen=None</em>, <em>visited=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#euler_tour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.euler_tour" title="Permalink to this definition">¶</a></dt>
+<dd><p>definition from
+<a class="reference external" href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.192.8615&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.192.8615&amp;rep=rep1&amp;type=pdf</a></p>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># DISABLE_DOCTEST</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">utool.experimental.euler_tour_tree_avl</span> <span class="k">import</span> <span class="o">*</span>  <span class="c1"># NOQA</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edges</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">et1</span> <span class="o">=</span> <span class="n">euler_tour</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">et2</span> <span class="o">=</span> <span class="n">euler_tour_dfs</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.euler_tour_tree_avl.euler_tour_dfs">
+<code class="descclassname">utool.experimental.euler_tour_tree_avl.</code><code class="descname">euler_tour_dfs</code><span class="sig-paren">(</span><em>G</em>, <em>source=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#euler_tour_dfs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.euler_tour_dfs" title="Permalink to this definition">¶</a></dt>
+<dd><p>adaptation of networkx dfs</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.euler_tour_tree_avl.height">
+<code class="descclassname">utool.experimental.euler_tour_tree_avl.</code><code class="descname">height</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#height"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.height" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.euler_tour_tree_avl.test_avl_split">
+<code class="descclassname">utool.experimental.euler_tour_tree_avl.</code><code class="descname">test_avl_split</code><span class="sig-paren">(</span><em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/euler_tour_tree_avl.html#test_avl_split"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.euler_tour_tree_avl.test_avl_split" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-utool.experimental.pandas_highlight">
+<span id="utool-experimental-pandas-highlight-module"></span><h2>utool.experimental.pandas_highlight module<a class="headerlink" href="#module-utool.experimental.pandas_highlight" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="utool.experimental.pandas_highlight.monkey_to_str_columns">
+<code class="descclassname">utool.experimental.pandas_highlight.</code><code class="descname">monkey_to_str_columns</code><span class="sig-paren">(</span><em>self</em>, <em>latex=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/pandas_highlight.html#monkey_to_str_columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.pandas_highlight.monkey_to_str_columns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.pandas_highlight.pandas_repr">
+<code class="descclassname">utool.experimental.pandas_highlight.</code><code class="descname">pandas_repr</code><span class="sig-paren">(</span><em>df</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/pandas_highlight.html#pandas_repr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.pandas_highlight.pandas_repr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utool.experimental.pandas_highlight.to_string_monkey">
+<code class="descclassname">utool.experimental.pandas_highlight.</code><code class="descname">to_string_monkey</code><span class="sig-paren">(</span><em>df</em>, <em>highlight_cols=None</em>, <em>latex=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utool/experimental/pandas_highlight.html#to_string_monkey"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utool.experimental.pandas_highlight.to_string_monkey" title="Permalink to this definition">¶</a></dt>
+<dd><p>monkey patch to pandas to highlight the maximum value in specified
+cols of a row</p>
+<dl class="docutils">
+<dt>Ignore:</dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">utool.experimental.pandas_highlight</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span> <span class="mf">0.9</span><span class="p">,</span>         <span class="mf">0.86886931</span><span class="p">,</span>  <span class="mf">0.86842073</span><span class="p">,</span>  <span class="mf">0.9</span>       <span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>              <span class="p">[</span> <span class="mf">0.34196218</span><span class="p">,</span>  <span class="mf">0.34289191</span><span class="p">,</span>  <span class="mf">0.34206377</span><span class="p">,</span>  <span class="mf">0.34252863</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>              <span class="p">[</span> <span class="mf">0.34827074</span><span class="p">,</span>  <span class="mf">0.34827074</span><span class="p">,</span>  <span class="mf">0.34827074</span><span class="p">,</span>  <span class="mf">0.34827074</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>              <span class="p">[</span> <span class="mf">0.76979453</span><span class="p">,</span>  <span class="mf">0.77214855</span><span class="p">,</span>  <span class="mf">0.77547518</span><span class="p">,</span>  <span class="mf">0.38850962</span><span class="p">]]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;sum(fgweights)&#39;</span><span class="p">,</span> <span class="s1">&#39;sum(weighted_ratio)&#39;</span><span class="p">,</span> <span class="s1">&#39;len(matches)&#39;</span><span class="p">,</span> <span class="s1">&#39;score_lnbnn_1vM&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;match_state(match-v-rest)&#39;</span><span class="p">,</span> <span class="s1">&#39;match_state(nomatch-v-rest)&#39;</span><span class="p">,</span> <span class="s1">&#39;match_state(notcomp-v-rest)&#39;</span><span class="p">,</span> <span class="s1">&#39;photobomb_state&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">highlight_cols</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">to_string_monkey</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">highlight_cols</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">to_string_monkey</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">highlight_cols</span><span class="p">,</span> <span class="n">latex</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>ut.editfile(pd.io.formats.printing.adjoin)</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-utool.experimental">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-utool.experimental" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">wbia-vtool</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="utool.html">utool package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="utool.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="utool._internal.html">utool._internal package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">utool.experimental package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-utool.experimental.bytecode_optimizations">utool.experimental.bytecode_optimizations module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-utool.experimental.dynamic_connectivity">utool.experimental.dynamic_connectivity module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-utool.experimental.euler_tour_tree_avl">utool.experimental.euler_tour_tree_avl module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-utool.experimental.pandas_highlight">utool.experimental.pandas_highlight module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-utool.experimental">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="utool.tests.html">utool.tests package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.DynamicStruct">utool.DynamicStruct module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.Preferences">utool.Preferences module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.Printable">utool.Printable module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.__main__">utool.__main__ module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool._version">utool._version module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.oldalg">utool.oldalg module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.sandbox">utool.sandbox module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_alg">utool.util_alg module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_aliases">utool.util_aliases module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_arg">utool.util_arg module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_assert">utool.util_assert module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_autogen">utool.util_autogen module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_cache">utool.util_cache module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_class">utool.util_class module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_config">utool.util_config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_const">utool.util_const module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_cplat">utool.util_cplat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_csv">utool.util_csv module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_dbg">utool.util_dbg module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_decor">utool.util_decor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_depricated">utool.util_depricated module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_dev">utool.util_dev module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_dict">utool.util_dict module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_func">utool.util_func module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_git">utool.util_git module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_grabdata">utool.util_grabdata module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_graph">utool.util_graph module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_gridsearch">utool.util_gridsearch module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_hash">utool.util_hash module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_import">utool.util_import module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_inject">utool.util_inject module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_inspect">utool.util_inspect module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_io">utool.util_io module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_ipynb">utool.util_ipynb module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_iter">utool.util_iter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_latex">utool.util_latex module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_list">utool.util_list module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_logging">utool.util_logging module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_num">utool.util_num module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_numpy">utool.util_numpy module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_parallel">utool.util_parallel module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_path">utool.util_path module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_print">utool.util_print module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_profile">utool.util_profile module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_progress">utool.util_progress module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_project">utool.util_project module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_regex">utool.util_regex module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_resources">utool.util_resources module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_set">utool.util_set module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_setup">utool.util_setup module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_six">utool.util_six module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_sqlite">utool.util_sqlite module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_str">utool.util_str module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_sysreq">utool.util_sysreq module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_tags">utool.util_tags module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_tests">utool.util_tests module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_time">utool.util_time module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_type">utool.util_type module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_ubuntu">utool.util_ubuntu module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_web">utool.util_web module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool.util_win32">utool.util_win32 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utool.html#module-utool">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="utool.html">utool package</a><ul>
+      <li>Previous: <a href="utool._internal.html" title="previous chapter">utool._internal package</a></li>
+      <li>Next: <a href="utool.tests.html" title="next chapter">utool.tests package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wild Me.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/utool.experimental.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

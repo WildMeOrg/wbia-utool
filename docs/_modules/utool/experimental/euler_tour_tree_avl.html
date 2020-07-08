@@ -1,0 +1,1301 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>utool.experimental.euler_tour_tree_avl &#8212; wbia-vtool 3.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for utool.experimental.euler_tour_tree_avl</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+<span class="n">MAXSTACK</span> <span class="o">=</span> <span class="mi">32</span>
+
+
+<div class="viewcode-block" id="euler_tour_dfs"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.euler_tour_dfs">[docs]</a><span class="k">def</span> <span class="nf">euler_tour_dfs</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; adaptation of networkx dfs &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># produce edges for all components</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">G</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># produce edges for components with source</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">source</span><span class="p">]</span>
+    <span class="n">yielder</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">start</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+        <span class="n">stack</span> <span class="o">=</span> <span class="p">[(</span><span class="n">start</span><span class="p">,</span> <span class="nb">iter</span><span class="p">(</span><span class="n">G</span><span class="p">[</span><span class="n">start</span><span class="p">]))]</span>
+        <span class="k">while</span> <span class="n">stack</span><span class="p">:</span>
+            <span class="n">parent</span><span class="p">,</span> <span class="n">kids</span> <span class="o">=</span> <span class="n">stack</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">child</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">kids</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">child</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+                    <span class="c1"># yielder += [[parent, child]]</span>
+                    <span class="n">yielder</span> <span class="o">+=</span> <span class="p">[</span><span class="n">parent</span><span class="p">]</span>
+                    <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+                    <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">child</span><span class="p">,</span> <span class="nb">iter</span><span class="p">(</span><span class="n">G</span><span class="p">[</span><span class="n">child</span><span class="p">])))</span>
+            <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stack</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">last</span> <span class="o">=</span> <span class="n">stack</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">yielder</span> <span class="o">+=</span> <span class="p">[</span><span class="n">last</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                <span class="n">stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">yielder</span></div>
+
+
+<div class="viewcode-block" id="euler_tour"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.euler_tour">[docs]</a><span class="k">def</span> <span class="nf">euler_tour</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">visited</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    definition from</span>
+<span class="sd">    http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.192.8615&amp;rep=rep1&amp;type=pdf</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.experimental.euler_tour_tree_avl import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; edges = [</span>
+<span class="sd">        &gt;&gt;&gt;     (&#39;R&#39;, &#39;A&#39;), (&#39;R&#39;, &#39;B&#39;),</span>
+<span class="sd">        &gt;&gt;&gt;     (&#39;B&#39;, &#39;C&#39;), (&#39;C&#39;, &#39;D&#39;), (&#39;C&#39;, &#39;E&#39;),</span>
+<span class="sd">        &gt;&gt;&gt;     (&#39;B&#39;, &#39;F&#39;), (&#39;B&#39;, &#39;G&#39;),</span>
+<span class="sd">        &gt;&gt;&gt; ]</span>
+<span class="sd">        &gt;&gt;&gt; G = nx.Graph(edges)</span>
+<span class="sd">        &gt;&gt;&gt; node = list(G.nodes())[0]</span>
+<span class="sd">        &gt;&gt;&gt; et1 = euler_tour(G, node)</span>
+<span class="sd">        &gt;&gt;&gt; et2 = euler_tour_dfs(G, node)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">visited</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">nx</span><span class="o">.</span><span class="n">is_tree</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+        <span class="n">visited</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">seen</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+    <span class="n">visited</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+        <span class="n">euler_tour</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">seen</span><span class="p">,</span> <span class="n">visited</span><span class="p">)</span>
+        <span class="n">visited</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">visited</span></div>
+
+
+<div class="viewcode-block" id="Node"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.Node">[docs]</a><span class="k">class</span> <span class="nc">Node</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">NiceRepr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Internal object, represents a tree node.&quot;&quot;&quot;</span>
+
+    <span class="c1"># __slots__ = [&#39;left&#39;, &#39;right&#39;, &#39;parent&#39;, &#39;balance&#39;, &#39;key&#39;, &#39;value&#39;]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>  <span class="c1"># for networkx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">balance</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">kids</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">val</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">__nice__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">with_neighbors</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">with_neighbors</span><span class="p">:</span>
+
+            <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">node</span><span class="o">.</span><span class="n">value</span>
+
+            <span class="k">return</span> <span class="s1">&#39;(</span><span class="si">{}</span><span class="s1">)-</span><span class="si">{}</span><span class="s1">-(</span><span class="si">{}</span><span class="s1">, </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="p">),</span> <span class="n">value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">xdata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; compatibility with the C node_t struct &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">balance</span>
+
+    <span class="nd">@xdata</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">xdata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; compatibility with the C node_t struct &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">balance</span> <span class="o">=</span> <span class="n">data</span>
+
+<div class="viewcode-block" id="Node.set_child"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.Node.set_child">[docs]</a>    <span class="k">def</span> <span class="nf">set_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">other</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">other</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="bp">self</span><span class="p">[</span><span class="n">direction</span><span class="p">]</span> <span class="o">=</span> <span class="n">other</span></div>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; direction is 0 (left) or 1 (right).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span>
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; key is 0 (left) or 1 (right).&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="n">other</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="n">other</span>
+
+<div class="viewcode-block" id="Node.free"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.Node.free">[docs]</a>    <span class="k">def</span> <span class="nf">free</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove all references.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kc">None</span></div></div>
+
+
+<div class="viewcode-block" id="EulerTourTree"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.EulerTourTree">[docs]</a><span class="k">class</span> <span class="nc">EulerTourTree</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">NiceRepr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TODO: generalize out the binary tree sequence part</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.experimental.euler_tour_tree_avl EulerTourTree</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        Randomized Dynamic Graph Algorithms with Polylogarithmic Time per Operation</span>
+<span class="sd">        Henzinger and King 1995</span>
+<span class="sd">        http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.192.8615&amp;rep=rep1&amp;type=pdf</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.experimental.euler_tour_tree_avl import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; ETT = EulerTourTree</span>
+<span class="sd">        &gt;&gt;&gt; self = ETT([&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;b&#39;, &#39;d&#39;, &#39;b&#39;, &#39;a&#39;])</span>
+<span class="sd">        &gt;&gt;&gt; self._assert_nodes()</span>
+<span class="sd">        &gt;&gt;&gt; other = ETT([&#39;E&#39;, &#39;F&#39;, &#39;G&#39;, &#39;F&#39;, &#39;E&#39;])</span>
+<span class="sd">        &gt;&gt;&gt; other2 = ETT([&#39;E&#39;, &#39;F&#39;, &#39;G&#39;, &#39;F&#39;, &#39;E&#39;])</span>
+<span class="sd">        &gt;&gt;&gt; new = self + other + other2</span>
+<span class="sd">        &gt;&gt;&gt; print(self)</span>
+<span class="sd">        &gt;&gt;&gt; print(other)</span>
+<span class="sd">        &gt;&gt;&gt; print(self + other)</span>
+<span class="sd">        &gt;&gt;&gt; print(new)</span>
+<span class="sd">        &gt;&gt;&gt; print(new + self + self)</span>
+<span class="sd">        &gt;&gt;&gt; self.print_tree()</span>
+<span class="sd">        &gt;&gt;&gt; #other.print_tree()</span>
+<span class="sd">        &gt;&gt;&gt; #self.print_tree()</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; import networkx as nx</span>
+<span class="sd">        &gt;&gt;&gt; from utool.experimental.euler_tour_tree_avl import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; edges = [</span>
+<span class="sd">        &gt;&gt;&gt;     (&#39;R&#39;, &#39;A&#39;), (&#39;R&#39;, &#39;B&#39;),</span>
+<span class="sd">        &gt;&gt;&gt;     (&#39;B&#39;, &#39;C&#39;), (&#39;C&#39;, &#39;D&#39;), (&#39;C&#39;, &#39;E&#39;),</span>
+<span class="sd">        &gt;&gt;&gt;     (&#39;B&#39;, &#39;F&#39;), (&#39;B&#39;, &#39;G&#39;),</span>
+<span class="sd">        &gt;&gt;&gt; ]</span>
+<span class="sd">        &gt;&gt;&gt; tour = euler_tour(nx.Graph(edges))</span>
+<span class="sd">        &gt;&gt;&gt; print(tour)</span>
+<span class="sd">        &gt;&gt;&gt; self = EulerTourTree(tour)</span>
+<span class="sd">        &gt;&gt;&gt; print(self)</span>
+<span class="sd">        &gt;&gt;&gt; assert list(self) == tour</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root</span>
+        <span class="k">if</span> <span class="n">iterable</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">iterable</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">avl_insert_dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">Node</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">))</span>
+
+<div class="viewcode-block" id="EulerTourTree.join"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.EulerTourTree.join">[docs]</a>    <span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">avl_join2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+        <span class="n">other</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="EulerTourTree.min_elem"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.EulerTourTree.min_elem">[docs]</a>    <span class="k">def</span> <span class="nf">min_elem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;no min element&#39;</span><span class="p">)</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span>
+        <span class="k">while</span> <span class="n">node</span><span class="o">.</span><span class="n">left</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">left</span>
+        <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="n">value</span></div>
+
+<div class="viewcode-block" id="EulerTourTree.reroot"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.EulerTourTree.reroot">[docs]</a>    <span class="k">def</span> <span class="nf">reroot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_node</span><span class="p">,</span> <span class="n">last_node</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Notes:</span>
+<span class="sd">            ● Pick any occurrence of the new root r.</span>
+<span class="sd">            ● Split the tour into A and B, where B is the</span>
+<span class="sd">            part of the tour before r.</span>
+<span class="sd">            ● Delete the first node of A and append r.</span>
+<span class="sd">            ● Concatenate B and A.</span>
+
+<span class="sd">            To change the root of T from r to s:</span>
+<span class="sd">                Let os denote any occurrence of s.</span>
+<span class="sd">                Splice out the first part of the sequence ending with the</span>
+<span class="sd">                occurrence before or,</span>
+<span class="sd">                remove its first occurrence (or), and</span>
+<span class="sd">                tack this on to the end of the sequence which now begins with os.</span>
+<span class="sd">                Add a new occurrence os to the end.</span>
+
+<span class="sd">        CommandLine:</span>
+<span class="sd">            python -m utool.experimental.euler_tour_tree_avl reroot</span>
+
+<span class="sd">        Ignore:</span>
+<span class="sd">            &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">            &gt;&gt;&gt; import networkx as nx</span>
+<span class="sd">            &gt;&gt;&gt; from utool.experimental.euler_tour_tree_avl import *  # NOQA</span>
+<span class="sd">            &gt;&gt;&gt; edges = [</span>
+<span class="sd">            &gt;&gt;&gt;     (&#39;R&#39;, &#39;A&#39;), (&#39;R&#39;, &#39;B&#39;),</span>
+<span class="sd">            &gt;&gt;&gt;     (&#39;B&#39;, &#39;C&#39;), (&#39;C&#39;, &#39;D&#39;), (&#39;C&#39;, &#39;E&#39;),</span>
+<span class="sd">            &gt;&gt;&gt;     (&#39;B&#39;, &#39;F&#39;), (&#39;B&#39;, &#39;G&#39;),</span>
+<span class="sd">            &gt;&gt;&gt; ]</span>
+<span class="sd">            &gt;&gt;&gt; edges = list(nx.balanced_tree(2, 2).edges())</span>
+<span class="sd">            &gt;&gt;&gt; tour = euler_tour(nx.Graph(edges))</span>
+<span class="sd">            &gt;&gt;&gt; self = EulerTourTree(tour)</span>
+<span class="sd">            &gt;&gt;&gt; print(&#39;old_tour = %r&#39; % (self,))</span>
+<span class="sd">            &gt;&gt;&gt; nodes = list(self._traverse_nodes())</span>
+<span class="sd">            &gt;&gt;&gt; self.first_lookup = {node.value: node for node in nodes[::-1]}</span>
+<span class="sd">            &gt;&gt;&gt; self.last_lookup = {node.value: node for node in nodes}</span>
+<span class="sd">            &gt;&gt;&gt; new_root_val = list(self)[445 % (len(tour) - 1)]</span>
+<span class="sd">            &gt;&gt;&gt; new_root_val = 5</span>
+<span class="sd">            &gt;&gt;&gt; print(&#39;new_root_val = %r&#39; % (new_root_val,))</span>
+<span class="sd">            &gt;&gt;&gt; first_node = self.first_lookup[new_root_val]</span>
+<span class="sd">            &gt;&gt;&gt; last_node = self.last_lookup[new_root_val]</span>
+<span class="sd">            &gt;&gt;&gt; self.reroot(first_node, last_node)</span>
+<span class="sd">            &gt;&gt;&gt; print(&#39;new_tour = %r&#39; % (self,))</span>
+<span class="sd">            &gt;&gt;&gt; ut.quit_if_noshow()</span>
+<span class="sd">            &gt;&gt;&gt; ut.show_if_requested()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">min_elem</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_elem</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">min_elem</span> <span class="o">==</span> <span class="n">first_node</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Already rooted there&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="c1"># tour = list(self)</span>
+        <span class="c1"># print(&#39;tour     = %r&#39; % (tour,))</span>
+        <span class="c1"># B is the part before R</span>
+        <span class="c1"># A is the part after R (with first element removed)</span>
+        <span class="n">B</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">first_node</span> <span class="o">=</span> <span class="n">avl_split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">first_node</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Splice out first part of sequence ending before os&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;B = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">([]</span> <span class="k">if</span> <span class="n">B</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">B</span><span class="p">),))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Remove its first occurrence or&#39;</span><span class="p">)</span>
+        <span class="n">B</span><span class="p">,</span> <span class="n">old_root</span> <span class="o">=</span> <span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span> <span class="k">if</span> <span class="n">B</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">avl_split_first</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;B = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">([]</span> <span class="k">if</span> <span class="n">B</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">B</span><span class="p">),))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The rest of the sequence now begins with os&#39;</span><span class="p">)</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">avl_insert_dir</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">first_node</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;A = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">A</span><span class="p">),))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Tack the first part onto the end&#39;</span><span class="p">)</span>
+        <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">A</span><span class="p">)</span><span class="o">.</span><span class="n">_assert_nodes</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">)</span>
+        <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">B</span><span class="p">)</span><span class="o">.</span><span class="n">_assert_nodes</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">)</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="n">avl_join2</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
+        <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">C</span><span class="p">)</span><span class="o">.</span><span class="n">_assert_nodes</span><span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;C = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">C</span><span class="p">),))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Add a new occurrence os to the end&#39;</span><span class="p">)</span>
+        <span class="n">new_last</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">last_node</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="n">avl_insert_dir</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">new_last</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;C = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">C</span><span class="p">),))</span>
+
+        <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">B</span><span class="p">)</span><span class="o">.</span><span class="n">_assert_nodes</span><span class="p">()</span>
+        <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">A</span><span class="p">)</span><span class="o">.</span><span class="n">_assert_nodes</span><span class="p">()</span>
+        <span class="c1"># EulerTourTree(root=first_node)._assert_nodes()</span>
+
+        <span class="c1"># EulerTourTree(root=B).print_tree()</span>
+        <span class="c1"># EulerTourTree(root=A).print_tree()</span>
+        <span class="c1"># EulerTourTree(root=first_node).print_tree()</span>
+
+        <span class="c1"># B = avl_insert_dir(B, new_last, 1)</span>
+        <span class="c1"># print(&#39;B = %r&#39; % ([] if B is None else list(B),))</span>
+        <span class="c1"># print(&#39;A = %r&#39; % (list(A),))</span>
+
+        <span class="c1"># EulerTourTree(root=A).print_tree()</span>
+
+        <span class="c1"># old_tour_parts = [S1, R, S2]</span>
+        <span class="c1"># old_tour = ut.flatten([list(p) for p in old_tour_parts if p])</span>
+        <span class="c1"># print(&#39;old_tour = %r&#39; % (old_tour,))</span>
+        <span class="c1"># assert tour == old_tour</span>
+        <span class="c1"># new_tour_parts = [A, B]</span>
+        <span class="c1"># new_tour = ut.flatten([list(p) for p in new_tour_parts if p])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;new_tour = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">C</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">C</span>
+
+        <span class="c1"># TODO: fix lookups</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span><span class="p">[</span><span class="n">new_last</span><span class="o">.</span><span class="n">value</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_last</span>
+
+        <span class="n">nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_traverse_nodes</span><span class="p">())</span>
+        <span class="n">new_first_lookup</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]}</span>
+        <span class="n">new_last_lookup</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">[::</span><span class="mi">1</span><span class="p">]}</span>
+
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">new_last_lookup</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">old_last</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_lookup</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">new_last</span> <span class="o">=</span> <span class="n">new_last_lookup</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">old_last</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">new_last</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;key=</span><span class="si">%r</span><span class="s1"> needs LAST_DICT update&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,))</span>
+
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">new_last_lookup</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">old_first</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_lookup</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">new_first</span> <span class="o">=</span> <span class="n">new_first_lookup</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">old_first</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">new_first</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;key=</span><span class="si">%r</span><span class="s1"> needs FIRST_DICT update&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,))</span></div>
+
+<div class="viewcode-block" id="EulerTourTree.copy"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.EulerTourTree.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">copy</span>
+
+        <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__nice__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;[]&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+
+<div class="viewcode-block" id="EulerTourTree.values"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.EulerTourTree.values">[docs]</a>    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traverse_nodes</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">node</span><span class="o">.</span><span class="n">value</span></div>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="n">value</span>
+
+<div class="viewcode-block" id="EulerTourTree.get_node"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.EulerTourTree.get_node">[docs]</a>    <span class="k">def</span> <span class="nf">get_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_traverse_nodes</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="n">index</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">node</span></div>
+
+    <span class="k">def</span> <span class="nf">_assert_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="kc">False</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">treestr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_ascii_tree</span><span class="p">()</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">codeblock</span><span class="p">(</span>
+                    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                    Root cannot have a parent.</span>
+<span class="sd">                    name = {}</span>
+<span class="sd">                    root = {}</span>
+<span class="sd">                    root.parent = {}</span>
+<span class="sd">                    &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">parent</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">treestr</span>
+                <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;must be root&#39;</span>
+        <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_traverse_nodes</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">left</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">node</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="n">node</span><span class="p">,</span> <span class="s1">&#39;left child problem, </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">count</span>
+            <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">right</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">node</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="n">node</span><span class="p">,</span> <span class="s1">&#39;right child problem, </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">count</span>
+            <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">kids</span><span class="p">,</span> <span class="s1">&#39;parent problem, </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">count</span>
+        <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Nodes in </span><span class="si">{}</span><span class="s1"> are ok&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_traverse_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Debugging function (exposes cython nodes as dummy nodes) &quot;&quot;&quot;</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span>
+        <span class="n">stack</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">while</span> <span class="n">stack</span> <span class="ow">or</span> <span class="n">node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">left</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+                <span class="k">yield</span> <span class="n">node</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">right</span>
+
+<div class="viewcode-block" id="EulerTourTree.to_networkx"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.EulerTourTree.to_networkx">[docs]</a>    <span class="k">def</span> <span class="nf">to_networkx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">edge_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get a networkx representation of the binary search tree. &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traverse_nodes</span><span class="p">():</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">key</span>
+            <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>  <span class="c1"># Minor redundancy</span>
+            <span class="c1"># Set node properties</span>
+            <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">value</span>
+            <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">])</span>
+                <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span>
+            <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">left</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">key</span>
+                <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">edge_labels</span><span class="p">:</span>
+                    <span class="n">graph</span><span class="o">.</span><span class="n">edge</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">][</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;L&#39;</span>
+            <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">right</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">key</span>
+                <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">edge_labels</span><span class="p">:</span>
+                    <span class="n">graph</span><span class="o">.</span><span class="n">edge</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">][</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;R&#39;</span>
+        <span class="k">return</span> <span class="n">graph</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">repr_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        reconstruct represented tree as a DiGraph to</span>
+<span class="sd">        preserve the current rootedness</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+        <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+
+        <span class="n">repr_tree</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">ut</span><span class="o">.</span><span class="n">itertwo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">repr_tree</span><span class="o">.</span><span class="n">has_edge</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">):</span>
+                <span class="n">repr_tree</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">repr_tree</span>
+
+<div class="viewcode-block" id="EulerTourTree.show_nx"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.EulerTourTree.show_nx">[docs]</a>    <span class="k">def</span> <span class="nf">show_nx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">],</span> <span class="n">edge_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fnum</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">wbia.plottool</span> <span class="k">as</span> <span class="nn">pt</span>
+
+        <span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_networkx</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">edge_labels</span><span class="o">=</span><span class="n">edge_labels</span><span class="p">)</span>
+        <span class="n">pt</span><span class="o">.</span><span class="n">show_nx</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">fnum</span><span class="o">=</span><span class="n">fnum</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EulerTourTree.print_tree"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.EulerTourTree.print_tree">[docs]</a>    <span class="k">def</span> <span class="nf">print_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ascii_tree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EulerTourTree.get_ascii_tree"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.EulerTourTree.get_ascii_tree">[docs]</a>    <span class="k">def</span> <span class="nf">get_ascii_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">drawtree</span>
+        <span class="kn">import</span> <span class="nn">ubelt</span> <span class="k">as</span> <span class="nn">ub</span>
+
+        <span class="n">root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span>
+        <span class="k">with</span> <span class="n">ub</span><span class="o">.</span><span class="n">CaptureStdout</span><span class="p">()</span> <span class="k">as</span> <span class="n">cap</span><span class="p">:</span>
+            <span class="n">drawtree</span><span class="o">.</span><span class="n">drawtree</span><span class="o">.</span><span class="n">drawtree</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cap</span><span class="o">.</span><span class="n">text</span></div></div>
+
+
+<div class="viewcode-block" id="ascii_tree"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.ascii_tree">[docs]</a><span class="k">def</span> <span class="nf">ascii_tree</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">drawtree</span>
+    <span class="kn">import</span> <span class="nn">ubelt</span> <span class="k">as</span> <span class="nn">ub</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s1">&#39;root&#39;</span><span class="p">):</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">root</span>
+    <span class="k">with</span> <span class="n">ub</span><span class="o">.</span><span class="n">CaptureStdout</span><span class="p">()</span> <span class="k">as</span> <span class="n">cap</span><span class="p">:</span>
+        <span class="n">drawtree</span><span class="o">.</span><span class="n">drawtree</span><span class="o">.</span><span class="n">drawtree</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;+---&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Tree(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cap</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="c1"># if False:</span>
+    <span class="c1">#     # Modified BFS with placeholders</span>
+    <span class="c1">#     yielder = []</span>
+    <span class="c1">#     queue = [root]</span>
+    <span class="c1">#     while queue:</span>
+    <span class="c1">#         node = queue.pop(0)</span>
+    <span class="c1">#         if node is None:</span>
+    <span class="c1">#             yielder.append(None)</span>
+    <span class="c1">#         else:</span>
+    <span class="c1">#             yielder.append(node)</span>
+    <span class="c1">#             queue.append(node.left)</span>
+    <span class="c1">#             queue.append(node.right)</span>
+    <span class="c1">#     # Generate code for drawtree</span>
+    <span class="c1">#     # import itertools as it</span>
+    <span class="c1">#     # counter = it.count(0)</span>
+    <span class="c1">#     # import six</span>
+    <span class="c1">#     # c = ut.partial(six.next, counter)</span>
+    <span class="c1">#     sequence = [</span>
+    <span class="c1">#         # &#39;#&#39; if n is None else str(c())</span>
+    <span class="c1">#         &#39;#&#39; if n is None else str(n.value)</span>
+    <span class="c1">#         for n in yielder</span>
+    <span class="c1">#     ]</span>
+    <span class="c1">#     code = &#39;,&#39;.join(sequence)</span>
+    <span class="c1">#     # code = code.rstrip(&#39;#&#39;)</span>
+    <span class="c1">#     if name is not None:</span>
+    <span class="c1">#         print(&#39;+---&#39;)</span>
+    <span class="c1">#         print(&#39;Tree(%s)&#39; % (name,))</span>
+    <span class="c1">#     drawtree.draw_level_order(&#39;{&#39; + code + &#39;}&#39;)</span>
+    <span class="c1">#     print([(n.value, n.balance) for n in yielder if n is not None])</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;L___&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="height"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.height">[docs]</a><span class="k">def</span> <span class="nf">height</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="n">balance</span> <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="avl_release_kids"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.avl_release_kids">[docs]</a><span class="k">def</span> <span class="nf">avl_release_kids</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    splits a node from its kids maintaining parent pointers</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">right</span>
+    <span class="k">if</span> <span class="n">left</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># assert left.parent is node</span>
+        <span class="n">left</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">right</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># assert right.parent is node</span>
+        <span class="n">right</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">node</span><span class="o">.</span><span class="n">balance</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">node</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">node</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">node</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span></div>
+
+
+<div class="viewcode-block" id="avl_release_parent"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.avl_release_parent">[docs]</a><span class="k">def</span> <span class="nf">avl_release_parent</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    removes the parent of a child</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">parent</span>
+    <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">right</span> <span class="ow">is</span> <span class="n">node</span><span class="p">:</span>
+            <span class="n">parent</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="n">parent</span><span class="o">.</span><span class="n">left</span> <span class="ow">is</span> <span class="n">node</span><span class="p">:</span>
+            <span class="n">parent</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s1">&#39;impossible state&#39;</span><span class="p">)</span>
+        <span class="n">node</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">parent</span><span class="o">.</span><span class="n">balance</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">height</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">right</span><span class="p">),</span> <span class="n">height</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">left</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">node</span><span class="p">,</span> <span class="n">parent</span></div>
+
+
+<div class="viewcode-block" id="avl_rotate_single"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.avl_rotate_single">[docs]</a><span class="k">def</span> <span class="nf">avl_rotate_single</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Single rotation, either 0 (left) or 1 (right).</span>
+
+<span class="sd">    Figure:</span>
+<span class="sd">                a,0 (left)</span>
+<span class="sd">                ----------&gt;</span>
+<span class="sd">          a                   b</span>
+<span class="sd">           \                /   \</span>
+<span class="sd">            b             a       c</span>
+<span class="sd">             \</span>
+<span class="sd">              c</span>
+
+<span class="sd">    a = root</span>
+<span class="sd">    save = root.right</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">other_side</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">direction</span>
+    <span class="n">save</span> <span class="o">=</span> <span class="n">root</span><span class="p">[</span><span class="n">other_side</span><span class="p">]</span>
+    <span class="n">save</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">parent</span>
+    <span class="c1"># root[other_side] = save[direction]</span>
+    <span class="c1"># save[direction] = root</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">set_child</span><span class="p">(</span><span class="n">other_side</span><span class="p">,</span> <span class="n">save</span><span class="p">[</span><span class="n">direction</span><span class="p">])</span>
+    <span class="n">save</span><span class="o">.</span><span class="n">set_child</span><span class="p">(</span><span class="n">direction</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+    <span class="n">rlh</span> <span class="o">=</span> <span class="n">height</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+    <span class="n">rrh</span> <span class="o">=</span> <span class="n">height</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+    <span class="n">slh</span> <span class="o">=</span> <span class="n">height</span><span class="p">(</span><span class="n">save</span><span class="p">[</span><span class="n">other_side</span><span class="p">])</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">balance</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">rlh</span><span class="p">,</span> <span class="n">rrh</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">save</span><span class="o">.</span><span class="n">balance</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">slh</span><span class="p">,</span> <span class="n">root</span><span class="o">.</span><span class="n">balance</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">save</span></div>
+
+
+<div class="viewcode-block" id="avl_rotate_double"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.avl_rotate_double">[docs]</a><span class="k">def</span> <span class="nf">avl_rotate_double</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Double rotation, either 0 (left) or 1 (right).</span>
+
+<span class="sd">    Figure:</span>
+<span class="sd">                    c,1 (right)</span>
+<span class="sd">                    -----------&gt;</span>
+<span class="sd">           a              a             c</span>
+<span class="sd">          /      b,0     /     a,1    /   \</span>
+<span class="sd">         b       ---&gt;   b      --&gt;  b      a</span>
+<span class="sd">          \            /</span>
+<span class="sd">           c          c</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">other_side</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">direction</span>
+    <span class="n">root</span><span class="p">[</span><span class="n">other_side</span><span class="p">]</span> <span class="o">=</span> <span class="n">avl_rotate_single</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="n">other_side</span><span class="p">],</span> <span class="n">other_side</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">avl_rotate_single</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span></div>
+
+
+<span class="n">DEBUG_JOIN</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">_DEBUG_JOIN_DIR</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<div class="viewcode-block" id="avl_join_dir_recursive"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.avl_join_dir_recursive">[docs]</a><span class="k">def</span> <span class="nf">avl_join_dir_recursive</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Recursive version of join_left and join_right</span>
+<span class="sd">    TODO: make this iterative using a stack</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">other_side</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">direction</span>
+    <span class="k">if</span> <span class="n">_DEBUG_JOIN_DIR</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;--JOIN DIR (dir=</span><span class="si">%r</span><span class="s1">) --&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">direction</span><span class="p">,))</span>
+        <span class="n">ascii_tree</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="s1">&#39;t1&#39;</span><span class="p">)</span>
+        <span class="n">ascii_tree</span><span class="p">(</span><span class="n">t2</span><span class="p">,</span> <span class="s1">&#39;t2&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">large</span><span class="p">,</span> <span class="n">small</span> <span class="o">=</span> <span class="n">t2</span><span class="p">,</span> <span class="n">t1</span>
+    <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">large</span><span class="p">,</span> <span class="n">small</span> <span class="o">=</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span>
+
+    <span class="c1"># Follow the spine of the larger tree</span>
+    <span class="n">spine</span> <span class="o">=</span> <span class="n">large</span><span class="p">[</span><span class="n">direction</span><span class="p">]</span>
+    <span class="n">rest</span> <span class="o">=</span> <span class="n">large</span><span class="p">[</span><span class="n">other_side</span><span class="p">]</span>
+    <span class="c1"># k_, v_ = large.key, large.value</span>
+
+    <span class="n">hsmall</span> <span class="o">=</span> <span class="n">height</span><span class="p">(</span><span class="n">small</span><span class="p">)</span>
+    <span class="n">hspine</span> <span class="o">=</span> <span class="n">height</span><span class="p">(</span><span class="n">spine</span><span class="p">)</span>
+    <span class="n">hrest</span> <span class="o">=</span> <span class="n">height</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">_DEBUG_JOIN_DIR</span><span class="p">:</span>
+        <span class="n">ascii_tree</span><span class="p">(</span><span class="n">spine</span><span class="p">,</span> <span class="s1">&#39;spine&#39;</span><span class="p">)</span>
+        <span class="n">ascii_tree</span><span class="p">(</span><span class="n">rest</span><span class="p">,</span> <span class="s1">&#39;rest&#39;</span><span class="p">)</span>
+        <span class="n">ascii_tree</span><span class="p">(</span><span class="n">small</span><span class="p">,</span> <span class="s1">&#39;small&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">hspine</span> <span class="o">&lt;=</span> <span class="n">hsmall</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">t_</span> <span class="o">=</span> <span class="n">avl_new_top</span><span class="p">(</span><span class="n">small</span><span class="p">,</span> <span class="n">spine</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_DEBUG_JOIN_DIR</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;JOIN DIR (BASE)&#39;</span><span class="p">)</span>
+            <span class="n">ascii_tree</span><span class="p">(</span><span class="n">t_</span><span class="p">,</span> <span class="s1">&#39;t_&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">height</span><span class="p">(</span><span class="n">t_</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">hrest</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_DEBUG_JOIN_DIR</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;JOIN DIR (Case 1)&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">avl_new_top</span><span class="p">(</span><span class="n">t_</span><span class="p">,</span> <span class="n">rest</span><span class="p">,</span> <span class="n">large</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Double rotation, but with a new node</span>
+            <span class="k">if</span> <span class="n">_DEBUG_JOIN_DIR</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;JOIN DIR (Case 2)&#39;</span><span class="p">)</span>
+            <span class="n">t_rotate</span> <span class="o">=</span> <span class="n">avl_rotate_single</span><span class="p">(</span><span class="n">t_</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_DEBUG_JOIN_DIR</span><span class="p">:</span>
+                <span class="n">ascii_tree</span><span class="p">(</span><span class="n">t_rotate</span><span class="p">,</span> <span class="s1">&#39;t_rotate&#39;</span><span class="p">)</span>
+                <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">t_rotate</span><span class="p">)</span><span class="o">.</span><span class="n">_assert_nodes</span><span class="p">(</span><span class="s1">&#39;t_rotate&#39;</span><span class="p">)</span>
+            <span class="n">t_merge</span> <span class="o">=</span> <span class="n">avl_new_top</span><span class="p">(</span><span class="n">rest</span><span class="p">,</span> <span class="n">t_rotate</span><span class="p">,</span> <span class="n">large</span><span class="p">,</span> <span class="n">other_side</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_DEBUG_JOIN_DIR</span><span class="p">:</span>
+                <span class="n">ascii_tree</span><span class="p">(</span><span class="n">t_merge</span><span class="p">,</span> <span class="s1">&#39;t_merge&#39;</span><span class="p">)</span>
+                <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">t_merge</span><span class="p">)</span><span class="o">.</span><span class="n">_assert_nodes</span><span class="p">(</span><span class="s1">&#39;t_merge&#39;</span><span class="p">)</span>
+            <span class="n">new_root</span> <span class="o">=</span> <span class="n">avl_rotate_single</span><span class="p">(</span><span class="n">t_merge</span><span class="p">,</span> <span class="n">other_side</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_DEBUG_JOIN_DIR</span><span class="p">:</span>
+                <span class="n">ascii_tree</span><span class="p">(</span><span class="n">new_root</span><span class="p">,</span> <span class="s1">&#39;new_root&#39;</span><span class="p">)</span>
+                <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">new_root</span><span class="p">)</span><span class="o">.</span><span class="n">_assert_nodes</span><span class="p">(</span><span class="s1">&#39;new_root&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">new_root</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Traverse down the spine in the appropriate direction</span>
+        <span class="k">if</span> <span class="n">_DEBUG_JOIN_DIR</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;JOIN DIR (RECURSE)&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">t_</span> <span class="o">=</span> <span class="n">avl_join_dir_recursive</span><span class="p">(</span><span class="n">small</span><span class="p">,</span> <span class="n">spine</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">t_</span> <span class="o">=</span> <span class="n">avl_join_dir_recursive</span><span class="p">(</span><span class="n">spine</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s1">&#39;invalid direction&#39;</span><span class="p">)</span>
+        <span class="n">t__</span> <span class="o">=</span> <span class="n">avl_new_top</span><span class="p">(</span><span class="n">t_</span><span class="p">,</span> <span class="n">rest</span><span class="p">,</span> <span class="n">large</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">height</span><span class="p">(</span><span class="n">t_</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">hrest</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_DEBUG_JOIN_DIR</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;JOIN DIR (Case 3)&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">t__</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_DEBUG_JOIN_DIR</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;JOIN DIR (Case 4)&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">avl_rotate_single</span><span class="p">(</span><span class="n">t__</span><span class="p">,</span> <span class="n">other_side</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;should never get here&#39;</span></div>
+
+
+<div class="viewcode-block" id="avl_join"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.avl_join">[docs]</a><span class="k">def</span> <span class="nf">avl_join</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Joins two trees `t1` and `t1` with an intermediate key-value pair</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.experimental.euler_tour_tree_avl avl_join</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.experimental.euler_tour_tree_avl import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; self = EulerTourTree([&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;b&#39;, &#39;d&#39;, &#39;b&#39;, &#39;a&#39;])</span>
+<span class="sd">        &gt;&gt;&gt; other = EulerTourTree([&#39;E&#39;, &#39;F&#39;, &#39;G&#39;, &#39;F&#39;, &#39;E&#39;])</span>
+<span class="sd">        &gt;&gt;&gt; node = Node(value=&#39;Q&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; root = avl_join(self.root, other.root, node)</span>
+<span class="sd">        &gt;&gt;&gt; new = EulerTourTree(root=root)</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;new = %r&#39; % (new,))</span>
+<span class="sd">        &gt;&gt;&gt; ut.quit_if_noshow()</span>
+<span class="sd">        &gt;&gt;&gt; self.print_tree()</span>
+<span class="sd">        &gt;&gt;&gt; other.print_tree()</span>
+<span class="sd">        &gt;&gt;&gt; new.print_tree()</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.experimental.euler_tour_tree_avl import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; self = EulerTourTree([&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;E&#39;, &#39;F&#39;, &#39;G&#39;, &#39;H&#39;, &#39;I&#39;, &#39;J&#39;, &#39;K&#39;])</span>
+<span class="sd">        &gt;&gt;&gt; other = EulerTourTree([&#39;X&#39;])</span>
+<span class="sd">        &gt;&gt;&gt; node = Node(value=&#39;Q&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; root = avl_join(self.root, other.root, node)</span>
+<span class="sd">        &gt;&gt;&gt; new = EulerTourTree(root=root)</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;new = %r&#39; % (new,))</span>
+<span class="sd">        &gt;&gt;&gt; ut.quit_if_noshow()</span>
+<span class="sd">        &gt;&gt;&gt; ut.qtensure()</span>
+<span class="sd">        &gt;&gt;&gt; #self.show_nx(fnum=1)</span>
+<span class="sd">        &gt;&gt;&gt; #other.show_nx(fnum=2)</span>
+<span class="sd">        &gt;&gt;&gt; new.show_nx()</span>
+
+<span class="sd">    Running Time:</span>
+<span class="sd">        O(abs(r(t1) - r(t2)))</span>
+<span class="sd">        O(abs(height(t1) - height(t2)))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">DEBUG_JOIN</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-- JOIN node=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">node</span><span class="p">,))</span>
+
+    <span class="k">if</span> <span class="n">t1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">t2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">DEBUG_JOIN</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Join Case 1&#39;</span><span class="p">)</span>
+        <span class="n">top</span> <span class="o">=</span> <span class="n">node</span>
+    <span class="k">elif</span> <span class="n">t1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># FIXME keep track of count if possible</span>
+        <span class="k">if</span> <span class="n">DEBUG_JOIN</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Join Case 2&#39;</span><span class="p">)</span>
+        <span class="n">top</span> <span class="o">=</span> <span class="n">avl_insert_dir</span><span class="p">(</span><span class="n">t2</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">t2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">DEBUG_JOIN</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Join Case 3&#39;</span><span class="p">)</span>
+        <span class="n">top</span> <span class="o">=</span> <span class="n">avl_insert_dir</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">h1</span> <span class="o">=</span> <span class="n">height</span><span class="p">(</span><span class="n">t1</span><span class="p">)</span>
+        <span class="n">h2</span> <span class="o">=</span> <span class="n">height</span><span class="p">(</span><span class="n">t2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">h1</span> <span class="o">&gt;</span> <span class="n">h2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">DEBUG_JOIN</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Join Case 4&#39;</span><span class="p">)</span>
+            <span class="n">top</span> <span class="o">=</span> <span class="n">avl_join_dir_recursive</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">DEBUG_JOIN</span><span class="p">:</span>
+                <span class="n">ascii_tree</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="s1">&#39;top&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">h2</span> <span class="o">&gt;</span> <span class="n">h1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">DEBUG_JOIN</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Join Case 5&#39;</span><span class="p">)</span>
+                <span class="n">ascii_tree</span><span class="p">(</span><span class="n">t1</span><span class="p">)</span>
+                <span class="n">ascii_tree</span><span class="p">(</span><span class="n">t2</span><span class="p">)</span>
+
+            <span class="n">top</span> <span class="o">=</span> <span class="n">avl_join_dir_recursive</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">DEBUG_JOIN</span><span class="p">:</span>
+                <span class="n">ascii_tree</span><span class="p">(</span><span class="n">top</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">DEBUG_JOIN</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Join Case 6&#39;</span><span class="p">)</span>
+            <span class="c1"># Insert at the top of the tree</span>
+            <span class="n">top</span> <span class="o">=</span> <span class="n">avl_new_top</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">top</span></div>
+
+
+<div class="viewcode-block" id="avl_split_last"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.avl_split_last">[docs]</a><span class="k">def</span> <span class="nf">avl_split_last</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Removes the maximum element from the tree</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: new_root, last_node</span>
+
+<span class="sd">    O(log(n)) = O(height(root))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">root</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;Empty tree has no maximum element&#39;</span><span class="p">)</span>
+    <span class="n">root</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">avl_release_kids</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">right</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">new_root</span><span class="p">,</span> <span class="n">last_node</span> <span class="o">=</span> <span class="n">left</span><span class="p">,</span> <span class="n">root</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">new_right</span><span class="p">,</span> <span class="n">last_node</span> <span class="o">=</span> <span class="n">avl_split_last</span><span class="p">(</span><span class="n">right</span><span class="p">)</span>
+        <span class="n">new_root</span> <span class="o">=</span> <span class="n">avl_join</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">new_right</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">new_root</span><span class="p">,</span> <span class="n">last_node</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="avl_split_first"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.avl_split_first">[docs]</a><span class="k">def</span> <span class="nf">avl_split_first</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Removes the minimum element from the tree</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: new_root, first_node</span>
+
+<span class="sd">    O(log(n)) = O(height(root))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">root</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;Empty tree has no maximum element&#39;</span><span class="p">)</span>
+    <span class="n">root</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">avl_release_kids</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">left</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">new_root</span><span class="p">,</span> <span class="n">first_node</span> <span class="o">=</span> <span class="n">right</span><span class="p">,</span> <span class="n">root</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">new_left</span><span class="p">,</span> <span class="n">first_node</span> <span class="o">=</span> <span class="n">avl_split_first</span><span class="p">(</span><span class="n">left</span><span class="p">)</span>
+        <span class="n">new_root</span> <span class="o">=</span> <span class="n">avl_join</span><span class="p">(</span><span class="n">new_left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">new_root</span><span class="p">,</span> <span class="n">first_node</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="avl_join2"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.avl_join2">[docs]</a><span class="k">def</span> <span class="nf">avl_join2</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    join two trees without any intermediate key</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Node: new_root</span>
+
+<span class="sd">    O(log(n) + log(m)) = O(r(t1) + r(t2))</span>
+
+<span class="sd">    For AVL-Trees the rank r(t1) = height(t1) - 1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">t1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">t2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">new_root</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="n">t2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">new_root</span> <span class="o">=</span> <span class="n">t1</span>
+    <span class="k">elif</span> <span class="n">t1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">new_root</span> <span class="o">=</span> <span class="n">t2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">new_left</span><span class="p">,</span> <span class="n">last_node</span> <span class="o">=</span> <span class="n">avl_split_last</span><span class="p">(</span><span class="n">t1</span><span class="p">)</span>
+
+        <span class="n">debug</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+            <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">new_left</span><span class="p">)</span><span class="o">.</span><span class="n">_assert_nodes</span><span class="p">(</span><span class="s1">&#39;new_left&#39;</span><span class="p">)</span>
+            <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">last_node</span><span class="p">)</span><span class="o">.</span><span class="n">_assert_nodes</span><span class="p">(</span><span class="s1">&#39;last_node&#39;</span><span class="p">)</span>
+            <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">t2</span><span class="p">)</span><span class="o">.</span><span class="n">_assert_nodes</span><span class="p">(</span><span class="s1">&#39;t2&#39;</span><span class="p">)</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;new_left&#39;</span><span class="p">)</span>
+            <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">new_left</span><span class="p">)</span><span class="o">.</span><span class="n">print_tree</span><span class="p">()</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;last_node&#39;</span><span class="p">)</span>
+            <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">last_node</span><span class="p">)</span><span class="o">.</span><span class="n">print_tree</span><span class="p">()</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;t2&#39;</span><span class="p">)</span>
+            <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">t2</span><span class="p">)</span><span class="o">.</span><span class="n">print_tree</span><span class="p">()</span>
+
+        <span class="n">new_root</span> <span class="o">=</span> <span class="n">avl_join</span><span class="p">(</span><span class="n">new_left</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">last_node</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;new_root&#39;</span><span class="p">)</span>
+            <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">new_root</span><span class="p">)</span><span class="o">.</span><span class="n">print_tree</span><span class="p">()</span>
+            <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">last_node</span><span class="p">)</span><span class="o">.</span><span class="n">_assert_nodes</span><span class="p">(</span><span class="s1">&#39;new_root&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new_root</span></div>
+
+
+<div class="viewcode-block" id="avl_new_top"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.avl_new_top">[docs]</a><span class="k">def</span> <span class="nf">avl_new_top</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    if direction == 0:</span>
+<span class="sd">        (t1, t2) is (left, right)</span>
+<span class="sd">    if direction == 1:</span>
+<span class="sd">        (t1, t2) is (right, left)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">top</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">top</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">top</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+    <span class="n">top</span><span class="o">.</span><span class="n">set_child</span><span class="p">(</span><span class="n">direction</span><span class="p">,</span> <span class="n">t1</span><span class="p">)</span>
+    <span class="n">top</span><span class="o">.</span><span class="n">set_child</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">direction</span><span class="p">,</span> <span class="n">t2</span><span class="p">)</span>
+    <span class="n">top</span><span class="o">.</span><span class="n">balance</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">height</span><span class="p">(</span><span class="n">t1</span><span class="p">),</span> <span class="n">height</span><span class="p">(</span><span class="n">t2</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">top</span></div>
+
+
+<span class="n">DEBUG_SPLIT</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<div class="viewcode-block" id="backtrace_root"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.backtrace_root">[docs]</a><span class="k">def</span> <span class="nf">backtrace_root</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; from utool.experimental.euler_tour_tree_avl import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; self = EulerTourTree(range(10))</span>
+<span class="sd">        &gt;&gt;&gt; self._assert_nodes()</span>
+<span class="sd">        &gt;&gt;&gt; root = self.root</span>
+<span class="sd">        &gt;&gt;&gt; node = self.get_node(5)</span>
+<span class="sd">        &gt;&gt;&gt; self.print_tree()</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;node = %r&#39; % (node,))</span>
+<span class="sd">        &gt;&gt;&gt; rpath = backtrace_root(node)</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;rpath = %r&#39; % (rpath,))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Trace path to the root</span>
+    <span class="n">rpath</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">prev</span> <span class="o">=</span> <span class="n">node</span>
+    <span class="n">now</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">parent</span>
+    <span class="k">while</span> <span class="n">now</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">now</span><span class="o">.</span><span class="n">left</span> <span class="ow">is</span> <span class="n">prev</span><span class="p">:</span>
+            <span class="n">rpath</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">now</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">now</span><span class="o">.</span><span class="n">right</span> <span class="ow">is</span> <span class="n">prev</span><span class="p">:</span>
+            <span class="n">rpath</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">now</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s1">&#39;impossible state&#39;</span><span class="p">)</span>
+        <span class="n">prev</span> <span class="o">=</span> <span class="n">now</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">parent</span>
+    <span class="k">return</span> <span class="n">rpath</span></div>
+
+
+<div class="viewcode-block" id="test_avl_split"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.test_avl_split">[docs]</a><span class="k">def</span> <span class="nf">test_avl_split</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;------&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;num = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;index = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">index</span><span class="p">,))</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">tree0</span> <span class="o">=</span> <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">chr_range</span><span class="p">(</span><span class="n">num</span><span class="p">))</span>
+                <span class="n">tour</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tree0</span><span class="p">)</span>
+                <span class="n">tree0</span><span class="o">.</span><span class="n">_assert_nodes</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">tree0</span><span class="o">.</span><span class="n">print_tree</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;tree0 = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">tree0</span><span class="p">,))</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="n">tree0</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;node = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">node</span><span class="p">,))</span>
+                <span class="n">part1</span><span class="p">,</span> <span class="n">part2</span><span class="p">,</span> <span class="n">bnode</span> <span class="o">=</span> <span class="n">avl_split</span><span class="p">(</span><span class="n">tree0</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+                <span class="n">tree1</span> <span class="o">=</span> <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">part1</span><span class="p">)</span>
+                <span class="n">tree2</span> <span class="o">=</span> <span class="n">EulerTourTree</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">part2</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">tree1</span><span class="o">.</span><span class="n">print_tree</span><span class="p">(),</span> <span class="n">tree2</span><span class="o">.</span><span class="n">print_tree</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;tree1 = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">tree1</span><span class="p">,))</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;tree2 = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">tree2</span><span class="p">,))</span>
+                <span class="c1"># Should correspond to a split in the tour list</span>
+                <span class="k">assert</span> <span class="n">bnode</span><span class="o">.</span><span class="n">left</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;bnode must be split&#39;</span>
+                <span class="k">assert</span> <span class="n">bnode</span><span class="o">.</span><span class="n">right</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;bnode must be split&#39;</span>
+                <span class="k">assert</span> <span class="n">bnode</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;bnode must be split&#39;</span>
+                <span class="k">assert</span> <span class="n">bnode</span> <span class="ow">is</span> <span class="n">node</span><span class="p">,</span> <span class="s1">&#39;node must be same&#39;</span>
+                <span class="n">ut</span><span class="o">.</span><span class="n">assert_eq</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">tree1</span><span class="p">),</span> <span class="n">tour</span><span class="p">[:</span><span class="n">index</span><span class="p">])</span>
+                <span class="n">ut</span><span class="o">.</span><span class="n">assert_eq</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">tree2</span><span class="p">),</span> <span class="n">tour</span><span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:])</span>
+                <span class="n">tree1</span><span class="o">.</span><span class="n">_assert_nodes</span><span class="p">(),</span> <span class="n">tree2</span><span class="o">.</span><span class="n">_assert_nodes</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;num = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;index = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">index</span><span class="p">,))</span>
+                <span class="k">raise</span></div>
+
+
+<div class="viewcode-block" id="avl_split"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.avl_split">[docs]</a><span class="k">def</span> <span class="nf">avl_split</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    O(log(n))</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        root (Node): tree root</span>
+<span class="sd">        node (Node): node to split at</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        puple: (tl, tr, node)</span>
+<span class="sd">            tl contains all keys in the tree less than node</span>
+<span class="sd">            tr contains all keys in the tree greater than node</span>
+<span class="sd">            node is the node we split out</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.experimental.euler_tour_tree_avl avl_split</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; from utool.experimental.euler_tour_tree_avl import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; self = EulerTourTree(ut.chr_range(10))</span>
+<span class="sd">        &gt;&gt;&gt; self.print_tree()</span>
+<span class="sd">        &gt;&gt;&gt; node = self.get_node(5)</span>
+<span class="sd">        &gt;&gt;&gt; part1, part2, bnode = avl_split(self.root, node)</span>
+<span class="sd">        &gt;&gt;&gt; ascii_tree(part1)</span>
+<span class="sd">        &gt;&gt;&gt; ascii_tree(part2)</span>
+<span class="sd">        &gt;&gt;&gt; ascii_tree(bnode)</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; from utool.experimental.euler_tour_tree_avl import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; test_avl_split(verbose=2)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DEBUG_SPLIT</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># Get the backtrace to the root</span>
+    <span class="n">rpath</span> <span class="o">=</span> <span class="n">backtrace_root</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rpath</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">rpath</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="n">root</span>
+    <span class="k">if</span> <span class="n">DEBUG_SPLIT</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;======== SPLIT (PY)&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;rpath = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">rpath</span><span class="p">,))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;node = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">node</span><span class="p">,))</span>
+
+    <span class="c1"># We start by knowing where the node is</span>
+    <span class="c1"># This is the base case of the recursive function</span>
+    <span class="n">bnode</span><span class="p">,</span> <span class="n">part1</span><span class="p">,</span> <span class="n">part2</span> <span class="o">=</span> <span class="n">avl_release_kids</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">bnode</span> <span class="ow">is</span> <span class="n">node</span>
+    <span class="k">if</span> <span class="n">DEBUG_SPLIT</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;bnode = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">bnode</span><span class="p">,))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; * part1 = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">part1</span><span class="p">,))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; * part2 = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">part2</span><span class="p">,))</span>
+    <span class="n">avl_release_parent</span><span class="p">(</span><span class="n">bnode</span><span class="p">)</span>
+
+    <span class="c1"># We have split out the node we care about.</span>
+    <span class="c1"># Now, we need to recombine the tree in an ordered fashion</span>
+
+    <span class="c1"># Retrace the the stack that would have been</span>
+    <span class="c1"># generated by the old recursive key-based split</span>
+    <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rpath</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">DEBUG_SPLIT</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;+--- Iter </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">count</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; * node = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">node</span><span class="p">,))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; * direction = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">direction</span><span class="p">,))</span>
+        <span class="n">node</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">avl_release_kids</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="n">avl_release_parent</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">DEBUG_SPLIT</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; * left = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">left</span><span class="p">,))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; * right = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">right</span><span class="p">,))</span>
+        <span class="c1"># At `node` we would have decided to go `direction`</span>
+        <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># left is case 1</span>
+            <span class="k">if</span> <span class="n">DEBUG_SPLIT</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; * Case 1&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; * Join </span><span class="si">%s</span><span class="s1"> + </span><span class="si">%s</span><span class="s1"> + </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">part2</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">right</span><span class="p">))</span>
+            <span class="n">new_right</span> <span class="o">=</span> <span class="n">avl_join</span><span class="p">(</span><span class="n">part2</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+            <span class="n">part1</span> <span class="o">=</span> <span class="n">part1</span>
+            <span class="n">part2</span> <span class="o">=</span> <span class="n">new_right</span>
+        <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># right is case 1</span>
+            <span class="k">if</span> <span class="n">DEBUG_SPLIT</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; * Case 2&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; * Join </span><span class="si">%s</span><span class="s1"> + </span><span class="si">%s</span><span class="s1"> + </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">part1</span><span class="p">))</span>
+            <span class="n">new_left</span> <span class="o">=</span> <span class="n">avl_join</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">part1</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+            <span class="n">part1</span> <span class="o">=</span> <span class="n">new_left</span>
+            <span class="n">part2</span> <span class="o">=</span> <span class="n">part2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s1">&#39;impossible state&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">DEBUG_SPLIT</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;     * part1 = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">part1</span><span class="p">,))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;     * part2 = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">part2</span><span class="p">,))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;+--- End Iter </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">count</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">DEBUG_SPLIT</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;RETURN&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; * part1 = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">part1</span><span class="p">,))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; * part2 = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">part2</span><span class="p">,))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; * bnode = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">bnode</span><span class="p">,))</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">part1</span><span class="p">,</span> <span class="n">part2</span><span class="p">,</span> <span class="n">bnode</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="avl_split_old"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.avl_split_old">[docs]</a><span class="k">def</span> <span class="nf">avl_split_old</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">DEBUG_SPLIT</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-- SPLIT (PY)&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;root = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">root</span> <span class="k">if</span> <span class="n">root</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">root</span><span class="o">.</span><span class="n">key</span><span class="p">,))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;key = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,))</span>
+        <span class="k">pass</span>
+    <span class="c1"># TODO: keep track of the size of the sets being avl_split if possible</span>
+    <span class="k">if</span> <span class="n">root</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">DEBUG_SPLIT</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Split Case None&#39;</span><span class="p">)</span>
+        <span class="n">part1</span> <span class="o">=</span> <span class="n">root</span>
+        <span class="n">part2</span> <span class="o">=</span> <span class="n">root</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">bv</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">root</span><span class="o">.</span><span class="n">right</span>
+        <span class="n">t_key</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">key</span>
+        <span class="n">t_val</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">t_key</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">DEBUG_SPLIT</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Split Case Hit&#39;</span><span class="p">)</span>
+            <span class="n">part1</span> <span class="o">=</span> <span class="n">left</span>
+            <span class="n">part2</span> <span class="o">=</span> <span class="n">right</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">bv</span> <span class="o">=</span> <span class="n">t_val</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">&lt;</span> <span class="n">t_key</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">DEBUG_SPLIT</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Split Case Recurse 1&#39;</span><span class="p">)</span>
+            <span class="n">ll</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">bv</span> <span class="o">=</span> <span class="n">avl_split</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">DEBUG_SPLIT</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Split Case Up 1&#39;</span><span class="p">)</span>
+            <span class="n">new_right</span> <span class="o">=</span> <span class="n">avl_join</span><span class="p">(</span><span class="n">lr</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">t_key</span><span class="p">,</span> <span class="n">t_val</span><span class="p">)</span>
+            <span class="n">part1</span> <span class="o">=</span> <span class="n">ll</span>
+            <span class="n">part2</span> <span class="o">=</span> <span class="n">new_right</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">DEBUG_SPLIT</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Split Case Recurse 2&#39;</span><span class="p">)</span>
+            <span class="n">rl</span><span class="p">,</span> <span class="n">rr</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">bv</span> <span class="o">=</span> <span class="n">avl_split</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">DEBUG_SPLIT</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Split Case Up 2&#39;</span><span class="p">)</span>
+            <span class="n">new_left</span> <span class="o">=</span> <span class="n">avl_join</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">rl</span><span class="p">,</span> <span class="n">t_key</span><span class="p">,</span> <span class="n">t_val</span><span class="p">)</span>
+            <span class="n">part1</span> <span class="o">=</span> <span class="n">new_left</span>
+            <span class="n">part2</span> <span class="o">=</span> <span class="n">rr</span>
+    <span class="k">if</span> <span class="n">DEBUG_SPLIT</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;part1 = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="kc">None</span> <span class="k">if</span> <span class="n">part1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">part1</span><span class="o">.</span><span class="n">key</span><span class="p">,))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;part2 = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="kc">None</span> <span class="k">if</span> <span class="n">part2</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">part2</span><span class="o">.</span><span class="n">key</span><span class="p">,))</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">part1</span><span class="p">,</span> <span class="n">part2</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">bv</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="avl_insert_dir"><a class="viewcode-back" href="../../../utool.experimental.html#utool.experimental.euler_tour_tree_avl.avl_insert_dir">[docs]</a><span class="k">def</span> <span class="nf">avl_insert_dir</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">new_node</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Inserts a single node all the way to the left (direction=1) or right (direction=1)</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.experimental.euler_tour_tree_avl avl_insert_dir --show</span>
+<span class="sd">        python -m utool.experimental.euler_tour_tree_avl avl_insert_dir</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.experimental.euler_tour_tree_avl import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; root = Node(value=&#39;A&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; new_node = Node(value=&#39;B&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; new_root = avl_insert_dir(root, new_node, direction=1)</span>
+<span class="sd">        &gt;&gt;&gt; new_root = avl_insert_dir(root, Node(value=&#39;Z&#39;), direction=1)</span>
+<span class="sd">        &gt;&gt;&gt; EulerTourTree(root=new_root)._assert_nodes()</span>
+<span class="sd">        &gt;&gt;&gt; for v in ut.chr_range(5, base=&#39;C&#39;):</span>
+<span class="sd">        &gt;&gt;&gt;     new_root = avl_insert_dir(new_root, Node(value=v), direction=1)</span>
+<span class="sd">        &gt;&gt;&gt;     self = EulerTourTree(root=new_root)</span>
+<span class="sd">        &gt;&gt;&gt;     self._assert_nodes()</span>
+<span class="sd">        &gt;&gt;&gt; new = EulerTourTree(root=new_root)</span>
+<span class="sd">        &gt;&gt;&gt; print(new)</span>
+<span class="sd">        &gt;&gt;&gt; ut.quit_if_noshow()</span>
+<span class="sd">        &gt;&gt;&gt; ut.qtensure()</span>
+<span class="sd">        &gt;&gt;&gt; new.show_nx(edge_labels=True)</span>
+<span class="sd">        &gt;&gt;&gt; ut.show_if_requested()</span>
+<span class="sd">        &gt;&gt;&gt; #ascii_tree(root)</span>
+<span class="sd">        &gt;&gt;&gt; #print(result)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">root</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">new_node</span>
+    <span class="k">assert</span> <span class="n">new_node</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">((</span><span class="n">new_node</span><span class="p">,</span> <span class="n">new_node</span><span class="o">.</span><span class="n">parent</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="n">new_node</span><span class="o">.</span><span class="n">left</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">new_node</span><span class="o">.</span><span class="n">right</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">root</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span>
+
+    <span class="n">node_stack</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># node stack</span>
+    <span class="c1"># dir_stack = array(&#39;I&#39;)  # direction stack</span>
+    <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># Move all the way to the right/left in tree1</span>
+    <span class="n">node</span> <span class="o">=</span> <span class="n">root</span>
+    <span class="c1"># search for an empty link, save path</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># Always move to the right</span>
+        <span class="c1"># dir_stack.append(direction)</span>
+        <span class="n">node_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">node</span><span class="p">[</span><span class="n">direction</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">node</span><span class="p">[</span><span class="n">direction</span><span class="p">]</span>
+    <span class="n">extreme_node</span> <span class="o">=</span> <span class="n">node</span>
+
+    <span class="c1"># Insert a new node at the bottom of the tree</span>
+    <span class="n">extreme_node</span><span class="o">.</span><span class="n">set_child</span><span class="p">(</span><span class="n">direction</span><span class="p">,</span> <span class="n">new_node</span><span class="p">)</span>
+    <span class="n">new_root</span> <span class="o">=</span> <span class="n">root</span>
+
+    <span class="c1"># Walk back up the search path</span>
+    <span class="c1"># (which for joining orderless structures was always right)</span>
+    <span class="n">other_side</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">direction</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">node_stack</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">top</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+        <span class="c1"># direction = dir_stack[top]</span>
+        <span class="c1"># other_side = 1 - direction</span>
+        <span class="n">top_node</span> <span class="o">=</span> <span class="n">node_stack</span><span class="p">[</span><span class="n">top</span><span class="p">]</span>
+        <span class="n">left_height</span> <span class="o">=</span> <span class="n">height</span><span class="p">(</span><span class="n">top_node</span><span class="p">[</span><span class="n">direction</span><span class="p">])</span>
+        <span class="n">right_height</span> <span class="o">=</span> <span class="n">height</span><span class="p">(</span><span class="n">top_node</span><span class="p">[</span><span class="n">other_side</span><span class="p">])</span>
+
+        <span class="c1"># Terminate or rebalance as necessary</span>
+        <span class="k">if</span> <span class="n">left_height</span> <span class="o">-</span> <span class="n">right_height</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">left_height</span> <span class="o">-</span> <span class="n">right_height</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">top_node</span><span class="p">[</span><span class="n">direction</span><span class="p">][</span><span class="n">direction</span><span class="p">]</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">top_node</span><span class="p">[</span><span class="n">direction</span><span class="p">][</span><span class="n">other_side</span><span class="p">]</span>
+
+            <span class="c1"># Determine which rotation is required</span>
+            <span class="k">if</span> <span class="n">height</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">height</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
+                <span class="n">node_stack</span><span class="p">[</span><span class="n">top</span><span class="p">]</span> <span class="o">=</span> <span class="n">avl_rotate_single</span><span class="p">(</span><span class="n">top_node</span><span class="p">,</span> <span class="n">other_side</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">node_stack</span><span class="p">[</span><span class="n">top</span><span class="p">]</span> <span class="o">=</span> <span class="n">avl_rotate_double</span><span class="p">(</span><span class="n">top_node</span><span class="p">,</span> <span class="n">other_side</span><span class="p">)</span>
+
+            <span class="c1"># Fix parent</span>
+            <span class="k">if</span> <span class="n">top</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># d_ = dir_stack[top - 1]</span>
+                <span class="n">d_</span> <span class="o">=</span> <span class="n">direction</span>
+                <span class="n">node_stack</span><span class="p">[</span><span class="n">top</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_child</span><span class="p">(</span><span class="n">d_</span><span class="p">,</span> <span class="n">node_stack</span><span class="p">[</span><span class="n">top</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_root</span> <span class="o">=</span> <span class="n">node_stack</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">new_root</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Update balance factors</span>
+        <span class="n">top_node</span> <span class="o">=</span> <span class="n">node_stack</span><span class="p">[</span><span class="n">top</span><span class="p">]</span>
+        <span class="n">left_height</span> <span class="o">=</span> <span class="n">height</span><span class="p">(</span><span class="n">top_node</span><span class="p">[</span><span class="n">direction</span><span class="p">])</span>
+        <span class="n">right_height</span> <span class="o">=</span> <span class="n">height</span><span class="p">(</span><span class="n">top_node</span><span class="p">[</span><span class="n">other_side</span><span class="p">])</span>
+
+        <span class="n">top_node</span><span class="o">.</span><span class="n">balance</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">left_height</span><span class="p">,</span> <span class="n">right_height</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">top</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">new_root</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">new_root</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.experimental.euler_tour_tree_avl</span>
+<span class="sd">        python -m utool.experimental.euler_tour_tree_avl --allexamples</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">multiprocessing</span>
+
+    <span class="n">multiprocessing</span><span class="o">.</span><span class="n">freeze_support</span><span class="p">()</span>  <span class="c1"># for win32</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>  <span class="c1"># NOQA</span>
+
+    <span class="n">ut</span><span class="o">.</span><span class="n">doctest_funcs</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">wbia-vtool</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../utool.html">utool package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../utool.html">utool</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wild Me.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

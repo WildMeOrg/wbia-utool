@@ -1,0 +1,216 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>utool._internal.meta_util_arg &#8212; wbia-vtool 3.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for utool._internal.meta_util_arg</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">import</span> <span class="nn">types</span>
+<span class="kn">import</span> <span class="nn">six</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">DEBUG</span> <span class="o">=</span> <span class="s1">&#39;--debug&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+<span class="n">DEBUG2</span> <span class="o">=</span> <span class="s1">&#39;--debug2&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+<span class="n">NO_ASSERTS</span> <span class="o">=</span> <span class="s1">&#39;--no-assert&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+<span class="n">QUIET</span> <span class="o">=</span> <span class="s1">&#39;--quiet&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+<span class="n">SILENT</span> <span class="o">=</span> <span class="s1">&#39;--silent&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+<span class="n">SAFE</span> <span class="o">=</span> <span class="s1">&#39;--safe&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+<span class="n">STRICT</span> <span class="o">=</span> <span class="s1">&#39;--strict&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+<span class="n">REPORT</span> <span class="o">=</span> <span class="s1">&#39;--report&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+<span class="n">TRACE</span> <span class="o">=</span> <span class="s1">&#39;--trace&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+<span class="n">SUPER_STRICT</span> <span class="o">=</span> <span class="s1">&#39;--super-strict&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="ow">or</span> <span class="s1">&#39;--superstrict&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+<span class="n">VERBOSE</span> <span class="o">=</span> <span class="s1">&#39;--verbose&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="ow">or</span> <span class="s1">&#39;--verb&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+<span class="n">VERYVERBOSE</span> <span class="o">=</span> <span class="s1">&#39;--very-verbose&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="ow">or</span> <span class="s1">&#39;--veryverbose&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+<span class="n">NO_INDENT</span> <span class="o">=</span> <span class="s1">&#39;--noindent&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="ow">or</span> <span class="s1">&#39;--no-indent&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="ow">or</span> <span class="n">SILENT</span>
+<span class="n">PRINT_ALL_CALLERS</span> <span class="o">=</span> <span class="s1">&#39;--print-all-callers&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+<span class="n">USE_ASSERT</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">NO_ASSERTS</span>
+<span class="n">NOT_QUIET</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">QUIET</span>
+<span class="n">PRINT_INJECT_ORDER</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">VERYVERBOSE</span>
+    <span class="ow">or</span> <span class="s1">&#39;--print-inject-order&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+    <span class="ow">or</span> <span class="s1">&#39;--verbinject&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+    <span class="ow">or</span> <span class="s1">&#39;--print-imports&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+    <span class="ow">or</span> <span class="s1">&#39;--verb-inject&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+    <span class="ow">or</span> <span class="s1">&#39;--verbimport&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+    <span class="ow">or</span> <span class="s1">&#39;--verbimp&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+    <span class="ow">or</span> <span class="s1">&#39;--verb-import&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+    <span class="ow">or</span> <span class="s1">&#39;--verb-import&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+    <span class="ow">or</span> <span class="s1">&#39;--verbose-import&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+<span class="p">)</span>
+<span class="n">LOGGING_VERBOSE</span> <span class="o">=</span> <span class="n">VERYVERBOSE</span> <span class="ow">or</span> <span class="s1">&#39;--verb-logging&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+
+<span class="k">if</span> <span class="n">PRINT_INJECT_ORDER</span><span class="p">:</span>
+    <span class="c1"># HACK</span>
+    <span class="kn">from</span> <span class="nn">utool._internal</span> <span class="k">import</span> <span class="n">meta_util_dbg</span>
+    <span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="n">builtins</span>
+
+    <span class="n">N</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">callername</span> <span class="o">=</span> <span class="n">meta_util_dbg</span><span class="o">.</span><span class="n">get_caller_name</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">2</span> <span class="o">+</span> <span class="n">N</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">lineno</span> <span class="o">=</span> <span class="n">meta_util_dbg</span><span class="o">.</span><span class="n">get_caller_lineno</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">2</span> <span class="o">+</span> <span class="n">N</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">fmtdict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">,</span> <span class="n">callername</span><span class="o">=</span><span class="n">callername</span><span class="p">,</span> <span class="n">modname</span><span class="o">=</span><span class="vm">__name__</span><span class="p">)</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;[util_inject] N=</span><span class="si">{N}</span><span class="s1"> </span><span class="si">{modname}</span><span class="s1"> is imported by </span><span class="si">{callername}</span><span class="s1"> at lineno=</span><span class="si">{lineno}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="o">**</span><span class="n">fmtdict</span>
+    <span class="p">)</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_try_cast</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">type_</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">type_</span> <span class="ow">in</span> <span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">BooleanType</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">val</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span><span class="p">:</span>
+            <span class="n">newval</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">val</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;false&#39;</span><span class="p">:</span>
+            <span class="n">newval</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">newval</span> <span class="o">=</span> <span class="n">type_</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">newval</span>
+
+
+<div class="viewcode-block" id="get_argflag"><a class="viewcode-back" href="../../../utool._internal.html#utool._internal.meta_util_arg.get_argflag">[docs]</a><span class="k">def</span> <span class="nf">get_argflag</span><span class="p">(</span><span class="n">flag</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">flag</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span></div>
+
+
+<span class="c1"># FIXME: on a rrrr this get_argval is taken</span>
+<span class="c1"># instead of the correct one from util_arg</span>
+<div class="viewcode-block" id="get_argval"><a class="viewcode-back" href="../../../utool._internal.html#utool._internal.meta_util_arg.get_argval">[docs]</a><span class="k">def</span> <span class="nf">get_argval</span><span class="p">(</span><span class="n">argstr</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a value of an argument specified on the command line after some flag</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -c &quot;import utool; print([(type(x), x) for x in [utool.get_argval(&#39;--quest&#39;)]])&quot; --quest=&quot;holy grail&quot;</span>
+<span class="sd">        python -c &quot;import utool; print([(type(x), x) for x in [utool.get_argval(&#39;--quest&#39;)]])&quot; --quest=&quot;42&quot;</span>
+<span class="sd">        python -c &quot;import utool; print([(type(x), x) for x in [utool.get_argval(&#39;--quest&#39;)]])&quot; --quest=42</span>
+<span class="sd">        python -c &quot;import utool; print([(type(x), x) for x in [utool.get_argval(&#39;--quest&#39;)]])&quot; --quest 42</span>
+<span class="sd">        python -c &quot;import utool; print([(type(x), x) for x in [utool.get_argval(&#39;--quest&#39;, float)]])&quot; --quest 42</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_arg import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import sys</span>
+<span class="sd">        &gt;&gt;&gt; sys.argv.extend([&#39;--spam&#39;, &#39;eggs&#39;, &#39;--quest=holy grail&#39;, &#39;--ans=42&#39;])</span>
+<span class="sd">        &gt;&gt;&gt; get_argval(&#39;--spam&#39;, type_=str, default=None)</span>
+<span class="sd">        eggs</span>
+<span class="sd">        &gt;&gt;&gt; get_argval(&#39;--quest&#39;, type_=str, default=None)</span>
+<span class="sd">        holy grail</span>
+<span class="sd">        &gt;&gt;&gt; get_argval(&#39;--ans&#39;, type_=int, default=None)</span>
+<span class="sd">        42</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">arg_after</span> <span class="o">=</span> <span class="n">default</span>
+    <span class="k">if</span> <span class="n">type_</span> <span class="ow">is</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">arg_after</span> <span class="o">=</span> <span class="kc">False</span> <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">default</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># New for loop way (accounts for =)</span>
+        <span class="k">for</span> <span class="n">argx</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="n">argstr</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">argx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">type_</span> <span class="ow">is</span> <span class="nb">bool</span><span class="p">:</span>
+                        <span class="n">arg_after</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">arg_after</span> <span class="o">=</span> <span class="n">_try_cast</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="n">argx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">type_</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">argstr</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span><span class="p">):</span>
+                <span class="n">val_after</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:])</span>
+                <span class="n">arg_after</span> <span class="o">=</span> <span class="n">_try_cast</span><span class="p">(</span><span class="n">val_after</span><span class="p">,</span> <span class="n">type_</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">arg_after</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">wbia-vtool</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../utool.html">utool package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../utool.html">utool</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wild Me.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

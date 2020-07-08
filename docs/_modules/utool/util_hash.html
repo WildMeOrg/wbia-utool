@@ -1,0 +1,1462 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>utool.util_hash &#8212; wbia-vtool 3.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for utool.util_hash</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Hashing convinience functions</span>
+
+<span class="sd">You should opt to use a hash*27 function over a hash* function.</span>
+
+
+<span class="sd">TODO: the same hashing algorithm should be used everywhere</span>
+<span class="sd">Currently there is a mix of sha1, sha256, and sha512 in different places.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">six</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="nb">zip</span><span class="p">,</span> <span class="nb">map</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inject</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_path</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_type</span>
+
+<span class="p">(</span><span class="nb">print</span><span class="p">,</span> <span class="n">rrr</span><span class="p">,</span> <span class="n">profile</span><span class="p">)</span> <span class="o">=</span> <span class="n">util_inject</span><span class="o">.</span><span class="n">inject2</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="s1">&#39;[hash]&#39;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">util_type</span><span class="o">.</span><span class="n">HAVE_NUMPY</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1"># default length of hash codes</span>
+<span class="n">HASH_LEN</span> <span class="o">=</span> <span class="mi">16</span>
+<span class="n">HASH_LEN2</span> <span class="o">=</span> <span class="mi">32</span>
+
+<span class="c1"># HEX alphabet</span>
+<span class="n">ALPHABET_16</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;3&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;4&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;5&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;6&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;7&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;8&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;9&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;a&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;b&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;c&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;d&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;e&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;f&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1"># A large base-54 alphabet (all chars are valid for filenames but not pretty)</span>
+<span class="n">ALPHABET_54</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;3&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;4&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;5&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;6&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;7&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;8&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;9&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;a&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;b&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;c&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;d&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;e&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;f&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;g&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;h&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;i&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;j&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;k&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;l&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;m&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;n&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;o&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;p&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;q&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;r&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;s&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;t&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;u&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;v&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;w&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;x&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;y&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;z&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;=&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;@&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;[&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;]&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;^&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;_&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;`&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;{&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;}&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;~&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;!&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;#&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;$&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;%&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;&amp;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;+&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;,&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="c1"># A large base-41 alphabet (prettier subset of base 54)</span>
+<span class="n">ALPHABET_41</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;3&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;4&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;5&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;6&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;7&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;8&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;9&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;a&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;b&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;c&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;d&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;e&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;f&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;g&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;h&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;i&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;j&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;k&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;l&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;m&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;n&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;o&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;p&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;q&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;r&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;s&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;t&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;u&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;v&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;w&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;x&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;y&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;z&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;@&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;!&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;%&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;&amp;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;+&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">ALPHABET_27</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;a&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;b&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;c&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;d&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;e&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;f&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;g&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;h&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;i&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;j&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;k&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;l&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;m&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;n&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;o&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;p&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;q&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;r&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;s&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;t&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;u&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;v&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;w&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;x&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;y&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;z&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="c1"># ALPHABET = ALPHABET_41</span>
+<span class="n">ALPHABET</span> <span class="o">=</span> <span class="n">ALPHABET_27</span>
+<span class="n">BIGBASE</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ALPHABET</span><span class="p">)</span>
+
+
+<span class="n">DictProxyType</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="nb">object</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="make_hash"><a class="viewcode-back" href="../../utool.html#utool.util_hash.make_hash">[docs]</a><span class="k">def</span> <span class="nf">make_hash</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Makes a hash from a dictionary, list, tuple or set to any level, that</span>
+<span class="sd">    contains only other hashable types (including any lists, tuples, sets, and</span>
+<span class="sd">    dictionaries). In the case where other kinds of objects (like classes) need</span>
+<span class="sd">    to be hashed, pass in a collection of object attributes that are pertinent.</span>
+<span class="sd">    For example, a class can be hashed in this fashion:</span>
+
+<span class="sd">    make_hash([cls.__dict__, cls.__name__])</span>
+
+<span class="sd">    A function can be hashed like so:</span>
+
+<span class="sd">    make_hash([fn.__dict__, fn.__code__])</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        http://stackoverflow.com/questions/5884066/hashing-a-python-dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="o">==</span> <span class="n">DictProxyType</span><span class="p">:</span>
+        <span class="n">o2</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">o</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">):</span>
+                <span class="n">o2</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="n">o</span> <span class="o">=</span> <span class="n">o2</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="p">(</span><span class="nb">set</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">make_hash</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">o</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+    <span class="n">new_o</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">new_o</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">new_o</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">make_hash</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">frozenset</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">new_o</span><span class="o">.</span><span class="n">items</span><span class="p">()))))</span></div>
+
+
+<div class="viewcode-block" id="hashstr_arr27"><a class="viewcode-back" href="../../utool.html#utool.util_hash.hashstr_arr27">[docs]</a><span class="k">def</span> <span class="nf">hashstr_arr27</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">lbl</span><span class="p">,</span> <span class="n">alphabet</span><span class="o">=</span><span class="n">ALPHABET_27</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">hashstr_arr</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">lbl</span><span class="p">,</span> <span class="n">alphabet</span><span class="o">=</span><span class="n">alphabet</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="hashstr27"><a class="viewcode-back" href="../../utool.html#utool.util_hash.hashstr27">[docs]</a><span class="k">def</span> <span class="nf">hashstr27</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">alphabet</span><span class="o">=</span><span class="n">ALPHABET_27</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">hashstr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">alphabet</span><span class="o">=</span><span class="n">alphabet</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="hashstr_arr"><a class="viewcode-back" href="../../utool.html#utool.util_hash.hashstr_arr">[docs]</a><span class="k">def</span> <span class="nf">hashstr_arr</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">lbl</span><span class="o">=</span><span class="s1">&#39;arr&#39;</span><span class="p">,</span> <span class="n">pathsafe</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        arr (ndarray):</span>
+<span class="sd">        lbl (str): (default = &#39;arr&#39;)</span>
+<span class="sd">        pathsafe (bool): (default = False)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: arr_hashstr</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_hash --test-hashstr_arr</span>
+<span class="sd">        python -m utool.util_hash hashstr_arr:2</span>
+
+<span class="sd">    Example0:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_hash import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; arr = np.array([[1, 2, 3], [4, 5, 6]], dtype=np.float64)</span>
+<span class="sd">        &gt;&gt;&gt; lbl = &#39;arr&#39;</span>
+<span class="sd">        &gt;&gt;&gt; kwargs = {}</span>
+<span class="sd">        &gt;&gt;&gt; pathsafe = False</span>
+<span class="sd">        &gt;&gt;&gt; arr_hashstr = hashstr_arr(arr, lbl, pathsafe, alphabet=ALPHABET_27)</span>
+<span class="sd">        &gt;&gt;&gt; result = (&#39;arr_hashstr = %s&#39; % (str(arr_hashstr),))</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        arr_hashstr = arr((2,3)daukyreqnhfejkfs)</span>
+
+<span class="sd">    Example1:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_hash import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; arr = np.array([[1, 2, 3], [4, 5, 6]], dtype=np.float64)</span>
+<span class="sd">        &gt;&gt;&gt; kwargs = {}</span>
+<span class="sd">        &gt;&gt;&gt; lbl = &#39;arr&#39;</span>
+<span class="sd">        &gt;&gt;&gt; pathsafe = True</span>
+<span class="sd">        &gt;&gt;&gt; arr_hashstr = hashstr_arr(arr, lbl, pathsafe, alphabet=ALPHABET_27)</span>
+<span class="sd">        &gt;&gt;&gt; result = (&#39;arr_hashstr = %s&#39; % (str(arr_hashstr),))</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        arr_hashstr = arr-_2,3_daukyreqnhfejkfs-</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>  <span class="c1"># force arrays into a tuple for hashability</span>
+        <span class="c1"># TODO: maybe for into numpy array instead? tuples might have problems</span>
+    <span class="k">if</span> <span class="n">pathsafe</span><span class="p">:</span>
+        <span class="n">lbrace1</span><span class="p">,</span> <span class="n">rbrace1</span><span class="p">,</span> <span class="n">lbrace2</span><span class="p">,</span> <span class="n">rbrace2</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lbrace1</span><span class="p">,</span> <span class="n">rbrace1</span><span class="p">,</span> <span class="n">lbrace2</span><span class="p">,</span> <span class="n">rbrace2</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">,</span> <span class="s1">&#39;(&#39;</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">arr_shape</span> <span class="o">=</span> <span class="n">lbrace1</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">))</span> <span class="o">+</span> <span class="n">rbrace1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Arr should be an ndarray here. append info about the ndarray</span>
+        <span class="n">arr_shape</span> <span class="o">=</span> <span class="n">lbrace1</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">)))</span> <span class="o">+</span> <span class="n">rbrace1</span>
+    <span class="n">arr_hashstr_</span> <span class="o">=</span> <span class="n">hashstr</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">arr_hashstr</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">lbl</span><span class="p">,</span> <span class="n">lbrace2</span><span class="p">,</span> <span class="n">arr_shape</span><span class="p">,</span> <span class="n">arr_hashstr_</span><span class="p">,</span> <span class="n">rbrace2</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">arr_hashstr</span></div>
+
+
+<div class="viewcode-block" id="hashid_arr"><a class="viewcode-back" href="../../utool.html#utool.util_hash.hashid_arr">[docs]</a><span class="k">def</span> <span class="nf">hashid_arr</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;arr&#39;</span><span class="p">,</span> <span class="n">hashlen</span><span class="o">=</span><span class="mi">16</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; newer version of hashstr_arr2 &quot;&quot;&quot;</span>
+    <span class="n">hashstr</span> <span class="o">=</span> <span class="n">hash_data</span><span class="p">(</span><span class="n">arr</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="n">hashlen</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="n">shapestr</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">shapestr</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">)))</span>
+    <span class="n">hashid</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">-</span><span class="si">{}</span><span class="s1">-</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">shapestr</span><span class="p">,</span> <span class="n">hashstr</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">hashid</span></div>
+
+
+<span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">PY2</span><span class="p">:</span>
+    <span class="n">stringlike</span> <span class="o">=</span> <span class="p">(</span><span class="n">basestring</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span>  <span class="c1"># NOQA</span>
+<span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">PY3</span><span class="p">:</span>
+    <span class="n">stringlike</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span>  <span class="c1"># NOQA</span>
+
+
+<span class="k">def</span> <span class="nf">_covert_to_hashable</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        data (?):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ?:</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_hash _covert_to_hashable</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_hash import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_hash import _covert_to_hashable  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; data = np.array([1], dtype=np.int64)</span>
+<span class="sd">        &gt;&gt;&gt; result = _covert_to_hashable(data)</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">binary_type</span><span class="p">):</span>
+        <span class="n">hashable</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;TXT&#39;</span>
+    <span class="k">elif</span> <span class="n">util_type</span><span class="o">.</span><span class="n">HAVE_NUMPY</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;O&#39;</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;[ut] hashing ndarrays with dtype=object is unstable&#39;</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
+            <span class="n">hashable</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dumps</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hashable</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;NDARR&#39;</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">text_type</span><span class="p">):</span>
+        <span class="c1"># convert unicode into bytes</span>
+        <span class="n">hashable</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;TXT&#39;</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span>
+        <span class="n">hashable</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">bytes</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;UUID&#39;</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="c1"># warnings.warn(&#39;[util_hash] Hashing ints is slow, numpy is prefered&#39;)</span>
+        <span class="n">hashable</span> <span class="o">=</span> <span class="n">_int_to_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="c1"># hashable = data.to_bytes(8, byteorder=&#39;big&#39;)</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;INT&#39;</span>
+    <span class="c1"># elif isinstance(data, float):</span>
+    <span class="c1">#     hashable = repr(data).encode(&#39;utf8&#39;)</span>
+    <span class="c1">#     prefix = b&#39;FLT&#39;</span>
+    <span class="k">elif</span> <span class="n">util_type</span><span class="o">.</span><span class="n">HAVE_NUMPY</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_covert_to_hashable</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">util_type</span><span class="o">.</span><span class="n">HAVE_NUMPY</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">as_integer_ratio</span><span class="p">()</span>
+        <span class="n">hashable</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">byteorder</span><span class="o">=</span><span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">byteorder</span><span class="o">=</span><span class="s1">&#39;big&#39;</span><span class="p">)</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;FLOAT&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;unknown hashable type=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
+        <span class="c1"># import bencode</span>
+        <span class="c1"># hashable = bencode.Bencoder.encode(data).encode(&#39;utf-8&#39;)</span>
+        <span class="c1"># prefix = b&#39;BEN&#39;</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">hashable</span>
+
+
+<span class="k">def</span> <span class="nf">_update_hasher</span><span class="p">(</span><span class="n">hasher</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is the clear winner over the generate version.</span>
+<span class="sd">    Used by hash_data</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        import utool</span>
+<span class="sd">        rng = np.random.RandomState(0)</span>
+<span class="sd">        # str1 = rng.rand(0).dumps()</span>
+<span class="sd">        str1 = b&#39;SEP&#39;</span>
+<span class="sd">        str2 = rng.rand(10000).dumps()</span>
+<span class="sd">        for timer in utool.Timerit(100, label=&#39;twocall&#39;):</span>
+<span class="sd">            hasher = hashlib.sha256()</span>
+<span class="sd">            with timer:</span>
+<span class="sd">                hasher.update(str1)</span>
+<span class="sd">                hasher.update(str2)</span>
+<span class="sd">        a = hasher.hexdigest()</span>
+<span class="sd">        for timer in utool.Timerit(100, label=&#39;concat&#39;):</span>
+<span class="sd">            hasher = hashlib.sha256()</span>
+<span class="sd">            with timer:</span>
+<span class="sd">                hasher.update(str1 + str2)</span>
+<span class="sd">        b = hasher.hexdigest()</span>
+<span class="sd">        assert a == b</span>
+<span class="sd">        # CONCLUSION: Faster to concat in case of prefixes and seps</span>
+
+<span class="sd">        nested_data = {&#39;1&#39;: [rng.rand(100), &#39;2&#39;, &#39;3&#39;],</span>
+<span class="sd">                       &#39;2&#39;: [&#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;],</span>
+<span class="sd">                       &#39;3&#39;: [(&#39;1&#39;, &#39;2&#39;), (&#39;3&#39;, &#39;4&#39;), (&#39;5&#39;, &#39;6&#39;)]}</span>
+<span class="sd">        data = list(nested_data.values())</span>
+
+
+<span class="sd">        for timer in utool.Timerit(1000, label=&#39;cat-generate&#39;):</span>
+<span class="sd">            hasher = hashlib.sha256()</span>
+<span class="sd">            with timer:</span>
+<span class="sd">                hasher.update(b&#39;&#39;.join(_bytes_generator(data)))</span>
+
+<span class="sd">        for timer in utool.Timerit(1000, label=&#39;inc-generate&#39;):</span>
+<span class="sd">            hasher = hashlib.sha256()</span>
+<span class="sd">            with timer:</span>
+<span class="sd">                for b in _bytes_generator(data):</span>
+<span class="sd">                    hasher.update(b)</span>
+
+<span class="sd">        for timer in utool.Timerit(1000, label=&#39;inc-generate&#39;):</span>
+<span class="sd">            hasher = hashlib.sha256()</span>
+<span class="sd">            with timer:</span>
+<span class="sd">                for b in _bytes_generator(data):</span>
+<span class="sd">                    hasher.update(b)</span>
+
+<span class="sd">        for timer in utool.Timerit(1000, label=&#39;chunk-inc-generate&#39;):</span>
+<span class="sd">            hasher = hashlib.sha256()</span>
+<span class="sd">            import ubelt as ub</span>
+<span class="sd">            with timer:</span>
+<span class="sd">                for chunk in ub.chunks(_bytes_generator(data), 5):</span>
+<span class="sd">                    hasher.update(b&#39;&#39;.join(chunk))</span>
+
+<span class="sd">        for timer in utool.Timerit(1000, label=&#39;inc-update&#39;):</span>
+<span class="sd">            hasher = hashlib.sha256()</span>
+<span class="sd">            with timer:</span>
+<span class="sd">                _update_hasher(hasher, data)</span>
+
+<span class="sd">        data = ut.lorium_ipsum()</span>
+<span class="sd">        hash_data(data)</span>
+<span class="sd">        ut.hashstr27(data)</span>
+<span class="sd">        %timeit hash_data(data)</span>
+<span class="sd">        %timeit ut.hashstr27(repr(data))</span>
+
+<span class="sd">        for timer in utool.Timerit(100, label=&#39;twocall&#39;):</span>
+<span class="sd">            hasher = hashlib.sha256()</span>
+<span class="sd">            with timer:</span>
+<span class="sd">                hash_data(data)</span>
+
+<span class="sd">        hasher = hashlib.sha256()</span>
+<span class="sd">        hasher.update(memoryview(np.array([1])))</span>
+<span class="sd">        print(hasher.hexdigest())</span>
+
+<span class="sd">        hasher = hashlib.sha256()</span>
+<span class="sd">        hasher.update(np.array([&#39;1&#39;], dtype=object))</span>
+<span class="sd">        print(hasher.hexdigest())</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">zip</span><span class="p">)):</span>
+        <span class="n">needs_iteration</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="n">util_type</span><span class="o">.</span><span class="n">HAVE_NUMPY</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;O&#39;</span><span class="p">:</span>
+        <span class="c1"># ndarrays of objects cannot be hashed directly.</span>
+        <span class="n">needs_iteration</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">needs_iteration</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">needs_iteration</span><span class="p">:</span>
+        <span class="c1"># try to nest quickly without recursive calls</span>
+        <span class="n">SEP</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;SEP&#39;</span>
+        <span class="n">iter_prefix</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;ITER&#39;</span>
+        <span class="c1"># if isinstance(data, tuple):</span>
+        <span class="c1">#     iter_prefix = b&#39;TUP&#39;</span>
+        <span class="c1"># else:</span>
+        <span class="c1">#     iter_prefix = b&#39;LIST&#39;</span>
+        <span class="n">iter_</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">iter_prefix</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">iter_</span><span class="p">:</span>
+                <span class="n">prefix</span><span class="p">,</span> <span class="n">hashable</span> <span class="o">=</span> <span class="n">_covert_to_hashable</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                <span class="n">binary_data</span> <span class="o">=</span> <span class="n">SEP</span> <span class="o">+</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">hashable</span>
+                <span class="c1"># b&#39;&#39;.join([SEP, prefix, hashable])</span>
+                <span class="n">hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">binary_data</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="c1"># need to use recursive calls</span>
+            <span class="c1"># Update based on current item</span>
+            <span class="n">_update_hasher</span><span class="p">(</span><span class="n">hasher</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">iter_</span><span class="p">:</span>
+                <span class="c1"># Ensure the items have a spacer between them</span>
+                <span class="n">hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">SEP</span><span class="p">)</span>
+                <span class="n">_update_hasher</span><span class="p">(</span><span class="n">hasher</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">prefix</span><span class="p">,</span> <span class="n">hashable</span> <span class="o">=</span> <span class="n">_covert_to_hashable</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">binary_data</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">hashable</span>
+        <span class="c1"># b&#39;&#39;.join([prefix, hashable])</span>
+        <span class="n">hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">binary_data</span><span class="p">)</span>
+
+
+<span class="c1"># def _bytes_generator(data):</span>
+<span class="c1">#     # SLOWER METHOD</span>
+<span class="c1">#     if isinstance(data, (tuple, list)):</span>
+<span class="c1">#         # Ensure there is a iterable prefix with a spacer item</span>
+<span class="c1">#         SEP = b&#39;SEP&#39;</span>
+<span class="c1">#         iter_prefix = b&#39;ITER&#39;</span>
+<span class="c1">#         # if isinstance(data, tuple):</span>
+<span class="c1">#         #     iter_prefix = b&#39;TUP&#39;</span>
+<span class="c1">#         # else:</span>
+<span class="c1">#         #     iter_prefix = b&#39;LIST&#39;</span>
+<span class="c1">#         iter_ = iter(data)</span>
+<span class="c1">#         yield iter_prefix</span>
+<span class="c1">#         try:</span>
+<span class="c1">#             # try to nest quickly without recursive calls</span>
+<span class="c1">#             for item in iter_:</span>
+<span class="c1">#                 prefix, hashable = _covert_to_hashable(data)</span>
+<span class="c1">#                 yield SEP</span>
+<span class="c1">#                 yield prefix</span>
+<span class="c1">#                 yield hashable</span>
+<span class="c1">#         except TypeError:</span>
+<span class="c1">#             # recover from failed item and then continue iterating using slow</span>
+<span class="c1">#             # recursive calls</span>
+<span class="c1">#             yield SEP</span>
+<span class="c1">#             for bytes_ in _bytes_generator(item):</span>
+<span class="c1">#                 yield bytes_</span>
+<span class="c1">#             for item in iter_:</span>
+<span class="c1">#                 yield SEP</span>
+<span class="c1">#                 for bytes_ in _bytes_generator(item):</span>
+<span class="c1">#                     yield bytes_</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         prefix, hashable = _covert_to_hashable(data)</span>
+<span class="c1">#         yield prefix</span>
+<span class="c1">#         yield hashable</span>
+
+
+<div class="viewcode-block" id="b"><a class="viewcode-back" href="../../utool.html#utool.util_hash.b">[docs]</a><span class="k">def</span> <span class="nf">b</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">six</span><span class="o">.</span><span class="n">binary_type</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">b</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
+
+
+<span class="n">SEP_STR</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span>
+<span class="n">SEP_BYTE</span> <span class="o">=</span> <span class="n">b</span><span class="p">(</span><span class="n">SEP_STR</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="freeze_hash_bytes"><a class="viewcode-back" href="../../utool.html#utool.util_hash.freeze_hash_bytes">[docs]</a><span class="k">def</span> <span class="nf">freeze_hash_bytes</span><span class="p">(</span><span class="n">bytes_</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">codecs</span>
+
+    <span class="n">hexstr</span> <span class="o">=</span> <span class="n">codecs</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">bytes_</span><span class="p">,</span> <span class="s1">&#39;hex&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">hexstr</span></div>
+
+
+<div class="viewcode-block" id="combine_hashes"><a class="viewcode-back" href="../../utool.html#utool.util_hash.combine_hashes">[docs]</a><span class="k">def</span> <span class="nf">combine_hashes</span><span class="p">(</span><span class="n">bytes_list</span><span class="p">,</span> <span class="n">hasher</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Only works on bytes</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; x = [b(&#39;1111&#39;), b(&#39;2222&#39;)]</span>
+<span class="sd">        &gt;&gt;&gt; y = [b(&#39;11&#39;), b(&#39;11&#39;), b(&#39;22&#39;), b(&#39;22&#39;)]</span>
+<span class="sd">        &gt;&gt;&gt; bytes_list = y</span>
+<span class="sd">        &gt;&gt;&gt; out1 = ut.combine_hashes(x, hashlib.sha1())</span>
+<span class="sd">        &gt;&gt;&gt; hasher = hashlib.sha1()</span>
+<span class="sd">        &gt;&gt;&gt; out2 = ut.combine_hashes(y, hasher)</span>
+<span class="sd">        &gt;&gt;&gt; bytes_ = out2</span>
+<span class="sd">        &gt;&gt;&gt; assert hasher.hexdigest() == freeze_hash_bytes(hasher.digest())</span>
+<span class="sd">        &gt;&gt;&gt; assert convert_bytes_to_bigbase(hasher.digest()) == convert_hexstr_to_bigbase(hasher.hexdigest())</span>
+<span class="sd">        &gt;&gt;&gt; assert out1 != out2</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;out1 = %r&#39; % (out1,))</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;out2 = %r&#39; % (out2,))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">hasher</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">hasher</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bytes_list</span><span class="p">:</span>
+        <span class="n">hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+        <span class="n">hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">SEP_BYTE</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">hasher</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="hash_data"><a class="viewcode-back" href="../../utool.html#utool.util_hash.hash_data">[docs]</a><span class="nd">@profile</span>
+<span class="k">def</span> <span class="nf">hash_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">hashlen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alphabet</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a unique hash depending on the state of the data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (object): any sort of loosely organized data</span>
+<span class="sd">        hashlen (None): (default = None)</span>
+<span class="sd">        alphabet (None): (default = None)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: text -  hash string</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_hash hash_data</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_hash import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; counter = [0]</span>
+<span class="sd">        &gt;&gt;&gt; failed = []</span>
+<span class="sd">        &gt;&gt;&gt; def check_hash(input_, want=None):</span>
+<span class="sd">        &gt;&gt;&gt;     count = counter[0] = counter[0] + 1</span>
+<span class="sd">        &gt;&gt;&gt;     got = ut.hash_data(input_)</span>
+<span class="sd">        &gt;&gt;&gt;     print(&#39;({}) {}&#39;.format(count, got))</span>
+<span class="sd">        &gt;&gt;&gt;     if want is not None and not got.startswith(want):</span>
+<span class="sd">        &gt;&gt;&gt;         failed.append((got, input_, count, want))</span>
+<span class="sd">        &gt;&gt;&gt; check_hash(&#39;1&#39;, &#39;wuvrng&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; check_hash([&#39;1&#39;], &#39;dekbfpby&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; check_hash(tuple([&#39;1&#39;]), &#39;dekbfpby&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; check_hash(b&#39;12&#39;, &#39;marreflbv&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; check_hash([b&#39;1&#39;, b&#39;2&#39;], &#39;nwfs&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; check_hash([&#39;1&#39;, &#39;2&#39;, &#39;3&#39;], &#39;arfrp&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; check_hash([&#39;1&#39;, np.array([1,2,3]), &#39;3&#39;], &#39;uyqwcq&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; check_hash(&#39;123&#39;, &#39;ehkgxk&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; check_hash(zip([1, 2, 3], [4, 5, 6]), &#39;mjcpwa&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; rng = np.random.RandomState(0)</span>
+<span class="sd">        &gt;&gt;&gt; check_hash(rng.rand(100000), &#39;bdwosuey&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; for got, input_, count, want in failed:</span>
+<span class="sd">        &gt;&gt;&gt;     print(&#39;failed {} on {}&#39;.format(count, input_))</span>
+<span class="sd">        &gt;&gt;&gt;     print(&#39;got={}, want={}&#39;.format(got, want))</span>
+<span class="sd">        &gt;&gt;&gt; assert not failed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">alphabet</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">alphabet</span> <span class="o">=</span> <span class="n">ALPHABET_27</span>
+    <span class="k">if</span> <span class="n">hashlen</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">hashlen</span> <span class="o">=</span> <span class="n">HASH_LEN2</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">stringlike</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Make a special hash for empty data</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">alphabet</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">hashlen</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">hasher</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha512</span><span class="p">()</span>
+        <span class="n">_update_hasher</span><span class="p">(</span><span class="n">hasher</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="c1"># Get a 128 character hex string</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">hasher</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+        <span class="c1"># Shorten length of string (by increasing base)</span>
+        <span class="n">hashstr2</span> <span class="o">=</span> <span class="n">convert_hexstr_to_bigbase</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">alphabet</span><span class="p">,</span> <span class="n">bigbase</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">alphabet</span><span class="p">))</span>
+        <span class="c1"># Truncate</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">hashstr2</span><span class="p">[:</span><span class="n">hashlen</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">text</span></div>
+
+
+<div class="viewcode-block" id="digest_data"><a class="viewcode-back" href="../../utool.html#utool.util_hash.digest_data">[docs]</a><span class="k">def</span> <span class="nf">digest_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">alg</span><span class="o">=</span><span class="s1">&#39;sha256&#39;</span><span class="p">):</span>
+    <span class="n">hasher</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;md5&#39;</span><span class="p">:</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">,</span> <span class="s1">&#39;sha1&#39;</span><span class="p">:</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">,</span> <span class="s1">&#39;sha256&#39;</span><span class="p">:</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">,}[</span><span class="n">alg</span><span class="p">]()</span>
+    <span class="n">_update_hasher</span><span class="p">(</span><span class="n">hasher</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">hasher</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="hashstr"><a class="viewcode-back" href="../../utool.html#utool.util_hash.hashstr">[docs]</a><span class="k">def</span> <span class="nf">hashstr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">hashlen</span><span class="o">=</span><span class="n">HASH_LEN</span><span class="p">,</span> <span class="n">alphabet</span><span class="o">=</span><span class="n">ALPHABET</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    python -c &quot;import utool as ut; print(ut.hashstr(&#39;abcd&#39;))&quot;</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (hashable):</span>
+<span class="sd">        hashlen (int): (default = 16)</span>
+<span class="sd">        alphabet (list): list of characters:</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: hashstr</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_hash --test-hashstr</span>
+<span class="sd">        python3 -m utool.util_hash --test-hashstr</span>
+<span class="sd">        python3 -m utool.util_hash --test-hashstr:2</span>
+<span class="sd">        python -m utool.util_hash hashstr:3</span>
+<span class="sd">        python3 -m utool.util_hash hashstr:3</span>
+
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_hash import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; data = &#39;foobar&#39;</span>
+<span class="sd">        &gt;&gt;&gt; hashlen = 16</span>
+<span class="sd">        &gt;&gt;&gt; alphabet = ALPHABET_41</span>
+<span class="sd">        &gt;&gt;&gt; text = hashstr(data, hashlen, alphabet)</span>
+<span class="sd">        &gt;&gt;&gt; result = (&#39;text = %s&#39; % (str(text),))</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        text = mi5yum60mbxhyp+x</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_hash import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; data = &#39;&#39;</span>
+<span class="sd">        &gt;&gt;&gt; hashlen = 16</span>
+<span class="sd">        &gt;&gt;&gt; alphabet = ALPHABET_41</span>
+<span class="sd">        &gt;&gt;&gt; text = hashstr(data, hashlen, alphabet)</span>
+<span class="sd">        &gt;&gt;&gt; result = (&#39;text = %s&#39; % (str(text),))</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        text = 0000000000000000</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_hash import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; data = np.array([1, 2, 3])</span>
+<span class="sd">        &gt;&gt;&gt; hashlen = 16</span>
+<span class="sd">        &gt;&gt;&gt; alphabet = ALPHABET_41</span>
+<span class="sd">        &gt;&gt;&gt; text = hashstr(data, hashlen, alphabet)</span>
+<span class="sd">        &gt;&gt;&gt; result = (&#39;text = %s&#39; % (str(text),))</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        text = z5lqw0bzt4dmb9yy</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_hash import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; from uuid import UUID</span>
+<span class="sd">        &gt;&gt;&gt; data = (UUID(&#39;7cd0197b-1394-9d16-b1eb-0d8d7a60aedc&#39;), UUID(&#39;c76b54a5-adb6-7f16-f0fb-190ab99409f8&#39;))</span>
+<span class="sd">        &gt;&gt;&gt; hashlen = 16</span>
+<span class="sd">        &gt;&gt;&gt; alphabet = ALPHABET_41</span>
+<span class="sd">        &gt;&gt;&gt; text = hashstr_arr(data, &#39;label&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; result = (&#39;text = %s&#39; % (str(text),))</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; # UNSTABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_hash import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; data = np.array([&#39;a&#39;, &#39;b&#39;], dtype=object)</span>
+<span class="sd">        &gt;&gt;&gt; text = hashstr(data, alphabet=ALPHABET_27)</span>
+<span class="sd">        &gt;&gt;&gt; result = (&#39;text = %s&#39; % (str(text),))</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        data = np.array([&#39;a&#39;, &#39;b&#39;], dtype=object)</span>
+<span class="sd">        data.tobytes()</span>
+<span class="sd">        data = np.array([&#39;a&#39;, &#39;b&#39;])</span>
+<span class="sd">        data = [&#39;a&#39;, &#39;b&#39;]</span>
+<span class="sd">        data = np.array([1, 2, 3])</span>
+<span class="sd">        import hashlib</span>
+<span class="sd">        from six.moves import cPickle as pickle</span>
+<span class="sd">        pickle.dumps(data, protocol=2)</span>
+
+<span class="sd">        python2 -c &quot;import hashlib, numpy; print(hashlib.sha1(&#39;ab&#39;).hexdigest())&quot;</span>
+<span class="sd">        python3 -c &quot;import hashlib, numpy; print(hashlib.sha1(&#39;ab&#39;.encode(&#39;utf8&#39;)).hexdigest())&quot;</span>
+
+<span class="sd">        python2 -c &quot;import hashlib, numpy; print(hashlib.sha1(&#39;ab&#39;).hexdigest())&quot;</span>
+<span class="sd">        python3 -c &quot;import hashlib, numpy; print(hashlib.sha1(b&#39;ab&#39;).hexdigest())&quot;</span>
+
+<span class="sd">        python2 -c &quot;import hashlib, numpy; print(hashlib.sha1(numpy.array([1, 2])).hexdigest())&quot;</span>
+<span class="sd">        python3 -c &quot;import hashlib, numpy; print(hashlib.sha1(numpy.array([1, 2])).hexdigest())&quot;</span>
+
+<span class="sd">        # TODO: numpy arrays of strings must be encoded to bytes first in python3</span>
+<span class="sd">        python2 -c &quot;import hashlib, numpy; print(hashlib.sha1(numpy.array([&#39;a&#39;, &#39;b&#39;])).hexdigest())&quot;</span>
+<span class="sd">        python3 -c &quot;import hashlib, numpy; print(hashlib.sha1(numpy.array([b&#39;a&#39;, b&#39;b&#39;])).hexdigest())&quot;</span>
+
+<span class="sd">        python -c &quot;import hashlib, numpy; print(hashlib.sha1(numpy.array([&#39;a&#39;, &#39;b&#39;], dtype=object)).hexdigest())&quot;</span>
+<span class="sd">        python -c &quot;import hashlib, numpy; print(hashlib.sha1(numpy.array([&#39;a&#39;, &#39;b&#39;], dtype=object)).hexdigest())&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">util_type</span><span class="o">.</span><span class="n">HAVE_NUMPY</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;O&#39;</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;[ut] hashing ndarrays with dtype=object is unstable&#39;</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
+            <span class="c1"># but tobytes is ok, but differs between python 2 and 3 for objects</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dumps</span><span class="p">()</span>
+            <span class="c1"># data = data.tobytes()</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="c1"># should instead do</span>
+        <span class="k">if</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">hasher</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha512</span><span class="p">()</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span>
+                    <span class="n">hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">bytes</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">hasher</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+            <span class="n">hashstr2</span> <span class="o">=</span> <span class="n">convert_hexstr_to_bigbase</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">alphabet</span><span class="p">,</span> <span class="n">bigbase</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">alphabet</span><span class="p">))</span>
+            <span class="c1"># Truncate</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">hashstr2</span><span class="p">[:</span><span class="n">hashlen</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">text</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;[ut] hashing tuples with repr is not a good idea. FIXME&#39;</span>
+            <span class="c1"># warnings.warn(msg, RuntimeWarning)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># Hack?</span>
+
+    <span class="c1"># convert unicode into raw bytes</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">text_type</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">stringlike</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Make a special hash for empty data</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">alphabet</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">hashlen</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Get a 128 character hex string</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha512</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+        <span class="c1"># Shorten length of string (by increasing base)</span>
+        <span class="n">hashstr2</span> <span class="o">=</span> <span class="n">convert_hexstr_to_bigbase</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">alphabet</span><span class="p">,</span> <span class="n">bigbase</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">alphabet</span><span class="p">))</span>
+        <span class="c1"># Truncate</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">hashstr2</span><span class="p">[:</span><span class="n">hashlen</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">text</span></div>
+
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">def valid_filename_ascii_chars():</span>
+<span class="sd">    # Find invalid chars</span>
+<span class="sd">    ntfs_inval = &#39;&lt; &gt; : &quot; / \ | ? *&#39;.split(&#39; &#39;)</span>
+<span class="sd">    other_inval = [&#39; &#39;, &#39;\&#39;&#39;, &#39;.&#39;]</span>
+<span class="sd">    #case_inval = map(chr, range(97, 123))</span>
+<span class="sd">    case_inval = map(chr, range(65, 91))</span>
+<span class="sd">    invalid_chars = set(ntfs_inval + other_inval + case_inval)</span>
+<span class="sd">    # Find valid chars</span>
+<span class="sd">    valid_chars = []</span>
+<span class="sd">    for index in range(32, 127):</span>
+<span class="sd">        char = chr(index)</span>
+<span class="sd">        if not char in invalid_chars:</span>
+<span class="sd">            print index, chr(index)</span>
+<span class="sd">            valid_chars.append(chr(index))</span>
+<span class="sd">    return valid_chars</span>
+<span class="sd">valid_filename_ascii_chars()</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">PY3</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">_int_to_bytes</span><span class="p">(</span><span class="n">int_</span><span class="p">):</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">int_</span><span class="o">.</span><span class="n">bit_length</span><span class="p">())</span>
+        <span class="n">bytes_</span> <span class="o">=</span> <span class="n">int_</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">byteorder</span><span class="o">=</span><span class="s1">&#39;big&#39;</span><span class="p">)</span>
+        <span class="c1"># bytes_ = int_.to_bytes(4, byteorder=&#39;big&#39;)</span>
+        <span class="c1"># int_.to_bytes(8, byteorder=&#39;big&#39;)  # TODO: uncomment</span>
+        <span class="k">return</span> <span class="n">bytes_</span>
+
+    <span class="k">def</span> <span class="nf">_bytes_to_int</span><span class="p">(</span><span class="n">bytes_</span><span class="p">):</span>
+        <span class="n">int_</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">bytes_</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">int_</span>
+
+
+<span class="k">else</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">_py2_to_bytes</span><span class="p">(</span><span class="n">int_</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">byteorder</span><span class="o">=</span><span class="s1">&#39;big&#39;</span><span class="p">):</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%x</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">int_</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;0&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">h</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">h</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="n">length</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;hex&#39;</span><span class="p">)</span>
+        <span class="n">bytes_</span> <span class="o">=</span> <span class="n">s</span> <span class="k">if</span> <span class="n">byteorder</span> <span class="o">==</span> <span class="s1">&#39;big&#39;</span> <span class="k">else</span> <span class="n">s</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">bytes_</span>
+
+    <span class="kn">import</span> <span class="nn">codecs</span>
+
+    <span class="k">def</span> <span class="nf">_int_to_bytes</span><span class="p">(</span><span class="n">int_</span><span class="p">):</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">int_</span><span class="o">.</span><span class="n">bit_length</span><span class="p">())</span>
+        <span class="n">bytes_</span> <span class="o">=</span> <span class="n">_py2_to_bytes</span><span class="p">(</span><span class="n">int_</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+        <span class="c1"># bytes_ = struct.pack(&#39;&gt;i&#39;, int_)</span>
+        <span class="k">return</span> <span class="n">bytes_</span>
+
+    <span class="k">def</span> <span class="nf">_bytes_to_int</span><span class="p">(</span><span class="n">bytes_</span><span class="p">):</span>
+        <span class="n">int_</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">codecs</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">bytes_</span><span class="p">,</span> <span class="s1">&#39;hex&#39;</span><span class="p">),</span> <span class="mi">16</span><span class="p">)</span>
+        <span class="c1"># int_ = struct.unpack(&#39;&gt;i&#39;, bytes_)[0]</span>
+        <span class="c1"># int_ = struct.unpack_from(&#39;&gt;L&#39;, bytes_)[0]</span>
+        <span class="k">return</span> <span class="n">int_</span>
+
+
+<span class="k">def</span> <span class="nf">_test_int_byte_conversion</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">itertools</span> <span class="k">as</span> <span class="nn">it</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+    <span class="n">inputs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+        <span class="n">it</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span>
+            <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">32</span><span class="p">)),</span>
+            <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">32</span><span class="p">)),</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">int_0</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;---&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;int_0 = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">repr2</span><span class="p">(</span><span class="n">int_0</span><span class="p">),))</span>
+        <span class="n">bytes_</span> <span class="o">=</span> <span class="n">_int_to_bytes</span><span class="p">(</span><span class="n">int_0</span><span class="p">)</span>
+        <span class="n">int_</span> <span class="o">=</span> <span class="n">_bytes_to_int</span><span class="p">(</span><span class="n">bytes_</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;bytes_ = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">repr2</span><span class="p">(</span><span class="n">bytes_</span><span class="p">),))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;int_ = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">repr2</span><span class="p">(</span><span class="n">int_</span><span class="p">),))</span>
+        <span class="k">assert</span> <span class="n">int_</span> <span class="o">==</span> <span class="n">int_0</span>
+
+
+<div class="viewcode-block" id="convert_bytes_to_bigbase"><a class="viewcode-back" href="../../utool.html#utool.util_hash.convert_bytes_to_bigbase">[docs]</a><span class="k">def</span> <span class="nf">convert_bytes_to_bigbase</span><span class="p">(</span><span class="n">bytes_</span><span class="p">,</span> <span class="n">alphabet</span><span class="o">=</span><span class="n">ALPHABET_27</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        bytes_ (bytes):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str:</span>
+
+<span class="sd">    Ignore:</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_hash convert_bytes_to_bigbase</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_hash import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; bytes_ = b(&#39;9999999999999999999999999999999999&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; alphabet = ALPHABET_27</span>
+<span class="sd">        &gt;&gt;&gt; result = convert_bytes_to_bigbase(bytes_, alphabet)</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        fervudwhpustklnptklklcgswbmvtustqocdpgiwkgrvwytvneardkpytd</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">_bytes_to_int</span><span class="p">(</span><span class="n">bytes_</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;0&#39;</span>
+    <span class="n">sign</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">x</span> <span class="o">*=</span> <span class="n">sign</span>
+    <span class="n">digits</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">bigbase</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">alphabet</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">x</span><span class="p">:</span>
+        <span class="n">digits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alphabet</span><span class="p">[</span><span class="n">x</span> <span class="o">%</span> <span class="n">bigbase</span><span class="p">])</span>
+        <span class="n">x</span> <span class="o">//=</span> <span class="n">bigbase</span>
+    <span class="k">if</span> <span class="n">sign</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">digits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+        <span class="n">digits</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+    <span class="n">newbase_str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">newbase_str</span></div>
+
+
+<div class="viewcode-block" id="convert_hexstr_to_bigbase"><a class="viewcode-back" href="../../utool.html#utool.util_hash.convert_hexstr_to_bigbase">[docs]</a><span class="k">def</span> <span class="nf">convert_hexstr_to_bigbase</span><span class="p">(</span><span class="n">hexstr</span><span class="p">,</span> <span class="n">alphabet</span><span class="o">=</span><span class="n">ALPHABET</span><span class="p">,</span> <span class="n">bigbase</span><span class="o">=</span><span class="n">BIGBASE</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Packs a long hexstr into a shorter length string with a larger base</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        # Determine the length savings with lossless conversion</span>
+<span class="sd">        import sympy as sy</span>
+<span class="sd">        consts = dict(hexbase=16, hexlen=256, bigbase=27)</span>
+<span class="sd">        symbols = sy.symbols(&#39;hexbase, hexlen, bigbase, newlen&#39;)</span>
+<span class="sd">        haexbase, hexlen, bigbase, newlen = symbols</span>
+<span class="sd">        eqn = sy.Eq(16 ** hexlen,  bigbase ** newlen)</span>
+<span class="sd">        newlen_ans = sy.solve(eqn, newlen)[0].subs(consts).evalf()</span>
+<span class="sd">        print(&#39;newlen_ans = %r&#39; % (newlen_ans,))</span>
+
+<span class="sd">        # for a 27 char alphabet we can get 216</span>
+<span class="sd">        print(&#39;Required length for lossless conversion len2 = %r&#39; % (len2,))</span>
+
+<span class="sd">        def info(base, len):</span>
+<span class="sd">            bits = base ** len</span>
+<span class="sd">            print(&#39;base = %r&#39; % (base,))</span>
+<span class="sd">            print(&#39;len = %r&#39; % (len,))</span>
+<span class="sd">            print(&#39;bits = %r&#39; % (bits,))</span>
+<span class="sd">        info(16, 256)</span>
+<span class="sd">        info(27, 16)</span>
+<span class="sd">        info(27, 64)</span>
+<span class="sd">        info(27, 216)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hexstr</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>  <span class="c1"># first convert to base 16</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;0&#39;</span>
+    <span class="n">sign</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">x</span> <span class="o">*=</span> <span class="n">sign</span>
+    <span class="n">digits</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="n">x</span><span class="p">:</span>
+        <span class="n">digits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alphabet</span><span class="p">[</span><span class="n">x</span> <span class="o">%</span> <span class="n">bigbase</span><span class="p">])</span>
+        <span class="n">x</span> <span class="o">//=</span> <span class="n">bigbase</span>
+    <span class="k">if</span> <span class="n">sign</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">digits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+        <span class="n">digits</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+    <span class="n">newbase_str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">newbase_str</span></div>
+
+
+<div class="viewcode-block" id="hashstr_md5"><a class="viewcode-back" href="../../utool.html#utool.util_hash.hashstr_md5">[docs]</a><span class="k">def</span> <span class="nf">hashstr_md5</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_hash import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; fpath = ut.grab_test_imgpath(&#39;patsy.jpg&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; %timeit ut.get_file_hash(fpath, hasher=hashlib.sha1())</span>
+<span class="sd">        &gt;&gt;&gt; %timeit ut.get_file_hash(fpath, hasher=hashlib.md5())</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+    <span class="c1"># bin(int(my_hexdata, scale))</span>
+    <span class="k">return</span> <span class="n">text</span></div>
+
+
+<div class="viewcode-block" id="hashstr_sha1"><a class="viewcode-back" href="../../utool.html#utool.util_hash.hashstr_sha1">[docs]</a><span class="k">def</span> <span class="nf">hashstr_sha1</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">base10</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">base10</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="s1">&#39;0x&#39;</span> <span class="o">+</span> <span class="n">text</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">text</span></div>
+
+
+<div class="viewcode-block" id="get_file_hash"><a class="viewcode-back" href="../../utool.html#utool.util_hash.get_file_hash">[docs]</a><span class="k">def</span> <span class="nf">get_file_hash</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">blocksize</span><span class="o">=</span><span class="mi">65536</span><span class="p">,</span> <span class="n">hasher</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">hexdigest</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    For better hashes use hasher=hashlib.sha256, and keep stride=1</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fpath (str):  file path string</span>
+<span class="sd">        blocksize (int): 2 ** 16. Affects speed of reading file</span>
+<span class="sd">        hasher (None):  defaults to sha1 for fast (but insecure) hashing</span>
+<span class="sd">        stride (int): strides &gt; 1 skip data to hash, useful for faster</span>
+<span class="sd">                      hashing, but less accurate, also makes hash dependant on</span>
+<span class="sd">                      blocksize.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        http://stackoverflow.com/questions/3431825/generating-a-md5-checksum-of-a-file</span>
+<span class="sd">        http://stackoverflow.com/questions/5001893/when-should-i-use-sha-1-and-when-should-i-use-sha-2</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_hash --test-get_file_hash</span>
+<span class="sd">        python -m utool.util_hash --test-get_file_hash:0</span>
+<span class="sd">        python -m utool.util_hash --test-get_file_hash:1</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_hash import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; fpath = ut.grab_test_imgpath(&#39;patsy.jpg&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; #blocksize = 65536  # 2 ** 16</span>
+<span class="sd">        &gt;&gt;&gt; blocksize = 2 ** 16</span>
+<span class="sd">        &gt;&gt;&gt; hasher = None</span>
+<span class="sd">        &gt;&gt;&gt; stride = 1</span>
+<span class="sd">        &gt;&gt;&gt; hashbytes_20 = get_file_hash(fpath, blocksize, hasher, stride)</span>
+<span class="sd">        &gt;&gt;&gt; result = repr(hashbytes_20)</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        &#39;7\x07B\x0eX&lt;sRu\xa2\x90P\xda\xb2\x84?\x81?\xa9\xd9&#39;</span>
+
+<span class="sd">        &#39;\x13\x9b\xf6\x0f\xa3QQ \xd7&quot;$\xe9m\x05\x9e\x81\xf6\xf2v\xe4&#39;</span>
+
+<span class="sd">        &#39;\x16\x00\x80Xx\x8c-H\xcdP\xf6\x02\x9frl\xbf\x99VQ\xb5&#39;</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_hash import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; #fpath = ut.grab_file_url(&#39;http://en.wikipedia.org/wiki/List_of_comets_by_type&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; fpath = ut.unixjoin(ut.ensure_app_resource_dir(&#39;utool&#39;), &#39;tmp.txt&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; ut.write_to(fpath, ut.lorium_ipsum())</span>
+<span class="sd">        &gt;&gt;&gt; blocksize = 2 ** 3</span>
+<span class="sd">        &gt;&gt;&gt; hasher = None</span>
+<span class="sd">        &gt;&gt;&gt; stride = 2</span>
+<span class="sd">        &gt;&gt;&gt; hashbytes_20 = get_file_hash(fpath, blocksize, hasher, stride)</span>
+<span class="sd">        &gt;&gt;&gt; result = repr(hashbytes_20)</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        &#39;5KP\xcf&gt;R\xf6\xffO:L\xac\x9c\xd3V+\x0e\xf6\xe1n&#39;</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        file_ = open(fpath, &#39;rb&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">hasher</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">hasher</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">()</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_</span><span class="p">:</span>
+        <span class="n">buf</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">blocksize</span><span class="p">)</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">stride</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">file_</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">blocksize</span> <span class="o">*</span> <span class="p">(</span><span class="n">stride</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># skip blocks</span>
+            <span class="n">buf</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">blocksize</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">hexdigest</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">hasher</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">hasher</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="write_hash_file"><a class="viewcode-back" href="../../utool.html#utool.util_hash.write_hash_file">[docs]</a><span class="k">def</span> <span class="nf">write_hash_file</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">hash_tag</span><span class="o">=</span><span class="s1">&#39;md5&#39;</span><span class="p">,</span> <span class="n">recompute</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot; Creates a hash file for each file in a path</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_hash --test-write_hash_file</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_hash import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; fpath = ut.grab_test_imgpath(&#39;patsy.jpg&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; write_hash_file(fpath, &#39;md5&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hash_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;md5&#39;</span><span class="p">:</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(),</span>
+        <span class="s1">&#39;sha1&#39;</span><span class="p">:</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">(),</span>
+        <span class="s1">&#39;sha256&#39;</span><span class="p">:</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(),</span>
+    <span class="p">}</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Unrecognized hashing function.  Use &#39;md5&#39;, &#39;sha1&#39;, or &#39;sha256&quot;</span>
+    <span class="k">assert</span> <span class="n">hash_tag</span> <span class="ow">in</span> <span class="n">hash_dict</span><span class="p">,</span> <span class="n">message</span>
+    <span class="k">if</span> <span class="n">fpath</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">hash_tag</span><span class="p">,)):</span>
+        <span class="c1"># No need to compute hashes on hashes</span>
+        <span class="k">return</span>
+    <span class="c1"># Get hash path</span>
+    <span class="n">hash_fpath</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">hash_tag</span><span class="p">,)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">hash_fpath</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">recompute</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="c1"># Assert this is a file</span>
+    <span class="n">file_type</span> <span class="o">=</span> <span class="n">util_path</span><span class="o">.</span><span class="n">get_path_type</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span>
+        <span class="c1"># Compute hash</span>
+        <span class="n">hasher</span> <span class="o">=</span> <span class="n">hash_dict</span><span class="p">[</span><span class="n">hash_tag</span><span class="p">]</span>
+        <span class="n">hash_local</span> <span class="o">=</span> <span class="n">get_file_hash</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">hasher</span><span class="o">=</span><span class="n">hasher</span><span class="p">,</span> <span class="n">hexdigest</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[utool] Adding:&#39;</span><span class="p">,</span> <span class="n">fpath</span><span class="p">,</span> <span class="n">hash_local</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">hash_fpath</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">hash_file</span><span class="p">:</span>
+            <span class="n">hash_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">hash_local</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">hash_fpath</span></div>
+
+
+<div class="viewcode-block" id="write_hash_file_for_path"><a class="viewcode-back" href="../../utool.html#utool.util_hash.write_hash_file_for_path">[docs]</a><span class="k">def</span> <span class="nf">write_hash_file_for_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">recompute</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot; Creates a hash file for each file in a path</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_hash --test-write_hash_file_for_path</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; import os</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_hash import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; fpath = ut.grab_test_imgpath(&#39;patsy.jpg&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; path, _ = os.path.split(fpath)</span>
+<span class="sd">        &gt;&gt;&gt; hash_fpath_list = write_hash_file_for_path(path)</span>
+<span class="sd">        &gt;&gt;&gt; for hash_fpath in hash_fpath_list:</span>
+<span class="sd">        &gt;&gt;&gt;     assert os.path.exists(hash_fpath)</span>
+<span class="sd">        &gt;&gt;&gt;     ut.delete(hash_fpath)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hash_fpath_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dname_list</span><span class="p">,</span> <span class="n">fname_list</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">fname_list</span><span class="p">):</span>
+            <span class="c1"># fpath = os.path.join(path, fname)</span>
+            <span class="n">fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+            <span class="n">hash_fpath</span> <span class="o">=</span> <span class="n">write_hash_file</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">recompute</span><span class="o">=</span><span class="n">recompute</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">hash_fpath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">hash_fpath_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hash_fpath</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">hash_fpath_list</span></div>
+
+
+<div class="viewcode-block" id="get_file_uuid"><a class="viewcode-back" href="../../utool.html#utool.util_hash.get_file_uuid">[docs]</a><span class="k">def</span> <span class="nf">get_file_uuid</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">hasher</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Creates a uuid from the hash of a file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">hasher</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">hasher</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">()</span>  <span class="c1"># 20 bytes of output</span>
+        <span class="c1"># hasher = hashlib.sha256()  # 32 bytes of output</span>
+    <span class="c1"># sha1 produces a 20 byte hash</span>
+    <span class="n">hashbytes_20</span> <span class="o">=</span> <span class="n">get_file_hash</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">hasher</span><span class="o">=</span><span class="n">hasher</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="n">stride</span><span class="p">)</span>
+    <span class="c1"># sha1 produces 20 bytes, but UUID requires 16 bytes</span>
+    <span class="n">hashbytes_16</span> <span class="o">=</span> <span class="n">hashbytes_20</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">16</span><span class="p">]</span>
+    <span class="n">uuid_</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span><span class="nb">bytes</span><span class="o">=</span><span class="n">hashbytes_16</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">uuid_</span></div>
+
+
+<div class="viewcode-block" id="image_uuid"><a class="viewcode-back" href="../../utool.html#utool.util_hash.image_uuid">[docs]</a><span class="k">def</span> <span class="nf">image_uuid</span><span class="p">(</span><span class="n">pil_img</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    UNSAFE: DEPRICATE: JPEG IS NOT GAURENTEED TO PRODUCE CONSITENT VALUES ON</span>
+
+<span class="sd">    MULTIPLE MACHINES image global unique id</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        http://stackoverflow.com/questions/23565889/jpeg-images-have-different-pixel-values-across-multiple-devices</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;WARNING DO NOT USE utool.util_hash.image_uuid UNSAFE AND DEPRICATED&#39;</span><span class="p">)</span>
+    <span class="c1"># Get the bytes of the image</span>
+    <span class="n">img_bytes_</span> <span class="o">=</span> <span class="n">pil_img</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+    <span class="n">uuid_</span> <span class="o">=</span> <span class="n">hashable_to_uuid</span><span class="p">(</span><span class="n">img_bytes_</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">uuid_</span></div>
+
+
+<div class="viewcode-block" id="augment_uuid"><a class="viewcode-back" href="../../utool.html#utool.util_hash.augment_uuid">[docs]</a><span class="k">def</span> <span class="nf">augment_uuid</span><span class="p">(</span><span class="n">uuid_</span><span class="p">,</span> <span class="o">*</span><span class="n">hashables</span><span class="p">):</span>
+    <span class="c1"># from six.moves import reprlib</span>
+    <span class="c1"># uuidhex_data   = uuid_.get_bytes()</span>
+    <span class="n">uuidhex_data</span> <span class="o">=</span> <span class="n">uuid_</span><span class="o">.</span><span class="n">bytes</span>
+    <span class="c1"># hashable_str    = &#39;&#39;.join(map(repr, hashables))</span>
+    <span class="c1"># Python 2 and 3 diverge here because repr returns</span>
+    <span class="c1"># ascii data in python2 and unicode text in python3</span>
+    <span class="c1"># it would be nice to</span>
+    <span class="c1"># warnings.warn(&#39;[ut] should not use repr when hashing&#39;, RuntimeWarning)</span>
+    <span class="k">def</span> <span class="nf">tmprepr</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="c1"># hack to remove u prefix</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;u&#39;</span><span class="p">):</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">y</span>
+
+    <span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">PY2</span><span class="p">:</span>
+        <span class="n">hashable_text</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">tmprepr</span><span class="p">,</span> <span class="n">hashables</span><span class="p">))</span>
+        <span class="n">hashable_data</span> <span class="o">=</span> <span class="n">hashable_text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="c1"># hashable_data = b&#39;&#39;.join(map(bytes, hashables))</span>
+    <span class="k">elif</span> <span class="n">six</span><span class="o">.</span><span class="n">PY3</span><span class="p">:</span>
+        <span class="n">hashable_text</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">tmprepr</span><span class="p">,</span> <span class="n">hashables</span><span class="p">))</span>
+        <span class="n">hashable_data</span> <span class="o">=</span> <span class="n">hashable_text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="c1"># hashable_data = b&#39;&#39;.join(map(bytes, hashables))</span>
+    <span class="n">augmented_data</span> <span class="o">=</span> <span class="n">uuidhex_data</span> <span class="o">+</span> <span class="n">hashable_data</span>
+    <span class="n">augmented_uuid_</span> <span class="o">=</span> <span class="n">hashable_to_uuid</span><span class="p">(</span><span class="n">augmented_data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">augmented_uuid_</span></div>
+
+
+<div class="viewcode-block" id="combine_uuids"><a class="viewcode-back" href="../../utool.html#utool.util_hash.combine_uuids">[docs]</a><span class="nd">@profile</span>
+<span class="k">def</span> <span class="nf">combine_uuids</span><span class="p">(</span><span class="n">uuids</span><span class="p">,</span> <span class="n">ordered</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">salt</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a uuid that specifies a group of UUIDS</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        uuids (list): list of uuid objects</span>
+<span class="sd">        ordered (bool): if False uuid order changes the resulting combined uuid</span>
+<span class="sd">            otherwise the uuids are considered an orderless set</span>
+<span class="sd">        salt (str): salts the resulting hash</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        uuid.UUID: combined uuid</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_hash --test-combine_uuids</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_hash import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; uuids = [hashable_to_uuid(&#39;one&#39;), hashable_to_uuid(&#39;two&#39;),</span>
+<span class="sd">        &gt;&gt;&gt;          hashable_to_uuid(&#39;three&#39;)]</span>
+<span class="sd">        &gt;&gt;&gt; combo1 = combine_uuids(uuids, ordered=True)</span>
+<span class="sd">        &gt;&gt;&gt; combo2 = combine_uuids(uuids[::-1], ordered=True)</span>
+<span class="sd">        &gt;&gt;&gt; combo3 = combine_uuids(uuids, ordered=False)</span>
+<span class="sd">        &gt;&gt;&gt; combo4 = combine_uuids(uuids[::-1], ordered=False)</span>
+<span class="sd">        &gt;&gt;&gt; result = ut.repr4([combo1, combo2, combo3, combo4], nobr=True)</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        UUID(&#39;83ee781f-8646-ccba-0ed8-13842825c12a&#39;),</span>
+<span class="sd">        UUID(&#39;52bbb33f-612e-2ab8-a62c-2f46e5b1edc8&#39;),</span>
+<span class="sd">        UUID(&#39;945cadab-e834-e581-0f74-62f106d20d81&#39;),</span>
+<span class="sd">        UUID(&#39;945cadab-e834-e581-0f74-62f106d20d81&#39;),</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_hash import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; uuids = [uuid.UUID(&#39;5ff6b34e-7d8f-ef32-5fad-489266acd2ae&#39;),</span>
+<span class="sd">        &gt;&gt;&gt;          uuid.UUID(&#39;f2400146-ec12-950b-1489-668228e155a8&#39;),</span>
+<span class="sd">        &gt;&gt;&gt;          uuid.UUID(&#39;037d6f31-8c73-f961-1fe4-d616442a1e86&#39;),</span>
+<span class="sd">        &gt;&gt;&gt;          uuid.UUID(&#39;ca45d6e2-e648-09cc-a49e-e71c6fa3b3f3&#39;)]</span>
+<span class="sd">        &gt;&gt;&gt; ordered = True</span>
+<span class="sd">        &gt;&gt;&gt; salt = u&#39;&#39;</span>
+<span class="sd">        &gt;&gt;&gt; result = combine_uuids(uuids, ordered, salt)</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        1dabc66b-b564-676a-99b4-5cae7a9e7294</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">uuids</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_zero_uuid</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">uuids</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">uuids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ordered</span><span class="p">:</span>
+            <span class="n">uuids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">uuids</span><span class="p">)</span>
+        <span class="n">sep_str</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span>
+        <span class="n">sep_byte</span> <span class="o">=</span> <span class="n">six</span><span class="o">.</span><span class="n">binary_type</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">b</span><span class="p">(</span><span class="n">sep_str</span><span class="p">))</span>
+        <span class="n">pref</span> <span class="o">=</span> <span class="n">six</span><span class="o">.</span><span class="n">binary_type</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">b</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}{}{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">salt</span><span class="p">,</span> <span class="n">sep_str</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">uuids</span><span class="p">))))</span>
+        <span class="n">combined_bytes</span> <span class="o">=</span> <span class="n">pref</span> <span class="o">+</span> <span class="n">sep_byte</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">u</span><span class="o">.</span><span class="n">bytes</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">uuids</span><span class="p">])</span>
+        <span class="n">combined_uuid</span> <span class="o">=</span> <span class="n">hashable_to_uuid</span><span class="p">(</span><span class="n">combined_bytes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">combined_uuid</span></div>
+
+
+<span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">PY3</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">_ensure_hashable_bytes</span><span class="p">(</span><span class="n">hashable_</span><span class="p">):</span>
+        <span class="c1"># If hashable_ is text (python3)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hashable_</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">hashable_</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hashable_</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">hashable_</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hashable_</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">hashable_</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">byteorder</span><span class="o">=</span><span class="s1">&#39;big&#39;</span><span class="p">)</span>
+            <span class="c1"># return int_.to_bytes(8, byteorder=&#39;big&#39;)  # TODO: uncomment</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hashable_</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">hashable_</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">hashable_</span>
+
+
+<span class="k">elif</span> <span class="n">six</span><span class="o">.</span><span class="n">PY2</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">struct</span>
+
+    <span class="k">def</span> <span class="nf">_ensure_hashable_bytes</span><span class="p">(</span><span class="n">hashable_</span><span class="p">):</span>
+        <span class="c1"># If hashable_ is data (python2)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hashable_</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">hashable_</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hashable_</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">hashable_</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hashable_</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;i&#39;</span><span class="p">,</span> <span class="n">hashable_</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hashable_</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">hashable_</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">hashable_</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="hashable_to_uuid"><a class="viewcode-back" href="../../utool.html#utool.util_hash.hashable_to_uuid">[docs]</a><span class="k">def</span> <span class="nf">hashable_to_uuid</span><span class="p">(</span><span class="n">hashable_</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TODO: ensure that python2 and python3 agree on hashes of the same</span>
+<span class="sd">    information</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        hashable_ (hashable): hashables are bytes-like objects</span>
+<span class="sd">           An object that supports the Buffer Protocol, like bytes, bytearray</span>
+<span class="sd">           or memoryview. Bytes-like objects can be used for various operations</span>
+<span class="sd">           that expect binary data, such as compression, saving to a binary</span>
+<span class="sd">           file or sending over a socket. Some operations need the binary data</span>
+<span class="sd">           to be mutable, in which case not all bytes-like objects can apply.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        UUID: uuid_</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_hash --test-hashable_to_uuid</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_hash import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; hashables = [</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;foobar&#39;,</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;foobar&#39;.encode(&#39;utf-8&#39;),</span>
+<span class="sd">        &gt;&gt;&gt;     u&#39;foobar&#39;,</span>
+<span class="sd">        &gt;&gt;&gt;     10,</span>
+<span class="sd">        &gt;&gt;&gt;     [1, 2, 3],</span>
+<span class="sd">        &gt;&gt;&gt; ]</span>
+<span class="sd">        &gt;&gt;&gt; uuids = []</span>
+<span class="sd">        &gt;&gt;&gt; for hashable_ in hashables:</span>
+<span class="sd">        &gt;&gt;&gt;     uuid_ = hashable_to_uuid(hashable_)</span>
+<span class="sd">        &gt;&gt;&gt;     uuids.append(uuid_)</span>
+<span class="sd">        &gt;&gt;&gt; result = ut.repr4(ut.lmap(str, uuids), strvals=True, nobr=True)</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        8843d7f9-2416-211d-e9eb-b963ff4ce281,</span>
+<span class="sd">        8843d7f9-2416-211d-e9eb-b963ff4ce281,</span>
+<span class="sd">        8843d7f9-2416-211d-e9eb-b963ff4ce281,</span>
+<span class="sd">        e864ece8-8880-43b6-7277-c8b2cefe96ad,</span>
+<span class="sd">        a01eda32-e4e0-b139-3274-e91d1b3e9ecf,</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bytes_</span> <span class="o">=</span> <span class="n">_ensure_hashable_bytes</span><span class="p">(</span><span class="n">hashable_</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">bytes_sha1</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">(</span><span class="n">bytes_</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;hashable_ = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">hashable_</span><span class="p">,))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;bytes_ = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">bytes_</span><span class="p">,))</span>
+        <span class="k">raise</span>
+    <span class="c1"># Digest them into a hash</span>
+    <span class="n">hashbytes_20</span> <span class="o">=</span> <span class="n">bytes_sha1</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+    <span class="n">hashbytes_16</span> <span class="o">=</span> <span class="n">hashbytes_20</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">16</span><span class="p">]</span>
+    <span class="n">uuid_</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span><span class="nb">bytes</span><span class="o">=</span><span class="n">hashbytes_16</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">uuid_</span></div>
+
+
+<div class="viewcode-block" id="random_uuid"><a class="viewcode-back" href="../../utool.html#utool.util_hash.random_uuid">[docs]</a><span class="k">def</span> <span class="nf">random_uuid</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="random_nonce"><a class="viewcode-back" href="../../utool.html#utool.util_hash.random_nonce">[docs]</a><span class="k">def</span> <span class="nf">random_nonce</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">alphabet</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    returns a random string of len=&lt;length&gt; from &lt;alphabet&gt;</span>
+<span class="sd">    I have no idea why this is named random_nonce</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">length</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">alphabet</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">alphabet</span> <span class="o">=</span> <span class="n">ALPHABET_16</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">alphabet</span><span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">alphabet</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">)]</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_zero_uuid"><a class="viewcode-back" href="../../utool.html#utool.util_hash.get_zero_uuid">[docs]</a><span class="k">def</span> <span class="nf">get_zero_uuid</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span></div>
+
+
+<span class="c1"># Cleanup namespace</span>
+<span class="c1"># del ALPHABET_41</span>
+<span class="k">del</span> <span class="n">ALPHABET_54</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_hash</span>
+<span class="sd">        python -m utool.util_hash --allexamples</span>
+<span class="sd">        python3 -m utool.util_hash --allexamples</span>
+<span class="sd">        python -m utool.util_hash --allexamples --noface --nosrc</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">multiprocessing</span>
+
+    <span class="n">multiprocessing</span><span class="o">.</span><span class="n">freeze_support</span><span class="p">()</span>  <span class="c1"># for win32</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>  <span class="c1"># NOQA</span>
+
+    <span class="n">ut</span><span class="o">.</span><span class="n">doctest_funcs</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">wbia-vtool</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  <li><a href="../utool.html">utool</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wild Me.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

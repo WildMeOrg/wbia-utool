@@ -1,0 +1,746 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>utool.util_import &#8212; wbia-vtool 3.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for utool.util_import</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">SeeAlso:</span>
+<span class="sd">    utool._internal.util_importer</span>
+
+<span class="sd">    TODO: http://code.activestate.com/recipes/473888-lazy-module-imports/</span>
+<span class="sd">    https://pypi.python.org/pypi/zope.deferredimport/3.5.2</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inject</span>
+
+<span class="c1"># from utool import util_arg</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="nb">print</span><span class="p">,</span> <span class="n">rrr</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">util_inject</span><span class="o">.</span><span class="n">inject2</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="c1"># def dynamic_import(modname, submod):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     CommandLine:</span>
+<span class="c1">#         python -m utool.util_import dynamic_import opengm.opengmcore _opengmcore</span>
+
+<span class="c1">#     Tutorial:</span>
+<span class="c1">#         ### Instead of writing:</span>
+
+<span class="c1">#         from {your_submodule} import *</span>
+<span class="c1">#         ### OR</span>
+<span class="c1">#         from {your_module}.{your_submodule} import *</span>
+
+<span class="c1">#         ### You can use utool&#39;s dynamic importer:</span>
+
+<span class="c1">#         if True:</span>
+<span class="c1">#             # To Autogenerate Run</span>
+<span class="c1">#             &#39;&#39;&#39;</span>
+<span class="c1">#             python -c &quot;import {your_module}&quot; --print-{your_module}-init</span>
+<span class="c1">#             python -c &quot;import {your_module}&quot; --update-{your_module}-init</span>
+<span class="c1">#             &#39;&#39;&#39;</span>
+<span class="c1">#             import utool as ut</span>
+<span class="c1">#             ut.dynamic_import(__name__, &#39;{your_submodule}&#39;)</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             # &lt;AUTOGEN_INIT&gt;</span>
+<span class="c1">#             pass</span>
+<span class="c1">#             # &lt;/AUTOGEN_INIT&gt;</span>
+
+<span class="c1">#        ### This will do the same thing, but you can &quot;freeze&quot; your module</span>
+<span class="c1">#        ### and autogenerate what import * would have done. This helps</span>
+<span class="c1">#        ### with static analysis and overall code readability.</span>
+
+<span class="c1">#     Ignore:</span>
+<span class="c1">#         modname = &#39;opengm.opengmcore&#39;</span>
+<span class="c1">#         submod = &#39;_opengmcore&#39;</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     from utool._internal import util_importer</span>
+<span class="c1">#     if isinstance(submod, list):</span>
+<span class="c1">#         import_tuples = submod</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         import_tuples = [(submod, None)]</span>
+<span class="c1">#     import_execstr, initstr = util_importer.dynamic_import(</span>
+<span class="c1">#         modname, import_tuples, check_not_imported=False,</span>
+<span class="c1">#         return_initstr=True)</span>
+<span class="c1">#     return initstr</span>
+
+
+<div class="viewcode-block" id="import_star"><a class="viewcode-back" href="../../utool.html#utool.util_import.import_star">[docs]</a><span class="k">def</span> <span class="nf">import_star</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        modname (str): module name</span>
+
+<span class="sd">    Tutorial:</span>
+<span class="sd">        Replacement for</span>
+<span class="sd">        from modname import *</span>
+
+<span class="sd">        Usage is like this</span>
+<span class="sd">        globals().update(ut.import_star(&#39;&lt;module&gt;&#39;))</span>
+<span class="sd">        OR</span>
+<span class="sd">        ut.import_star(&#39;&lt;module&gt;&#39;, __name__)</span>
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_import import *  # NOQA</span>
+<span class="sd">        modname = &#39;opengm&#39;</span>
+<span class="sd">        submod = None</span>
+<span class="sd">        parent = __name__</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">six</span>
+    <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">dirname</span>
+
+    <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">parent_module</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">parent_module</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">parent</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+            <span class="n">parent_module</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">parent</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;parent must be the module __name__ attribute&#39;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">modname</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="p">{},</span> <span class="p">{},</span> <span class="n">fromlist</span><span class="o">=</span><span class="p">[],</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">parent_module</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Maybe try specifying parent?&#39;</span><span class="p">)</span>
+                <span class="k">raise</span>
+            <span class="c1"># Inject into the parent if given</span>
+            <span class="c1"># Temporilly put this module dir in the pythonpath to simulate</span>
+            <span class="c1"># relative imports</span>
+            <span class="n">relative_to</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="n">parent_module</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">relative_to</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="p">{},</span> <span class="p">{},</span> <span class="n">fromlist</span><span class="o">=</span><span class="p">[],</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">raise</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+    <span class="c1"># get public attributes</span>
+    <span class="n">module_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">module</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)]</span>
+    <span class="n">module_vars</span> <span class="o">=</span> <span class="p">{</span><span class="n">attr</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">module_attrs</span><span class="p">}</span>
+    <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Inject into the parent if given</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+            <span class="n">parent_module</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">parent</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">module_vars</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">parent_module</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;parent must be the module __name__ attribute&#39;</span><span class="p">)</span>
+    <span class="c1"># return the module dictionary</span>
+    <span class="k">return</span> <span class="n">module_vars</span></div>
+
+
+<div class="viewcode-block" id="import_star_execstr"><a class="viewcode-back" href="../../utool.html#utool.util_import.import_star_execstr">[docs]</a><span class="k">def</span> <span class="nf">import_star_execstr</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    print(ut.import_star_execstr(&#39;opengm.inference&#39;))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>
+
+    <span class="n">module_vars</span> <span class="o">=</span> <span class="n">import_star</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+    <span class="n">fromlist_str</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">module_vars</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+    <span class="n">fromimport_prefix</span> <span class="o">=</span> <span class="s1">&#39;from </span><span class="si">{modname}</span><span class="s1"> import (&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">modname</span><span class="o">=</span><span class="n">modname</span><span class="p">)</span>
+
+    <span class="n">newline_prefix</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">fromimport_prefix</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fromlist_str</span><span class="p">:</span>
+        <span class="n">rawstr</span> <span class="o">=</span> <span class="n">fromimport_prefix</span> <span class="o">+</span> <span class="n">fromlist_str</span> <span class="o">+</span> <span class="s1">&#39;,)&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rawstr</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">textwidth</span> <span class="o">=</span> <span class="mi">79</span> <span class="o">-</span> <span class="mi">4</span>
+    <span class="n">fromimport_str</span> <span class="o">=</span> <span class="n">util_str</span><span class="o">.</span><span class="n">pack_into</span><span class="p">(</span>
+        <span class="n">rawstr</span><span class="p">,</span> <span class="n">textwidth</span><span class="o">=</span><span class="n">textwidth</span><span class="p">,</span> <span class="n">newline_prefix</span><span class="o">=</span><span class="n">newline_prefix</span><span class="p">,</span> <span class="n">break_words</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+
+    <span class="c1"># fromimport_str = ut.autopep8_format(fromimport_str, ignore={})</span>
+    <span class="k">return</span> <span class="n">fromimport_str</span></div>
+
+
+<span class="c1"># TODO import_freezestar</span>
+
+
+<div class="viewcode-block" id="possible_import_patterns"><a class="viewcode-back" href="../../utool.html#utool.util_import.possible_import_patterns">[docs]</a><span class="k">def</span> <span class="nf">possible_import_patterns</span><span class="p">(</span><span class="n">modname</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    does not support from x import *</span>
+<span class="sd">    does not support from x import z, y</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; modname = &#39;package.submod.submod2.module&#39;</span>
+<span class="sd">        &gt;&gt;&gt; result = ut.repr3(ut.possible_import_patterns(modname))</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        [</span>
+<span class="sd">            &#39;import\\spackage.submod.submod2.module&#39;,</span>
+<span class="sd">            &#39;from\\spackage\\.submod\\.submod2\\simportmodule&#39;,</span>
+<span class="sd">        ]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># common regexes</span>
+    <span class="n">WS</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\s&#39;</span>
+    <span class="n">import_</span> <span class="o">=</span> <span class="s1">&#39;import&#39;</span>
+    <span class="n">from_</span> <span class="o">=</span> <span class="s1">&#39;from&#39;</span>
+    <span class="n">dot_</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\.&#39;</span>
+    <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span><span class="n">import_</span> <span class="o">+</span> <span class="n">WS</span> <span class="o">+</span> <span class="n">modname</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">modname</span><span class="p">:</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">modname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="n">modpart</span> <span class="o">=</span> <span class="n">dot_</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">imppart</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">patterns</span> <span class="o">+=</span> <span class="p">[</span><span class="n">from_</span> <span class="o">+</span> <span class="n">WS</span> <span class="o">+</span> <span class="n">modpart</span> <span class="o">+</span> <span class="n">WS</span> <span class="o">+</span> <span class="n">import_</span> <span class="o">+</span> <span class="n">imppart</span><span class="p">]</span>
+    <span class="n">NONSTANDARD</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">NONSTANDARD</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">modname</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">modpart</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">imppart</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">patterns</span> <span class="o">+=</span> <span class="p">[</span><span class="n">from_</span> <span class="o">+</span> <span class="n">WS</span> <span class="o">+</span> <span class="n">modpart</span> <span class="o">+</span> <span class="n">WS</span> <span class="o">+</span> <span class="n">import_</span> <span class="o">+</span> <span class="n">imppart</span><span class="p">]</span>
+            <span class="n">imppart</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">patterns</span> <span class="o">+=</span> <span class="p">[</span><span class="n">import_</span> <span class="o">+</span> <span class="n">WS</span> <span class="o">+</span> <span class="n">imppart</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">patterns</span></div>
+
+
+<div class="viewcode-block" id="package_contents"><a class="viewcode-back" href="../../utool.html#utool.util_import.package_contents">[docs]</a><span class="k">def</span> <span class="nf">package_contents</span><span class="p">(</span>
+    <span class="n">package</span><span class="p">,</span> <span class="n">with_pkg</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">with_mod</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ignore_prefix</span><span class="o">=</span><span class="p">[],</span> <span class="n">ignore_suffix</span><span class="o">=</span><span class="p">[]</span>
+<span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    References:</span>
+<span class="sd">        http://stackoverflow.com/questions/1707709/list-all-the-modules-that-are-part-of-a-python-package</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        package (?):</span>
+<span class="sd">        with_pkg (bool): (default = False)</span>
+<span class="sd">        with_mod (bool): (default = True)</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_import --exec-package_contents</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_import import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; import wbia</span>
+<span class="sd">        &gt;&gt;&gt; package = wbia</span>
+<span class="sd">        &gt;&gt;&gt; ignore_prefix = [&#39;wbia.tests&#39;, &#39;wbia.control.__SQLITE3__&#39;,</span>
+<span class="sd">        &gt;&gt;&gt;                  &#39;_autogen_explicit_controller&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; ignore_suffix = [&#39;_grave&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; with_pkg = False</span>
+<span class="sd">        &gt;&gt;&gt; with_mod = True</span>
+<span class="sd">        &gt;&gt;&gt; result = package_contents(package, with_pkg, with_mod,</span>
+<span class="sd">        &gt;&gt;&gt;                           ignore_prefix, ignore_suffix)</span>
+<span class="sd">        &gt;&gt;&gt; print(ut.repr2(result))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">pkgutil</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">package</span><span class="p">,</span> <span class="s1">&#39;__path__&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">package</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span>
+    <span class="c1">#    pass</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;package = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">package</span><span class="p">,))</span>
+    <span class="n">walker</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">walk_packages</span><span class="p">(</span>
+        <span class="n">package</span><span class="o">.</span><span class="n">__path__</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">package</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">onerror</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="n">module_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">importer</span><span class="p">,</span> <span class="n">modname</span><span class="p">,</span> <span class="n">ispkg</span> <span class="ow">in</span> <span class="n">walker</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">modname</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span> <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="n">ignore_prefix</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">modname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">suffix</span><span class="p">)</span> <span class="k">for</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="n">ignore_suffix</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ispkg</span> <span class="ow">and</span> <span class="n">with_mod</span><span class="p">:</span>
+            <span class="n">module_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">modname</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ispkg</span> <span class="ow">and</span> <span class="n">with_pkg</span><span class="p">:</span>
+            <span class="n">module_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">modname</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">module_list</span></div>
+
+
+<div class="viewcode-block" id="get_modpath_from_modname"><a class="viewcode-back" href="../../utool.html#utool.util_import.get_modpath_from_modname">[docs]</a><span class="k">def</span> <span class="nf">get_modpath_from_modname</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">prefer_pkg</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">prefer_main</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Same as get_modpath but doesnt import directly</span>
+
+<span class="sd">    SeeAlso:</span>
+<span class="sd">        get_modpath</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">exists</span>
+
+    <span class="n">initname</span> <span class="o">=</span> <span class="s1">&#39;__init__.py&#39;</span>
+    <span class="n">mainname</span> <span class="o">=</span> <span class="s1">&#39;__main__.py&#39;</span>
+    <span class="k">if</span> <span class="n">modname</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+        <span class="n">modpath</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">modname</span><span class="p">]</span><span class="o">.</span><span class="vm">__file__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.pyc&#39;</span><span class="p">,</span> <span class="s1">&#39;.py&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">pkgutil</span>
+
+        <span class="n">loader</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">find_loader</span><span class="p">(</span><span class="n">modname</span><span class="p">)</span>
+        <span class="n">modpath</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.pyc&#39;</span><span class="p">,</span> <span class="s1">&#39;.py&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">basename</span><span class="p">(</span><span class="n">modpath</span><span class="p">):</span>
+            <span class="n">modpath</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">modpath</span><span class="p">,</span> <span class="n">initname</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">prefer_pkg</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">modpath</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">initname</span><span class="p">)</span> <span class="ow">or</span> <span class="n">modpath</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">mainname</span><span class="p">):</span>
+            <span class="n">modpath</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="n">modpath</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">prefer_main</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">modpath</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">initname</span><span class="p">):</span>
+            <span class="n">main_modpath</span> <span class="o">=</span> <span class="n">modpath</span><span class="p">[:</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">initname</span><span class="p">)]</span> <span class="o">+</span> <span class="n">mainname</span>
+            <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">main_modpath</span><span class="p">):</span>
+                <span class="n">modpath</span> <span class="o">=</span> <span class="n">main_modpath</span>
+    <span class="k">return</span> <span class="n">modpath</span></div>
+
+
+<div class="viewcode-block" id="check_module_installed"><a class="viewcode-back" href="../../utool.html#utool.util_import.check_module_installed">[docs]</a><span class="k">def</span> <span class="nf">check_module_installed</span><span class="p">(</span><span class="n">modname</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a python module is installed without attempting to import it.</span>
+<span class="sd">    Note, that if ``modname`` indicates a child module, the parent module is</span>
+<span class="sd">    always loaded.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        modname (str):  module name</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: found</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        http://stackoverflow.com/questions/14050281/module-exists-without-importing</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_import check_module_installed --show --verbimp --modname=this</span>
+<span class="sd">        python -m utool.util_import check_module_installed --show --verbimp --modname=wbia.scripts.iccv</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_import import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; modname = ut.get_argval(&#39;--modname&#39;, default=&#39;this&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; is_installed = check_module_installed(modname)</span>
+<span class="sd">        &gt;&gt;&gt; is_imported = modname in sys.modules</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;module(%r).is_installed = %r&#39; % (modname, is_installed))</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;module(%r).is_imported = %r&#39; % (modname, is_imported))</span>
+<span class="sd">        &gt;&gt;&gt; assert &#39;this&#39; not in sys.modules, &#39;module(this) should not have ever been imported&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">pkgutil</span>
+
+    <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">modname</span><span class="p">:</span>
+        <span class="c1"># Prevent explicit import if possible</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">modname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">submods</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">loader</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">find_loader</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">loader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># TODO: check to see if path to the submod exists</span>
+            <span class="n">submods</span>
+            <span class="k">return</span> <span class="kc">True</span>
+    <span class="n">loader</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">find_loader</span><span class="p">(</span><span class="n">modname</span><span class="p">)</span>
+    <span class="n">is_installed</span> <span class="o">=</span> <span class="n">loader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">is_installed</span></div>
+
+
+<div class="viewcode-block" id="import_modname"><a class="viewcode-back" href="../../utool.html#utool.util_import.import_modname">[docs]</a><span class="k">def</span> <span class="nf">import_modname</span><span class="p">(</span><span class="n">modname</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        modname (str):  module name</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        module: module</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_import --test-import_modname</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_import import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; modname_list = [</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;utool&#39;,</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;utool._internal&#39;,</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;utool._internal.meta_util_six&#39;,</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;utool.util_path&#39;,</span>
+<span class="sd">        &gt;&gt;&gt;     #&#39;utool.util_path.checkpath&#39;,</span>
+<span class="sd">        &gt;&gt;&gt; ]</span>
+<span class="sd">        &gt;&gt;&gt; modules = [import_modname(modname) for modname in modname_list]</span>
+<span class="sd">        &gt;&gt;&gt; result = ([m.__name__ for m in modules])</span>
+<span class="sd">        &gt;&gt;&gt; assert result == modname_list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># The __import__ statment is weird</span>
+    <span class="k">if</span> <span class="n">util_inject</span><span class="o">.</span><span class="n">PRINT_INJECT_ORDER</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">modname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+            <span class="n">util_inject</span><span class="o">.</span><span class="n">noinject</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">via</span><span class="o">=</span><span class="s1">&#39;ut.import_modname&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">modname</span><span class="p">:</span>
+        <span class="n">fromlist</span> <span class="o">=</span> <span class="n">modname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">fromlist_</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">fromlist</span><span class="p">))</span>  <span class="c1"># needs to be ascii for python2.7</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="p">{},</span> <span class="p">{},</span> <span class="n">fromlist_</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="p">{},</span> <span class="p">{},</span> <span class="p">[],</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">module</span></div>
+
+
+<div class="viewcode-block" id="tryimport"><a class="viewcode-back" href="../../utool.html#utool.util_import.tryimport">[docs]</a><span class="k">def</span> <span class="nf">tryimport</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">pipiname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ensure</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_import --test-tryimport</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_tests import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; modname = &#39;pyfiglet&#39;</span>
+<span class="sd">        &gt;&gt;&gt; pipiname = &#39;git+https://github.com/pwaller/pyfiglet&#39;</span>
+<span class="sd">        &gt;&gt;&gt; pyfiglet = ut.tryimport(modname, pipiname)</span>
+<span class="sd">        &gt;&gt;&gt; assert pyfiglet is None or isinstance(pyfiglet, types.ModuleType), &#39;unknown error&#39;</span>
+
+<span class="sd">    Example2:</span>
+<span class="sd">        &gt;&gt;&gt; # UNSTABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; # disabled because not everyone has access to being a super user</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_tests import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; modname = &#39;lru&#39;</span>
+<span class="sd">        &gt;&gt;&gt; pipiname = &#39;git+https://github.com/amitdev/lru-dict&#39;</span>
+<span class="sd">        &gt;&gt;&gt; lru = ut.tryimport(modname, pipiname, ensure=True)</span>
+<span class="sd">        &gt;&gt;&gt; assert isinstance(lru, types.ModuleType), &#39;did not ensure lru&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">pipiname</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pipiname</span> <span class="o">=</span> <span class="n">modname</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">util_inject</span><span class="o">.</span><span class="n">PRINT_INJECT_ORDER</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">modname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+                <span class="n">util_inject</span><span class="o">.</span><span class="n">noinject</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">via</span><span class="o">=</span><span class="s1">&#39;ut.tryimport&#39;</span><span class="p">)</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">modname</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">module</span>
+    <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
+
+        <span class="n">base_pipcmd</span> <span class="o">=</span> <span class="s1">&#39;pip install </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">pipiname</span>
+        <span class="n">sudo</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">ut</span><span class="o">.</span><span class="n">WIN32</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ut</span><span class="o">.</span><span class="n">in_virtual_env</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">sudo</span><span class="p">:</span>
+            <span class="n">pipcmd</span> <span class="o">=</span> <span class="s1">&#39;sudo &#39;</span> <span class="o">+</span> <span class="n">base_pipcmd</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pipcmd</span> <span class="o">=</span> <span class="n">base_pipcmd</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;unable to find module </span><span class="si">%s</span><span class="s1">. Please install: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">((</span><span class="n">modname</span><span class="p">),</span> <span class="p">(</span><span class="n">pipcmd</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">ut</span><span class="o">.</span><span class="n">printex</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">iswarning</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ensure</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
+                <span class="s1">&#39;Ensure is dangerous behavior and is is no longer supported.&#39;</span>
+            <span class="p">)</span>
+            <span class="c1"># raise NotImplementedError(&#39;not ensuring&#39;)</span>
+            <span class="n">ut</span><span class="o">.</span><span class="n">cmd</span><span class="p">(</span><span class="n">base_pipcmd</span><span class="p">,</span> <span class="n">sudo</span><span class="o">=</span><span class="n">sudo</span><span class="p">)</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="n">tryimport</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">pipiname</span><span class="p">,</span> <span class="n">ensure</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">module</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
+                    <span class="s1">&#39;Cannot ensure modname=</span><span class="si">%r</span><span class="s1"> please install using </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">pipcmd</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="n">module</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<span class="c1"># lazy_module_attrs =  [&#39;_modname&#39;, &#39;_module&#39;, &#39;_load_module&#39;]</span>
+
+
+<span class="c1"># class LazyModule(object):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Waits to import the module until it is actually used.</span>
+<span class="c1">#     Caveat: there is no access to module attributes used</span>
+<span class="c1">#         in ``lazy_module_attrs``</span>
+
+<span class="c1">#     CommandLine:</span>
+<span class="c1">#         python -m utool.util_import --test-LazyModule</span>
+
+<span class="c1">#     Example:</span>
+<span class="c1">#         &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="c1">#         &gt;&gt;&gt; from utool.util_import import *  # NOQA</span>
+<span class="c1">#         &gt;&gt;&gt; import sys</span>
+<span class="c1">#         &gt;&gt;&gt; assert &#39;this&#39; not in sys.modules,  &#39;this was imported before test start&#39;</span>
+<span class="c1">#         &gt;&gt;&gt; this = LazyModule(&#39;this&#39;)</span>
+<span class="c1">#         &gt;&gt;&gt; assert &#39;this&#39; not in sys.modules,  &#39;this should not have been imported yet&#39;</span>
+<span class="c1">#         &gt;&gt;&gt; assert this.i == 25</span>
+<span class="c1">#         &gt;&gt;&gt; assert &#39;this&#39; in sys.modules,  &#39;this should now be imported&#39;</span>
+<span class="c1">#         &gt;&gt;&gt; print(this)</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     def __init__(self, modname):</span>
+<span class="c1">#         r&quot;&quot;&quot;</span>
+<span class="c1">#         Args:</span>
+<span class="c1">#             modname (str):  module name</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         self._modname = modname</span>
+<span class="c1">#         self._module = None</span>
+
+<span class="c1">#     def _load_module(self):</span>
+<span class="c1">#         if self._module is None:</span>
+<span class="c1">#             if util_arg.VERBOSE:</span>
+<span class="c1">#                 print(&#39;lazy loading module module&#39;)</span>
+<span class="c1">#             self._module =  __import__(self._modname, globals(), locals(), fromlist=[], level=0)</span>
+
+<span class="c1">#     def __str__(self):</span>
+<span class="c1">#         return &#39;LazyModule(%s)&#39; % (self._modname,)</span>
+
+<span class="c1">#     def __dir__(self):</span>
+<span class="c1">#         self._load_module()</span>
+<span class="c1">#         return dir(self._module)</span>
+
+<span class="c1">#     def __getattr__(self, item):</span>
+<span class="c1">#         if item in lazy_module_attrs:</span>
+<span class="c1">#             return super(LazyModule, self).__getattr__(item)</span>
+<span class="c1">#         self._load_module()</span>
+<span class="c1">#         return getattr(self._module, item)</span>
+
+<span class="c1">#     def __setattr__(self, item, value):</span>
+<span class="c1">#         if item in lazy_module_attrs:</span>
+<span class="c1">#             return super(LazyModule, self).__setattr__(item, value)</span>
+<span class="c1">#         self._load_module()</span>
+<span class="c1">#         setattr(self._module, item, value)</span>
+
+
+<div class="viewcode-block" id="import_module_from_fpath"><a class="viewcode-back" href="../../utool.html#utool.util_import.import_module_from_fpath">[docs]</a><span class="k">def</span> <span class="nf">import_module_from_fpath</span><span class="p">(</span><span class="n">module_fpath</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot; imports module from a file path</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        module_fpath (str):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        module: module</span>
+
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_import --test-import_module_from_fpath</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_import import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool</span>
+<span class="sd">        &gt;&gt;&gt; module_fpath = utool.__file__</span>
+<span class="sd">        &gt;&gt;&gt; module = import_module_from_fpath(module_fpath)</span>
+<span class="sd">        &gt;&gt;&gt; result = (&#39;module = %s&#39; % (str(module),))</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+
+
+<span class="sd">    Ignore:</span>
+<span class="sd">        import shutil</span>
+<span class="sd">        import ubelt as ub</span>
+<span class="sd">        test_root = ub.ensure_app_cache_dir(&#39;test_fpath_import&#39;)</span>
+<span class="sd">        # Clear the directory</span>
+<span class="sd">        shutil.rmtree(test_root)</span>
+<span class="sd">        test_root = ub.ensure_app_cache_dir(&#39;test_fpath_import&#39;)</span>
+
+<span class="sd">        # -----</span>
+<span class="sd">        # Define two temporary modules with the same name that are not in sys.path</span>
+<span class="sd">        import sys, os, os.path</span>
+<span class="sd">        from os.path import join</span>
+
+<span class="sd">        # Even though they have the same name they have different values</span>
+<span class="sd">        mod1_fpath = ub.ensuredir((test_root, &#39;path1&#39;, &#39;testmod&#39;))</span>
+<span class="sd">        ub.writeto(join(mod1_fpath, &#39;__init__.py&#39;), &#39;version = 1\nfrom . import sibling\na1 = 1&#39;)</span>
+<span class="sd">        ub.writeto(join(mod1_fpath, &#39;sibling.py&#39;), &#39;spam = \&quot;ham\&quot;\nb1 = 2&#39;)</span>
+
+<span class="sd">        # Even though they have the same name they have different values</span>
+<span class="sd">        mod2_fpath = ub.ensuredir((test_root, &#39;path2&#39;, &#39;testmod&#39;))</span>
+<span class="sd">        ub.writeto(join(mod2_fpath, &#39;__init__.py&#39;), &#39;version = 2\nfrom . import sibling\na2 = 3&#39;)</span>
+<span class="sd">        ub.writeto(join(mod2_fpath, &#39;sibling.py&#39;), &#39;spam = \&quot;jam\&quot;\nb2 = 4&#39;)</span>
+
+<span class="sd">        # -----</span>
+<span class="sd">        # Neither module should be importable through the normal mechanism</span>
+<span class="sd">        try:</span>
+<span class="sd">            import testmod</span>
+<span class="sd">            assert False, &#39;should fail&#39;</span>
+<span class="sd">        except ImportError as ex:</span>
+<span class="sd">            pass</span>
+
+<span class="sd">        mod1 = ut.import_module_from_fpath(mod1_fpath)</span>
+<span class="sd">        print(&#39;mod1.version = {!r}&#39;.format(mod1.version))</span>
+<span class="sd">        print(&#39;mod1.version = {!r}&#39;.format(mod1.version))</span>
+<span class="sd">        print(mod1.version == 1, &#39;mod1 version is 1&#39;)</span>
+<span class="sd">        print(&#39;mod1.a1 = {!r}&#39;.format(mod1.a1))</span>
+
+<span class="sd">        mod2 = ut.import_module_from_fpath(mod2_fpath)</span>
+<span class="sd">        print(&#39;mod2.version = {!r}&#39;.format(mod2.version))</span>
+<span class="sd">        print(mod2.version == 2, &#39;mod2 version is 2&#39;)</span>
+<span class="sd">        print(&#39;mod2.a2 = {!r}&#39;.format(mod1.a2))</span>
+
+<span class="sd">        # BUT Notice how mod1 is mod2</span>
+<span class="sd">        print(mod1 is mod2)</span>
+
+<span class="sd">        # mod1 has attributes from mod1 and mod2</span>
+<span class="sd">        print(&#39;mod1.a1 = {!r}&#39;.format(mod1.a1))</span>
+<span class="sd">        print(&#39;mod1.a2 = {!r}&#39;.format(mod1.a2))</span>
+<span class="sd">        print(&#39;mod2.a1 = {!r}&#39;.format(mod2.a1))</span>
+<span class="sd">        print(&#39;mod2.a2 = {!r}&#39;.format(mod2.a2))</span>
+
+<span class="sd">        # Both are version 2</span>
+<span class="sd">        print(&#39;mod1.version = {!r}&#39;.format(mod1.version))</span>
+<span class="sd">        print(&#39;mod2.version = {!r}&#39;.format(mod2.version))</span>
+
+<span class="sd">        # However sibling always remains at version1 (ham)</span>
+<span class="sd">        print(&#39;mod2.sibling.spam = {!r}&#39;.format(mod2.sibling.spam))</span>
+
+<span class="sd">        # now importing testmod works because it reads from sys.modules</span>
+<span class="sd">        import testmod</span>
+
+<span class="sd">        # reloading mod1 overwrites attrs again</span>
+<span class="sd">        mod1 = ut.import_module_from_fpath(mod1_fpath)</span>
+
+<span class="sd">        # Removing both from sys.modules</span>
+<span class="sd">        del sys.modules[&#39;testmod&#39;]</span>
+<span class="sd">        del sys.modules[&#39;testmod.sibling&#39;]</span>
+<span class="sd">        mod2 = ut.import_module_from_fpath(mod2_fpath)</span>
+
+<span class="sd">        print(not hasattr(mod2, &#39;a1&#39;),</span>
+<span class="sd">            &#39;mod2 no longer has a1 and it reloads itself correctly&#39;)</span>
+
+
+<span class="sd">        # -------</span>
+
+<span class="sd">        del sys.modules[&#39;testmod&#39;]</span>
+<span class="sd">        del sys.modules[&#39;testmod.sibling&#39;]</span>
+<span class="sd">        mod1 = ut.import_module_from_fpath(mod1_fpath)</span>
+
+
+<span class="sd">        # third test</span>
+<span class="sd">        mod3_fpath = ub.ensuredir((test_root, &#39;path3&#39;, &#39;testmod&#39;))</span>
+<span class="sd">        ub.writeto(join(mod3_fpath, &#39;__init__.py&#39;), &#39;version = 3&#39;)</span>
+
+<span class="sd">        module_fpath = mod3_fpath</span>
+<span class="sd">        modname = &#39;testmod&#39;</span>
+
+<span class="sd">        # third test</span>
+<span class="sd">        mod4_fpath = ub.ensuredir((test_root, &#39;path3&#39;, &#39;novelmod&#39;))</span>
+<span class="sd">        ub.writeto(join(mod4_fpath, &#39;__init__.py&#39;), &#39;version = 4&#39;)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">basename</span><span class="p">,</span> <span class="n">splitext</span><span class="p">,</span> <span class="n">isdir</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">exists</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">split</span>
+    <span class="kn">import</span> <span class="nn">platform</span>
+
+    <span class="k">if</span> <span class="n">isdir</span><span class="p">(</span><span class="n">module_fpath</span><span class="p">):</span>
+        <span class="n">module_fpath</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">module_fpath</span><span class="p">,</span> <span class="s1">&#39;__init__.py&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;module_fpath = </span><span class="si">{!r}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">module_fpath</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">module_fpath</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s1">&#39;module_fpath=</span><span class="si">{!r}</span><span class="s1"> does not exist&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">module_fpath</span><span class="p">))</span>
+    <span class="n">python_version</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">python_version</span><span class="p">()</span>
+    <span class="n">modname</span> <span class="o">=</span> <span class="n">splitext</span><span class="p">(</span><span class="n">basename</span><span class="p">(</span><span class="n">module_fpath</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">modname</span> <span class="o">==</span> <span class="s1">&#39;__init__&#39;</span><span class="p">:</span>
+        <span class="n">modname</span> <span class="o">=</span> <span class="n">split</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">module_fpath</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">util_inject</span><span class="o">.</span><span class="n">PRINT_INJECT_ORDER</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">modname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span>
+            <span class="n">util_inject</span><span class="o">.</span><span class="n">noinject</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">via</span><span class="o">=</span><span class="s1">&#39;ut.import_module_from_fpath&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">python_version</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;2.7&#39;</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">imp</span>
+
+        <span class="n">module</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">load_source</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">module_fpath</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">python_version</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;3&#39;</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">importlib.machinery</span>
+
+        <span class="n">loader</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">machinery</span><span class="o">.</span><span class="n">SourceFileLoader</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">module_fpath</span><span class="p">)</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load_module</span><span class="p">()</span>
+        <span class="c1"># module = loader.exec_module(modname)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s1">&#39;invalid python version=</span><span class="si">{!r}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">python_version</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">module</span></div>
+
+
+<span class="c1"># modname = &#39;theano&#39;</span>
+<span class="c1"># theano = LazyModule(modname)</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CommandLine:</span>
+<span class="sd">        python -m utool.util_import</span>
+<span class="sd">        python -m utool.util_import --allexamples</span>
+<span class="sd">        python -m utool.util_import --allexamples --noface --nosrc</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">multiprocessing</span>
+
+    <span class="n">multiprocessing</span><span class="o">.</span><span class="n">freeze_support</span><span class="p">()</span>  <span class="c1"># for win32</span>
+    <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>  <span class="c1"># NOQA</span>
+
+    <span class="n">ut</span><span class="o">.</span><span class="n">doctest_funcs</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">wbia-vtool</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  <li><a href="../utool.html">utool</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wild Me.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
