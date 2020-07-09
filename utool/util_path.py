@@ -1097,9 +1097,11 @@ def glob(
         >>> result = ('path_list = %s' % (ut.repr3(path_list),))
         >>> result = result.replace(r'\\', '/')
         >>> print(result)
+        exclude_dirs = ['_internal', '/Users/jason.parham/code/utool/utool/experimental']
         path_list = [
             '__init__.py',
             '__main__.py',
+            '_graveyard/__prefwidg_dep.py',
             'tests/__init__.py',
         ]
 

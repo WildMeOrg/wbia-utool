@@ -632,6 +632,7 @@ def make_example_docstr(
         from utool.util_autogen import *  # NOQA
         import utool as ut
         import wbia
+        ibs = wbia.opendb(defaultdb='testdb1')
         species = wbia.const.TEST_SPECIES.ZEB_PLAIN
         qaids = ibs.get_valid_aids(species=species)
         qreq_ = wbia.testdata_qreq_()
