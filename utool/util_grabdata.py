@@ -22,7 +22,7 @@ print, rrr, profile = util_inject.inject2(__name__)
 QUIET = util_arg.QUIET
 BadZipfile = zipfile.BadZipfile
 
-TIMEOUT = 10.0
+TIMEOUT = 60.0
 
 
 def archive_files(archive_fpath, fpath_list, small=True, allowZip64=False,
@@ -798,7 +798,7 @@ def grab_file_remote_hash(file_url, hash_list, verbose=False):
 
 def grab_file_url(file_url, appname='utool', download_dir=None, delay=None,
                   spoof=False, fname=None, verbose=True, redownload=False,
-                  check_hash=False):
+                  check_hash=False, attempts=3):
     r"""
     Downloads a file and returns the local path of the file.
 
@@ -893,20 +893,27 @@ def grab_file_url(file_url, appname='utool', download_dir=None, delay=None,
             redownload = True
 
     # Download
-    util_path.ensurepath(download_dir)
-    if redownload or not exists(fpath):
-        # Download testdata
-        if verbose:
-            print('[utool] Downloading file %s' % fpath)
-        if delay is not None:
-            print('[utool] delay download by %r seconds' % (delay,))
-            time.sleep(delay)
-        download_url(file_url, fpath, spoof=spoof)
-    else:
-        if verbose:
-            print('[utool] Already have file %s' % fpath)
+    while attempts > 0:
+        try:
+            util_path.ensurepath(download_dir)
+            if redownload or not exists(fpath):
+                # Download testdata
+                if verbose:
+                    print('[utool] Downloading file %s' % fpath)
+                if delay is not None:
+                    print('[utool] delay download by %r seconds' % (delay,))
+                    time.sleep(delay)
+                download_url(file_url, fpath, spoof=spoof)
+            else:
+                if verbose:
+                    print('[utool] Already have file %s' % fpath)
+            util_path.assert_exists(fpath)
+            # The file exists locally, break
+            break
+        except Exception:
+            print('[utool] ERROR: Attempting to download file (retry %d): %s' % (attempts, file_url, ))
+            attempts -= 1
 
-    util_path.assert_exists(fpath)
     # Post-download local hash verification
     if check_hash:
         # File has been successfuly downloaded, write remote hash to local hash file
@@ -919,6 +926,7 @@ def grab_file_url(file_url, appname='utool', download_dir=None, delay=None,
             print('[utool] Post Local Hash: %r' % (hash_local, ))
         assert hash_local == hash_remote, 'Post-download hash disagreement'
         assert hash_tag_local == hash_tag_remote, 'Post-download hash tag disagreement'
+
     return fpath
 
 
@@ -991,7 +999,7 @@ def grab_zipped_url(zipped_url, ensure=True, appname='utool',
     return util_path.unixpath(data_dir)
 
 
-def geo_locate(default='Unknown', timeout=1):
+def geo_locate(default='Unknown', timeout=TIMEOUT):
     try:
         import urllib2
         import json
