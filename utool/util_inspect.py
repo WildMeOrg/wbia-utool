@@ -1383,7 +1383,7 @@ def get_kwdefaults(func, parse_source=False):
     """
     # import utool as ut
     # with ut.embed_on_exception_context:
-    argspec = inspect.getargspec(func)
+    argspec = inspect.getfullargspec(func)
     kwdefaults = {}
     if argspec.args is None or argspec.defaults is None:
         pass
@@ -1403,7 +1403,7 @@ def get_kwdefaults(func, parse_source=False):
 
 
 def get_argnames(func):
-    argspec = inspect.getargspec(func)
+    argspec = inspect.getfullargspec(func)
     argnames = argspec.args
     return argnames
 
@@ -2601,17 +2601,14 @@ def get_unbound_args(argspec):
 
 def get_func_argspec(func):
     """
-    wrapper around inspect.getargspec but takes into account utool decorators
+    wrapper around inspect.getfullargspec but takes into account utool decorators
     """
     if hasattr(func, '_utinfo'):
         argspec = func._utinfo['orig_argspec']
         return argspec
     if isinstance(func, property):
         func = func.fget
-    try:
-        argspec = inspect.getargspec(func)
-    except Exception:
-        argspec = inspect.getfullargspec(func)
+    argspec = inspect.getfullargspec(func)
     return argspec
 
 
@@ -2644,7 +2641,7 @@ def get_kwargs(func):
         def func7(a, b=1, c=2, *args, **kwargs):
             pass
         for func in [locals()['func' + str(x)] for x in range(1, 8)]:
-            print(inspect.getargspec(func))
+            print(inspect.getfullargspec(func))
 
     Example:
         >>> # DISABLE_DOCTEST
@@ -2657,8 +2654,7 @@ def get_kwargs(func):
     """
     # if argspec.keywords is None:
     import utool as ut
-
-    argspec = inspect.getargspec(func)
+    argspec = inspect.getfullargspec(func)
     if argspec.defaults is not None:
         num_args = len(argspec.args)
         num_keys = len(argspec.defaults)
