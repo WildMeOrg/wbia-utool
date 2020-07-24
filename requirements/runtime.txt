@@ -10,6 +10,7 @@ numpy
 pandas
 parse >= 1.6.6
 pint
+psutil
 pyparsing
 requests
 six >= 1.10.0
