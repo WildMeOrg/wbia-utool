@@ -2662,9 +2662,9 @@ def get_kwargs(func):
         keys = ut.take(argspec.args, range(num_args - num_keys, num_args))
     else:
         keys = []
-    is_arbitrary = argspec.keywords is not None
+    is_arbitrary = argspec.varkw is not None
     RECURSIVE = False
-    if RECURSIVE and argspec.keywords is not None:
+    if RECURSIVE and argspec.varkw is not None:
         pass
         # TODO: look inside function at the functions that the kwargs object is being
         # passed to
