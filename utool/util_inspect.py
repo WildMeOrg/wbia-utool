@@ -1393,7 +1393,7 @@ def get_kwdefaults(func, parse_source=False):
         # kwdefaults = OrderedDict(zip(argspec.args[::-1], argspec.defaults[::-1]))
         kwpos = len(args) - len(defaults)
         kwdefaults = OrderedDict(zip(args[kwpos:], defaults))
-    if parse_source and argspec.keywords:
+    if parse_source and argspec.varkw:
         # TODO parse for kwargs.get/pop
         keyword_defaults = parse_func_kwarg_keys(func, with_vals=True)
         for key, val in keyword_defaults:
@@ -2794,7 +2794,7 @@ def recursive_parse_kwargs(root_func, path_=None, verbose=None):
     # kwargs_list = [(kw,) for kw in  ut.get_kwargs(root_func)[0]]
     sourcecode = ut.get_func_sourcecode(root_func, strip_docstr=True, stripdef=True)
     sourcecode1 = ut.get_func_sourcecode(root_func, strip_docstr=True, stripdef=False)
-    found_implicit = ut.parse_kwarg_keys(sourcecode1, spec.keywords, with_vals=True)
+    found_implicit = ut.parse_kwarg_keys(sourcecode1, spec.varkw, with_vals=True)
     if verbose:
         print('[inspect] * Found found_implicit %r' % (found_implicit,))
     kwargs_list = found_explicit + found_implicit
@@ -2876,10 +2876,10 @@ def recursive_parse_kwargs(root_func, path_=None, verbose=None):
             new_subkw = []
         return new_subkw
 
-    if spec.keywords is not None:
+    if spec.varkw is not None:
         if verbose:
-            print('[inspect] Checking spec.keywords=%r' % (spec.keywords,))
-        subfunc_name_list = ut.find_funcs_called_with_kwargs(sourcecode, spec.keywords)
+            print('[inspect] Checking spec.varkw=%r' % (spec.varkw,))
+        subfunc_name_list = ut.find_funcs_called_with_kwargs(sourcecode, spec.varkw)
         if verbose:
             print(
                 '[inspect] Checking subfunc_name_list with len {}'.format(
