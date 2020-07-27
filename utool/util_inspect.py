@@ -2654,6 +2654,7 @@ def get_kwargs(func):
     """
     # if argspec.keywords is None:
     import utool as ut
+
     argspec = inspect.getfullargspec(func)
     if argspec.defaults is not None:
         num_args = len(argspec.args)
@@ -2942,7 +2943,7 @@ def get_func_kwargs(func, recursive=True):
         header_kw = {}
     else:
         header_kw = dict(zip(argspec.args[::-1], argspec.defaults[::-1]))
-    if argspec.keywords is not None:
+    if argspec.varkw is not None:
         header_kw.update(dict(ut.recursive_parse_kwargs(func)))
     return header_kw
 
