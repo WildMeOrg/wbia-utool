@@ -52,22 +52,10 @@ if util_cplat.WIN32:
     __MIN_PARALLEL_TASKS__ = 16
 
 
-def generate2(
-    func,
-    args_gen,
-    kw_gen=None,
-    ntasks=None,
-    ordered=True,
-    force_serial=False,
-    use_pool=False,
-    chunksize=None,
-    nprocs=None,
-    progkw={},
-    futures_threaded=False,
-    timeout=3600,
-    nTasks=None,
-    verbose=None,
-):
+def generate2(func, args_gen, kw_gen=None, ntasks=None, ordered=True,
+              force_serial=False, use_pool=False, chunksize=None, nprocs=None,
+              progkw={}, nTasks=None, verbose=None, futures_threaded=False,
+              timeout=3600):
     r"""
     Interfaces to either multiprocessing or futures.
     Esentially maps ``args_gen`` onto ``func`` using pool.imap.
@@ -105,6 +93,7 @@ def generate2(
         >>> _ = list(generate2(func, args_gen, ordered=False))
         >>> _ = list(generate2(func, args_gen, force_serial=True))
         >>> _ = list(generate2(func, args_gen, use_pool=True))
+        >>> _ = list(generate2(func, args_gen, futures_threaded=True))
         >>> _ = list(generate2(func, args_gen, ordered=False, verbose=False))
 
     Example0:
@@ -117,12 +106,17 @@ def generate2(
         >>> args_list = list(range(0, num))
         >>> flag_generator0 = ut.generate2(ut.is_prime, zip(range(0, num)), force_serial=True)
         >>> flag_list0 = list(flag_generator0)
-        >>> print('TESTING PARALLEL')
+        >>> print('TESTING PARALLEL (PROCESS)')
         >>> flag_generator1 = ut.generate2(ut.is_prime, zip(range(0, num)))
         >>> flag_list1 = list(flag_generator1)
+        >>> print('TESTING PARALLEL (THREAD)')
+        >>> flag_generator2 = ut.generate2(ut.is_prime, zip(range(0, num)), futures_threaded=True)
+        >>> flag_list2 = list(flag_generator2)
         >>> print('ASSERTING')
         >>> assert len(flag_list1) == num
+        >>> assert len(flag_list2) == num
         >>> assert flag_list0 == flag_list1
+        >>> assert flag_list0 == flag_list2
 
     Example1:
         >>> # ENABLE_DOCTEST
@@ -278,12 +272,13 @@ def generate2(
                 pool.close()
                 pool.join()
         else:
-            # Use futures
             if futures_threaded:
-                executor = futures.ThreadPoolExecutor(nprocs)
+                executor_cls = futures.ThreadPoolExecutor
             else:
-                executor = futures.ProcessPoolExecutor(nprocs)
+                executor_cls = futures.ProcessPoolExecutor
 
+            # Use futures
+            executor = executor_cls(nprocs)
             try:
                 fs_list = [
                     executor.submit(func, *a, **k) for a, k in zip(args_gen, kw_gen)
