@@ -1807,7 +1807,6 @@ def choose(n, k):
     scipy.special.binom
     """
     import scipy.special
-
     return scipy.special.comb(n, k, exact=True, repetition=False)
 
 
