@@ -12,16 +12,6 @@ if six.PY2:
 
     # TODO: use six.text_type
     def get_funcname(func):
-        """
-        Weird behavior for classes
-        I dont know why this returns type / None
-        import lasagne
-        lasagne.layers.InputLayer
-        lasagne.layers.InputLayer.__module__
-        lasagne.layers.InputLayer.__class__.__name__ == 'type'
-        lasagne.layers.InputLayer.__class__ is type
-        wtf
-        """
         try:
             return getattr(func, 'func_name')
         except AttributeError:
