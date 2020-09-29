@@ -232,7 +232,7 @@ def generate2(
     if ntasks == 0:
         if verbose:
             print('[ut.generate2] submitted 0 tasks')
-        raise StopIteration
+        return
     if nprocs is None:
         nprocs = min(ntasks, get_default_numprocs())
     if nprocs == 1:
