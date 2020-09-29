@@ -131,7 +131,7 @@ class RepoManager(util_dev.NiceRepr):
             flag, msg, errors = repo.check_importable()
             if not flag:
                 msg_list.append(
-                    '  * !!!%s REPO %s HAS IMPORT ISSUES' % (label.upper(), repo,)
+                    '  * !!!%s REPO %s HAS IMPORT ISSUES' % (label.upper(), repo)
                 )
                 if any([str(ex).find('undefined symbol') > -1 for ex in errors]):
                     recommended_fixes.append('rebuild')
@@ -158,7 +158,7 @@ class RepoManager(util_dev.NiceRepr):
             flag, msg = repo.check_installed()
             if not flag:
                 msg_list.append(
-                    '  * !!!%s REPO %s NEEDS TO BE INSTALLED' % (label.upper(), repo,)
+                    '  * !!!%s REPO %s NEEDS TO BE INSTALLED' % (label.upper(), repo)
                 )
                 if ut.VERBOSE:
                     msg_list.append(ut.indent(msg, '    '))
@@ -177,7 +177,7 @@ class RepoManager(util_dev.NiceRepr):
         for repo in rman.repos:
             flag, msg = repo.check_cpp_build()
             if not flag:
-                print('  * !!!%s REPO %s NEEDS TO BE BUILT' % (label.upper(), repo,))
+                print('  * !!!%s REPO %s NEEDS TO BE BUILT' % (label.upper(), repo))
                 if ut.VERBOSE:
                     print(ut.indent(msg, '    '))
                 missing.append(repo)
@@ -715,7 +715,7 @@ class Repo(util_dev.NiceRepr):
                     # cmdinfo = ut.cmd2('sudo ' + cmd, verbose=1)
                     out, err, ret = ut.cmd(cmd, sudo=True)
                 if verbose > 1:
-                    print('ret(%d) = %r' % (count, ret,))
+                    print('ret(%d) = %r' % (count, ret))
                 if ret != 0:
                     if error == 'raise':
                         raise Exception('Failed command %r' % (cmd,))

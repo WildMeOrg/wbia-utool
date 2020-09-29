@@ -35,7 +35,7 @@ class CSV(util_dev.NiceRepr):
             )
         else:
             header_str = ', '.join(self.short_header)
-        return '(shape=%s: cols=%s)' % (self.shape, header_str,)
+        return '(shape=%s: cols=%s)' % (self.shape, header_str)
 
     @classmethod
     def from_fpath(cls, fpath, **kwargs):

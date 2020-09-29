@@ -186,7 +186,7 @@ def execstr_dict(dict_, local_name=None, exclude_list=None, explicit=False):
         expr_list = []
         for (key, val) in sorted(dict_.items()):
             assert isinstance(key, six.string_types), 'keys must be strings'
-            expr_list.append('%s = %s' % (key, ut.repr2(val),))
+            expr_list.append('%s = %s' % (key, ut.repr2(val)))
         execstr = '\n'.join(expr_list)
         return execstr
     else:

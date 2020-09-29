@@ -895,7 +895,7 @@ def get_latex_figure_str(
             if len(fpath_list) > 1:
                 parts.append('\\begin{subfigure}[h]{' + graphics_sizestr + '}')
                 parts.append('\\centering')
-            graphics_part = '\\includegraphics[width=%s]{%s}' % (width_str, fpath,)
+            graphics_part = '\\includegraphics[width=%s]{%s}' % (width_str, fpath)
             if use_frame:
                 parts.append('\\fbox{%s}' % (graphics_part,))
             else:
@@ -921,7 +921,7 @@ def get_latex_figure_str(
             ]
         else:
             graphics_list = [
-                r'\includegraphics%s{%s}' % (graphics_sizestr, fpath,)
+                r'\includegraphics%s{%s}' % (graphics_sizestr, fpath)
                 for fpath in fpath_list
             ]
         # graphics_list = [r'\includegraphics%s{%s}' % (graphics_sizestr, fpath,) ]
@@ -963,7 +963,7 @@ def get_latex_figure_str(
     if caption_str is not None:
         # tabular_body += '\n\caption{\\footnotesize{%s}}' % (caption_str,)
         if label_str is not None:
-            figure_body += '\n\\caption[%s]{%s}' % (label_str, caption_str,)
+            figure_body += '\n\\caption[%s]{%s}' % (label_str, caption_str)
         else:
             figure_body += '\n\\caption{%s}' % (caption_str,)
     if label_str is not None:

@@ -3101,7 +3101,7 @@ def varinfo_str(
             varinfo_list += [
                 # '    %s varinfo(%s):' % (symbol, varname,),
                 '    %s %s = <not shown!>'
-                % (symbol, varname,),
+                % (symbol, varname),
             ]
         varinfo_list += ['          len = %r' % (len(varval),)]
         if depth != len(varval):

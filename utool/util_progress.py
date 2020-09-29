@@ -589,7 +589,7 @@ class ProgressIter(object):
             # time_thresh_growth is specified for very long processes
             # print out the starting timestamp in that case
             timestamp = time.strftime('%Y-%m-%d %H:%M:%S') + ' ' + time.tzname[0]
-            print('Start progress lbl= %s at %s' % (self.lbl, timestamp,))
+            print('Start progress lbl= %s at %s' % (self.lbl, timestamp))
         # time_thresh = 0.5
         max_between_time = -1.0
         max_between_count = -1.0  # why is this different? # because frequency varies

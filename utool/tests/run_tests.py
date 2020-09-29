@@ -155,7 +155,7 @@ def convert_tests_from_utool_to_nose(module_list):
             #    src_node.append('assert result == %r' % (want,))
             if '\nresult = ' in src:
                 src += '\nassert str(result) == %r' % (want,)
-        func_src = 'def test_%s_%d():\n' % (name.replace('.', '_'), num,) + ut.indent(src)
+        func_src = 'def test_%s_%d():\n' % (name.replace('.', '_'), num) + ut.indent(src)
         autogen_test_src_funcs.append(func_src)
 
     autogen_test_src = (

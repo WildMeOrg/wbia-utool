@@ -109,7 +109,7 @@ def inject_instance(
         if verbose:
             print(
                 '[util_class] injecting %d methods\n   with classkey=%r\n   into %r'
-                % (len(func_list), classkey, self,)
+                % (len(func_list), classkey, self)
             )
         for func in func_list:
             if VERBOSE_CLASS:

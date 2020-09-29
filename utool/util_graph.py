@@ -1728,7 +1728,7 @@ def all_multi_paths(graph, source, target, data=False):
 
 
 def reverse_path_edges(edge_list):
-    return [(edge[1], edge[0],) + tuple(edge[2:]) for edge in edge_list][::-1]
+    return [(edge[1], edge[0]) + tuple(edge[2:]) for edge in edge_list][::-1]
 
 
 def bfs_multi_edges(G, source, reverse=False, keys=True, data=False):

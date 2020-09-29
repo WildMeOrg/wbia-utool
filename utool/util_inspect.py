@@ -1109,7 +1109,7 @@ def iter_module_doctestable(
                         if util_arg.VERBOSE:
                             print(
                                 '[util_inspect] WARNING module %r class %r:'
-                                % (module, class_,)
+                                % (module, class_)
                             )
                             print(' * Unknown if testable val=%r' % (val))
                             print(' * Unknown if testable type(val)=%r' % type(val))
@@ -2046,7 +2046,7 @@ def parse_return_type(sourcecode):
             import utool as ut
 
             print('+---')
-            print('\nVISIT %s node = %r' % (type_, node,))
+            print('\nVISIT %s node = %r' % (type_, node))
             print('node.__dict__ = ' + ut.repr2(node.__dict__, nl=True))
             print('L___')
 

@@ -322,7 +322,7 @@ def get_prefered_browser(pref_list=[], fallback=True):
         return browser
     else:
         raise AssertionError(
-            'No browser meets preferences=%r. error_list=%r' % (pref_list, error_list,)
+            'No browser meets preferences=%r. error_list=%r' % (pref_list, error_list)
         )
 
 
@@ -392,7 +392,7 @@ def download_url(
             code = con.status_code
             if code != 200:
                 raise ValueError(
-                    'URL download failed (HTTP Error %d) for %r' % (code, url,)
+                    'URL download failed (HTTP Error %d) for %r' % (code, url)
                 )
 
             # import math
@@ -801,7 +801,7 @@ def get_file_local_hash(fpath, hash_list, verbose=False):
 
         # Get the hashing parameters and the expected hash destination
         hasher = HASH_DICT[hash_tag]()
-        hash_fpath = '%s.%s' % (fpath, hash_tag,)
+        hash_fpath = '%s.%s' % (fpath, hash_tag)
 
         if exists(hash_fpath):
             with open(hash_fpath, 'r') as hash_file:
@@ -844,7 +844,7 @@ def grab_file_remote_hash(file_url, hash_list, verbose=False):
 
         # Get the hashing parameters and the expected hash destination
         hasher = HASH_DICT[hash_tag]()
-        hash_url = '%s.%s' % (file_url, hash_tag,)
+        hash_url = '%s.%s' % (file_url, hash_tag)
 
         if verbose:
             print('[utool] Checking remote hash URL %r' % (hash_url,))
@@ -1005,13 +1005,16 @@ def grab_file_url(
             # The file exists locally, break
             break
         except Exception:
-            print('[utool] ERROR: Attempting to download file (retry %d): %s' % (attempts, file_url, ))
+            print(
+                '[utool] ERROR: Attempting to download file (retry %d): %s'
+                % (attempts, file_url)
+            )
             attempts -= 1
 
     # Post-download local hash verification
     if check_hash:
         # File has been successfuly downloaded, write remote hash to local hash file
-        hash_fpath = '%s.%s' % (fpath, hash_tag_remote,)
+        hash_fpath = '%s.%s' % (fpath, hash_tag_remote)
         with open(hash_fpath, 'w') as hash_file:
             hash_file.write(hash_remote)
         # For sanity check (custom) and file verification (hashing), get local hash again
