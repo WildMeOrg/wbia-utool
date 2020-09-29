@@ -125,7 +125,7 @@ def relpath_unix(path, otherpath):
 
 
 def truepath_relative(path, otherpath=None):
-    """ Normalizes and returns absolute path with so specs
+    """Normalizes and returns absolute path with so specs
 
     Args:
         path (str):  path to file or directory
@@ -627,7 +627,7 @@ def get_path_type(path_):
 
 
 def checkpath(path_, verbose=VERYVERBOSE, n=None, info=VERYVERBOSE):
-    r""" verbose wrapper around ``os.path.exists``
+    r"""verbose wrapper around ``os.path.exists``
 
     Returns:
         true if ``path_`` exists on the filesystem show only the
@@ -2597,7 +2597,7 @@ def find_lib_fpath(libname, root_dir, recurse_down=True, verbose=False, debug=Fa
 
 
 def ensure_mingw_drive(win32_path):
-    r""" replaces windows drives with mingw style drives
+    r"""replaces windows drives with mingw style drives
 
     Args:
         win32_path (str):

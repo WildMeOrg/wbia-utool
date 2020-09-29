@@ -129,7 +129,7 @@ def monkey_to_str_columns(self, latex=False):
 
 
 def to_string_monkey(df, highlight_cols=None, latex=False):
-    """  monkey patch to pandas to highlight the maximum value in specified
+    """monkey patch to pandas to highlight the maximum value in specified
     cols of a row
 
     Ignore:

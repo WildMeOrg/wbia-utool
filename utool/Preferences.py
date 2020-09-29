@@ -361,8 +361,8 @@ class Pref(PrefNode):
     # ----------------
     # Disk caching
     def to_dict(self, split_structs_bit=False):
-        """ Converts prefeters to a dictionary.
-        Children Pref can be optionally separated """
+        """Converts prefeters to a dictionary.
+        Children Pref can be optionally separated"""
         pref_dict = {}
         struct_dict = {}
         for (key, val) in six.iteritems(self):

@@ -1488,8 +1488,8 @@ def knapsack_ilp(items, maxweight, verbose=False):
 def knapsack_recursive(items, maxweight):
     @util_decor.memoize_nonzero
     def bestvalue(i, j):
-        """ Return the value of the most valuable subsequence of the first i
-        elements in items whose weights sum to no more than j. """
+        """Return the value of the most valuable subsequence of the first i
+        elements in items whose weights sum to no more than j."""
         if i == 0:
             return 0
         value, weight = items[i - 1][0:2]
@@ -1758,7 +1758,7 @@ def prod(item_list, initial=1.0):
 
 
 def cumsum(item_list, initial=0):
-    """ python cumsum
+    """python cumsum
 
     Args:
         item_list (list): list of numbers or items supporting addition
@@ -1807,6 +1807,7 @@ def choose(n, k):
     scipy.special.binom
     """
     import scipy.special
+
     return scipy.special.comb(n, k, exact=True, repetition=False)
 
 
@@ -2157,8 +2158,7 @@ def inbounds(num, low, high, eq=False):
 
 
 def almost_eq(arr1, arr2, thresh=1e-11, ret_error=False):
-    """ checks if floating point number are equal to a threshold
-    """
+    """checks if floating point number are equal to a threshold"""
     error = np.abs(arr1 - arr2)
     passed = error < thresh
     if ret_error:

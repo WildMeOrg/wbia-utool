@@ -389,7 +389,7 @@ def latex_scalar(lbl, data):
 
 
 def make_stats_tabular():
-    '''tabular for dipslaying statistics'''
+    """tabular for dipslaying statistics"""
     pass
 
 

@@ -42,7 +42,10 @@ def make_setup(repodir):
     packages = utool.ls_moduledirs(repodir, full=False)
     print(pkgname)
     setup_text = setup_text_fmt.format(
-        packages=packages, repodir=repodir, timestamp=timestamp, pkgname=pkgname,
+        packages=packages,
+        repodir=repodir,
+        timestamp=timestamp,
+        pkgname=pkgname,
     )
     return setup_text
 

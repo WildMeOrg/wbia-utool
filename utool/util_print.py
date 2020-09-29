@@ -298,7 +298,7 @@ def print_difftext(text, other=None):
 
 
 def colorprint(text, color=None):
-    r""" provides some color to terminal output
+    r"""provides some color to terminal output
 
     Args:
         text (str):
@@ -379,7 +379,7 @@ if __name__ == '__main__':
     CommandLine:
         python -m utool.util_print
         python -m utool.util_print --allexamples
-        python -m utool.util_print --allexamples --noface --nosrc """
+        python -m utool.util_print --allexamples --noface --nosrc"""
     import multiprocessing
 
     multiprocessing.freeze_support()  # for win32

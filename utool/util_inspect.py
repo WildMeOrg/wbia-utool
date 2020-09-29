@@ -108,8 +108,7 @@ class BaronWraper(object):
             raise ValueError('unknown error for node=%r' % (node.name))
 
     def internal_call_graph(self, with_doctests=False):
-        """
-        """
+        """"""
         import utool as ut
         import networkx as nx
 
@@ -2909,7 +2908,7 @@ def get_funckw(func, recursive=True):
 
 
 def parse_func_kwarg_keys(func, with_vals=False):
-    """ hacky inference of kwargs keys
+    """hacky inference of kwargs keys
 
     SeeAlso:
         argparse_funckw

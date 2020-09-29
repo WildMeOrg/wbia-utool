@@ -13,7 +13,7 @@ class _Link(object):
 
 
 class OrderedSet(collections.MutableSet):
-    """ Set the remembers the order elements were added
+    """Set the remembers the order elements were added
      Big-O running times for all methods are the same as for regular sets.
      The internal self._map dictionary maps keys to links in a doubly linked list.
      The circular doubly linked list starts and ends with a sentinel element.

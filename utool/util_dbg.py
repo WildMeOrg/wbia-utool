@@ -1261,7 +1261,7 @@ def get_varname_from_stack(var, N=0, **kwargs):
 def get_varname_from_locals(
     val, locals_, default='varname-not-found', strict=False, cmpfunc_=operator.is_
 ):
-    """ Finds the string name which has where locals_[name] is val
+    """Finds the string name which has where locals_[name] is val
 
     Check the varname is in the parent namespace
     This will only work with objects not primatives
@@ -1348,7 +1348,7 @@ def print_keys(key_list, locals_=None):
 
 
 def parse_locals_keylist(locals_, key_list, strlist_=None, prefix=''):
-    """ For each key in keylist, puts its value in locals into a stringlist
+    """For each key in keylist, puts its value in locals into a stringlist
 
     Args:
         locals_ (?):

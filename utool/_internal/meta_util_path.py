@@ -18,7 +18,7 @@ def truepath(path):
 def unixpath(path):
     """
     TODO: rename to unix_truepath
-    Corrects fundamental problems with windows paths.~ """
+    Corrects fundamental problems with windows paths.~"""
     return truepath(path).replace('\\', '/')
 
 

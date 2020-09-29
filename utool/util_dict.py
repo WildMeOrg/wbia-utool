@@ -80,7 +80,7 @@ def dzip(list1, list2):
 
 
 def map_dict_vals(func, dict_):
-    """ applies a function to each of the keys in a dictionary
+    """applies a function to each of the keys in a dictionary
 
     Args:
         func (callable): a function
@@ -113,7 +113,7 @@ def map_dict_vals(func, dict_):
 
 
 def map_dict_keys(func, dict_):
-    """ applies a function to each of the keys in a dictionary
+    """applies a function to each of the keys in a dictionary
 
     Args:
         func (callable): a function
@@ -1061,7 +1061,7 @@ def dict_take_asnametup(dict_, keys, name='_NamedTup'):
 
 
 def dict_take_pop(dict_, keys, *d):
-    """ like dict_take but pops values off
+    """like dict_take but pops values off
 
     CommandLine:
         python -m utool.util_dict --test-dict_take_pop
@@ -1107,8 +1107,8 @@ def dict_take_pop(dict_, keys, *d):
 
 
 def dict_assign(dict_, keys, vals):
-    """ simple method for assigning or setting values with a similar interface
-    to dict_take """
+    """simple method for assigning or setting values with a similar interface
+    to dict_take"""
     for key, val in zip(keys, vals):
         dict_[key] = val
 
@@ -1794,7 +1794,7 @@ def hierarchical_group_items(item_list, groupids_list):
 
 def iflatten_dict_values(node, depth=0):
     """
-        >>> from utool.util_dict import *  # NOQA
+    >>> from utool.util_dict import *  # NOQA
     """
     if isinstance(node, dict):
         _iter = (iflatten_dict_values(value) for value in six.itervalues(node))

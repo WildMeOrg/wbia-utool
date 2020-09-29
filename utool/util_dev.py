@@ -1653,7 +1653,7 @@ def numpy_list_num_bits(nparr_list, expected_type, expected_dims):
 
 
 def make_call_graph(func, *args, **kwargs):
-    """ profile with pycallgraph
+    """profile with pycallgraph
 
     Example:
         pycallgraph graphviz -- ./mypythonscript.py
@@ -1719,7 +1719,7 @@ def _memory_profile(with_gc=False):
 
 
 def make_object_graph(obj, fpath='sample_graph.png'):
-    """ memoryprofile with objgraph
+    """memoryprofile with objgraph
 
     Examples:
         #import objgraph

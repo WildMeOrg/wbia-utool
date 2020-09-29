@@ -198,11 +198,18 @@ def get_injected_modules(classname):
         pkgname = '.'.join(parts[:-1])
         modname = parts[-1]
         try:
-            exec('from %s import %s' % (pkgname, modname,), globals(), locals())
+            exec(
+                'from %s import %s' % (pkgname, modname),
+                globals(),
+                locals(),
+            )
             module = eval(modname)
             injected_modules.append(module)
         except ImportError as ex:
-            ut.printex(ex, 'Cannot load package=%r, module=%r' % (pkgname, modname,))
+            ut.printex(
+                ex,
+                'Cannot load package=%r, module=%r' % (pkgname, modname),
+            )
     return injected_modules
 
 
@@ -402,9 +409,11 @@ def make_class_method_decorator(classkey, modname=None):
     elif isinstance(classkey, type):
         classname = classkey.__name__
         if modname is not None:
-            assert modname == classkey.__module__, (
-                'modname=%r does not agree with __module__=%r'
-                % (modname, classkey.__module__)
+            assert (
+                modname == classkey.__module__
+            ), 'modname=%r does not agree with __module__=%r' % (
+                modname,
+                classkey.__module__,
             )
         modname = classkey.__module__
         # Convert to new classkey format
@@ -498,7 +507,7 @@ def inject_func_as_method(
     override=None,
     force=False,
 ):
-    """ Injects a function into an object as a method
+    """Injects a function into an object as a method
 
     Wraps func as a bound method of self. Then injects func into self
     It is preferable to use make_class_method_decorator and inject_instance

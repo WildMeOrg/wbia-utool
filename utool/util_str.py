@@ -353,7 +353,7 @@ def indent(str_, indent='    '):
 
 
 def indent_rest(str_, indent='    '):
-    """ TODO fix name Indents every part of the string except the beginning
+    """TODO fix name Indents every part of the string except the beginning
     SeeAlso: wbia/templates/generate_notebook.py
     """
     return str_.replace('\n', '\n' + indent)
@@ -1977,7 +1977,7 @@ def str_between(str_, startstr, endstr):
 
 
 def get_callable_name(func):
-    """ Works on must functionlike objects including str, which has no func_name
+    """Works on must functionlike objects including str, which has no func_name
 
     Args:
         func (function):
