@@ -1033,7 +1033,7 @@ def get_file_hash(fpath, blocksize=65536, hasher=None, stride=1, hexdigest=False
 
 
 def write_hash_file(fpath, hash_tag='md5', recompute=False):
-    r""" Creates a hash file for each file in a path
+    r"""Creates a hash file for each file in a path
 
     CommandLine:
         python -m utool.util_hash --test-write_hash_file
@@ -1072,7 +1072,7 @@ def write_hash_file(fpath, hash_tag='md5', recompute=False):
 
 
 def write_hash_file_for_path(path, recompute=False):
-    r""" Creates a hash file for each file in a path
+    r"""Creates a hash file for each file in a path
 
     CommandLine:
         python -m utool.util_hash --test-write_hash_file_for_path
@@ -1101,8 +1101,7 @@ def write_hash_file_for_path(path, recompute=False):
 
 
 def get_file_uuid(fpath, hasher=None, stride=1):
-    """ Creates a uuid from the hash of a file
-    """
+    """Creates a uuid from the hash of a file"""
     if hasher is None:
         hasher = hashlib.sha1()  # 20 bytes of output
         # hasher = hashlib.sha256()  # 32 bytes of output

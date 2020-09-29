@@ -52,10 +52,22 @@ if util_cplat.WIN32:
     __MIN_PARALLEL_TASKS__ = 16
 
 
-def generate2(func, args_gen, kw_gen=None, ntasks=None, ordered=True,
-              force_serial=False, use_pool=False, chunksize=None, nprocs=None,
-              progkw={}, nTasks=None, verbose=None, futures_threaded=False,
-              timeout=3600):
+def generate2(
+    func,
+    args_gen,
+    kw_gen=None,
+    ntasks=None,
+    ordered=True,
+    force_serial=False,
+    use_pool=False,
+    chunksize=None,
+    nprocs=None,
+    progkw={},
+    nTasks=None,
+    verbose=None,
+    futures_threaded=False,
+    timeout=3600,
+):
     r"""
     Interfaces to either multiprocessing or futures.
     Esentially maps ``args_gen`` onto ``func`` using pool.imap.

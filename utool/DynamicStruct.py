@@ -91,10 +91,10 @@ class DynStruct(Printable.AbstractPrintable):
 
     def execstr(self, local_name):
         """returns a string which when evaluated will
-           add the stored variables to the current namespace
+        add the stored variables to the current namespace
 
-           localname is the name of the variable in the current scope
-           * use locals().update(dyn.to_dict()) instead
+        localname is the name of the variable in the current scope
+        * use locals().update(dyn.to_dict()) instead
         """
         execstr = ''
         for (key, val) in six.iteritems(self.__dict__):

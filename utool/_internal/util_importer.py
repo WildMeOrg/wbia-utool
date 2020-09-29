@@ -183,7 +183,7 @@ def __execute_fromimport_star(
 
 
 def __get_from_imports(import_tuples):
-    """ Returns import names and fromlist
+    """Returns import names and fromlist
     import_tuples are specified as
     (name, fromlist, ispackage)
     """

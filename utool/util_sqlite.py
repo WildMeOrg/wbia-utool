@@ -31,7 +31,7 @@ def get_table_columns(cur, tablename, exclude_columns=[]):
 
 
 def get_table_csv(cur, tablename, exclude_columns=[]):
-    """ Conveinience: Converts a tablename to csv format
+    """Conveinience: Converts a tablename to csv format
 
     Args:
         tablename (str):

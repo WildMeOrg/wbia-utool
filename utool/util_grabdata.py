@@ -335,7 +335,7 @@ def download_url(
     new=True,
     chunk_size=None,
 ):
-    r""" downloads a url to a filename.
+    r"""downloads a url to a filename.
 
     Args:
         url (str): url to download
@@ -885,7 +885,7 @@ def grab_file_url(
     verbose=True,
     redownload=False,
     check_hash=False,
-    attempts=3
+    attempts=3,
 ):
     r"""
     Downloads a file and returns the local path of the file.

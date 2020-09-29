@@ -630,7 +630,7 @@ def memoize_nonzero(func):
 
 
 def memoize_single(func):
-    """ Memoization decorator for a function taking a single argument
+    """Memoization decorator for a function taking a single argument
 
     References:
         http://code.activestate.com/recipes/578231-fastest-memoization-decorator

@@ -89,8 +89,8 @@ def get_injected_modules():
 
 
 def _get_module(module_name=None, module=None, register=True):
-    """ finds module in sys.modules based on module name unless the module has
-    already been found and is passed in """
+    """finds module in sys.modules based on module name unless the module has
+    already been found and is passed in"""
     if module is None and module_name is not None:
         try:
             module = sys.modules[module_name]
@@ -408,7 +408,7 @@ if PROF_MOD_PAT_LIST is not None:
 
 
 def memprof(func):
-    """ requires memory_profiler
+    """requires memory_profiler
     pip install memory_profiler
 
     References:

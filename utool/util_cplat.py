@@ -479,7 +479,7 @@ def getroot():
 
 
 def startfile(fpath, detatch=True, quote=False, verbose=False, quiet=True):
-    """ Uses default program defined by the system to open a file.
+    """Uses default program defined by the system to open a file.
 
     References:
         http://stackoverflow.com/questions/2692873/quote-posix-shell-special-characters-in-python-output
@@ -845,7 +845,7 @@ def quote_single_command(cmdstr):
 
 
 def cmd(*args, **kwargs):
-    r""" A really roundabout way to issue a system call
+    r"""A really roundabout way to issue a system call
 
     # FIXME: This function needs some work
     # It should work without a hitch on windows or unix.

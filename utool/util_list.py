@@ -152,7 +152,7 @@ def alloc_nones(num_alloc):
 
 
 def ensure_list_size(list_, size_):
-    """ Allocates more space if needbe.
+    """Allocates more space if needbe.
 
     Ensures len(``list_``) == ``size_``.
 
@@ -464,7 +464,7 @@ def invertible_flatten1(unflat_list):
 
 
 def unflatten1(flat_list, reverse_list):
-    """ Rebuilds unflat list from invertible_flatten1
+    """Rebuilds unflat list from invertible_flatten1
 
     Args:
         flat_list (list): the flattened list
@@ -680,7 +680,7 @@ def invertible_flatten2(unflat_list):
 
 
 def invertible_flatten2_numpy(unflat_arrs, axis=0):
-    """ more numpy version
+    """more numpy version
 
     TODO: move to vtool
 
@@ -708,7 +708,7 @@ def invertible_flatten2_numpy(unflat_arrs, axis=0):
 
 
 def unflatten2(flat_list, cumlen_list):
-    """ Rebuilds unflat list from invertible_flatten1
+    """Rebuilds unflat list from invertible_flatten1
 
     Args:
         flat_list (list): the flattened list
@@ -823,8 +823,8 @@ def unpack_iterables(list_):
 
 
 def safe_slice(list_, *args):
-    """ safe_slice(list_, [start], stop, [end], [step])
-        Slices list and truncates if out of bounds
+    """safe_slice(list_, [start], stop, [end], [step])
+    Slices list and truncates if out of bounds
     """
     if len(args) == 3:
         start = args[0]
@@ -926,9 +926,11 @@ def compress(item_list, flag_list):
     Returns:
         list : filtered_items - masked items
     """
-    assert len(item_list) == len(flag_list), (
-        'lists should correspond. len(item_list)=%r len(flag_list)=%r'
-        % (len(item_list), len(flag_list))
+    assert len(item_list) == len(
+        flag_list
+    ), 'lists should correspond. len(item_list)=%r len(flag_list)=%r' % (
+        len(item_list),
+        len(flag_list),
     )
     filtered_items = list(util_iter.iter_compress(item_list, flag_list))
     return filtered_items
@@ -1494,7 +1496,7 @@ setintersect = setintersect_ordered
 
 
 def sortedby(item_list, key_list, reverse=False):
-    """ sorts ``item_list`` using key_list
+    """sorts ``item_list`` using key_list
 
     Args:
         list_ (list): list to sort
@@ -1530,7 +1532,7 @@ def sortedby(item_list, key_list, reverse=False):
 
 
 def sortedby2(item_list, *args, **kwargs):
-    """ sorts ``item_list`` using key_list
+    """sorts ``item_list`` using key_list
 
     Args:
         item_list (list): list to sort
@@ -2074,7 +2076,7 @@ def equal(list1, list2):
 
 
 def where_not_None(item_list):
-    """ returns list of indexes of non None values
+    """returns list of indexes of non None values
 
     SeeAlso:
         flag_None_items
@@ -2109,7 +2111,7 @@ def scalar_input_map(func, input_):
 
 
 def partial_imap_1to1(func, si_func):
-    """ a bit messy
+    """a bit messy
 
     DEPRICATE
     """
@@ -2128,7 +2130,7 @@ def partial_imap_1to1(func, si_func):
 
 
 def sample_zip(items_list, num_samples, allow_overflow=False, per_bin=1):
-    """ Helper for sampling
+    """Helper for sampling
 
     Given a list of lists, samples one item for each list and bins them into
     num_samples bins. If all sublists are of equal size this is equivilent to a
@@ -3284,16 +3286,20 @@ def unflat_map(func, unflat_items, vectorized=False, **kwargs):
     else:
         flat_vals = [func(item, **kwargs) for item in flat_items]
     if True:
-        assert len(flat_vals) == len(flat_items), (
-            'flat lens not the same, len(flat_vals)=%d len(flat_items)=%d'
-            % (len(flat_vals), len(flat_items),)
+        assert len(flat_vals) == len(
+            flat_items
+        ), 'flat lens not the same, len(flat_vals)=%d len(flat_items)=%d' % (
+            len(flat_vals),
+            len(flat_items),
         )
     # Then ut.unflatten2 the results to the original input dimensions
     unflat_vals = ut.unflatten2(flat_vals, reverse_list)
     if True:
-        assert len(unflat_vals) == len(unflat_items), (
-            'unflat lens not the same, len(unflat_vals)=%d len(unflat_rowids)=%d'
-            % (len(unflat_vals), len(unflat_items),)
+        assert len(unflat_vals) == len(
+            unflat_items
+        ), 'unflat lens not the same, len(unflat_vals)=%d len(unflat_rowids)=%d' % (
+            len(unflat_vals),
+            len(unflat_items),
         )
     return unflat_vals
 
@@ -3307,16 +3313,20 @@ def unflat_vecmap(func, unflat_items, vectorized=False, **kwargs):
     # Then preform the lookup / implicit mapping
     flat_vals = func(flat_items, **kwargs)
     if True:
-        assert len(flat_vals) == len(flat_items), (
-            'flat lens not the same, len(flat_vals)=%d len(flat_items)=%d'
-            % (len(flat_vals), len(flat_items),)
+        assert len(flat_vals) == len(
+            flat_items
+        ), 'flat lens not the same, len(flat_vals)=%d len(flat_items)=%d' % (
+            len(flat_vals),
+            len(flat_items),
         )
     # Then ut.unflatten2 the results to the original input dimensions
     unflat_vals = ut.unflatten2(flat_vals, reverse_list)
     if True:
-        assert len(unflat_vals) == len(unflat_items), (
-            'unflat lens not the same, len(unflat_vals)=%d len(unflat_rowids)=%d'
-            % (len(unflat_vals), len(unflat_items),)
+        assert len(unflat_vals) == len(
+            unflat_items
+        ), 'unflat lens not the same, len(unflat_vals)=%d len(unflat_rowids)=%d' % (
+            len(unflat_vals),
+            len(unflat_items),
         )
     return unflat_vals
 

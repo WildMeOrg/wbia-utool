@@ -85,7 +85,7 @@ def _rectify_verb_read(verbose):
 def write_to(
     fpath, to_write, aslines=False, verbose=None, onlyifdiff=False, mode='w', n=None
 ):
-    """ Writes text to a file. Automatically encodes text as utf8.
+    """Writes text to a file. Automatically encodes text as utf8.
 
     Args:
         fpath (str): file path
@@ -168,7 +168,7 @@ def write_to(
 
 
 def read_from(fpath, verbose=None, aslines=False, strict=True, n=None, errors='replace'):
-    r""" Reads text from a file. Automatically returns utf8.
+    r"""Reads text from a file. Automatically returns utf8.
 
     Args:
         fpath (str): file path

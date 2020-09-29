@@ -143,7 +143,7 @@ def ensure_rng(rng, impl='numpy'):
 
 
 def random_indexes(max_index, subset_size=None, seed=None, rng=None):
-    """ random unrepeated indicies
+    """random unrepeated indicies
 
     Args:
         max_index (?):

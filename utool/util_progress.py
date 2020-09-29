@@ -687,10 +687,10 @@ class ProgressIter(object):
                                     iters_per_second = measure_between
                                 else:
                                     iters_per_second = (
-                                        (USE_RECORD_WINDOWED_WEIGHT) * iters_per_second
-                                        + (1.0 - USE_RECORD_WINDOWED_WEIGHT)
-                                        * measure_between
-                                    )
+                                        USE_RECORD_WINDOWED_WEIGHT
+                                    ) * iters_per_second + (
+                                        1.0 - USE_RECORD_WINDOWED_WEIGHT
+                                    ) * measure_between
                         else:
                             iters_per_second = sum(measure_between_time) / len(
                                 measure_between_time
@@ -869,7 +869,7 @@ class ProgIter(ProgressIter):
 def progress_str(
     max_val, lbl='Progress: ', repl=False, approx=False, backspace=PROGGRESS_BACKSPACE
 ):
-    r""" makes format string that prints progress: %Xd/MAX_VAL with backspaces
+    r"""makes format string that prints progress: %Xd/MAX_VAL with backspaces
 
     NOTE: \r can be used instead of backspaces. This function is not very
     relevant because of that.

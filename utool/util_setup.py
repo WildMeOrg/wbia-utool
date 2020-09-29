@@ -271,7 +271,7 @@ def get_cmdclass():
 
 
 def parse_author():
-    """ TODO: this function should parse setup.py or a module for
+    """TODO: this function should parse setup.py or a module for
     the author variable
     """
     return 'Jon Crall'  # FIXME
@@ -337,9 +337,10 @@ def autogen_sphinx_apidoc():
         packages = ut.find_packages(maxdepth=1)
         assert len(packages) != 0, 'directory must contain at least one package'
         if len(packages) > 1:
-            assert len(packages) == 1, (
-                'FIXME I dont know what to do with more than one root package: %r'
-                % (packages,)
+            assert (
+                len(packages) == 1
+            ), 'FIXME I dont know what to do with more than one root package: %r' % (
+                packages,
             )
         pkgdir = packages[0]
         version = ut.parse_package_for_version(pkgdir)
