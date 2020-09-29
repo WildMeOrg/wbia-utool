@@ -494,7 +494,7 @@ def get_argval(
                                 print('[get_argval] ... argstr=%r' % (argstr,))
                                 print(
                                     '[get_argval] ... Found type_=%r argx=%r'
-                                    % (type_, argx,)
+                                    % (type_, argx)
                                 )
                             arg_after = argv[argx + 1]
                             if type_ is not None:

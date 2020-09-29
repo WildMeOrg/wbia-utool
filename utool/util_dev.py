@@ -903,7 +903,7 @@ def report_memsize(obj, name=None, verbose=True):
                             keystr = ut.packstr(
                                 repr(referer.keys()), 60, newline_prefix='        '
                             )
-                            print('    referer.keys = %s' % (keystr),)
+                            print('    referer.keys = %s' % (keystr,))
                     print('    id(referer) = %r' % id(referer))
                     # print('referer = ' + ut.truncate_str(repr(referer)))
                     print('  </Referer %d>' % count)
@@ -2726,7 +2726,7 @@ def exec_funckw(func, globals_):
 def focusvim():
     import utool.util_ubuntu
 
-    utool.util_ubuntu.xctrl.do(('focus', 'GVIM'),)
+    utool.util_ubuntu.xctrl.do(('focus', 'GVIM'))
 
 
 def ipcopydev():

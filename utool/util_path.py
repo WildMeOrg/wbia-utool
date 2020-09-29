@@ -684,7 +684,7 @@ def checkpath(path_, verbose=VERYVERBOSE, n=None, info=VERYVERBOSE):
         if does_exist:
             path_type = get_path_type(path_)
             # path_type = 'file' if isfile(path_) else 'directory'
-            print('[%s] ...(%s) exists' % (caller_name, path_type,))
+            print('[%s] ...(%s) exists' % (caller_name, path_type))
         else:
             print('[%s] ... does not exist' % (caller_name))
     if not does_exist and info:
@@ -1164,7 +1164,7 @@ def iglob(
     from utool import util_iter
 
     if kwargs.get('verbose', False):  # log what i'm going to do
-        print('[util_path] glob(dpath=%r)' % truepath(dpath,))
+        print('[util_path] glob(dpath=%r)' % truepath(dpath))
 
     debug = False
     if pattern is None:
@@ -2931,7 +2931,7 @@ def remove_broken_links(dpath, verbose=True):
     num_broken = len(broken_links)
     if verbose:
         if verbose > 1 or num_broken > 0:
-            print('[util_path] Removing %d broken links in %r' % (num_broken, dpath,))
+            print('[util_path] Removing %d broken links in %r' % (num_broken, dpath))
     for link in broken_links:
         os.unlink(link)
     return num_broken

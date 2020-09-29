@@ -1486,7 +1486,7 @@ class ParamInfo(util_dev.NiceRepr):
             if value not in pi.valid_values:
                 raise ValueError(
                     'pi=%r, value=%r not in valid_values=%r'
-                    % (pi, value, pi.valid_values,)
+                    % (pi, value, pi.valid_values)
                 )
         if pi.is_type_enforced():
             if not util_type.is_comparable_type(value, pi.type_):
@@ -1506,7 +1506,7 @@ class ParamInfo(util_dev.NiceRepr):
             if value not in pi.valid_values:
                 raise ValueError(
                     'pi=%r, value=%r not in valid_values=%r'
-                    % (pi, value, pi.valid_values,)
+                    % (pi, value, pi.valid_values)
                 )
         if not util_type.is_comparable_type(value, pi.type_):
             raise TypeError(
@@ -1649,7 +1649,7 @@ class ParamInfoBool(ParamInfo):
             itemstr = 'no' + itemstr
         elif varval is not True:
             raise AssertionError(
-                'Not a boolean pi.varname=%r, varval=%r' % (pi.varname, varval,)
+                'Not a boolean pi.varname=%r, varval=%r' % (pi.varname, varval)
             )
         return itemstr
 

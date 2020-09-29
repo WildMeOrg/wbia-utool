@@ -233,7 +233,7 @@ def load_cache(dpath, fname, cfgstr, ext='.cPkl', verbose=None, enabled=True):
         if verbose > 1:
             print(
                 '[util_cache] ... cache disabled: dpath=%s cfgstr=%r'
-                % (basename(dpath), cfgstr,)
+                % (basename(dpath), cfgstr)
             )
         raise IOError(3, 'Cache Loading Is Disabled')
     fpath = _args2_fpath(dpath, fname, cfgstr, ext)
@@ -241,14 +241,14 @@ def load_cache(dpath, fname, cfgstr, ext='.cPkl', verbose=None, enabled=True):
         if verbose > 0:
             print(
                 '[util_cache] ... cache does not exist: dpath=%r fname=%r cfgstr=%r'
-                % (basename(dpath), fname, cfgstr,)
+                % (basename(dpath), fname, cfgstr)
             )
         raise IOError(2, 'No such file or directory: %r' % (fpath,))
     else:
         if verbose > 2:
             print(
                 '[util_cache] ... cache exists: dpath=%r fname=%r cfgstr=%r'
-                % (basename(dpath), fname, cfgstr,)
+                % (basename(dpath), fname, cfgstr)
             )
         import utool as ut
 
@@ -264,7 +264,7 @@ def load_cache(dpath, fname, cfgstr, ext='.cPkl', verbose=None, enabled=True):
         if verbose > 1:
             print(
                 '[util_cache] ... cache miss dpath=%s cfgstr=%r'
-                % (basename(dpath), cfgstr,)
+                % (basename(dpath), cfgstr)
             )
         raise IOError(str(ex))
     except Exception:
@@ -932,7 +932,7 @@ def cached_func(
             except Exception as ex:
                 from utool import util_dbg
 
-                _dbgdict2 = dict(key_argx=key_argx, lenargs=len(args), lenkw=len(kwargs),)
+                _dbgdict2 = dict(key_argx=key_argx, lenargs=len(args), lenkw=len(kwargs))
                 msg = '\n'.join(
                     [
                         '+--- UTOOL --- ERROR IN CACHED FUNCTION',
@@ -1213,7 +1213,7 @@ class Cachable(object):
             import utool as ut
 
             msg = 'need to further specify target. valid_targets=%s' % (
-                ut.repr3(valid_targets,)
+                ut.repr3(valid_targets)
             )
             raise ValueError(msg)
         fpath = valid_targets[0]

@@ -2014,7 +2014,7 @@ def maximum_distance_subset(items, K, verbose=False):
     from utool import util_decor
 
     if verbose:
-        print('maximum_distance_subset len(items)=%r, K=%r' % (len(items), K,))
+        print('maximum_distance_subset len(items)=%r, K=%r' % (len(items), K))
 
     points = np.array(items)[:, None]
 

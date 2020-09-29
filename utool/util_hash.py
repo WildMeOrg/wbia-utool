@@ -1056,7 +1056,7 @@ def write_hash_file(fpath, hash_tag='md5', recompute=False):
         # No need to compute hashes on hashes
         return
     # Get hash path
-    hash_fpath = '%s.%s' % (fpath, hash_tag,)
+    hash_fpath = '%s.%s' % (fpath, hash_tag)
     if os.path.exists(hash_fpath) and not recompute:
         return
     # Assert this is a file

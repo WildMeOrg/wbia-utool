@@ -297,7 +297,7 @@ class Timerit(object):
             if self.label is None:
                 print('Timing for %d loops' % self.num)
             else:
-                print('Timing %s for %d loops.' % (self.label, self.num,))
+                print('Timing %s for %d loops.' % (self.label, self.num))
         self.n_loops = 0
         self.total_time = 0
         # Create a foreground and background timer
