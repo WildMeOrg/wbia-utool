@@ -658,105 +658,108 @@ class ProgressIter(object):
         measure_between_time = collections.deque([], maxlen=self.est_window)
 
         # Wrap the for loop with a generator
-        for self.count, item in enumerate(self.iterable, start=start):
-            if self.prehack:
-                # hack to print before yeilding
-                # so much for efficiency
-                self.set_extra((self.lbl + '=' + self.prehack) % item)
-                self.display_message()
-                self.ensure_newline()
-
-            # GENERATE
-            yield item
-
-            if self.prehack or (self.count) % freq == 0:
-                now_time = default_timer()
-                between_time = now_time - last_time
-                between_count = self.count - last_count
-                total_seconds = now_time - start_time
-                self.total_seconds = total_seconds
-                if FREQ_EST == 0:
-                    if USE_RECORD:
-                        measure_between_time.append(
-                            between_count / (float(between_time) + 1e-9)
-                        )
-                        if USE_RECORD_WINDOWED_AVG:
-                            iters_per_second = None
-                            for measure_between in measure_between_time:
-                                if iters_per_second is None:
-                                    iters_per_second = measure_between
-                                else:
-                                    iters_per_second = (
-                                        USE_RECORD_WINDOWED_WEIGHT
-                                    ) * iters_per_second + (
-                                        1.0 - USE_RECORD_WINDOWED_WEIGHT
-                                    ) * measure_between
-                        else:
-                            iters_per_second = sum(measure_between_time) / len(
-                                measure_between_time
-                            )
-                    else:
-                        iters_per_second = between_count / (float(between_time) + 1e-9)
-                elif FREQ_EST == 1:
-                    iters_per_second = (now_time - start_time) / self.count
-
-                self.iters_per_second = iters_per_second
-                # If the future is known
-                if length is None:
-                    est_seconds_left = -1
-                else:
-                    iters_left = length - self.count
-                    est_seconds_left = iters_left / (1.0 / iters_per_second + 1e-9)
-                self.est_seconds_left = est_seconds_left
-
-                # /future
-                last_count = self.count
-                last_time = now_time
-                # ADJUST FREQ IF NEEDED
-                # Adjust frequency if printing too quickly
-                # so progress doesnt slow down actual function
-                # TODO: better adjust algorithm
-                time_thresh *= time_thresh_growth
-                if adjust and (
-                    between_time < time_thresh or between_time > time_thresh * 2.0
-                ):
-                    max_between_time = max(max(max_between_time, between_time), 1e-9)
-                    max_between_count = max(max_between_count, between_count)
-                    # If progress was uniform and all time estimates were
-                    # perfect this would be the new freq to achieve time_thresh
-                    new_freq = max(
-                        int(time_thresh * max_between_count / max_between_time), 1
-                    )
-                    if DEBUG_FREQ_ADJUST:
-                        print('\n+---')
-                        print('[prog] between_count = %r' % between_count)
-                        print('[prog] between_time = %.8r' % between_time)
-                        print('[prog] time_thresh = %r' % time_thresh)
-                        print('[prog] max_between_count = %r' % max_between_count)
-                        print('[prog] max_between_time = %.8r' % max_between_time)
-                        print('[prog] Adusting frequency from: %r' % freq)
-                        print('[prog] Adusting frequency to: %r' % new_freq)
-                        print('L___')
-                    # But things are not perfect. So, don't make drastic changes
-                    max_freq_change_up = max(256, freq * 2)
-                    max_freq_change_down = freq // 2
-                    if (new_freq - freq) > max_freq_change_up:
-                        freq += max_freq_change_up
-                    elif (freq - new_freq) > max_freq_change_down:
-                        freq -= max_freq_change_down
-                    else:
-                        freq = new_freq
-
-                if not self.prehack:
+        try:
+            for self.count, item in enumerate(self.iterable, start=start):
+                if self.prehack:
+                    # hack to print before yeilding
+                    # so much for efficiency
+                    self.set_extra((self.lbl + '=' + self.prehack) % item)
                     self.display_message()
+                    self.ensure_newline()
 
-                # DO PROGRESS INFO
-                if self.prog_hook is not None:
-                    # From the point of view of the progress iter, we are about
-                    # to enter the body of a for loop. (But we may have
-                    # executed the body implicitly in the yeild....  so it is
-                    # ambiguous. In the second case 0 will be executed twice.
-                    self.prog_hook(self.count, length)
+                # GENERATE
+                yield item
+
+                if self.prehack or (self.count) % freq == 0:
+                    now_time = default_timer()
+                    between_time = now_time - last_time
+                    between_count = self.count - last_count
+                    total_seconds = now_time - start_time
+                    self.total_seconds = total_seconds
+                    if FREQ_EST == 0:
+                        if USE_RECORD:
+                            measure_between_time.append(
+                                between_count / (float(between_time) + 1e-9)
+                            )
+                            if USE_RECORD_WINDOWED_AVG:
+                                iters_per_second = None
+                                for measure_between in measure_between_time:
+                                    if iters_per_second is None:
+                                        iters_per_second = measure_between
+                                    else:
+                                        iters_per_second = (
+                                            USE_RECORD_WINDOWED_WEIGHT
+                                        ) * iters_per_second + (
+                                            1.0 - USE_RECORD_WINDOWED_WEIGHT
+                                        ) * measure_between
+                            else:
+                                iters_per_second = sum(measure_between_time) / len(
+                                    measure_between_time
+                                )
+                        else:
+                            iters_per_second = between_count / (float(between_time) + 1e-9)
+                    elif FREQ_EST == 1:
+                        iters_per_second = (now_time - start_time) / self.count
+
+                    self.iters_per_second = iters_per_second
+                    # If the future is known
+                    if length is None:
+                        est_seconds_left = -1
+                    else:
+                        iters_left = length - self.count
+                        est_seconds_left = iters_left / (1.0 / iters_per_second + 1e-9)
+                    self.est_seconds_left = est_seconds_left
+
+                    # /future
+                    last_count = self.count
+                    last_time = now_time
+                    # ADJUST FREQ IF NEEDED
+                    # Adjust frequency if printing too quickly
+                    # so progress doesnt slow down actual function
+                    # TODO: better adjust algorithm
+                    time_thresh *= time_thresh_growth
+                    if adjust and (
+                        between_time < time_thresh or between_time > time_thresh * 2.0
+                    ):
+                        max_between_time = max(max(max_between_time, between_time), 1e-9)
+                        max_between_count = max(max_between_count, between_count)
+                        # If progress was uniform and all time estimates were
+                        # perfect this would be the new freq to achieve time_thresh
+                        new_freq = max(
+                            int(time_thresh * max_between_count / max_between_time), 1
+                        )
+                        if DEBUG_FREQ_ADJUST:
+                            print('\n+---')
+                            print('[prog] between_count = %r' % between_count)
+                            print('[prog] between_time = %.8r' % between_time)
+                            print('[prog] time_thresh = %r' % time_thresh)
+                            print('[prog] max_between_count = %r' % max_between_count)
+                            print('[prog] max_between_time = %.8r' % max_between_time)
+                            print('[prog] Adusting frequency from: %r' % freq)
+                            print('[prog] Adusting frequency to: %r' % new_freq)
+                            print('L___')
+                        # But things are not perfect. So, don't make drastic changes
+                        max_freq_change_up = max(256, freq * 2)
+                        max_freq_change_down = freq // 2
+                        if (new_freq - freq) > max_freq_change_up:
+                            freq += max_freq_change_up
+                        elif (freq - new_freq) > max_freq_change_down:
+                            freq -= max_freq_change_down
+                        else:
+                            freq = new_freq
+
+                    if not self.prehack:
+                        self.display_message()
+
+                    # DO PROGRESS INFO
+                    if self.prog_hook is not None:
+                        # From the point of view of the progress iter, we are about
+                        # to enter the body of a for loop. (But we may have
+                        # executed the body implicitly in the yeild....  so it is
+                        # ambiguous. In the second case 0 will be executed twice.
+                        self.prog_hook(self.count, length)
+        except StopIteration:
+            pass
 
         if self.prehack:
             self.set_extra('')
