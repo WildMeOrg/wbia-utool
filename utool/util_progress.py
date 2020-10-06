@@ -760,6 +760,8 @@ class ProgressIter(object):
                         self.prog_hook(self.count, length)
         except StopIteration:
             pass
+        except RuntimeError:
+            pass
 
         if self.prehack:
             self.set_extra('')
