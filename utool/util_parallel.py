@@ -65,7 +65,7 @@ def generate2(
     progkw={},
     nTasks=None,
     verbose=None,
-    futures_threaded=False,
+    futures_threaded=True,
     timeout=3600,
 ):
     r"""
