@@ -697,7 +697,9 @@ class ProgressIter(object):
                                     measure_between_time
                                 )
                         else:
-                            iters_per_second = between_count / (float(between_time) + 1e-9)
+                            iters_per_second = between_count / (
+                                float(between_time) + 1e-9
+                            )
                     elif FREQ_EST == 1:
                         iters_per_second = (now_time - start_time) / self.count
 
