@@ -3388,7 +3388,7 @@ def infer_function_info(func):
         else:
             argfunc = func
         argspec = ut.get_func_argspec(argfunc)
-        (argname_list, varargs, varkw, defaults) = argspec
+        (argname_list, varargs, varkw, defaults, _, _, _) = argspec
 
         # See util_inspect
         tup = ut.infer_arg_types_and_descriptions(argname_list, defaults)
