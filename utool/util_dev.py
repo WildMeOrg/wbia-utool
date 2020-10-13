@@ -1081,13 +1081,13 @@ class InteractiveIter(object):
                 iiter.iterable, lbl='nointeract: ', freq=1, adjust=False
             ):
                 yield item
-            raise StopIteration()
+            return
         assert isinstance(iiter.iterable, INDEXABLE_TYPES), 'input is not iterable'
         iiter.num_items = len(iiter.iterable)
         if iiter.verbose:
             print('[IITER] Begin interactive iteration: %r items\n' % (iiter.num_items))
         if iiter.num_items == 0:
-            raise StopIteration
+            return
         # TODO: replace with ub.ProgIter
         mark_, end_ = util_progress.log_progress(
             length=iiter.num_items, lbl='interaction: ', freq=1
@@ -1307,7 +1307,7 @@ def delayed_retry_gen(delay_schedule=[0.1, 1, 10], msg=None, timeout=None, raise
             if raise_:
                 raise Exception('Retry loop timed out')
             else:
-                raise StopIteration('Retry loop timed out')
+                return
         index = min(count, len(delay_schedule) - 1)
         delay = delay_schedule[index]
         time.sleep(delay)

@@ -896,7 +896,7 @@ def buffered_generator(source_gen, buffer_size=2, use_multiprocessing=False):
         # output = buffer_.get(timeout=1.0)
         output = buffer_.get()
         if output is sentinal:
-            raise StopIteration
+            return
         yield output
 
     # _iter = iter(buffer_.get, sentinal)
