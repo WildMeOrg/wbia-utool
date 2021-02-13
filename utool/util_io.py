@@ -274,6 +274,11 @@ class FixRenamedUnpickler(pickle.Unpickler):
         module = module.replace('ibeis', 'wbia')
         module = module.replace('sklearn.preprocessing.label', 'sklearn.preprocessing')
         name = name.replace('ibeis', 'wbia')
+
+        module = module.replace('sklearn.ensemble.forest', 'sklearn.ensemble')
+        module = module.replace('sklearn.tree.tree', 'sklearn.tree')
+        module = module.replace('sklearn.preprocessing.label', 'sklearn.preprocessing')
+
         return super(FixRenamedUnpickler, self).find_class(module, name)
 
 
