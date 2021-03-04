@@ -52,20 +52,6 @@ def next_counter(start=0, step=1):
     return next_
 
 
-def evaluate_generator(iter_):
-    """
-    for evaluating each item in a generator and ignoring output
-    """
-    for _ in iter_:  # NOQA
-        pass
-    # TODO: check if faster
-    # try:
-    #    while True:
-    #        six.next(iter_)
-    # except (RuntimeError, StopIteration):
-    #    pass
-
-
 def itake_column(list_, colx):
     """ iterator version of get_list_column """
     if isinstance(colx, list):
@@ -135,7 +121,7 @@ def iter_window(iterable, size=2, step=1, wrap=False):
         for count, iter_ in enumerate(iter_list[1:], start=1):
             for _ in range(count):
                 six.next(iter_)
-    except (RuntimeError, StopIteration):
+    except StopIteration:
         return iter(())
     else:
         _window_iter = zip(*iter_list)
@@ -241,7 +227,7 @@ def itertwo(iterable, wrap=False):
         iter2 = it.cycle(iter2)
     try:
         six.next(iter2)
-    except (RuntimeError, StopIteration):
+    except StopIteration:
         return iter(())
     else:
         return zip(iter1, iter2)
@@ -523,8 +509,8 @@ def interleave(args):
     for iter_ in cycle_iter:
         try:
             yield six.next(iter_)
-        except (RuntimeError, StopIteration):
-            return
+        except StopIteration:
+            pass
 
 
 def and_iters(*args):

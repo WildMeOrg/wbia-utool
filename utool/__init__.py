@@ -1105,7 +1105,6 @@ if DOELSE:
     from utool.util_iter import (
         and_iters,
         ensure_iterable,
-        evaluate_generator,
         ichunk_slices,
         ichunks,
         ichunks_cycle,

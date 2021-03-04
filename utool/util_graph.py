@@ -1761,7 +1761,7 @@ def bfs_multi_edges(G, source, reverse=False, keys=True, data=False):
             if child not in visited_nodes:
                 visited_nodes.add(child)
                 queue.append((child, edges_iter(child)))
-        except (RuntimeError, StopIteration):
+        except StopIteration:
             queue.popleft()
 
 
@@ -1799,7 +1799,7 @@ def dfs_conditional(G, source, state, can_cross):
                     yield child
                     visited.add(child)
                     stack.append((child, iter(G[child]), new_state))
-        except (RuntimeError, StopIteration):
+        except StopIteration:
             stack.pop()
 
 

@@ -77,7 +77,7 @@ def roundrobin(*iterables):
         try:
             for next in nexts:
                 yield next()
-        except (RuntimeError, StopIteration):
+        except StopIteration:
             pending -= 1
             nexts = cycle(islice(nexts, pending))
 
