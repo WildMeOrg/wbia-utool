@@ -969,7 +969,7 @@ class InteractivePrompt(object):
     def loop(self):
         @self.register((['quit', 'q'], ''))
         def quit_action():
-            raise StopIteration
+            return
 
         while True:
             ans = self.prompt()
@@ -1153,7 +1153,7 @@ class InteractiveIter(object):
 
         # Handle standard actions
         if ans in iiter.action_keys['quit']:
-            raise StopIteration()
+            return
         elif ans in iiter.action_keys['prev']:
             iiter.index -= 1
         elif ans in iiter.action_keys['next']:

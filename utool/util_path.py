@@ -1181,6 +1181,7 @@ def iglob(
             assert (
                 dpath.find(_) == -1
             ), 'warning: pattern _=%r in dpath, but a pattern was specified' % (_,)
+
     if isinstance(pattern, list):
         # overload pattern with list
         pattern_list = pattern
@@ -1200,7 +1201,8 @@ def iglob(
         )
         for item in util_iter.iflatten(subiters):
             yield item
-        raise StopIteration
+        return
+
     if kwargs.get('verbose', False):
         print('[iglob] pattern = %r' % (pattern,))
         print('[iglob] dpath = %r' % (dpath,))
