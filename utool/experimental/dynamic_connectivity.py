@@ -34,7 +34,7 @@ def euler_tour_dfs(G, source=None):
                     yielder += [parent]
                     visited.add(child)
                     stack.append((child, iter(G[child])))
-            except StopIteration:
+            except (RuntimeError, StopIteration):
                 if stack:
                     last = stack[-1]
                     yielder += [last[0]]

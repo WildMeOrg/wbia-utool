@@ -760,9 +760,7 @@ class ProgressIter(object):
                         # executed the body implicitly in the yeild....  so it is
                         # ambiguous. In the second case 0 will be executed twice.
                         self.prog_hook(self.count, length)
-        except StopIteration:
-            pass
-        except RuntimeError:
+        except (RuntimeError, StopIteration):
             pass
 
         if self.prehack:

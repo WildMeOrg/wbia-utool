@@ -2183,7 +2183,7 @@ def sample_zip(items_list, num_samples, allow_overflow=False, per_bin=1):
     else:
         try:
             samples_iter.next()
-        except StopIteration:
+        except (RuntimeError, StopIteration):
             pass
         else:
             raise AssertionError('Overflow occured')

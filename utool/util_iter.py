@@ -62,7 +62,7 @@ def evaluate_generator(iter_):
     # try:
     #    while True:
     #        six.next(iter_)
-    # except StopIteration:
+    # except (RuntimeError, StopIteration):
     #    pass
 
 
@@ -135,7 +135,7 @@ def iter_window(iterable, size=2, step=1, wrap=False):
         for count, iter_ in enumerate(iter_list[1:], start=1):
             for _ in range(count):
                 six.next(iter_)
-    except StopIteration:
+    except (RuntimeError, StopIteration):
         return iter(())
     else:
         _window_iter = zip(*iter_list)
@@ -241,7 +241,7 @@ def itertwo(iterable, wrap=False):
         iter2 = it.cycle(iter2)
     try:
         six.next(iter2)
-    except StopIteration:
+    except (RuntimeError, StopIteration):
         return iter(())
     else:
         return zip(iter1, iter2)
@@ -523,7 +523,7 @@ def interleave(args):
     for iter_ in cycle_iter:
         try:
             yield six.next(iter_)
-        except StopIteration:
+        except (RuntimeError, StopIteration):
             return
 
 
