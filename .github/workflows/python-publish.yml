@@ -27,12 +27,13 @@ jobs:
 
       - name: Build wheel
         run: |
-          pip install wheel
-          pip wheel -w wheelhouse .
+          pip install --upgrade pip
+          pip install build
+          python -m build --wheel --outdir dist/ .
 
       - uses: actions/upload-artifact@v2
         with:
-          path: ./wheelhouse/*.whl
+          path: ./dist/*.whl
 
   build_sdist:
     name: Build source distribution
@@ -47,12 +48,13 @@ jobs:
 
       - name: Build sdist
         run: |
-          pip install scikit-build
-          python setup.py sdist
+          pip install --upgrade pip
+          pip install build
+          python -m build --sdist --outdir dist/ .
 
       - uses: actions/upload-artifact@v2
         with:
-          path: dist/*.tar.gz
+          path: ./dist/*.tar.gz
 
   upload_pypi:
     needs: [build_wheels, build_sdist]
@@ -69,5 +71,4 @@ jobs:
         with:
           user: __token__
           password: ${{ secrets.PYPI_PASSWORD }}
-          verify_metadata: false
           # To test: repository_url: https://test.pypi.org/legacy/
