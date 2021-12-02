@@ -520,7 +520,7 @@ def get_argval(
                             sentinal = '##COM&&'
                             changed = [
                                 (block[0], block[1].replace(',', sentinal))
-                                if block[0] == 'nonNested'
+                                if block[0] in ['nonNested', 'ITEM']
                                 else block
                                 for block in blocks
                             ]

@@ -478,22 +478,18 @@ def parse_nestings2(string, nesters=['()', '[]', '<>', "''", '""'], escape='\\')
 
     def as_tagged(parent, doctag=None):
         """Returns the parse results as XML. Tags are created for tokens and lists that have defined results names."""
-        namedItems = dict(
-            (v[1], k)
-            for (k, vlist) in parent._ParseResults__tokdict.items()
-            for v in vlist
-        )
+        namedItems = dict(parent)
         # collapse out indents if formatting is not desired
         parentTag = None
         if doctag is not None:
             parentTag = doctag
         else:
-            if parent._ParseResults__name:
-                parentTag = parent._ParseResults__name
+            if parent.get_name():
+                parentTag = parent.get_name()
         if not parentTag:
             parentTag = 'ITEM'
         out = []
-        for i, res in enumerate(parent._ParseResults__toklist):
+        for i, res in enumerate(parent):
             if isinstance(res, pp.ParseResults):
                 if i in namedItems:
                     child = as_tagged(res, namedItems[i])
@@ -507,7 +503,7 @@ def parse_nestings2(string, nesters=['()', '[]', '<>', "''", '""'], escape='\\')
                     resTag = namedItems[i]
                 if not resTag:
                     resTag = 'ITEM'
-                child = (resTag, pp._ustr(res))
+                child = (resTag, res)
                 out += [child]
         return (parentTag, out)
 
@@ -644,22 +640,18 @@ def parse_nestings(string, only_curl=False):
 
     def as_tagged(parent, doctag=None):
         """Returns the parse results as XML. Tags are created for tokens and lists that have defined results names."""
-        namedItems = dict(
-            (v[1], k)
-            for (k, vlist) in parent._ParseResults__tokdict.items()
-            for v in vlist
-        )
+        namedItems = dict(parent)
         # collapse out indents if formatting is not desired
         parentTag = None
         if doctag is not None:
             parentTag = doctag
         else:
-            if parent._ParseResults__name:
-                parentTag = parent._ParseResults__name
+            if parent.get_name():
+                parentTag = parent.get_name()
         if not parentTag:
             parentTag = 'ITEM'
         out = []
-        for i, res in enumerate(parent._ParseResults__toklist):
+        for i, res in enumerate(parent):
             if isinstance(res, pp.ParseResults):
                 if i in namedItems:
                     child = as_tagged(res, namedItems[i])
@@ -673,7 +665,7 @@ def parse_nestings(string, only_curl=False):
                     resTag = namedItems[i]
                 if not resTag:
                     resTag = 'ITEM'
-                child = (resTag, pp._ustr(res))
+                child = (resTag, res)
                 out += [child]
         return (parentTag, out)
 
@@ -782,25 +774,21 @@ def parse_cfgstr3(string, debug=None):
 
     def as_tagged(parent, doctag=None, namedItemsOnly=False):
         """Returns the parse results as XML. Tags are created for tokens and lists that have defined results names."""
-        namedItems = dict(
-            (v[1], k)
-            for (k, vlist) in parent._ParseResults__tokdict.items()
-            for v in vlist
-        )
+        namedItems = dict(parent)
         # collapse out indents if formatting is not desired
         parentTag = None
         if doctag is not None:
             parentTag = doctag
         else:
-            if parent._ParseResults__name:
-                parentTag = parent._ParseResults__name
+            if parent.get_name():
+                parentTag = parent.get_name()
         if not parentTag:
             if namedItemsOnly:
                 return ''
             else:
                 parentTag = 'ITEM'
         out = []
-        for i, res in enumerate(parent._ParseResults__toklist):
+        for i, res in enumerate(parent):
             if isinstance(res, pp.ParseResults):
                 if i in namedItems:
                     child = as_tagged(
@@ -819,7 +807,7 @@ def parse_cfgstr3(string, debug=None):
                         continue
                     else:
                         resTag = 'ITEM'
-                child = (resTag, pp._ustr(res))
+                child = (resTag, res)
                 out += [child]
         return (parentTag, out)
 
@@ -885,7 +873,7 @@ def parse_cfgstr3(string, debug=None):
         if debug_:
             print('string = %r' % (string,))
             print('tokens List: ' + ut.repr3(tokens.asList()))
-            print('tokens XML: ' + tokens.asXML())
+            print('tokens XML: ' + tokens.asXML)
         parsed_blocks = as_tagged(tokens)[1]
         if debug_:
             print('PARSED_BLOCKS = ' + ut.repr3(parsed_blocks, nl=1))

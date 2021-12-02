@@ -486,14 +486,6 @@ def interleave(args):
     Args:
         args (tuple): tuple of lists to interleave
 
-    SeeAlso:
-        You may actually be better off doing something like this:
-            a, b, = args
-            ut.flatten(ut.bzip(a, b))
-
-            ut.flatten(ut.bzip([1, 2, 3], ['-']))
-            [1, '-', 2, '-', 3, '-']
-
     Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_iter import *  # NOQA
@@ -504,13 +496,8 @@ def interleave(args):
         >>> print(result)
         [1, 'A', 2, 'B', 3, 'C', 4, 'D', 5, 'E']
     """
-    arg_iters = list(map(iter, args))
-    cycle_iter = it.cycle(arg_iters)
-    for iter_ in cycle_iter:
-        try:
-            yield six.next(iter_)
-        except StopIteration:
-            pass
+    from utool.util_list import flatten
+    return flatten(zip(*args))
 
 
 def and_iters(*args):
