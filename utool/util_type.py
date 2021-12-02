@@ -53,9 +53,9 @@ try:
     VALID_INT_TYPES = (
         IntType,
         LongType,
-        np.typeDict['int64'],
-        np.typeDict['int32'],
-        np.typeDict['uint8'],
+        np.sctypeDict['int64'],
+        np.sctypeDict['int32'],
+        np.sctypeDict['uint8'],
         np.dtype('int32'),
         np.dtype('uint8'),
         np.dtype('int64'),
@@ -63,9 +63,9 @@ try:
 
     VALID_FLOAT_TYPES = (
         FloatType,
-        np.typeDict['float64'],
-        np.typeDict['float32'],
-        np.typeDict['float16'],
+        np.sctypeDict['float64'],
+        np.sctypeDict['float32'],
+        np.sctypeDict['float16'],
         np.dtype('float64'),
         np.dtype('float32'),
         np.dtype('float16'),
@@ -73,7 +73,7 @@ try:
 
     VALID_BOOL_TYPES = (BooleanType, np.bool_)
     LISTLIKE_TYPES = (tuple, list, np.ndarray)
-    NUMPY_TYPE_TUPLE = tuple([np.ndarray] + list(set(np.typeDict.values())))
+    NUMPY_TYPE_TUPLE = tuple([np.ndarray] + list(set(np.sctypeDict.values())))
 
     try:
         import pandas as pd  # NOQA

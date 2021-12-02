@@ -3275,7 +3275,7 @@ def format_multiple_paragraph_sentences(text, debug=False, **kwargs):
         '\n? *\\\\begin{[^}]*}\n',
         '\n? *\\\\item *\n',
         '\n? *\\\\noindent *\n',
-        '\n? *\\\\ImageCommand[^}]*}[^}]*}{\n',
+        r'\n? *\\\\ImageCommand[^}]*}[^}]*}{\n',
         '\n? *\\\\end{[^}]*}\n?',
         '\n}{',
         # docstr stuff

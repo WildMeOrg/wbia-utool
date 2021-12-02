@@ -2497,7 +2497,7 @@ def search_in_dirs(
     Example:
         >>> # DISABLE_DOCTEST
         >>> import utool as ut
-        >>> fname = 'Inno Setup 5\ISCC.exe'
+        >>> fname = 'Inno Setup 5\\ISCC.exe'
         >>> search_dpaths = ut.get_install_dirs()
         >>> shortcircuit = True
         >>> fpath = ut.search_in_dirs(fname, search_dpaths, shortcircuit)

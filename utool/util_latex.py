@@ -496,7 +496,7 @@ def make_score_tabular(
         >>> from utool.util_latex import *  # NOQA
         >>> import utool as ut
         >>> row_lbls = ['config1', 'config2']
-        >>> col_lbls = ['score \leq 1', 'metric2']
+        >>> col_lbls = ['score \\leq 1', 'metric2']
         >>> values = np.array([[1.2, 2], [3.2, 4]])
         >>> title = 'title'
         >>> out_of = 10
@@ -513,7 +513,7 @@ def make_score_tabular(
         >>> from utool.util_latex import *  # NOQA
         >>> import utool as ut
         >>> row_lbls = ['config1']
-        >>> col_lbls = ['score \leq 1', 'metric2']
+        >>> col_lbls = ['score \\leq 1', 'metric2']
         >>> values = np.array([[1.2, 2]])
         >>> title = 'title'
         >>> out_of = 10
@@ -530,7 +530,7 @@ def make_score_tabular(
         >>> from utool.util_latex import *  # NOQA
         >>> import utool as ut
         >>> row_lbls = ['config1', 'config2']
-        >>> col_lbls = ['score \leq 1', 'metric2', 'foobar']
+        >>> col_lbls = ['score \\leq 1', 'metric2', 'foobar']
         >>> multicol_lbls = [('spam', 1), ('eggs', 2)]
         >>> values = np.array([[1.2, 2, -3], [3.2, 4, -2]])
         >>> title = 'title'
