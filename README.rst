@@ -54,9 +54,9 @@ Installation can now be done via pypi
     pip install wbia-utool
 
 
-.. |Build| image:: https://img.shields.io/github/workflow/status/WildbookOrg/wbia-utool/Build%20and%20upload%20to%20PyPI/master
-    :target: https://github.com/WildbookOrg/wbia-utool/actions?query=branch%3Amaster+workflow%3A%22Build+and+upload+to+PyPI%22
-    :alt: Build and upload to PyPI (master)
+.. |Build| image:: https://img.shields.io/github/workflow/status/WildbookOrg/wbia-utool/Build%20and%20upload%20to%20PyPI/main
+    :target: https://github.com/WildbookOrg/wbia-utool/actions?query=branch%3Amain+workflow%3A%22Build+and+upload+to+PyPI%22
+    :alt: Build and upload to PyPI (main)
 
 .. |Pypi| image:: https://img.shields.io/pypi/v/wbia-utool.svg
    :target: https://pypi.python.org/pypi/wbia-utool
