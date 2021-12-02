@@ -786,6 +786,7 @@ def unixtime_to_datetimestr(unixtime, timefmt='%Y/%m/%d %H:%M:%S', isutc=True):
     TODO: ranme to datetimestr
     """
     try:
+        unixtime = int(unixtime)
         if unixtime == -1:
             return 'NA'
         if unixtime is None:
