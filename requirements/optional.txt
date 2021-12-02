@@ -4,7 +4,6 @@ boto
 delorean
 h5py
 lru-dict
-tqdm
 numpy
 objgraph
 pyfiglet
@@ -13,4 +12,5 @@ pyperclip
 setproctitle
 sphinx
 sphinxcontrib-napoleon
+tqdm
 xxhash
