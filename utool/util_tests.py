@@ -1838,7 +1838,7 @@ def get_module_doctest_tup(
 
 
 def doctest_was_requested():
-    """ lets a  __main__ codeblock know that util_test should do its thing """
+    """lets a  __main__ codeblock know that util_test should do its thing"""
     # FIXME; does not handle positinal doctest requests
     valid_prefix_list = ['--exec-', '--test-']
     return '--tf' in sys.argv or any(

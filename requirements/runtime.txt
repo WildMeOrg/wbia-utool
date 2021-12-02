@@ -1,17 +1,16 @@
 delorean
-futures >= 1.0.0 ; python_version<'3.0'
+futures
 gitpython
-
-lockfile >= 0.10.2 ; python_version<'3.0'
-
-networkx == 2.2 ; python_version<'3.0'
-networkx >= 2.2.0 ; python_version>'3.0'
+lockfile
+networkx
 numpy
+opencv-contrib-python-headless
+ordered-set
 pandas
-parse >= 1.6.6
+parse
 pint
 psutil
 pyparsing
 requests
-six >= 1.10.0
+six
 ubelt

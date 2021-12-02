@@ -597,7 +597,7 @@ def inject_func_as_property(self, func, method_name=None, class_=None):
 
 
 def inject_func_as_unbound_method(class_, func, method_name=None):
-    """ This is actually quite simple """
+    """This is actually quite simple"""
     if method_name is None:
         method_name = get_funcname(func)
     setattr(class_, method_name, func)
@@ -763,7 +763,7 @@ class ReloadingMetaclass(type):
 
 
 def reloading_meta_metaclass_factory(BASE_TYPE=type):
-    """ hack for pyqt """
+    """hack for pyqt"""
 
     class ReloadingMetaclass2(BASE_TYPE):
         def __init__(metaself, name, bases, dct):
@@ -913,7 +913,7 @@ def compare_instance(op, self, other):
 
 
 def get_comparison_methods():
-    """ makes methods for >, <, =, etc... """
+    """makes methods for >, <, =, etc..."""
     method_list = []
 
     def _register(func):

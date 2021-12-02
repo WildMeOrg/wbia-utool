@@ -112,7 +112,7 @@ def build_pyo(project_dirs):
 
 
 def setup_chmod(setup_fpath, setup_dir, chmod_patterns):
-    """ Gives files matching pattern the same chmod flags as setup.py """
+    """Gives files matching pattern the same chmod flags as setup.py"""
     # st_mode = os.stat(setup_fpath).st_mode
     st_mode = 33277
     for pattern in chmod_patterns:
@@ -122,7 +122,7 @@ def setup_chmod(setup_fpath, setup_dir, chmod_patterns):
 
 
 def assert_in_setup_repo(setup_fpath, name=''):
-    """ pass in __file__ from setup.py """
+    """pass in __file__ from setup.py"""
     setup_dir, setup_fname = split(setup_fpath)
     cwd = os.getcwd()
     # repo_dname = split(setup_dir)[1]
@@ -256,7 +256,7 @@ def find_packages(recursive=True, maxdepth=None):
 
 
 def get_cmdclass():
-    """ DEPRICATE """
+    """DEPRICATE"""
     try:
         from Cython.Distutils import build_ext
 
@@ -626,7 +626,7 @@ def parse_package_for_version(name):
     if not exists(init_fpath):
         raise AssertionError(version_errmsg)
     val_regex = util_regex.named_field('version', '[0-9a-zA-Z.]+')
-    regexstr = '__version__ *= *[\'"]' + val_regex
+    regexstr = "__version__ *= *['\"]" + val_regex
 
     def parse_version(line):
         # Helper
@@ -647,7 +647,7 @@ def parse_package_for_version(name):
 
 
 def __infer_setup_kwargs(module, kwargs):
-    """ Implicitly build kwargs based on standard info """
+    """Implicitly build kwargs based on standard info"""
     # Get project name from the module
     # if 'name' not in kwargs:
     #    kwargs['name'] = module.__name__

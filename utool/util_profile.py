@@ -223,7 +223,7 @@ def clean_line_profile_text(text):
 
 
 def clean_lprof_file(input_fname, output_fname=None):
-    """ Reads a .lprof file and cleans it """
+    """Reads a .lprof file and cleans it"""
     # Read the raw .lprof text dump
     text = ut.read_from(input_fname)
     # Sort and clean the text

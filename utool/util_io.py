@@ -33,7 +33,7 @@ __READ_TAIL_N__ = 3
 
 
 def load_data(fpath, **kwargs):
-    """ More generic interface to load data """
+    """More generic interface to load data"""
     ext = splitext(fpath)[1]
     if ext in ['.pickle', '.cPkl', '.pkl']:
         return load_cPkl(fpath, **kwargs)
@@ -50,7 +50,7 @@ def load_data(fpath, **kwargs):
 
 
 def save_data(fpath, data, **kwargs):
-    """ More generic interface to write data """
+    """More generic interface to write data"""
     ext = splitext(fpath)[1]
     if ext in ['.pickle', '.cPkl', '.pkl']:
         return save_cPkl(fpath, data, **kwargs)
@@ -260,7 +260,7 @@ def load_json(fpath):
 
 
 def save_cPkl(fpath, data, verbose=None, n=None):
-    """ Saves data to a pickled file with optional verbosity """
+    """Saves data to a pickled file with optional verbosity"""
     verbose = _rectify_verb_write(verbose)
     if verbose:
         print('[util_io] * save_cPkl(%r, data)' % (util_path.tail(fpath, n=n),))

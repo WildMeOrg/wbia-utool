@@ -39,7 +39,7 @@ __REGISTERED_ARGS__ = []
 
 
 def aug_sysargv(cmdstr):
-    """ DEBUG FUNC modify argv to look like you ran a command """
+    """DEBUG FUNC modify argv to look like you ran a command"""
     import shlex
 
     argv = shlex.split(cmdstr)
@@ -48,7 +48,7 @@ def aug_sysargv(cmdstr):
 
 
 def get_module_verbosity_flags(*labels):
-    """ checks for standard flags for enableing module specific verbosity """
+    """checks for standard flags for enableing module specific verbosity"""
     verbose_prefix_list = ['--verbose-', '--verb', '--verb-']
     veryverbose_prefix_list = ['--veryverbose-', '--veryverb', '--veryverb-']
     verbose_flags = tuple(
@@ -71,7 +71,7 @@ get_verbflag = get_module_verbosity_flags
 
 
 def reset_argrecord():
-    """ forgets about the args already parsed """
+    """forgets about the args already parsed"""
     global __REGISTERED_ARGS__
     __REGISTERED_ARGS__ = []
 
@@ -748,7 +748,7 @@ def switch_sanataize(switch):
 
 
 class ArgumentParser2(object):
-    """ Wrapper around argparse.ArgumentParser with convinence functions """
+    """Wrapper around argparse.ArgumentParser with convinence functions"""
 
     def __init__(self, parser):
         self.parser = parser

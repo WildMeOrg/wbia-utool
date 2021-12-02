@@ -39,7 +39,7 @@ else:
 
 
 def overrideable_partial(func, *args, **default_kwargs):
-    """ like partial, but given kwargs can be overrideden at calltime """
+    """like partial, but given kwargs can be overrideden at calltime"""
     import functools
 
     @functools.wraps(func)
@@ -94,7 +94,7 @@ def _check_clipboard_backend(backend):
 
 
 def set_clipboard(text):
-    """ alias for copy_text_to_clipboard """
+    """alias for copy_text_to_clipboard"""
     return copy_text_to_clipboard(text)
 
 
@@ -1290,7 +1290,7 @@ def grace_period(msg='', seconds=10):
 
 
 def delayed_retry_gen(delay_schedule=[0.1, 1, 10], msg=None, timeout=None, raise_=True):
-    """ template code for a infinte retry loop """
+    """template code for a infinte retry loop"""
     import utool as ut
     import time
 
@@ -1900,7 +1900,7 @@ def get_object_nbytes(
 
 
 def print_object_size_tree(obj, lbl='obj', maxdepth=None):
-    """ Needs work """
+    """Needs work"""
     from utool import util_str
     from utool import util_type
 
@@ -2253,7 +2253,7 @@ def is_developer(mycomputers=None):
 
 
 def iup():
-    """ shortcut when pt is not imported """
+    """shortcut when pt is not imported"""
     try:
         import wbia.plottool as pt
     except ImportError:
@@ -3033,7 +3033,7 @@ class ColumnLists(NiceRepr):
         self._key_to_list = ut.order_dict_by(self._key_to_list, keys)
 
     def take_column(self, keys, *extra_keys):
-        """ Takes a subset of columns """
+        """Takes a subset of columns"""
         import utool as ut
 
         keys = ut.ensure_iterable(keys) + list(extra_keys)
@@ -3042,7 +3042,7 @@ class ColumnLists(NiceRepr):
         return newself
 
     def take(self, idxs):
-        """ Takes a subset of rows """
+        """Takes a subset of rows"""
         import utool as ut
 
         if False:
@@ -3067,7 +3067,7 @@ class ColumnLists(NiceRepr):
         return newself
 
     def remove(self, idxs):
-        """ Returns a copy with idxs removed """
+        """Returns a copy with idxs removed"""
         import utool as ut
 
         keep_idxs = ut.index_complement(idxs, len(self))
@@ -3094,7 +3094,7 @@ class ColumnLists(NiceRepr):
         return unique_labels, groupxs
 
     def group_items(self, labels):
-        """ group as dict """
+        """group as dict"""
         import utool as ut
 
         unique_labels, groups = self.group(labels)
@@ -3102,7 +3102,7 @@ class ColumnLists(NiceRepr):
         return label_to_group
 
     def group(self, labels):
-        """ group as list """
+        """group as list"""
         unique_labels, groupxs = self.group_indicies(labels)
         groups = [self.take(idxs) for idxs in groupxs]
         return unique_labels, groups
@@ -3137,7 +3137,7 @@ class ColumnLists(NiceRepr):
         return multis
 
     def cast_column(self, keys, func):
-        """ like map column but applies values inplace """
+        """like map column but applies values inplace"""
         import utool as ut
 
         for key in ut.ensure_iterable(keys):
@@ -3464,7 +3464,7 @@ class Shortlist(NiceRepr):
 
 
 def _heappush_max(heap, item):
-    """ why is this not in heapq """
+    """why is this not in heapq"""
     heap.append(item)
     heapq._siftdown_max(heap, 0, len(heap) - 1)
 

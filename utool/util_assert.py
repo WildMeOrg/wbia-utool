@@ -146,7 +146,7 @@ assert_eq_len = assert_same_len
 
 
 def lists_eq(list1, list2):
-    """ recursive """
+    """recursive"""
     if len(list1) != len(list2):
         return False
     for count, (item1, item2) in enumerate(zip(list1, list2)):

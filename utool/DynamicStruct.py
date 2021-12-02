@@ -6,7 +6,7 @@ from utool import Printable
 
 
 class DynStruct(Printable.AbstractPrintable):
-    """ dynamically add and remove members """
+    """dynamically add and remove members"""
 
     def __init__(self, child_exclude_list=[], copy_dict=None, copy_class=None):
         super(DynStruct, self).__init__(child_print_exclude=child_exclude_list)
@@ -62,7 +62,7 @@ class DynStruct(Printable.AbstractPrintable):
             self[key] = val
 
     def to_dict(self):
-        """Converts dynstruct to a dictionary.  """
+        """Converts dynstruct to a dictionary."""
         dyn_dict = {}
         for (key, val) in six.iteritems(self.__dict__):
             if key not in self._printable_exclude:

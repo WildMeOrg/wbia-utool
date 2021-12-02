@@ -814,7 +814,7 @@ def unixtime_to_datetimeobj(unixtime, isutc=True):
 
 
 def unixtime_to_timedelta(unixtime_diff):
-    """ alias for get_unix_timedelta """
+    """alias for get_unix_timedelta"""
     return get_unix_timedelta(unixtime_diff)
 
 

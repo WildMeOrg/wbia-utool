@@ -437,7 +437,7 @@ def get_type(var):
 
 
 def is_type(var, valid_types):
-    """ Checks for types accounting for numpy """
+    """Checks for types accounting for numpy"""
     # printDBG('checking type var=%r' % (var,))
     # var_type = type(var)
     # printDBG('type is type(var)=%r' % (var_type,))

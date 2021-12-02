@@ -574,7 +574,7 @@ getter_1toM = accepts_scalar_input_vector_output
 
 
 def accepts_numpy(func):
-    """ Allows the first input to be a numpy array and get result in numpy form """
+    """Allows the first input to be a numpy array and get result in numpy form"""
     # @ignores_exc_tb
     # @wraps(func)
     def wrp_accepts_numpy(self, input_, *args, **kwargs):
@@ -645,7 +645,7 @@ def memoize_single(func):
 
 
 def memoize_zero(func):
-    """ Memoization decorator for a function taking no arguments """
+    """Memoization decorator for a function taking no arguments"""
     wrp_memoize_single = memoize_single(func)
 
     def wrp_memoize_zero():

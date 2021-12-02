@@ -1644,7 +1644,7 @@ class ParamInfoBool(ParamInfo):
 
 @six.add_metaclass(util_class.ReloadingMetaclass)
 class ParamInfoList(object):
-    """ small class for ut.Pref-less configurations """
+    """small class for ut.Pref-less configurations"""
 
     def __init__(self, name, param_info_list=[], constraint_func=None, hideif=None):
         self.name = name
@@ -1672,12 +1672,12 @@ class ParamInfoList(object):
         return [pi.varname for pi in self.param_info_list]
 
     def get_varydict(self):
-        """ for gridsearch """
+        """for gridsearch"""
         varied_dict = {pi.varname: pi.varyvals for pi in self.param_info_list}
         return varied_dict
 
     def get_slicedict(self):
-        """ for gridsearch """
+        """for gridsearch"""
         slice_dict = {
             pi.varname: pi.varyslice
             for pi in self.param_info_list
@@ -1688,14 +1688,14 @@ class ParamInfoList(object):
         return slice_dict
 
     def get_grid_basis(self):
-        """ DEPRICATE """
+        """DEPRICATE"""
         grid_basis = [
             DimensionBasis(pi.varname, pi.varyvals) for pi in self.param_info_list
         ]
         return grid_basis
 
     def get_gridsearch_input(self, defaultslice=slice(0, 1)):
-        """ for gridsearch """
+        """for gridsearch"""
         varied_dict = self.get_varydict()
         slice_dict = self.get_slicedict()
         constraint_func = self.constraint_func
@@ -1759,7 +1759,7 @@ class GridSearch(object):
         gridsearch.score_lbls = ['score_diff', 'tp_score', 'tn_score']
 
     def append_result(gridsearch, tp_score, tn_score):
-        """ for use in iteration """
+        """for use in iteration"""
         diff = tp_score - tn_score
         gridsearch.score_diff_list.append(diff)
         gridsearch.tp_score_list.append(tp_score)
@@ -1773,7 +1773,7 @@ class GridSearch(object):
         return gridsearch.num_configs
 
     def get_score_list_and_lbls(gridsearch):
-        """ returns result data """
+        """returns result data"""
         score_list = [
             gridsearch.score_diff_list,
             gridsearch.tp_score_list,
@@ -1783,7 +1783,7 @@ class GridSearch(object):
         return score_list, score_lbls
 
     def get_param_list_and_lbls(gridsearch):
-        """ returns input data """
+        """returns input data"""
         import utool as ut
 
         param_name_list = ut.get_list_column(gridsearch.grid_basis, 0)
@@ -1805,7 +1805,7 @@ class GridSearch(object):
         return param_label_list
 
     def get_sorted_columns_and_labels(gridsearch, score_lbl='score_diff'):
-        """ returns sorted input and result data """
+        """returns sorted input and result data"""
         import utool as ut
 
         # Input Parameters
@@ -2144,7 +2144,7 @@ def get_cfgdict_list_subset(cfgdict_list, keys):
 
 
 def constrain_cfgdict_list(cfgdict_list_, constraint_func):
-    """ constrains configurations and removes duplicates """
+    """constrains configurations and removes duplicates"""
     cfgdict_list = []
     for cfg_ in cfgdict_list_:
         cfg = cfg_.copy()
@@ -2155,7 +2155,7 @@ def constrain_cfgdict_list(cfgdict_list_, constraint_func):
 
 
 def make_cfglbls(cfgdict_list, varied_dict):
-    """  Show only the text in labels that mater from the cfgdict """
+    """Show only the text in labels that mater from the cfgdict"""
     import textwrap
 
     wrapper = textwrap.TextWrapper(width=50)
@@ -2200,7 +2200,7 @@ def interact_gridsearch_result_images(
     scorelbl='score',
     onclick_func=None,
 ):
-    """ helper function for visualizing results of gridsearch """
+    """helper function for visualizing results of gridsearch"""
     assert callable(show_result_func), 'NEED FUNCTION GOT: %r' % (show_result_func,)
 
     import utool as ut

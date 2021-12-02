@@ -120,7 +120,7 @@ def is_running_as_root():
 
 
 def locate_path(dname, recurse_down=True):
-    """ Search for a path """
+    """Search for a path"""
     tried_fpaths = []
     root_dir = os.getcwd()
     while root_dir is not None:

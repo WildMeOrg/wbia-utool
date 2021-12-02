@@ -7,10 +7,13 @@ on: push
 
 jobs:
   lint:
-    runs-on: ubuntu-latest
+    name: Lint on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        python-version: [3.6, 3.7, 3.8]
+        os: [ubuntu-latest]
+        python-version: [3.8]
 
     steps:
       # Checkout and env setup
@@ -40,11 +43,14 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --statistics
 
   test:
+    name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      max-parallel: 4
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest] # Disable "macos-latest" for now
-        python-version: [3.6, 3.7, 3.8]
+        os: [ubuntu-latest, macos-latest]
+        python-version: [3.7, 3.8]
 
     steps:
       # Checkout and env setup

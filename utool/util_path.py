@@ -62,7 +62,7 @@ IMG_EXTENSIONS = set(__LOWER_EXTS + __UPPER_EXTS)
 
 
 def newcd(path):
-    """ DEPRICATE """
+    """DEPRICATE"""
     cwd = os.getcwd()
     os.chdir(path)
     return cwd
@@ -156,7 +156,7 @@ def truepath_relative(path, otherpath=None):
 
 
 def tail(fpath, n=2, trailing=True):
-    """ Alias for path_ndir_split """
+    """Alias for path_ndir_split"""
     return path_ndir_split(fpath, n=n, trailing=trailing)
 
 
@@ -253,7 +253,7 @@ def path_ndir_split(path_, n, force_unix=True, winroot='C:', trailing=True):
 
 
 def remove_file(fpath, verbose=None, ignore_errors=True, dryrun=False, quiet=QUIET):
-    """ Removes a file """
+    """Removes a file"""
     if verbose is None:
         verbose = not quiet
     if dryrun:
@@ -403,7 +403,7 @@ def remove_files_in_dir(
     dryrun=False,
     ignore_errors=False,
 ):
-    """ Removes files matching a pattern from a directory """
+    """Removes files matching a pattern from a directory"""
     if isinstance(fname_pattern_list, six.string_types):
         fname_pattern_list = [fname_pattern_list]
     if verbose > 2:
@@ -442,7 +442,7 @@ def delete(
     print_exists=True,
     ignore_errors=True,
 ):
-    """ Removes a file, directory, or symlink """
+    """Removes a file, directory, or symlink"""
     if verbose is None:
         verbose = VERBOSE
         if not QUIET:
@@ -482,7 +482,7 @@ def remove_existing_fpaths(
     print_caller=PRINT_CALLER,
     lbl='files',
 ):
-    """ checks existance before removing. then tries to remove exisint paths """
+    """checks existance before removing. then tries to remove exisint paths"""
     import utool as ut
 
     if print_caller:
@@ -697,7 +697,7 @@ def checkpath(path_, verbose=VERYVERBOSE, n=None, info=VERYVERBOSE):
 
 
 def ensurepath(path_, verbose=None):
-    """ DEPRICATE - alias - use ensuredir instead """
+    """DEPRICATE - alias - use ensuredir instead"""
     if verbose is None:
         verbose = VERYVERBOSE
     return ensuredir(path_, verbose=verbose)
@@ -952,7 +952,7 @@ def copy_all(src_dir, dest_dir, glob_str_list, recursive=False):
 def copy_list(
     src_list, dst_list, lbl='Copying', ioerr_ok=False, sherro_ok=False, oserror_ok=False
 ):
-    """ Copies all data and stat info """
+    """Copies all data and stat info"""
     # Feb - 6 - 2014 Copy function
     task_iter = zip(src_list, dst_list)
 
@@ -1287,12 +1287,12 @@ def num_images_in_dir(path):
 
 
 def fpath_has_imgext(fname):
-    """ returns true if a filename matches an image pattern """
+    """returns true if a filename matches an image pattern"""
     return fpath_has_ext(fname, IMG_EXTENSIONS)
 
 
 def fpath_has_ext(fname, exts, case_sensitive=False):
-    """ returns true if the filename has any of the given extensions """
+    """returns true if the filename has any of the given extensions"""
     fname_ = fname.lower() if not case_sensitive else fname
     if case_sensitive:
         ext_pats = ['*' + ext for ext in exts]
@@ -1564,7 +1564,7 @@ def get_module_subdir_list(module_fpath):
 
 
 def ls(path, pattern='*'):
-    """ like unix ls - lists all files and dirs in path"""
+    """like unix ls - lists all files and dirs in path"""
     path_iter = glob(path, pattern, recursive=False)
     return sorted(list(path_iter))
 
@@ -1587,7 +1587,7 @@ def ls_modulefiles(path, private=True, full=True, noext=False):
 
 
 def ls_moduledirs(path, private=True, full=True):
-    """ lists all dirs which are python modules in path """
+    """lists all dirs which are python modules in path"""
     dir_list = ls_dirs(path)
     module_dir_iter = filter(is_module_dir, dir_list)
     if not private:
@@ -1707,7 +1707,7 @@ ls_images = list_images
 
 
 def assertpath(path_, msg='', **kwargs):
-    """ Asserts that a patha exists """
+    """Asserts that a patha exists"""
     if NO_ASSERTS:
         return
     if path_ is None:
@@ -1722,7 +1722,7 @@ assert_exists = assertpath
 
 
 def pathsplit_full(path):
-    """ splits all directories in path into a list """
+    """splits all directories in path into a list"""
     return path.replace('\\', '/').split('/')
 
 
@@ -2533,7 +2533,7 @@ def search_in_dirs(
 
 
 def find_lib_fpath(libname, root_dir, recurse_down=True, verbose=False, debug=False):
-    """ Search for the library """
+    """Search for the library"""
 
     def get_lib_fname_list(libname):
         """

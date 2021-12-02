@@ -8,7 +8,7 @@ print, rrr, profile = util_inject.inject2(__name__)
 
 
 def get_tablenames(cur):
-    """ Conveinience: """
+    """Conveinience:"""
     cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
     tablename_list_ = cur.fetchall()
     tablename_list = [str(tablename[0]) for tablename in tablename_list_]
@@ -131,7 +131,7 @@ def get_table_num_rows(cur, tablename):
 
 
 def get_table_column(cur, tablename, colname):
-    """ Conveinience: """
+    """Conveinience:"""
     return get_table_rows(cur, tablename, colname)
 
 

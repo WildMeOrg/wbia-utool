@@ -25,7 +25,7 @@ def get_caller_lineno(N=0, strict=True):
 
 
 def get_caller_name(N=0, strict=True):
-    """ Standalone version of get_caller_name """
+    """Standalone version of get_caller_name"""
     if isinstance(N, (list, tuple)):
         name_list = []
         for N_ in N:

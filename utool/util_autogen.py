@@ -11,7 +11,7 @@ print, rrr, profile = util_inject.inject2(__name__)
 
 
 class PythonStatement(object):
-    """ Thin wrapper around a string representing executable python code """
+    """Thin wrapper around a string representing executable python code"""
 
     def __init__(self, stmt):
         self.stmt = stmt
@@ -707,7 +707,7 @@ def make_example_docstr(
     dependant_argnames = []  # deque()
 
     def append_dependant_argnames(argnames, dependant_argnames):
-        """ use hints to add known dependencies for certain argument inputs """
+        """use hints to add known dependencies for certain argument inputs"""
         for argname in argnames:
             # Check if argname just implies an import
             if argname in import_depends_map:

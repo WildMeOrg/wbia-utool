@@ -166,7 +166,7 @@ def theta_str(theta, taustr=TAUSTR, fmtstr='{coeff:,.1f}{taustr}'):
 
 
 def bbox_str(bbox, pad=4, sep=', '):
-    r""" makes a string from an integer bounding box """
+    r"""makes a string from an integer bounding box"""
     if bbox is None:
         return 'None'
     fmtstr = sep.join(['%' + six.text_type(pad) + 'd'] * 4)
@@ -174,7 +174,7 @@ def bbox_str(bbox, pad=4, sep=', '):
 
 
 def verts_str(verts, pad=1):
-    r""" makes a string from a list of integer verticies """
+    r"""makes a string from a list of integer verticies"""
     if verts is None:
         return 'None'
     fmtstr = ', '.join(
@@ -487,7 +487,7 @@ def packstr(
     wordsep=' ',
     remove_newlines=True,
 ):
-    """ alias for pack_into. has more up to date kwargs """
+    """alias for pack_into. has more up to date kwargs"""
     if not isinstance(instr, six.string_types):
         instr = repr(instr)
     if nlprefix is not None:
@@ -1382,7 +1382,7 @@ def repr2(obj_, **kwargs):
 
 
 def repr2_json(obj_, **kwargs):
-    """ hack for json reprs """
+    """hack for json reprs"""
     import utool as ut
 
     kwargs['trailing_sep'] = False
@@ -2389,7 +2389,7 @@ def quantstr(typestr, num, plural_suffix='s'):
 
 
 def msgblock(key, text, side='|'):
-    """ puts text inside a visual ascii block """
+    """puts text inside a visual ascii block"""
     blocked_text = ''.join(
         [' + --- ', key, ' ---\n']
         + [' ' + side + ' ' + line + '\n' for line in text.split('\n')]
@@ -2623,7 +2623,7 @@ def unformat_text_as_docstr(formated_text):
 
 
 def lorium_ipsum():
-    """ Standard testing string """
+    """Standard testing string"""
     ipsum_str = """
     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
     do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
@@ -2756,7 +2756,7 @@ def to_camel_case(underscore_case, mixed=False):
 
 
 def is_url(str_):
-    """ heuristic check if str is url formatted """
+    """heuristic check if str is url formatted"""
     return any(
         [
             str_.startswith('http://'),

@@ -617,7 +617,7 @@ def self_prodx(list_):
 
 
 def product_nonsame(list1, list2):
-    """ product of list1 and list2 where items are non equal """
+    """product of list1 and list2 where items are non equal"""
     for item1, item2 in itertools.product(list1, list2):
         if item1 != item2:
             yield (item1, item2)
@@ -928,7 +928,7 @@ def negative_minclamp_inplace(arr):
 
 
 def xywh_to_tlbr(bbox, img_wh):
-    """ converts xywh format to (tlx, tly, blx, bly) """
+    """converts xywh format to (tlx, tly, blx, bly)"""
     (img_w, img_h) = img_wh
     if img_w == 0 or img_h == 0:
         img_w = 1
@@ -948,7 +948,7 @@ def xywh_to_tlbr(bbox, img_wh):
 
 
 def item_hist(list_):
-    """ counts the number of times each item appears in the dictionary """
+    """counts the number of times each item appears in the dictionary"""
     dict_hist = {}
     # Insert each item into the correct group
     for item in list_:
@@ -972,7 +972,7 @@ def flatten_membership_mapping(uid_list, members_list):
 
 
 def get_phi():
-    """ Golden Ratio: phi = 1 / sqrt(5) / 2.0 = 1.61803398875 """
+    """Golden Ratio: phi = 1 / sqrt(5) / 2.0 = 1.61803398875"""
     # phi = (1.0 + sqrt(5)) / 2.0 = 1.61803398875
     # return phi
     return PHI
@@ -1097,7 +1097,7 @@ def enumerate_primes(max_prime=4100):
 
 
 def get_nth_prime(n, max_prime=4100, safe=True):
-    """ hacky but still brute force algorithm for finding nth prime for small tests """
+    """hacky but still brute force algorithm for finding nth prime for small tests"""
     if n <= 100:
         first_100_primes = (
             2,

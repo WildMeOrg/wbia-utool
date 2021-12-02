@@ -146,7 +146,7 @@ class Pref(PrefNode):
     # -------------------
     # Attribute Setters
     def toggle(self, key):
-        """ Toggles a boolean key """
+        """Toggles a boolean key"""
         val = self[key]
         assert isinstance(val, bool), 'key[%r] = %r is not a bool' % (key, val)
         self.pref_update(key, not val)
@@ -377,7 +377,7 @@ class Pref(PrefNode):
     asdict = to_dict
 
     def save(self):
-        """ Saves prefs to disk in dict format """
+        """Saves prefs to disk in dict format"""
         fpath = self.get_fpath()
         if fpath in ['', None]:
             if self._tree.parent is not None:
@@ -399,7 +399,7 @@ class Pref(PrefNode):
         return self._intern.fpath
 
     def load(self):
-        """ Read pref dict stored on disk. Overwriting current values. """
+        """Read pref dict stored on disk. Overwriting current values."""
         if VERBOSE_PREF:
             print('[pref.load()]')
             # if not os.path.exists(self._intern.fpath):
@@ -443,7 +443,7 @@ class Pref(PrefNode):
             return ret
 
     def full_name(self):
-        """ returns name all the way up the tree """
+        """returns name all the way up the tree"""
         if self._tree.parent is None:
             return self._intern.name
         return self._tree.parent.full_name() + '.' + self._intern.name
@@ -466,7 +466,7 @@ class Pref(PrefNode):
                 return _typestr
 
     def pref_update(self, key, new_val):
-        """ Changes a preference value and saves it to disk """
+        """Changes a preference value and saves it to disk"""
         print(
             'Update and save pref from: %s=%r, to: %s=%r'
             % (key, six.text_type(self[key]), key, six.text_type(new_val))
@@ -540,7 +540,7 @@ class Pref(PrefNode):
 
 
 def _qt_set_leaf_data(self, qvar):
-    """ Sets backend data using QVariants """
+    """Sets backend data using QVariants"""
     if VERBOSE_PREF:
         print('')
         print('+--- [pref.qt_set_leaf_data]')

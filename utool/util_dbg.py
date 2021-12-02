@@ -110,7 +110,7 @@ varname_regex = re.compile('[_A-Za-z][_a-zA-Z0-9]*$')
 
 
 def is_valid_varname(varname):
-    """ Checks syntax and validity of a variable name """
+    """Checks syntax and validity of a variable name"""
     if not isinstance(varname, six.string_types):
         return False
     match_obj = re.match(varname_regex, varname)
@@ -807,7 +807,7 @@ def get_parent_frame(N=0):
 
 
 def quasiquote(string):
-    """ mimics lisp quasi quote functionality """
+    """mimics lisp quasi quote functionality"""
     return string.format(**get_parent_frame().f_locals)
 
 

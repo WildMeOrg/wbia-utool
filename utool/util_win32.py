@@ -18,7 +18,7 @@ def get_regstr(regtype, var, val):
         return ''
 
     def quotes(str_):
-        return '"' + str_.replace('"', r'\"') + '"'
+        return '"' + str_.replace('"', r"\"") + '"'
 
     sanitized_var = quotes(var)
     if regtype == 'REG_EXPAND_SZ':

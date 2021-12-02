@@ -171,7 +171,7 @@ def numpy_to_csv(arr, col_lbls=None, header='', col_type=None):
 
 
 def read_csv(fpath, binary=True):
-    """ reads csv in unicode """
+    """reads csv in unicode"""
     import csv
     import utool as ut
 

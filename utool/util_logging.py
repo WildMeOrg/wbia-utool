@@ -477,7 +477,7 @@ def start_logging(log_fpath=None, mode='a', appname='default', log_dir=None):
         # Overwrite utool functions with the logging functions
 
         def utool_flush(*args):
-            """ flushes whatever is in the current utool write buffer """
+            """flushes whatever is in the current utool write buffer"""
             # Flushes only the stdout handler
             stdout_handler.flush()
             # __UTOOL_ROOT_LOGGER__.flush()
@@ -490,7 +490,7 @@ def start_logging(log_fpath=None, mode='a', appname='default', log_dir=None):
             # __PYTHON_FLUSH__()
 
         def utool_write(*args):
-            """ writes to current utool logs and to sys.stdout.write """
+            """writes to current utool logs and to sys.stdout.write"""
             # global __UTOOL_WRITE_BUFFER__
             # sys.stdout.write('WRITEING\n')
             msg = ', '.join(map(six.text_type, args))
@@ -507,7 +507,7 @@ def start_logging(log_fpath=None, mode='a', appname='default', log_dir=None):
         if not PRINT_ALL_CALLERS:
 
             def utool_print(*args):
-                """ standard utool print function """
+                """standard utool print function"""
                 # sys.stdout.write('PRINT\n')
                 # endline = '\n'
                 endline = ''
@@ -528,7 +528,7 @@ def start_logging(log_fpath=None, mode='a', appname='default', log_dir=None):
         else:
 
             def utool_print(*args):
-                """ debugging utool print function """
+                """debugging utool print function"""
                 import utool as ut
 
                 utool_flush()
@@ -541,7 +541,7 @@ def start_logging(log_fpath=None, mode='a', appname='default', log_dir=None):
                 )
 
         def utool_printdbg(*args):
-            """ DRPRICATE standard utool print debug function """
+            """DRPRICATE standard utool print debug function"""
             return __UTOOL_ROOT_LOGGER__.debug(', '.join(map(six.text_type, args)))
 
         # overwrite the utool printers

@@ -314,7 +314,7 @@ def _kw_wrap_worker(func_args_kw):
 def _generate_serial2(
     func, args_gen, kw_gen=None, ntasks=None, progkw={}, verbose=None, nTasks=None
 ):
-    """ internal serial generator  """
+    """internal serial generator"""
     if verbose is None:
         verbose = 2
     if ntasks is None:
@@ -907,7 +907,7 @@ def buffered_generator(source_gen, buffer_size=2, use_multiprocessing=False):
 
 
 def _buffered_generation_thread(source_gen, buffer_, sentinal):
-    """ helper for buffered_generator """
+    """helper for buffered_generator"""
     for data in source_gen:
         buffer_.put(data, block=True)
     # sentinel: signal the end of the iterator
@@ -915,7 +915,7 @@ def _buffered_generation_thread(source_gen, buffer_, sentinal):
 
 
 def _buffered_generation_process(source_gen, buffer_, sentinal):
-    """ helper for buffered_generator """
+    """helper for buffered_generator"""
     for data in source_gen:
         buffer_.put(data, block=True)
     # sentinel: signal the end of the iterator

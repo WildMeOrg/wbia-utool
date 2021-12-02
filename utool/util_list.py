@@ -141,12 +141,12 @@ def list_replace(list_, target, repl):
 
 
 def alloc_lists(num_alloc):
-    """ allocates space for a ``list`` of lists """
+    """allocates space for a ``list`` of lists"""
     return [[] for _ in range(num_alloc)]
 
 
 def alloc_nones(num_alloc):
-    """ allocates space for a ``list`` of Nones """
+    """allocates space for a ``list`` of Nones"""
     return [None] * num_alloc
     # return [None for _ in range(num_alloc)]
 
@@ -249,7 +249,7 @@ def safelen(list_):
 
 
 def safe_listget(list_, index, default='?'):
-    """ depricate """
+    """depricate"""
     if index >= len(list_):
         return default
     ret = list_[index]
@@ -1421,7 +1421,7 @@ def unique(list_, ordered=True):
 
 
 def flat_unique(*lists_, **kwargs):
-    """ returns items unique across all lists """
+    """returns items unique across all lists"""
     return unique(flatten(lists_), **kwargs)
 
 
@@ -1784,7 +1784,7 @@ def index_complement(index_list, len_=None):
 
 
 def take_complement(list_, index_list):
-    """ Returns items in ``list_`` not indexed by index_list """
+    """Returns items in ``list_`` not indexed by index_list"""
     mask = not_list(index_to_boolmask(index_list, len(list_)))
     return compress(list_, mask)
 
@@ -1863,7 +1863,7 @@ def take(list_, index_list):
 
 
 def take_percentile(arr, percent):
-    """ take the top `percent` items in a list rounding up """
+    """take the top `percent` items in a list rounding up"""
     size = len(arr)
     stop = min(int(size * percent), len(arr))
     return arr[0:stop]
@@ -2066,12 +2066,12 @@ def broadcast_zip(list1, list2):
 
 
 def where(flag_list):
-    """ takes flags returns indexes of True values """
+    """takes flags returns indexes of True values"""
     return [index for index, flag in enumerate(flag_list) if flag]
 
 
 def equal(list1, list2):
-    """ takes flags returns indexes of True values """
+    """takes flags returns indexes of True values"""
     return [item1 == item2 for item1, item2 in broadcast_zip(list1, list2)]
 
 
@@ -2430,7 +2430,7 @@ def find_duplicate_items(items, k=2):
 
 
 def duplicates_exist(items):
-    """ returns if list has duplicates """
+    """returns if list has duplicates"""
     return len(items) - len(set(items)) != 0
 
 
@@ -3305,7 +3305,7 @@ def unflat_map(func, unflat_items, vectorized=False, **kwargs):
 
 
 def unflat_vecmap(func, unflat_items, vectorized=False, **kwargs):
-    """ unflat map for vectorized functions """
+    """unflat map for vectorized functions"""
     import utool as ut
 
     # First flatten the list, and remember the original dimensions

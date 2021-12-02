@@ -11,7 +11,7 @@ print, rrr, profile = ut.inject2(__name__)
 
 
 def euler_tour_dfs(G, source=None):
-    """ adaptation of networkx dfs """
+    """adaptation of networkx dfs"""
     if source is None:
         # produce edges for all components
         nodes = G

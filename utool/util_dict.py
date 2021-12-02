@@ -851,14 +851,14 @@ def update_dict(dict1, dict2, copy=False, alias_dict=None):
 
 
 def dict_update_newkeys(dict_, dict2):
-    """ Like dict.update, but does not overwrite items """
+    """Like dict.update, but does not overwrite items"""
     for key, val in six.iteritems(dict2):
         if key not in dict_:
             dict_[key] = val
 
 
 def is_dicteq(dict1_, dict2_, almosteq_ok=True, verbose_err=True):
-    """ Checks to see if dicts are the same. Performs recursion. Handles numpy """
+    """Checks to see if dicts are the same. Performs recursion. Handles numpy"""
     import utool as ut
 
     assert len(dict1_) == len(dict2_), 'dicts are not of same length'
@@ -1027,7 +1027,7 @@ def dict_take_gen(dict_, keys, *d):
 
 
 def dict_take(dict_, keys, *d):
-    """ get multiple values from a dictionary """
+    """get multiple values from a dictionary"""
     try:
         return list(dict_take_gen(dict_, keys, *d))
     except TypeError:
@@ -1373,7 +1373,7 @@ def range_hist(items, bins):
 
 
 def dict_hist_cumsum(hist_, reverse=True):
-    """ VERY HACKY """
+    """VERY HACKY"""
     import utool as ut
 
     items = hist_.items()
@@ -1507,7 +1507,7 @@ def dict_intersection(dict1, dict2, combine=False, combine_op=op.add):
 
 
 def dict_isect_combine(dict1, dict2, combine_op=op.add):
-    """ Intersection of dict keys and combination of dict values """
+    """Intersection of dict keys and combination of dict values"""
     keys3 = set(dict1.keys()).intersection(set(dict2.keys()))
     dict3 = {key: combine_op(dict1[key], dict2[key]) for key in keys3}
     return dict3
@@ -2115,7 +2115,7 @@ def order_dict_by(dict_, key_order):
 
 
 def iteritems_sorted(dict_):
-    """ change to iteritems ordered """
+    """change to iteritems ordered"""
     if isinstance(dict_, OrderedDict):
         return six.iteritems(dict_)
     else:

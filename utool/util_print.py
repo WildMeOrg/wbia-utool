@@ -241,7 +241,7 @@ def print_filesize(fpath):
 
 
 def printif(func, condition=VERBOSE and not QUIET):
-    """ execute printfunc only if condition=QUIET"""
+    """execute printfunc only if condition=QUIET"""
     if condition:
         print(func())
 

@@ -1,20 +1,16 @@
 astor
-
 autopep8
 boto
 delorean
 h5py
-
-
-lru-dict >= 1.1.1  # import as lru
-# tqdm
+lru-dict
+tqdm
 numpy
 objgraph
-pyfiglet >= 0.7.2
-Pygments >= 2.2.0
-pyperclip >= 1.5.7
+pyfiglet
+Pygments
+pyperclip
 setproctitle
-# guppy
 sphinx
 sphinxcontrib-napoleon
-xxhash >= 1.0.1
+xxhash

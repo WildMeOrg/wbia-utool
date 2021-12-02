@@ -19,7 +19,7 @@ import textwrap
 
 
 def __excecute_imports(module, modname, imports, verbose=False):
-    """ Module Imports """
+    """Module Imports"""
     # level: -1 is a the Python2 import strategy
     # level:  0 is a the Python3 absolute import
     if verbose:
@@ -36,7 +36,7 @@ def __excecute_imports(module, modname, imports, verbose=False):
 
 
 def __execute_fromimport(module, modname, import_tuples, verbose=False):
-    """ Module From Imports """
+    """Module From Imports"""
     if verbose:
         print('[UTIL_IMPORT] EXECUTING %d FROM IMPORT TUPLES' % (len(import_tuples),))
     from_imports = __get_from_imports(import_tuples)
@@ -201,7 +201,7 @@ def __get_from_imports(import_tuples):
 
 
 def _initstr(modname, imports, from_imports, inject_execstr, withheader=True):
-    """ Calls the other string makers """
+    """Calls the other string makers"""
     header = _make_module_header() if withheader else ''
     import_str = _make_imports_str(imports, modname)
     fromimport_str = _make_fromimport_str(from_imports, modname)
@@ -258,7 +258,7 @@ def _make_fromimport_str(from_imports, rootmodname='.'):
 
 
 def _inject_execstr(modname, import_tuples):
-    """ Injection and Reload String Defs """
+    """Injection and Reload String Defs"""
     if modname == 'utool':
         # Special case import of the util_inject module
         injecter = 'util_inject'
@@ -507,7 +507,7 @@ def make_initstr(modname, import_tuples, verbose=False):
 
 
 def make_import_tuples(module_path, exclude_modnames=[]):
-    """ Infer the import_tuples from a module_path """
+    """Infer the import_tuples from a module_path"""
     from utool import util_path
 
     kwargs = dict(private=False, full=False)

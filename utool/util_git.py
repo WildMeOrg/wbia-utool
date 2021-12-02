@@ -108,7 +108,7 @@ class RepoManager(util_dev.NiceRepr):
         rman.repos.extend(repos)
 
     def issue(rman, command, sudo=False):
-        """ Runs a command on all of managed repos """
+        """Runs a command on all of managed repos"""
         print('+------- GG_COMMAND -------')
         print('| sudo=%s' % sudo)
         print('| command=%s' % command)
@@ -254,7 +254,7 @@ class Repo(util_dev.NiceRepr):
 
     @util_decor.memoize
     def as_gitpython(repo):
-        """ pip install gitpython """
+        """pip install gitpython"""
         import git
 
         gitrepo = git.Repo(repo.dpath)
@@ -507,7 +507,7 @@ class Repo(util_dev.NiceRepr):
             repo._ensure_ssh_format()
 
     def change_url_format(repo, out_type='ssh'):
-        """ Changes the url format for committing """
+        """Changes the url format for committing"""
         url = repo.url
         url_parts = re.split('[/:]', url)
         in_type = url_parts[0]

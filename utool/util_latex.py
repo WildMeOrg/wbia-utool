@@ -38,7 +38,7 @@ def find_ghostscript_exe():
 
 
 def compress_pdf(pdf_fpath, output_fname=None):
-    """ uses ghostscript to write a pdf """
+    """uses ghostscript to write a pdf"""
     import utool as ut
 
     ut.assertpath(pdf_fpath)
@@ -138,7 +138,7 @@ def make_full_document(text, title=None, preamp_decl={}, preamb_extra=None):
 def render_latex_text(
     input_text, nest_in_doc=False, preamb_extra=None, appname='utool', verbose=None
 ):
-    """ compiles latex and shows the result """
+    """compiles latex and shows the result"""
     import utool as ut
 
     if verbose is None:
@@ -803,7 +803,7 @@ def make_score_tabular(
 
 
 def get_latex_figure_str2(fpath_list, cmdname, **kwargs):
-    """ hack for candidacy """
+    """hack for candidacy"""
     import utool as ut
     from os.path import relpath
 

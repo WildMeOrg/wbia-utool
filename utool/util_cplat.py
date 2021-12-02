@@ -457,12 +457,12 @@ def get_dynamic_lib_globstrs():
 
 
 def get_computer_name():
-    """ Returns machine name """
+    """Returns machine name"""
     return COMPUTER_NAME
 
 
 def get_user_name():
-    """ Returns user homefolder name """
+    """Returns user homefolder name"""
     return basename(truepath('~'))
 
 
@@ -516,7 +516,7 @@ def geteditor():
 
 
 def editfile(fpath):
-    """ Runs gvim. Can also accept a module / class / function """
+    """Runs gvim. Can also accept a module / class / function"""
     if not isinstance(fpath, six.string_types):
         from six import types
 
@@ -1112,7 +1112,7 @@ def cmd2(command, shell=False, detatch=False, verbose=False, verbout=None):
 
 
 def get_flops():
-    """ # DOESNT WORK """
+    """# DOESNT WORK"""
     from sys import stdout
     from re import compile
 
@@ -1429,7 +1429,7 @@ def send_keyboard_input(text=None, key_list=None):
 
 
 def ipython_paste(*args, **kwargs):
-    """ pastes for me FIXME: make something like this work on unix and windows"""
+    """pastes for me FIXME: make something like this work on unix and windows"""
     if WIN32:
         pass
     else:

@@ -42,7 +42,7 @@ class OrderedSet(collections.MutableSet):
         return key in self._map
 
     def add(self, key):
-        """ Store new key in a new link at the end of the linked list """
+        """Store new key in a new link at the end of the linked list"""
         if key not in self._map:
             self._map[key] = link = _Link()
             root = self._root
@@ -51,7 +51,7 @@ class OrderedSet(collections.MutableSet):
             last.next = root.prev = weakref.proxy(link)
 
     def append(self, key):
-        """ Alias for add """
+        """Alias for add"""
         return self.add(key)
 
     def discard(self, key):
@@ -106,7 +106,7 @@ class OrderedSet(collections.MutableSet):
         return cls(lists_)
 
     def update(self, other):
-        """ union update """
+        """union update"""
         for item in other:
             self.add(item)
 

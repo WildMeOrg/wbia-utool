@@ -7,7 +7,7 @@ MAXSTACK = 32
 
 
 def euler_tour_dfs(G, source=None):
-    """ adaptation of networkx dfs """
+    """adaptation of networkx dfs"""
     if source is None:
         # produce edges for all components
         nodes = G
@@ -114,12 +114,12 @@ class Node(ut.NiceRepr):
 
     @property
     def xdata(self):
-        """ compatibility with the C node_t struct """
+        """compatibility with the C node_t struct"""
         return self.balance
 
     @xdata.setter
     def xdata(self, data):
-        """ compatibility with the C node_t struct """
+        """compatibility with the C node_t struct"""
         self.balance = data
 
     def set_child(self, direction, other):
@@ -128,11 +128,11 @@ class Node(ut.NiceRepr):
         self[direction] = other
 
     def __getitem__(self, direction):
-        """ direction is 0 (left) or 1 (right)."""
+        """direction is 0 (left) or 1 (right)."""
         return self.left if direction == 0 else self.right
 
     def __setitem__(self, direction, other):
-        """ key is 0 (left) or 1 (right)."""
+        """key is 0 (left) or 1 (right)."""
         if direction == 0:
             self.left = other
         else:
@@ -388,7 +388,7 @@ class EulerTourTree(ut.NiceRepr):
             print('Nodes in {} are ok'.format(name))
 
     def _traverse_nodes(self):
-        """ Debugging function (exposes cython nodes as dummy nodes) """
+        """Debugging function (exposes cython nodes as dummy nodes)"""
         node = self.root
         stack = []
         while stack or node is not None:
@@ -401,7 +401,7 @@ class EulerTourTree(ut.NiceRepr):
                 node = node.right
 
     def to_networkx(self, labels=None, edge_labels=False):
-        """ Get a networkx representation of the binary search tree. """
+        """Get a networkx representation of the binary search tree."""
         import networkx as nx
 
         graph = nx.DiGraph()

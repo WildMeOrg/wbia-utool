@@ -631,7 +631,7 @@ TESTIMG_URL_DICT = {
 
 
 def get_valid_test_imgkeys():
-    r""" returns valid keys for grab_test_imgpath """
+    r"""returns valid keys for grab_test_imgpath"""
     return sorted(TESTIMG_URL_DICT.keys())
 
 
@@ -1258,7 +1258,7 @@ def grab_s3_contents(
 
 
 def scp_pull(remote_path, local_path='.', remote='localhost', user=None):
-    r""" wrapper for scp """
+    r"""wrapper for scp"""
     import utool as ut
 
     if user is not None:

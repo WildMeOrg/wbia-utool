@@ -861,7 +861,7 @@ progiter = ProgressIter
 
 
 class ProgIter(ProgressIter):
-    """ Thin wrapper with better arg positions """
+    """Thin wrapper with better arg positions"""
 
     def __init__(self, iterable, lbl='Prog', adjust=True, freq=1, bs=True, **kwargs):
         import utool as ut

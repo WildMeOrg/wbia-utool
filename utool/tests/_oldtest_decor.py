@@ -116,7 +116,7 @@ def test_decorator_module():
     preserving_testdecor = decorator.decorator(testdecor)
 
     def myfunction(self, listinput_, arg1, *args, **kwargs):
-        ' just a test function '
+        'just a test function'
         return [x + 1 for x in listinput_]
 
     wrapper = testdecor(myfunction)

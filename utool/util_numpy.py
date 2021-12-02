@@ -19,7 +19,7 @@ def tiled_range(range_, cols):
 
 
 def quantum_random():
-    """ returns a 32 bit unsigned integer quantum random number """
+    """returns a 32 bit unsigned integer quantum random number"""
     import quantumrandom
 
     data16 = quantumrandom.uint16(array_length=2)
@@ -369,14 +369,14 @@ def random_sample(list_, nSample, strict=False, rng=None, seed=None):
 
 
 def deterministic_sample(list_, nSample, seed=0, rng=None, strict=False):
-    """ Grabs data randomly, but in a repeatable way """
+    """Grabs data randomly, but in a repeatable way"""
     rng = ensure_rng(seed if rng is None else rng)
     sample_list = random_sample(list_, nSample, strict=strict, rng=rng)
     return sample_list
 
 
 def spaced_items(list_, n, **kwargs):
-    """ Returns n evenly spaced items """
+    """Returns n evenly spaced items"""
     indexes = spaced_indexes(len(list_), n, **kwargs)
     items = list_[indexes]
     return items

@@ -23,7 +23,7 @@ def compose_functions(*func_list):
 
 
 def identity(input_):
-    """ identity function """
+    """identity function"""
     return input_
 
 

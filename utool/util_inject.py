@@ -177,14 +177,14 @@ def make_module_print_func(module):
     if SILENT:
 
         def print(*args, **kwargs):
-            """ silent builtins.print """
+            """silent builtins.print"""
             pass
 
     else:
         if DEBUG_PRINT:
             # Turns on printing where a message came from
             def print(*args, **kwargs):
-                """ debugging logging builtins.print """
+                """debugging logging builtins.print"""
                 from utool._internal.meta_util_dbg import get_caller_name
 
                 calltag = ''.join(('[caller:', get_caller_name(N=DEBUG_PRINT_N), ']'))
@@ -193,7 +193,7 @@ def make_module_print_func(module):
         else:
 
             def print(*args, **kwargs):
-                """ logging builtins.print """
+                """logging builtins.print"""
                 util_logging._utool_print()(*args, **kwargs)
 
     return print
@@ -203,21 +203,21 @@ def make_module_write_func(module):
     if SILENT:
 
         def print_(*args, **kwargs):
-            """ silent stdout.write """
+            """silent stdout.write"""
             pass
 
     else:
         if __AGGROFLUSH__:
 
             def print_(*args, **kwargs):
-                """ aggressive logging stdout.write """
+                """aggressive logging stdout.write"""
                 util_logging._utool_write()(*args)
                 util_logging._utool_flush()()
 
         else:
 
             def print_(*args, **kwargs):
-                """ logging stdout.write """
+                """logging stdout.write"""
                 util_logging._utool_write()(*args)
 
     return print_
@@ -233,22 +233,22 @@ def inject_print_functions(
     if SILENT:
 
         def print(*args):
-            """ silent builtins.print """
+            """silent builtins.print"""
             pass
 
         def printDBG(*args):
-            """ silent debug print """
+            """silent debug print"""
             pass
 
         def print_(*args):
-            """ silent stdout.write """
+            """silent stdout.write"""
             pass
 
     else:
         if DEBUG_PRINT:
             # Turns on printing where a message came from
             def print(*args):
-                """ debugging logging builtins.print """
+                """debugging logging builtins.print"""
                 from utool._internal.meta_util_dbg import get_caller_name
 
                 calltag = ''.join(('[caller:', get_caller_name(N=DEBUG_PRINT_N), ']'))
@@ -257,20 +257,20 @@ def inject_print_functions(
         else:
 
             def print(*args):
-                """ logging builtins.print """
+                """logging builtins.print"""
                 util_logging._utool_print()(*args)
 
         if __AGGROFLUSH__:
 
             def print_(*args):
-                """ aggressive logging stdout.write """
+                """aggressive logging stdout.write"""
                 util_logging._utool_write()(*args)
                 util_logging._utool_flush()()
 
         else:
 
             def print_(*args):
-                """ logging stdout.write """
+                """logging stdout.write"""
                 util_logging._utool_write()(*args)
 
         # turn on module debugging with command line flags
@@ -293,14 +293,14 @@ def inject_print_functions(
             print('INJECT_PRINT: %r == %r' % (module_name, module_prefix))
 
             def printDBG(*args):
-                """ debug logging print """
+                """debug logging print"""
                 msg = ', '.join(map(str, args))
                 util_logging.__UTOOL_PRINTDBG__(module_prefix + ' DEBUG ' + msg)
 
         else:
 
             def printDBG(*args):
-                """ silent debug logging print """
+                """silent debug logging print"""
                 pass
 
     # _inject_funcs(module, print, print_, printDBG)
@@ -334,13 +334,13 @@ def reload_module(module, verbose=None):
 
 
 def make_module_reload_func(module_name=None, module_prefix='[???]', module=None):
-    """ Injects dynamic module reloading """
+    """Injects dynamic module reloading"""
     module = _get_module(module_name, module, register=False)
     if module_name is None:
         module_name = str(module.__name__)
 
     def rrr(verbose=True):
-        """ Dynamic module reloading """
+        """Dynamic module reloading"""
         if not __RELOAD_OK__:
             raise Exception('Reloading has been forced off')
         try:
@@ -362,7 +362,7 @@ def make_module_reload_func(module_name=None, module_prefix='[???]', module=None
 
 
 def DUMMYPROF_FUNC(func):
-    """ dummy profiling func. does nothing """
+    """dummy profiling func. does nothing"""
     return func
 
 
@@ -425,14 +425,14 @@ def _matches_list(name, pat_list):
 
 
 def _profile_func_flag(funcname):
-    """ checks if func has been requested to be profiled """
+    """checks if func has been requested to be profiled"""
     if PROF_FUNC_PAT_LIST is None:
         return True
     return _matches_list(funcname, PROF_FUNC_PAT_LIST)
 
 
 def _profile_module_flag(module_name):
-    """ checks if module has been requested to be profiled """
+    """checks if module has been requested to be profiled"""
     if PROF_MOD_PAT_LIST is None:
         return True
     return _matches_list(module_name, PROF_MOD_PAT_LIST)
@@ -569,7 +569,7 @@ def inject(module_name=None, module_prefix='[???]', DEBUG=False, module=None, N=
 
 
 def inject2(module_name=None, module_prefix=None, DEBUG=False, module=None, N=1):
-    """ wrapper that depricates print_ and printDBG """
+    """wrapper that depricates print_ and printDBG"""
     if module_prefix is None:
         module_prefix = '[%s]' % (module_name,)
     noinject(module_name, module_prefix, DEBUG, module, N=N)
@@ -621,7 +621,7 @@ def split_python_text_into_lines(text):
 
 
 def inject_python_code2(fpath, patch_code, tag):
-    """ Does autogeneration stuff """
+    """Does autogeneration stuff"""
     import utool as ut
 
     text = ut.readfrom(fpath)

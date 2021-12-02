@@ -411,7 +411,7 @@ def check_module_usage(modpath_patterns):
     cache = {}
 
     def find_where_module_is_imported(modname):
-        """ finds where a module was explicitly imported. (in most scenareos) """
+        """finds where a module was explicitly imported. (in most scenareos)"""
         # Find places where the module was imported
         patterns = ut.possible_import_patterns(modname)
         # do modname grep with all possible import patterns
@@ -419,7 +419,7 @@ def check_module_usage(modpath_patterns):
         return grepres.found_fpath_list
 
     def find_function_callers(funcname, importing_modpaths):
-        """ searches for places where a function is used """
+        """searches for places where a function is used"""
         pattern = ('\\b' + funcname + '\\b',)
         # Search which module uses each public member
         grepres = ut.grep_projects(
@@ -1439,7 +1439,7 @@ def set_funcdoc(func, newdoc):
 
 
 def get_docstr(func_or_class):
-    """  Get the docstring from a live object """
+    """Get the docstring from a live object"""
     import utool as ut
 
     try:
@@ -2509,7 +2509,7 @@ def get_func_sourcecode(
         # print(sourcecode)
         pass
     if stripret:
-        r""" \s is a whitespace char """
+        r"""\s is a whitespace char"""
         return_ = ut.named_field('return', 'return .*$')
         prereturn = ut.named_field('prereturn', r'^\s*')
         return_bref = ut.bref_field('return')

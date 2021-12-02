@@ -53,7 +53,7 @@ def next_counter(start=0, step=1):
 
 
 def itake_column(list_, colx):
-    """ iterator version of get_list_column """
+    """iterator version of get_list_column"""
     if isinstance(colx, list):
         # multi select
         return ([row[colx_] for colx_ in colx] for row in list_)
@@ -65,7 +65,7 @@ iget_list_column = itake_column
 
 
 def iget_list_column_slice(list_, start=None, stop=None, stride=None):
-    """ iterator version of get_list_column """
+    """iterator version of get_list_column"""
     if isinstance(start, slice):
         slice_ = start
     else:
@@ -285,12 +285,12 @@ def ifilterfalse_items(item_iter, flag_iter):
 
 
 def ifilter_Nones(iter_):
-    """ Removes any nones from the iterable """
+    """Removes any nones from the iterable"""
     return (item for item in iter_ if item is not None)
 
 
 def iflatten(list_):
-    r""" flattens a list iteratively """
+    r"""flattens a list iteratively"""
     # very fast flatten
     flat_iter = it.chain.from_iterable(list_)
     return flat_iter
@@ -497,6 +497,7 @@ def interleave(args):
         [1, 'A', 2, 'B', 3, 'C', 4, 'D', 5, 'E']
     """
     from utool.util_list import flatten
+
     return flatten(zip(*args))
 
 

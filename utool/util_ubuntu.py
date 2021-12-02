@@ -323,7 +323,7 @@ class XCtrl(object):
         # TODO: dynamic num screens
 
         def rel_to_abs_bbox(m, x, y, w, h):
-            """ monitor_num, relative x, y, w, h """
+            """monitor_num, relative x, y, w, h"""
             minfo = monitor_infos[m]
             # print('minfo(%d) = %s' % (m, ut.repr3(minfo),))
             mx, my = minfo['off_x'], minfo['off_y']

@@ -1065,7 +1065,7 @@ def nx_from_node_edge(nodes=None, edges=None):
 
 
 def nx_minimum_weight_component(graph, weight='weight'):
-    """ A minimum weight component is an MST + all negative edges """
+    """A minimum weight component is an MST + all negative edges"""
     mwc = nx.minimum_spanning_tree(graph, weight=weight)
     # negative edges only reduce the total weight
     neg_edges = (e for e, w in nx_gen_edge_attrs(graph, weight) if w < 0)
@@ -1104,7 +1104,7 @@ def nx_from_matrix(weight_matrix, nodes=None, remove_self=True):
 
 
 def nx_ensure_agraph_color(graph):
-    """ changes colors to hex strings on graph attrs """
+    """changes colors to hex strings on graph attrs"""
     try:
         from wbia.plottool import color_funcs
         import wbia.plottool as pt
@@ -1897,7 +1897,7 @@ def bfs_conditional(
 
 
 def color_nodes(graph, labelattr='label', brightness=0.878, outof=None, sat_adjust=None):
-    """ Colors edges and nodes by nid """
+    """Colors edges and nodes by nid"""
     try:
         import wbia.plottool as pt
     except ImportError:

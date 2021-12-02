@@ -1992,14 +1992,14 @@ if DOELSE:
                 setattr(utool, attr, getattr(submod, attr))
 
     def reload_subs(verbose=1):
-        """ Reloads utool and submodules """
+        """Reloads utool and submodules"""
         if verbose:
             print('Reloading utool submodules')
         rrr(verbose > 1)
 
         def wrap_fbrrr(mod):
             def fbrrr(*args, **kwargs):
-                """ fallback reload """
+                """fallback reload"""
                 if verbose > 0:
                     print('Auto-reload (using rrr) not setup for mod=%r' % (mod,))
 

@@ -58,7 +58,7 @@ class CacheMissException(Exception):
 # @six.add_metaclass(util_class.ReloadingMetaclass)
 @util_class.reloadable_class
 class ShelfCacher(object):
-    """ yet another cacher """
+    """yet another cacher"""
 
     def __init__(self, fpath, enabled=True):
         self.verbose = True
@@ -962,7 +962,7 @@ def view_global_cache_dir(appname='default'):
 
 
 def get_global_cache_dir(appname='default', ensure=False):
-    """ Returns (usually) writable directory for an application cache """
+    """Returns (usually) writable directory for an application cache"""
     if appname is None or appname == 'default':
         appname = get_default_appname()
     global_cache_dir = util_cplat.get_app_resource_dir(
@@ -974,7 +974,7 @@ def get_global_cache_dir(appname='default', ensure=False):
 
 
 def get_global_shelf_fpath(appname='default', ensure=False):
-    """ Returns the filepath to the global shelf """
+    """Returns the filepath to the global shelf"""
     global_cache_dir = get_global_cache_dir(appname, ensure=ensure)
     shelf_fpath = join(global_cache_dir, meta_util_constants.global_cache_fname)
     return shelf_fpath
@@ -1009,7 +1009,7 @@ def shelf_open(fpath):
 
 
 class GlobalShelfContext(object):
-    """ older class. might need update """
+    """older class. might need update"""
 
     def __init__(self, appname):
         self.appname = appname
@@ -1072,13 +1072,13 @@ def global_cache_dump(appname='default'):
 
 
 def global_cache_write(key, val, appname='default'):
-    """ Writes cache files to a safe place in each operating system """
+    """Writes cache files to a safe place in each operating system"""
     with GlobalShelfContext(appname) as shelf:
         shelf[key] = val
 
 
 def delete_global_cache(appname='default'):
-    """ Reads cache files to a safe place in each operating system """
+    """Reads cache files to a safe place in each operating system"""
     # close_global_shelf(appname)
     shelf_fpath = get_global_shelf_fpath(appname)
     util_path.remove_file(shelf_fpath, verbose=True, dryrun=False)
@@ -1601,7 +1601,7 @@ class LazyDict(object):
             return self.lazy_eval(key)
 
     def nocache_eval(self, key):
-        """ forces function evaluation """
+        """forces function evaluation"""
         func_ = self._eval_funcs[key]
         value = func_()
         return value
@@ -1634,30 +1634,30 @@ class LazyDict(object):
             del self._stored_results[key]
 
     def stored_keys(self):
-        """ keys whose vals that have been explicitly set or evaluated """
+        """keys whose vals that have been explicitly set or evaluated"""
         return self._stored_results.keys()
 
     def reconstructable_keys(self):
-        """ only keys whose vals that have been set with a backup func """
+        """only keys whose vals that have been set with a backup func"""
         return set(self._eval_funcs.keys())
 
     def all_keys(self):
         return set(self.stored_keys()).union(set(self.reconstructable_keys()))
 
     def unevaluated_keys(self):
-        """ keys whose vals can be constructed but have not been """
+        """keys whose vals can be constructed but have not been"""
         return set(self.reconstructable_keys()) - set(self.stored_keys())
 
     def evaluated_keys(self):
-        """ only keys whose vals have been evaluated from a stored function """
+        """only keys whose vals have been evaluated from a stored function"""
         return set(self.reconstructable_keys()) - set(self.unevaluated_keys())
 
     def nonreconstructable_keys(self):
-        """ only keys whose vals that have been explicitly set without a backup func """
+        """only keys whose vals that have been explicitly set without a backup func"""
         return set(self.all_keys()) - self.reconstructable_keys()
 
     def cached_keys(self):
-        """ only keys whose vals that have been explicitly set without a backup func """
+        """only keys whose vals that have been explicitly set without a backup func"""
         return set(self.nonreconstructable_keys()).union(set(self.evaluated_keys()))
 
     def printinfo(self):
@@ -1759,7 +1759,7 @@ class LazyDict(object):
 
 @six.add_metaclass(util_class.ReloadingMetaclass)
 class LazyList(object):
-    """ very hacky list implemented as a dictionary """
+    """very hacky list implemented as a dictionary"""
 
     def __init__(self, **kwargs):
         self._hackstore = LazyDict(**kwargs)

@@ -428,7 +428,7 @@ def modify_quoted_strs(text, modify_func=None):
 
         modify_func = idenfunc
     # regex to find a string sequence without any escaped strings in it
-    regex = r'(?P<quoted_str>\'[^\']*\')'
+    regex = r"(?P<quoted_str>\'[^\']*\')"
     tmp_text = text[:]
     new_text_list = []
     while True:

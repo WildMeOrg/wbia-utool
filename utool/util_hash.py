@@ -291,7 +291,7 @@ def hashstr_arr(arr, lbl='arr', pathsafe=False, **kwargs):
 
 
 def hashid_arr(arr, label='arr', hashlen=16):
-    """ newer version of hashstr_arr2 """
+    """newer version of hashstr_arr2"""
     hashstr = hash_data(arr)[0:hashlen]
     if isinstance(arr, (list, tuple)):
         shapestr = len(arr)
