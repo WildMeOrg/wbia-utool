@@ -2983,7 +2983,6 @@ def parse_kwarg_keys(source, keywords='kwargs', with_vals=False):
         >>>           "\n kwargs.pop('str', '3fd')\n kwargs.pop('str', '3f\\'d')"
         >>>           "\n \"kwargs.get('baz', None)\"\n kwargs['foo2']"
         >>>           "\n #kwargs.get('biz', None)\""
-        >>>           "\n kwargs['bloop']"
         >>>           "\n x = 'bop' in kwargs"
         >>>           )
         >>> print('source = %s\n' % (source,))
@@ -2994,7 +2993,6 @@ def parse_kwarg_keys(source, keywords='kwargs', with_vals=False):
         >>> kwarg_keys = ut.take_column(kwarg_items, 0)
         >>> assert 'baz' not in kwarg_keys
         >>> assert 'foo' in kwarg_keys
-        >>> assert 'bloop' in kwarg_keys
         >>> assert 'bop' not in kwarg_keys
         >>> print(result)
         kwarg_items = [
@@ -3003,7 +3001,6 @@ def parse_kwarg_keys(source, keywords='kwargs', with_vals=False):
             ('str', '3fd'),
             ('str', "3f'd"),
             ('foo2', None),
-            ('bloop', None),
         ]
     """
     import utool as ut
