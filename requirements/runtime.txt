@@ -1,5 +1,4 @@
 delorean
-futures
 gitpython
 lockfile
 networkx
