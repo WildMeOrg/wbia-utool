@@ -272,7 +272,9 @@ def save_cPkl(fpath, data, verbose=None, n=None):
 class FixRenamedUnpickler(pickle.Unpickler):
     def find_class(self, module, name):
         module = module.replace('ibeis', 'wbia')
+        module = module.replace('ibeis_cnn', 'wbia_cnn')
         name = name.replace('ibeis', 'wbia')
+        name = name.replace('ibeis_cnn', 'wbia_cnn')
 
         module = module.replace('sklearn.ensemble.forest', 'sklearn.ensemble')
         module = module.replace('sklearn.tree.tree', 'sklearn.tree')

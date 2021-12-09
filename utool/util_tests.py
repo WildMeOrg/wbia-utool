@@ -1979,9 +1979,12 @@ def quit_if_noshow():
 
 def show_if_requested():
     try:
-        import wbia.plottool as pt
+        from wbia import plottool as pt
     except ImportError:
-        import wbia.plottool as pt
+        try:
+            import plottool_ibeis as pt
+        except ImportError:
+            import plottool as pt
     pt.show_if_requested(N=2)
 
 
