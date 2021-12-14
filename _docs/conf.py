@@ -4,6 +4,13 @@ from datetime import date
 import sys
 import os
 
+try:
+    from _version import __version__
+
+    version_ = '.'.join(__version__.split('.')[:3])
+except Exception:
+    version_ = 'latest'
+
 sys.path.append(sys.path.insert(0, os.path.abspath('../')))
 
 autosummary_generate = True
@@ -32,7 +39,7 @@ html_sidebars = {
 project = 'wbia-utool'
 copyright = f'{date.today().year}, Wild Me'
 author = 'Wild Me (wildme.org)'
-version = '4.0.4'
+version = version_
 release = version
 
 # -- General configuration ---------------------------------------------------
