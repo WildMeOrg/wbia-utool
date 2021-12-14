@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from sphinx.ext.autodoc import between
-from utool import __version__
 from datetime import date
 import sys
 import os
@@ -33,7 +32,7 @@ html_sidebars = {
 project = 'wbia-utool'
 copyright = f'{date.today().year}, Wild Me'
 author = 'Wild Me (wildme.org)'
-version = __version__
+version = '4.0.4'
 release = version
 
 # -- General configuration ---------------------------------------------------
