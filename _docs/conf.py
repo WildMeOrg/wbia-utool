@@ -6,10 +6,8 @@ import os
 
 try:
     from _version import __version__
-
-    version_ = '.'.join(__version__.split('.')[:3])
 except Exception:
-    version_ = 'latest'
+    __version__ = 'latest'
 
 sys.path.append(sys.path.insert(0, os.path.abspath('../')))
 
@@ -39,7 +37,7 @@ html_sidebars = {
 project = 'wbia-utool'
 copyright = f'{date.today().year}, Wild Me'
 author = 'Wild Me (wildme.org)'
-version = version_
+version = __version__
 release = version
 
 # -- General configuration ---------------------------------------------------
