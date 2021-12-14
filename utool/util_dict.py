@@ -80,11 +80,11 @@ def dzip(list1, list2):
 
 
 def map_dict_vals(func, dict_):
-    """applies a function to each of the keys in a dictionary
+    r"""applies a function to each of the keys in a dictionary
 
     Args:
         func (callable): a function
-        dict_ (dict): a dictionary
+        dict\_ (dict): a dictionary
 
     Returns:
         newdict: transformed dictionary
@@ -113,11 +113,11 @@ def map_dict_vals(func, dict_):
 
 
 def map_dict_keys(func, dict_):
-    """applies a function to each of the keys in a dictionary
+    r"""applies a function to each of the keys in a dictionary
 
     Args:
         func (callable): a function
-        dict_ (dict): a dictionary
+        dict\_ (dict): a dictionary
 
     Returns:
         newdict: transformed dictionary
@@ -193,7 +193,7 @@ class OrderedAutoVivification(OrderedDict):
     References:
         http://stackoverflow.com/questions/651794/best-way-to-init-dict-of-dicts
 
-    Doctest:
+    Example:
         >>> from utool.util_dict import *  # NOQA
         >>> dict_ = AutoOrderedDict()
         >>> # Notice that there is no KeyError
@@ -238,7 +238,7 @@ def dict_keysubset(dict_, keys):
 def get_dict_hashid(dict_):
     r"""
     Args:
-        dict_ (dict):
+        dict\_ (dict):
 
     Returns:
         int: id hash
@@ -385,7 +385,7 @@ def dict_stack(dict_list, key_prefix=''):
         >>> print(result)
         {'a': [1, 2], 'b': [2, 3], 'c': [4]}
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_dict import *  # NOQA
         >>> import utool as ut
@@ -432,7 +432,7 @@ def dict_stack2(dict_list, key_suffix=None, default=None):
         >>> print(result)
         {'a': [1, 2], 'b': [2, 3], 'c': [None, 4]}
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> # Corner case: one dict as input
         >>> from utool.util_dict import *  # NOQA
@@ -444,7 +444,7 @@ def dict_stack2(dict_list, key_suffix=None, default=None):
         >>> print(result)
         {'a': [1], 'b': [2]}
 
-    Example2:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> # Corner case: zero dicts as input
         >>> from utool.util_dict import *  # NOQA
@@ -455,7 +455,7 @@ def dict_stack2(dict_list, key_suffix=None, default=None):
         >>> print(result)
         {}
 
-    Example3:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> # Corner case: empty dicts as input
         >>> from utool.util_dict import *  # NOQA
@@ -466,7 +466,7 @@ def dict_stack2(dict_list, key_suffix=None, default=None):
         >>> print(result)
         {}
 
-    Example4:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> # Corner case: one dict is empty
         >>> from utool.util_dict import *  # NOQA
@@ -479,7 +479,7 @@ def dict_stack2(dict_list, key_suffix=None, default=None):
         >>> print(result)
         {'a': [[1, 2], None], 'b': [[2, 3], None]}
 
-    Example5:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> # Corner case: disjoint dicts
         >>> from utool.util_dict import *  # NOQA
@@ -492,7 +492,7 @@ def dict_stack2(dict_list, key_suffix=None, default=None):
         >>> print(result)
         {'a': [[1, 2], None], 'b': [[2, 3], None], 'c': [None, 4]}
 
-    Example6:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> # Corner case: 3 dicts
         >>> from utool.util_dict import *  # NOQA
@@ -526,12 +526,12 @@ def dict_stack2(dict_list, key_suffix=None, default=None):
 
 
 def invert_dict(dict_, unique_vals=True):
-    """
+    r"""
     Reverses the keys and values in a dictionary. Set unique_vals to False if
     the values in the dict are not unique.
 
     Args:
-        dict_ (dict_): dictionary
+        dict\_ (dict): dictionary
         unique_vals (bool): if False, inverted keys are returned in a list.
 
     Returns:
@@ -924,10 +924,10 @@ def dict_to_keyvals(dict_):
 
 def dict_setdiff(dict_, negative_keys):
     r"""
-    returns a copy of dict_ without keys in the negative_keys list
+    returns a copy of dict\_ without keys in the negative_keys list
 
     Args:
-        dict_ (dict):
+        dict\_ (dict):
         negative_keys (list):
     """
     keys = [key for key in six.iterkeys(dict_) if key not in set(negative_keys)]
@@ -983,7 +983,7 @@ def dict_take_gen(dict_, keys, *d):
     CommandLine:
         python -m utool.util_dict --test-dict_take_gen
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_dict import *  # NOQA
         >>> import utool as ut
@@ -994,7 +994,7 @@ def dict_take_gen(dict_, keys, *d):
         >>> print(result)
         ['a', 'b', 'c', None, None]
 
-    Example2:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_dict import *  # NOQA
         >>> dict_ = {1: 'a', 2: 'b', 3: 'c'}
@@ -1066,7 +1066,7 @@ def dict_take_pop(dict_, keys, *d):
     CommandLine:
         python -m utool.util_dict --test-dict_take_pop
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_dict import *  # NOQA
         >>> import utool as ut
@@ -1080,7 +1080,7 @@ def dict_take_pop(dict_, keys, *d):
         >>> print(result)
         ['a', 'b', 'c', None, None]
 
-    Example2:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_dict import *  # NOQA
         >>> import utool as ut
@@ -1126,7 +1126,7 @@ def dict_where_len0(dict_):
 def get_dict_column(dict_, colx):
     r"""
     Args:
-        dict_ (dict_): a dictionary of lists
+        dict\_ (dict): a dictionary of lists
         colx (int):
 
     CommandLine:
@@ -1396,7 +1396,7 @@ def merge_dicts(*args):
     value specified the list of dictionaries.
 
     Returns:
-        dict: mergedict_
+        dict
 
     CommandLine:
         python -m utool.util_dict --test-merge_dicts
@@ -1431,7 +1431,7 @@ def dict_union3(dict1, dict2, combine_op=op.add):
         combine_op (func): (default=op.add)
 
     Returns:
-        dict: mergedict_
+        dict
 
     CommandLine:
         python -m utool.util_dict --exec-dict_union3
@@ -1473,7 +1473,7 @@ def dict_intersection(dict1, dict2, combine=False, combine_op=op.add):
         combine_op (func): (default = op.add)
 
     Returns:
-        dict: mergedict_
+        dict
 
     CommandLine:
         python -m utool.util_dict --exec-dict_intersection
@@ -1554,7 +1554,7 @@ def dict_filter_nones(dict_):
     Removes None values
 
     Args:
-        dict_ (dict):  a dictionary
+        dict\_ (dict):  a dictionary
 
     Returns:
         dict:
@@ -1844,7 +1844,7 @@ def hierarchical_map_vals(func, node, max_depth=None, depth=0):
             2: {1: 2, 2: 2},
         }
 
-    Example1:
+    Example:
         >>> # DISABLE_DOCTEST
         >>> # UNSTABLE_DOCTEST
         >>> from utool.util_dict import *  # NOQA
@@ -2029,11 +2029,11 @@ class DictLike(object):
 
 
 def sort_dict(dict_, part='keys', key=None, reverse=False):
-    """
+    r"""
     sorts a dictionary by its values or its keys
 
     Args:
-        dict_ (dict_):  a dictionary
+        dict\_ (dict):  a dictionary
         part (str): specifies to sort by keys or values
         key (Optional[func]): a function that takes specified part
             and returns a sortable value
@@ -2086,7 +2086,7 @@ def order_dict_by(dict_, key_order):
     Reorders items in a dictionary according to a custom key order
 
     Args:
-        dict_ (dict_):  a dictionary
+        dict\_ (dict):  a dictionary
         key_order (list): custom key order
 
     Returns:

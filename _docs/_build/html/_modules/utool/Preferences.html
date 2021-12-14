@@ -1,19 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>utool.Preferences &#8212; wbia-vtool 3.0.1 documentation</title>
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -41,19 +39,19 @@
 <span class="sd">    the __setattr__ __getattr__ stuff needs to be redone, and</span>
 <span class="sd">    DynStruct probably needs to go away.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
 <span class="kn">import</span> <span class="nn">six</span>
-<span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="n">cPickle</span> <span class="k">as</span> <span class="n">pickle</span>
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="kn">import</span> <span class="n">cPickle</span> <span class="k">as</span> <span class="n">pickle</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">DynamicStruct</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_dbg</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_arg</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_type</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inject</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">DynamicStruct</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_dbg</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_arg</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_type</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_inject</span>
 
 <span class="c1"># print, rrr, profile = util_inject.inject(__name__, &#39;[pref]&#39;)</span>
 <span class="n">util_inject</span><span class="o">.</span><span class="n">noinject</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="s1">&#39;[pref]&#39;</span><span class="p">)</span>
@@ -71,7 +69,7 @@
 <span class="c1"># Classes</span>
 <span class="c1"># ---</span>
 <div class="viewcode-block" id="PrefInternal"><a class="viewcode-back" href="../../utool.html#utool.Preferences.PrefInternal">[docs]</a><span class="k">class</span> <span class="nc">PrefInternal</span><span class="p">(</span><span class="n">DynamicStruct</span><span class="o">.</span><span class="n">DynStruct</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">_intern</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">hidden</span><span class="p">,</span> <span class="n">fpath</span><span class="p">,</span> <span class="n">depeq</span><span class="p">,</span> <span class="n">choices</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="n">_intern</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">hidden</span><span class="p">,</span> <span class="n">fpath</span><span class="p">,</span> <span class="n">depeq</span><span class="p">,</span> <span class="n">choices</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PrefInternal</span><span class="p">,</span> <span class="n">_intern</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">child_exclude_list</span><span class="o">=</span><span class="p">[])</span>
         <span class="c1"># self._intern describes this node</span>
         <span class="n">_intern</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>  <span class="c1"># A node has a name</span>
@@ -97,7 +95,7 @@
 
 
 <div class="viewcode-block" id="PrefTree"><a class="viewcode-back" href="../../utool.html#utool.Preferences.PrefTree">[docs]</a><span class="k">class</span> <span class="nc">PrefTree</span><span class="p">(</span><span class="n">DynamicStruct</span><span class="o">.</span><span class="n">DynStruct</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">_tree</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="n">_tree</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PrefTree</span><span class="p">,</span> <span class="n">_tree</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">child_exclude_list</span><span class="o">=</span><span class="p">[])</span>
         <span class="c1"># self._tree describes node&#39;s children and the parents</span>
         <span class="c1"># relationship to them</span>
@@ -110,7 +108,7 @@
 
 
 <div class="viewcode-block" id="PrefChoice"><a class="viewcode-back" href="../../utool.html#utool.Preferences.PrefChoice">[docs]</a><span class="k">class</span> <span class="nc">PrefChoice</span><span class="p">(</span><span class="n">DynamicStruct</span><span class="o">.</span><span class="n">DynStruct</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PrefChoice</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">child_exclude_list</span><span class="o">=</span><span class="p">[])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="n">choices</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sel</span> <span class="o">=</span> <span class="mi">0</span>
@@ -147,7 +145,7 @@
 <span class="sd">    * Dynamically add/remove</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="n">PrefNode</span><span class="p">,</span>  <span class="c1"># Default value for a Pref is to be itself</span>
         <span class="n">doc</span><span class="o">=</span><span class="s1">&#39;empty docs&#39;</span><span class="p">,</span>  <span class="c1"># Documentation for a preference</span>
@@ -181,7 +179,7 @@
     <span class="c1"># -------------------</span>
     <span class="c1"># Attribute Setters</span>
 <div class="viewcode-block" id="Pref.toggle"><a class="viewcode-back" href="../../utool.html#utool.Preferences.Pref.toggle">[docs]</a>    <span class="k">def</span> <span class="nf">toggle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Toggles a boolean key &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Toggles a boolean key&quot;&quot;&quot;</span>
         <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">bool</span><span class="p">),</span> <span class="s1">&#39;key[</span><span class="si">%r</span><span class="s1">] = </span><span class="si">%r</span><span class="s1"> is not a bool&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pref_update</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="ow">not</span> <span class="n">val</span><span class="p">)</span></div>
@@ -273,7 +271,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">__new_attr</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">pref_attr</span><span class="p">)</span>
 
     <span class="c1"># Attributes are children</span>
-    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Called when an attribute assignment is attempted. This is called instead</span>
 <span class="sd">        of the normal mechanism (i.e. store the value in the instance</span>
@@ -310,7 +308,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intern</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># TODO AS REFERENCE</span></div>
 
-    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Called when an attribute lookup has not found the attribute in the usual</span>
 <span class="sd">        places</span>
@@ -396,8 +394,8 @@
     <span class="c1"># ----------------</span>
     <span class="c1"># Disk caching</span>
 <div class="viewcode-block" id="Pref.to_dict"><a class="viewcode-back" href="../../utool.html#utool.Preferences.Pref.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">split_structs_bit</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Converts prefeters to a dictionary.</span>
-<span class="sd">        Children Pref can be optionally separated &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Converts prefeters to a dictionary.</span>
+<span class="sd">        Children Pref can be optionally separated&quot;&quot;&quot;</span>
         <span class="n">pref_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">struct_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -412,7 +410,7 @@
     <span class="n">asdict</span> <span class="o">=</span> <span class="n">to_dict</span>
 
 <div class="viewcode-block" id="Pref.save"><a class="viewcode-back" href="../../utool.html#utool.Preferences.Pref.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Saves prefs to disk in dict format &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Saves prefs to disk in dict format&quot;&quot;&quot;</span>
         <span class="n">fpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_fpath</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">fpath</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -434,7 +432,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intern</span><span class="o">.</span><span class="n">fpath</span></div>
 
 <div class="viewcode-block" id="Pref.load"><a class="viewcode-back" href="../../utool.html#utool.Preferences.Pref.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Read pref dict stored on disk. Overwriting current values. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Read pref dict stored on disk. Overwriting current values.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">VERBOSE_PREF</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[pref.load()]&#39;</span><span class="p">)</span>
             <span class="c1"># if not os.path.exists(self._intern.fpath):</span>
@@ -467,7 +465,7 @@
 
     <span class="c1"># ----------------------</span>
     <span class="c1"># String representation</span>
-    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intern</span><span class="o">.</span><span class="n">value</span> <span class="o">!=</span> <span class="n">PrefNode</span><span class="p">:</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">PrefNode</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
             <span class="c1"># .replace(&#39;\n    &#39;, &#39;&#39;)</span>
@@ -478,7 +476,7 @@
             <span class="k">return</span> <span class="n">ret</span>
 
 <div class="viewcode-block" id="Pref.full_name"><a class="viewcode-back" href="../../utool.html#utool.Preferences.Pref.full_name">[docs]</a>    <span class="k">def</span> <span class="nf">full_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; returns name all the way up the tree &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;returns name all the way up the tree&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intern</span><span class="o">.</span><span class="n">name</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">full_name</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intern</span><span class="o">.</span><span class="n">name</span></div>
@@ -501,7 +499,7 @@
                 <span class="k">return</span> <span class="n">_typestr</span></div>
 
 <div class="viewcode-block" id="Pref.pref_update"><a class="viewcode-back" href="../../utool.html#utool.Preferences.Pref.pref_update">[docs]</a>    <span class="k">def</span> <span class="nf">pref_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">new_val</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Changes a preference value and saves it to disk &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Changes a preference value and saves it to disk&quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span>
             <span class="s1">&#39;Update and save pref from: </span><span class="si">%s</span><span class="s1">=</span><span class="si">%r</span><span class="s1">, to: </span><span class="si">%s</span><span class="s1">=</span><span class="si">%r</span><span class="s1">&#39;</span>
             <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">text_type</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]),</span> <span class="n">key</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">text_type</span><span class="p">(</span><span class="n">new_val</span><span class="p">))</span>
@@ -522,9 +520,9 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># from utool._internal.PreferenceWidget import EditPrefWidget</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="kn">from</span> <span class="nn">wbia.guitool.PreferenceWidget</span> <span class="k">import</span> <span class="n">EditPrefWidget</span>
+                <span class="kn">from</span> <span class="nn">wbia.guitool.PreferenceWidget</span> <span class="kn">import</span> <span class="n">EditPrefWidget</span>
             <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-                <span class="kn">from</span> <span class="nn">guitool.PreferenceWidget</span> <span class="k">import</span> <span class="n">EditPrefWidget</span>
+                <span class="kn">from</span> <span class="nn">guitool.PreferenceWidget</span> <span class="kn">import</span> <span class="n">EditPrefWidget</span>
             <span class="n">editpref_widget</span> <span class="o">=</span> <span class="n">EditPrefWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
             <span class="n">editpref_widget</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">editpref_widget</span>
@@ -575,7 +573,7 @@
 
 
 <span class="k">def</span> <span class="nf">_qt_set_leaf_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qvar</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Sets backend data using QVariants &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Sets backend data using QVariants&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">VERBOSE_PREF</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;+--- [pref.qt_set_leaf_data]&#39;</span><span class="p">)</span>
@@ -727,7 +725,7 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
 </ul>
@@ -744,17 +742,15 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -771,7 +767,7 @@
       &copy;2020, Wild Me.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

@@ -1,19 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>utool.util_inject &#8212; wbia-vtool 3.0.1 documentation</title>
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -39,14 +37,14 @@
 
 <span class="sd">Basic use case is to extend the print function into a logging function</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
-<span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="n">builtins</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">zip</span><span class="p">,</span> <span class="nb">map</span>  <span class="c1"># NOQA</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="kn">import</span> <span class="n">builtins</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">zip</span><span class="p">,</span> <span class="nb">map</span>  <span class="c1"># NOQA</span>
 <span class="kn">import</span> <span class="nn">six</span>  <span class="c1"># NOQA</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">functools</span>
-<span class="kn">from</span> <span class="nn">utool._internal</span> <span class="k">import</span> <span class="n">meta_util_six</span>
-<span class="kn">from</span> <span class="nn">utool._internal</span> <span class="k">import</span> <span class="n">meta_util_arg</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_logging</span>
+<span class="kn">from</span> <span class="nn">utool._internal</span> <span class="kn">import</span> <span class="n">meta_util_six</span>
+<span class="kn">from</span> <span class="nn">utool._internal</span> <span class="kn">import</span> <span class="n">meta_util_arg</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_logging</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
 
 
@@ -124,8 +122,8 @@
 
 
 <span class="k">def</span> <span class="nf">_get_module</span><span class="p">(</span><span class="n">module_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">register</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; finds module in sys.modules based on module name unless the module has</span>
-<span class="sd">    already been found and is passed in &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;finds module in sys.modules based on module name unless the module has</span>
+<span class="sd">    already been found and is passed in&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">module</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">module_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">module</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span>
@@ -155,7 +153,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tbtext</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exception</span><span class="p">(</span><span class="n">type_</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">tb</span><span class="p">))</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>
+        <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_str</span>
 
         <span class="n">formatted_text</span> <span class="o">=</span> <span class="n">util_str</span><span class="o">.</span><span class="n">highlight_text</span><span class="p">(</span><span class="n">tbtext</span><span class="p">,</span> <span class="n">lexer_name</span><span class="o">=</span><span class="s1">&#39;pytb&#39;</span><span class="p">,</span> <span class="n">stripall</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
@@ -212,15 +210,15 @@
     <span class="k">if</span> <span class="n">SILENT</span><span class="p">:</span>
 
         <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot; silent builtins.print &quot;&quot;&quot;</span>
+            <span class="sd">&quot;&quot;&quot;silent builtins.print&quot;&quot;&quot;</span>
             <span class="k">pass</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">DEBUG_PRINT</span><span class="p">:</span>
             <span class="c1"># Turns on printing where a message came from</span>
             <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-                <span class="sd">&quot;&quot;&quot; debugging logging builtins.print &quot;&quot;&quot;</span>
-                <span class="kn">from</span> <span class="nn">utool._internal.meta_util_dbg</span> <span class="k">import</span> <span class="n">get_caller_name</span>
+                <span class="sd">&quot;&quot;&quot;debugging logging builtins.print&quot;&quot;&quot;</span>
+                <span class="kn">from</span> <span class="nn">utool._internal.meta_util_dbg</span> <span class="kn">import</span> <span class="n">get_caller_name</span>
 
                 <span class="n">calltag</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s1">&#39;[caller:&#39;</span><span class="p">,</span> <span class="n">get_caller_name</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="n">DEBUG_PRINT_N</span><span class="p">),</span> <span class="s1">&#39;]&#39;</span><span class="p">))</span>
                 <span class="n">util_logging</span><span class="o">.</span><span class="n">_utool_print</span><span class="p">()(</span><span class="n">calltag</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -228,7 +226,7 @@
         <span class="k">else</span><span class="p">:</span>
 
             <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-                <span class="sd">&quot;&quot;&quot; logging builtins.print &quot;&quot;&quot;</span>
+                <span class="sd">&quot;&quot;&quot;logging builtins.print&quot;&quot;&quot;</span>
                 <span class="n">util_logging</span><span class="o">.</span><span class="n">_utool_print</span><span class="p">()(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="nb">print</span></div>
@@ -238,21 +236,21 @@
     <span class="k">if</span> <span class="n">SILENT</span><span class="p">:</span>
 
         <span class="k">def</span> <span class="nf">print_</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot; silent stdout.write &quot;&quot;&quot;</span>
+            <span class="sd">&quot;&quot;&quot;silent stdout.write&quot;&quot;&quot;</span>
             <span class="k">pass</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">__AGGROFLUSH__</span><span class="p">:</span>
 
             <span class="k">def</span> <span class="nf">print_</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-                <span class="sd">&quot;&quot;&quot; aggressive logging stdout.write &quot;&quot;&quot;</span>
+                <span class="sd">&quot;&quot;&quot;aggressive logging stdout.write&quot;&quot;&quot;</span>
                 <span class="n">util_logging</span><span class="o">.</span><span class="n">_utool_write</span><span class="p">()(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
                 <span class="n">util_logging</span><span class="o">.</span><span class="n">_utool_flush</span><span class="p">()()</span>
 
         <span class="k">else</span><span class="p">:</span>
 
             <span class="k">def</span> <span class="nf">print_</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-                <span class="sd">&quot;&quot;&quot; logging stdout.write &quot;&quot;&quot;</span>
+                <span class="sd">&quot;&quot;&quot;logging stdout.write&quot;&quot;&quot;</span>
                 <span class="n">util_logging</span><span class="o">.</span><span class="n">_utool_write</span><span class="p">()(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">print_</span></div>
@@ -268,23 +266,23 @@
     <span class="k">if</span> <span class="n">SILENT</span><span class="p">:</span>
 
         <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot; silent builtins.print &quot;&quot;&quot;</span>
+            <span class="sd">&quot;&quot;&quot;silent builtins.print&quot;&quot;&quot;</span>
             <span class="k">pass</span>
 
         <span class="k">def</span> <span class="nf">printDBG</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot; silent debug print &quot;&quot;&quot;</span>
+            <span class="sd">&quot;&quot;&quot;silent debug print&quot;&quot;&quot;</span>
             <span class="k">pass</span>
 
         <span class="k">def</span> <span class="nf">print_</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot; silent stdout.write &quot;&quot;&quot;</span>
+            <span class="sd">&quot;&quot;&quot;silent stdout.write&quot;&quot;&quot;</span>
             <span class="k">pass</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">DEBUG_PRINT</span><span class="p">:</span>
             <span class="c1"># Turns on printing where a message came from</span>
             <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-                <span class="sd">&quot;&quot;&quot; debugging logging builtins.print &quot;&quot;&quot;</span>
-                <span class="kn">from</span> <span class="nn">utool._internal.meta_util_dbg</span> <span class="k">import</span> <span class="n">get_caller_name</span>
+                <span class="sd">&quot;&quot;&quot;debugging logging builtins.print&quot;&quot;&quot;</span>
+                <span class="kn">from</span> <span class="nn">utool._internal.meta_util_dbg</span> <span class="kn">import</span> <span class="n">get_caller_name</span>
 
                 <span class="n">calltag</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s1">&#39;[caller:&#39;</span><span class="p">,</span> <span class="n">get_caller_name</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="n">DEBUG_PRINT_N</span><span class="p">),</span> <span class="s1">&#39;]&#39;</span><span class="p">))</span>
                 <span class="n">util_logging</span><span class="o">.</span><span class="n">_utool_print</span><span class="p">()(</span><span class="n">calltag</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
@@ -292,20 +290,20 @@
         <span class="k">else</span><span class="p">:</span>
 
             <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-                <span class="sd">&quot;&quot;&quot; logging builtins.print &quot;&quot;&quot;</span>
+                <span class="sd">&quot;&quot;&quot;logging builtins.print&quot;&quot;&quot;</span>
                 <span class="n">util_logging</span><span class="o">.</span><span class="n">_utool_print</span><span class="p">()(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">__AGGROFLUSH__</span><span class="p">:</span>
 
             <span class="k">def</span> <span class="nf">print_</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-                <span class="sd">&quot;&quot;&quot; aggressive logging stdout.write &quot;&quot;&quot;</span>
+                <span class="sd">&quot;&quot;&quot;aggressive logging stdout.write&quot;&quot;&quot;</span>
                 <span class="n">util_logging</span><span class="o">.</span><span class="n">_utool_write</span><span class="p">()(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
                 <span class="n">util_logging</span><span class="o">.</span><span class="n">_utool_flush</span><span class="p">()()</span>
 
         <span class="k">else</span><span class="p">:</span>
 
             <span class="k">def</span> <span class="nf">print_</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-                <span class="sd">&quot;&quot;&quot; logging stdout.write &quot;&quot;&quot;</span>
+                <span class="sd">&quot;&quot;&quot;logging stdout.write&quot;&quot;&quot;</span>
                 <span class="n">util_logging</span><span class="o">.</span><span class="n">_utool_write</span><span class="p">()(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 
         <span class="c1"># turn on module debugging with command line flags</span>
@@ -328,14 +326,14 @@
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;INJECT_PRINT: </span><span class="si">%r</span><span class="s1"> == </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">module_prefix</span><span class="p">))</span>
 
             <span class="k">def</span> <span class="nf">printDBG</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-                <span class="sd">&quot;&quot;&quot; debug logging print &quot;&quot;&quot;</span>
+                <span class="sd">&quot;&quot;&quot;debug logging print&quot;&quot;&quot;</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">args</span><span class="p">))</span>
                 <span class="n">util_logging</span><span class="o">.</span><span class="n">__UTOOL_PRINTDBG__</span><span class="p">(</span><span class="n">module_prefix</span> <span class="o">+</span> <span class="s1">&#39; DEBUG &#39;</span> <span class="o">+</span> <span class="n">msg</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
 
             <span class="k">def</span> <span class="nf">printDBG</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-                <span class="sd">&quot;&quot;&quot; silent debug logging print &quot;&quot;&quot;</span>
+                <span class="sd">&quot;&quot;&quot;silent debug logging print&quot;&quot;&quot;</span>
                 <span class="k">pass</span>
 
     <span class="c1"># _inject_funcs(module, print, print_, printDBG)</span>
@@ -369,13 +367,13 @@
 
 
 <div class="viewcode-block" id="make_module_reload_func"><a class="viewcode-back" href="../../utool.html#utool.util_inject.make_module_reload_func">[docs]</a><span class="k">def</span> <span class="nf">make_module_reload_func</span><span class="p">(</span><span class="n">module_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">module_prefix</span><span class="o">=</span><span class="s1">&#39;[???]&#39;</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Injects dynamic module reloading &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Injects dynamic module reloading&quot;&quot;&quot;</span>
     <span class="n">module</span> <span class="o">=</span> <span class="n">_get_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">register</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">module_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">module_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">rrr</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Dynamic module reloading &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Dynamic module reloading&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">__RELOAD_OK__</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Reloading has been forced off&#39;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
@@ -397,7 +395,7 @@
 
 
 <div class="viewcode-block" id="DUMMYPROF_FUNC"><a class="viewcode-back" href="../../utool.html#utool.util_inject.DUMMYPROF_FUNC">[docs]</a><span class="k">def</span> <span class="nf">DUMMYPROF_FUNC</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; dummy profiling func. does nothing &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;dummy profiling func. does nothing&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">func</span></div>
 
 
@@ -443,7 +441,7 @@
 
 
 <div class="viewcode-block" id="memprof"><a class="viewcode-back" href="../../utool.html#utool.util_inject.memprof">[docs]</a><span class="k">def</span> <span class="nf">memprof</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; requires memory_profiler</span>
+    <span class="sd">&quot;&quot;&quot;requires memory_profiler</span>
 <span class="sd">    pip install memory_profiler</span>
 
 <span class="sd">    References:</span>
@@ -460,14 +458,14 @@
 
 
 <span class="k">def</span> <span class="nf">_profile_func_flag</span><span class="p">(</span><span class="n">funcname</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; checks if func has been requested to be profiled &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;checks if func has been requested to be profiled&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">PROF_FUNC_PAT_LIST</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span>
     <span class="k">return</span> <span class="n">_matches_list</span><span class="p">(</span><span class="n">funcname</span><span class="p">,</span> <span class="n">PROF_FUNC_PAT_LIST</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_profile_module_flag</span><span class="p">(</span><span class="n">module_name</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; checks if module has been requested to be profiled &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;checks if module has been requested to be profiled&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">PROF_MOD_PAT_LIST</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span>
     <span class="k">return</span> <span class="n">_matches_list</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">PROF_MOD_PAT_LIST</span><span class="p">)</span>
@@ -516,7 +514,7 @@
 
     <span class="k">def</span> <span class="nf">check_debug_import_times</span><span class="p">():</span>
         <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
-        <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inject</span>
+        <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_inject</span>
 
         <span class="nb">print</span><span class="p">(</span>
             <span class="n">ut</span><span class="o">.</span><span class="n">align</span><span class="p">(</span>
@@ -537,7 +535,7 @@
 <span class="sd">    is being imported so the import order can be debuged</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">PRINT_INJECT_ORDER</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">utool._internal</span> <span class="k">import</span> <span class="n">meta_util_dbg</span>
+        <span class="kn">from</span> <span class="nn">utool._internal</span> <span class="kn">import</span> <span class="n">meta_util_dbg</span>
 
         <span class="n">callername</span> <span class="o">=</span> <span class="n">meta_util_dbg</span><span class="o">.</span><span class="n">get_caller_name</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="n">N</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">lineno</span> <span class="o">=</span> <span class="n">meta_util_dbg</span><span class="o">.</span><span class="n">get_caller_lineno</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="n">N</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -566,13 +564,13 @@
 
 
 <div class="viewcode-block" id="inject"><a class="viewcode-back" href="../../utool.html#utool.util_inject.inject">[docs]</a><span class="k">def</span> <span class="nf">inject</span><span class="p">(</span><span class="n">module_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">module_prefix</span><span class="o">=</span><span class="s1">&#39;[???]&#39;</span><span class="p">,</span> <span class="n">DEBUG</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Injects your module with utool magic</span>
 
 <span class="sd">    Utool magic is not actually magic. It just turns your ``print`` statments into</span>
 <span class="sd">    logging statments, allows for your module to be used with the utool.Indent</span>
 <span class="sd">    context manager and the and utool.indent_func decorator. ``printDBG`` will soon</span>
-<span class="sd">    be deprecated as will ``print_``. The function rrr is a developer convinience for</span>
+<span class="sd">    be deprecated as will ``print\_``. The function rrr is a developer convinience for</span>
 <span class="sd">    reloading the module dynamically durring runtime. The profile decorator is</span>
 <span class="sd">    a no-op if not using kernprof.py, otherwise it is kernprof.py&#39;s profile</span>
 <span class="sd">    decorator.</span>
@@ -584,7 +582,7 @@
 <span class="sd">        module (None): the actual module (optional)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        tuple : (print, print_, printDBG, rrr, profile_)</span>
+<span class="sd">        tuple : (print, print\_, printDBG, rrr, profile\_)</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
@@ -604,7 +602,7 @@
 
 
 <div class="viewcode-block" id="inject2"><a class="viewcode-back" href="../../utool.html#utool.util_inject.inject2">[docs]</a><span class="k">def</span> <span class="nf">inject2</span><span class="p">(</span><span class="n">module_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">module_prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">DEBUG</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; wrapper that depricates print_ and printDBG &quot;&quot;&quot;</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;wrapper that depricates print\_ and printDBG&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">module_prefix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">module_prefix</span> <span class="o">=</span> <span class="s1">&#39;[</span><span class="si">%s</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">module_name</span><span class="p">,)</span>
     <span class="n">noinject</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">module_prefix</span><span class="p">,</span> <span class="n">DEBUG</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
@@ -656,7 +654,7 @@
 
 
 <div class="viewcode-block" id="inject_python_code2"><a class="viewcode-back" href="../../utool.html#utool.util_inject.inject_python_code2">[docs]</a><span class="k">def</span> <span class="nf">inject_python_code2</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">patch_code</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Does autogeneration stuff &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Does autogeneration stuff&quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
 
     <span class="n">text</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">readfrom</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span>
@@ -760,7 +758,7 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
 </ul>
@@ -777,17 +775,15 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -804,7 +800,7 @@
       &copy;2020, Wild Me.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

@@ -81,20 +81,20 @@ def get_table_columnname_list(cur, tablename):
 
 
 def get_table_columninfo_list(cur, tablename):
-    """
+    r"""
+    Returns a list of tuples with the following format:
+    [0] column_id  : id of the column
+    [1] name       : the name of the column
+    [2] type\_      : the type of the column (TEXT, INT, etc...)
+    [3] notnull    : 0 or 1 if the column can contains null values
+    [4] dflt_value : the default value
+    [5] pk         : 0 or 1 if the column partecipate to the primary key
+
     Args:
         tablename (str): table name
 
     Returns:
-        column_list : list of tuples with format:
-            (
-                [0] column_id  : id of the column
-                [1] name       : the name of the column
-                [2] type_      : the type of the column (TEXT, INT, etc...)
-                [3] notnull    : 0 or 1 if the column can contains null values
-                [4] dflt_value : the default value
-                [5] pk         : 0 or 1 if the column partecipate to the primary key
-            )
+        column_list: list of tuples
 
     References:
         http://stackoverflow.com/questions/17717829/how-to-get-column-names-from-a-table-in-sqlite-via-pragma-net-c

@@ -1039,9 +1039,8 @@ def reloadable_class(cls):
 
 
 class KwargsWrapper(Mapping):
-    """
-    Allows an arbitrary object attributes to be passed as a **kwargs
-    argument
+    r"""
+    Allows an arbitrary object attributes to be passed as a \*\*kwargs argument.
     """
 
     def __init__(self, obj):

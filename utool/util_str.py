@@ -82,7 +82,7 @@ def replace_between_tags(text, repl_, start_tag, end_tag=None):
 
     Args:
         text (str):
-        repl_ (str):
+        repl\_ (str):
         start_tag (str):
         end_tag (str): (default=None)
 
@@ -143,7 +143,7 @@ def theta_str(theta, taustr=TAUSTR, fmtstr='{coeff:,.1f}{taustr}'):
     Returns:
         str : theta_str - the angle in tau units
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_str import *  # NOQA
         >>> theta = 3.1415
@@ -151,7 +151,7 @@ def theta_str(theta, taustr=TAUSTR, fmtstr='{coeff:,.1f}{taustr}'):
         >>> print(result)
         0.5*2pi
 
-    Example2:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_str import *  # NOQA
         >>> theta = 6.9932
@@ -199,11 +199,11 @@ def scalar_str(val, precision=None, max_precision=None):
 
 
 def remove_chars(str_, char_list):
-    """
-    removes all chars in char_list from str_
+    r"""
+    removes all chars in char_list from str\_
 
     Args:
-        str_ (str):
+        str\_ (str):
         char_list (list):
 
     Returns:
@@ -309,13 +309,13 @@ def textblock(multiline_text):
         >>> from utool.util_str import *  # NOQA
         >>> # build test data
         >>> multiline_text = ''' a big string
-            that should be layed out flat
-            yet still provide nice python
-            code that doesnt go too far over
-            80 characters.
-
-            Two newlines should be respected though
-            '''
+        >>> that should be layed out flat
+        >>> yet still provide nice python
+        >>> code that doesnt go too far over
+        >>> 80 characters.
+        >>>
+        >>> Two newlines should be respected though
+        >>> '''
         >>> # execute function
         >>> new_text = textblock(multiline_text)
         >>> # verify results
@@ -332,8 +332,8 @@ def indent(str_, indent='    '):
     Indents a block of text
 
     Args:
-        str_ (str):
-        indent (str): (default = '    ') TODO rename to indent_ or rename func
+        str\_ (str):
+        indent (str): (default = '    ') TODO rename to indent or rename func
 
     Returns:
         str:
@@ -618,25 +618,26 @@ def parse_bytes(bytes_str):
     """
     Parse bytes from string
 
-    uint8_size = ut.parse_bytes('1B')
-    image_size = ut.parse_bytes('3.5MB')
-    float32_size = ut.parse_bytes('32bit')
-    desc_size = 128 * uint8_size
-    kpts_size = 6 * float32_size
-    chip_size = ut.parse_bytes('400 KB')
-    probchip_size = ut.parse_bytes('50 KB')
-    nImgs = 80000 # 80,000
-    nAnnots = nImgs * 2
-    desc_per_img = 3000
-    size_stats = {
-        'image': nImgs * image_size,
-        'chips': nAnnots * chip_size,
-        'probchips': nAnnots * probchip_size,
-        'desc': nAnnots * desc_size * desc_per_img,
-        'kpts': nAnnots * kpts_size * desc_per_img,
-    }
-    print(ut.repr3(ut.map_dict_vals(ut.byte_str2, size_stats), align=True))
-    print('total = ' + ut.byte_str2(sum(size_stats.values())))
+    Ignore:
+        >>> uint8_size = ut.parse_bytes('1B')
+        >>> image_size = ut.parse_bytes('3.5MB')
+        >>> float32_size = ut.parse_bytes('32bit')
+        >>> desc_size = 128 * uint8_size
+        >>> kpts_size = 6 * float32_size
+        >>> chip_size = ut.parse_bytes('400 KB')
+        >>> probchip_size = ut.parse_bytes('50 KB')
+        >>> nImgs = 80000 # 80,000
+        >>> nAnnots = nImgs * 2
+        >>> desc_per_img = 3000
+        >>> size_stats = {
+        >>>     'image': nImgs * image_size,
+        >>>     'chips': nAnnots * chip_size,
+        >>>     'probchips': nAnnots * probchip_size,
+        >>>     'desc': nAnnots * desc_size * desc_per_img,
+        >>>     'kpts': nAnnots * kpts_size * desc_per_img,
+        >>> }
+        >>> print(ut.repr3(ut.map_dict_vals(ut.byte_str2, size_stats), align=True))
+        >>> print('total = ' + ut.byte_str2(sum(size_stats.values())))
     """
     import utool as ut
     import re
@@ -1411,23 +1412,18 @@ def dict_str(dict_, **dictkw):
     dictionary. In most cases this string could be evaled.
 
     Args:
-        dict_ (dict_): a dictionary
-
-    Args:
-        dict_ (dict_):  a dictionary
+        dict\_ (dict):  a dictionary
         **dictkw: stritems, strkeys, strvals, nl, newlines, truncate, nobr,
-                  nobraces, align, trailing_sep, explicit, itemsep,
-                  truncatekw, sorted_, indent_, key_order, precision,
-                  with_comma, key_order_metric, maxlen, recursive, use_numpy,
-                  with_dtype, force_dtype, packed
-
-    Kwargs:
-        sorted_ (None): returns str sorted by a metric (default = None)
+            nobraces, align, trailing_sep, explicit, itemsep,
+            truncatekw, sorted\_, indent\_, key_order, precision,
+            with_comma, key_order_metric, maxlen, recursive, use_numpy,
+            with_dtype, force_dtype, packed
+        sorted\_ (None): returns str sorted by a metric (default = None)
         nl (int): prefered alias for newline. can be a coundown variable
             (default = None)
         key_order (None): overrides default ordering (default = None)
         key_order_metric (str): special sorting of items. Accepted values:
-                None, 'strlen', 'val'
+            None, 'strlen', 'val'
         precision (int): (default = 8)
         explicit (int): can be a countdown variable. if True, uses
             dict(a=b) syntax instead of {'a': b}
@@ -1643,11 +1639,11 @@ def list_str(list_, **listkw):
     Makes a pretty list string
 
     Args:
-        list_ (list): input list
+        list\_ (list): input list
         **listkw: nl, newlines, packed, truncate, nobr, nobraces, itemsep,
                   trailing_sep, truncatekw, strvals, recursive,
-                  indent_, precision, use_numpy, with_dtype, force_dtype,
-                  stritems, strkeys, align, explicit, sorted_, key_order,
+                  indent\_, precision, use_numpy, with_dtype, force_dtype,
+                  stritems, strkeys, align, explicit, sorted\_, key_order,
                   key_order_metric, maxlen
 
     Returns:
@@ -1873,7 +1869,7 @@ def horiz_string(*args, **kwargs):
     CommandLine:
         python -m utool.util_str --test-horiz_string
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> # Pretty printing of matrices demo / test
         >>> import utool
@@ -2026,7 +2022,7 @@ def align(text, character='=', replchar=None, pos=0):
     CommandLine:
         python -m utool.util_str --test-align:0
 
-    Example0:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_str import *  # NOQA
         >>> character = '='
@@ -2068,7 +2064,7 @@ def align_lines(line_list, character='=', replchar=None, pos=0):
         python -m utool.util_str --test-align_lines:2
         python -m utool.util_str --test-align_lines:3
 
-    Example0:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_str import *  # NOQA
         >>> line_list = 'a = b\none = two\nthree = fish'.split('\n')
@@ -2080,7 +2076,7 @@ def align_lines(line_list, character='=', replchar=None, pos=0):
         one   = two
         three = fish
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_str import *  # NOQA
         >>> line_list = 'foofish:\n    a = b\n    one    = two\n    three    = fish'.split('\n')
@@ -2093,7 +2089,7 @@ def align_lines(line_list, character='=', replchar=None, pos=0):
             one      = two
             three    = fish
 
-    Example2:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_str import *  # NOQA
         >>> import utool as ut
@@ -2113,7 +2109,7 @@ def align_lines(line_list, character='=', replchar=None, pos=0):
          'range' : '2:28:32',
          'std'   : '1:13:57',}
 
-    Example3:
+    Example:
         >>> # ENABLE_DOCEST
         >>> from utool.util_str import *  # NOQA
         >>> line_list = 'foofish:\n a = b = c\n one = two = three\nthree=4= fish'.split('\n')
@@ -2290,12 +2286,12 @@ def multi_replace(str_, search_list, repl_list):
     repl_list.
 
     Args:
-        str_ (str): string to search
+        str\_ (str): string to search
         search_list (list): list of search strings
         repl_list (list or str): one or multiple replace strings
 
     Returns:
-        str: str_
+        str
 
     CommandLine:
         python -m utool.util_str --exec-multi_replace
@@ -2448,7 +2444,7 @@ def get_textdiff(text1, text2, num_context_lines=0, ignore_whitespace=False):
         - three
         + five
 
-    Example2:
+    Example:
         >>> # DISABLE_DOCTEST
         >>> from utool.util_str import *  # NOQA
         >>> # build test data
@@ -2509,11 +2505,11 @@ difftext = get_textdiff
 
 
 def conj_phrase(list_, cond='or'):
-    """
+    r"""
     Joins a list of words using English conjunction rules
 
     Args:
-        list_ (list):  of strings
+        list\_ (list):  of strings
         cond (str): a conjunction (or, and, but)
 
     Returns:
@@ -2530,7 +2526,7 @@ def conj_phrase(list_, cond='or'):
         >>> print(result)
         a, b, or c
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_str import *  # NOQA
         >>> list_ = ['a', 'b']

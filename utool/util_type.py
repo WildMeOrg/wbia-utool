@@ -221,7 +221,7 @@ def smart_cast(var, type_):
         >>> print(result)
         [1]
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_type import *  # NOQA
         >>> import utool as ut
@@ -230,7 +230,7 @@ def smart_cast(var, type_):
         >>> print(result)
         '1'
 
-    Example2:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_type import *  # NOQA
         >>> cast_var = smart_cast('(1,3)', 'eval')
@@ -238,7 +238,7 @@ def smart_cast(var, type_):
         >>> print(result)
         (1, 3)
 
-    Example3:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_type import *  # NOQA
         >>> cast_var = smart_cast('(1,3)', eval)
@@ -246,7 +246,7 @@ def smart_cast(var, type_):
         >>> print(result)
         (1, 3)
 
-    Example4:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_type import *  # NOQA
         >>> cast_var = smart_cast('1::3', slice)

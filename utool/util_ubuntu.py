@@ -229,7 +229,7 @@ class XCtrl(object):
         #====
 
         win_title=x-terminal-emulator.X-terminal-emulator
-        key_ = 'x-terminal-emulator.X-terminal-emulator'
+        key\_ = 'x-terminal-emulator.X-terminal-emulator'
 
         # Get all windows in current workspace
         workspace_number=`wmctrl -d | grep '\*' | cut -d' ' -f 1`

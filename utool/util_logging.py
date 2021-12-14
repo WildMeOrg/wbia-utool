@@ -395,7 +395,7 @@ def start_logging(log_fpath=None, mode='a', appname='default', log_dir=None):
         python -m utool.util_logging --test-start_logging:1
         python -m utool.util_logging --test-start_logging:2
 
-    Example0:
+    Example:
         >>> # DISABLE_DOCTEST
         >>> import sys
         >>> sys.argv.append('--verb-logging')
@@ -414,7 +414,7 @@ def start_logging(log_fpath=None, mode='a', appname='default', log_dir=None):
         >>> # assert current_log_text.find('writing1writing2') > 0, 'cant find writing1writing2'
         >>> assert current_log_text.find('writing3') > 0, 'cant find writing3'
 
-    Example1:
+    Example:
         >>> # DISABLE_DOCTEST
         >>> # Ensure that progress is logged
         >>> import sys
@@ -428,7 +428,7 @@ def start_logging(log_fpath=None, mode='a', appname='default', log_dir=None):
         >>> assert current_log_text.find('rate') > 0, 'progress was not logged'
         >>> print(current_log_text)
 
-    Example2:
+    Example:
         >>> # DISABLE_DOCTEST
         >>> import sys
         >>> sys.argv.append('--verb-logging')

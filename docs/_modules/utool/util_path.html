@@ -1,19 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>utool.util_path &#8212; wbia-vtool 3.0.1 documentation</title>
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -40,10 +38,10 @@
 <span class="sd">This module becomes nav</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
-<span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="nb">zip</span><span class="p">,</span> <span class="nb">filter</span><span class="p">,</span> <span class="n">filterfalse</span><span class="p">,</span> <span class="nb">map</span><span class="p">,</span> <span class="nb">range</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="kn">import</span> <span class="nb">zip</span><span class="p">,</span> <span class="nb">filter</span><span class="p">,</span> <span class="n">filterfalse</span><span class="p">,</span> <span class="nb">map</span><span class="p">,</span> <span class="nb">range</span>
 <span class="kn">import</span> <span class="nn">six</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">join</span><span class="p">,</span>
     <span class="n">basename</span><span class="p">,</span>
     <span class="n">relpath</span><span class="p">,</span>
@@ -68,14 +66,14 @@
 <span class="kn">import</span> <span class="nn">fnmatch</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
-<span class="kn">from</span> <span class="nn">utool.util_regex</span> <span class="k">import</span> <span class="n">extend_regex</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_dbg</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_progress</span>
-<span class="kn">from</span> <span class="nn">utool._internal</span> <span class="k">import</span> <span class="n">meta_util_path</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inject</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_arg</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>
-<span class="kn">from</span> <span class="nn">utool._internal.meta_util_arg</span> <span class="k">import</span> <span class="n">NO_ASSERTS</span><span class="p">,</span> <span class="n">VERBOSE</span><span class="p">,</span> <span class="n">VERYVERBOSE</span><span class="p">,</span> <span class="n">QUIET</span>
+<span class="kn">from</span> <span class="nn">utool.util_regex</span> <span class="kn">import</span> <span class="n">extend_regex</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_dbg</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_progress</span>
+<span class="kn">from</span> <span class="nn">utool._internal</span> <span class="kn">import</span> <span class="n">meta_util_path</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_inject</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_arg</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_str</span>
+<span class="kn">from</span> <span class="nn">utool._internal.meta_util_arg</span> <span class="kn">import</span> <span class="n">NO_ASSERTS</span><span class="p">,</span> <span class="n">VERBOSE</span><span class="p">,</span> <span class="n">VERYVERBOSE</span><span class="p">,</span> <span class="n">QUIET</span>
 
 <span class="nb">print</span><span class="p">,</span> <span class="n">rrr</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">util_inject</span><span class="o">.</span><span class="n">inject2</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 <span class="n">print_</span> <span class="o">=</span> <span class="n">util_inject</span><span class="o">.</span><span class="n">make_module_write_func</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -97,7 +95,7 @@
 
 
 <div class="viewcode-block" id="newcd"><a class="viewcode-back" href="../../utool.html#utool.util_path.newcd">[docs]</a><span class="k">def</span> <span class="nf">newcd</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; DEPRICATE &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;DEPRICATE&quot;&quot;&quot;</span>
     <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
     <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">cwd</span></div>
@@ -160,14 +158,14 @@
 
 
 <div class="viewcode-block" id="truepath_relative"><a class="viewcode-back" href="../../utool.html#utool.util_path.truepath_relative">[docs]</a><span class="k">def</span> <span class="nf">truepath_relative</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">otherpath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Normalizes and returns absolute path with so specs</span>
+    <span class="sd">&quot;&quot;&quot;Normalizes and returns absolute path with so specs</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        path (str):  path to file or directory</span>
 <span class="sd">        otherpath (None): (default = None)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        str: path_</span>
+<span class="sd">        str</span>
 
 <span class="sd">    CommandLine:</span>
 <span class="sd">        python -m utool.util_path --exec-truepath_relative --show</span>
@@ -179,9 +177,9 @@
 <span class="sd">        &gt;&gt;&gt; path = &#39;C:/foobar/foobiz&#39;</span>
 <span class="sd">        &gt;&gt;&gt; otherpath = &#39;C:/foobar&#39;</span>
 <span class="sd">        &gt;&gt;&gt; path_ = truepath_relative(path, otherpath)</span>
-<span class="sd">        &gt;&gt;&gt; result = (&#39;path_ = %s&#39; % (ut.repr2(path_),))</span>
+<span class="sd">        &gt;&gt;&gt; result = (&#39;path = %s&#39; % (ut.repr2(path_),))</span>
 <span class="sd">        &gt;&gt;&gt; print(result)</span>
-<span class="sd">        path_ = &#39;foobiz&#39;</span>
+<span class="sd">        path = &#39;foobiz&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">otherpath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">otherpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
@@ -191,7 +189,7 @@
 
 
 <div class="viewcode-block" id="tail"><a class="viewcode-back" href="../../utool.html#utool.util_path.tail">[docs]</a><span class="k">def</span> <span class="nf">tail</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">trailing</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Alias for path_ndir_split &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Alias for path_ndir_split&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">path_ndir_split</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">trailing</span><span class="o">=</span><span class="n">trailing</span><span class="p">)</span></div>
 
 
@@ -288,7 +286,7 @@
 
 
 <div class="viewcode-block" id="remove_file"><a class="viewcode-back" href="../../utool.html#utool.util_path.remove_file">[docs]</a><span class="k">def</span> <span class="nf">remove_file</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dryrun</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="n">QUIET</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Removes a file &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Removes a file&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">verbose</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">verbose</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">quiet</span>
     <span class="k">if</span> <span class="n">dryrun</span><span class="p">:</span>
@@ -438,7 +436,7 @@
     <span class="n">dryrun</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Removes files matching a pattern from a directory &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Removes files matching a pattern from a directory&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fname_pattern_list</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
         <span class="n">fname_pattern_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">fname_pattern_list</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
@@ -477,7 +475,7 @@
     <span class="n">print_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Removes a file, directory, or symlink &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Removes a file, directory, or symlink&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">verbose</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">verbose</span> <span class="o">=</span> <span class="n">VERBOSE</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">QUIET</span><span class="p">:</span>
@@ -517,7 +515,7 @@
     <span class="n">print_caller</span><span class="o">=</span><span class="n">PRINT_CALLER</span><span class="p">,</span>
     <span class="n">lbl</span><span class="o">=</span><span class="s1">&#39;files&#39;</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; checks existance before removing. then tries to remove exisint paths &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;checks existance before removing. then tries to remove exisint paths&quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
 
     <span class="k">if</span> <span class="n">print_caller</span><span class="p">:</span>
@@ -594,7 +592,7 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span>
                 <span class="n">n_removed</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">VERYVERBOSE</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;WARNING: Could not remove fpath = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fpath</span><span class="p">,))</span>
     <span class="k">if</span> <span class="n">_verbose</span><span class="p">:</span>
@@ -662,7 +660,7 @@
 
 
 <div class="viewcode-block" id="checkpath"><a class="viewcode-back" href="../../utool.html#utool.util_path.checkpath">[docs]</a><span class="k">def</span> <span class="nf">checkpath</span><span class="p">(</span><span class="n">path_</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">VERYVERBOSE</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="n">VERYVERBOSE</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot; verbose wrapper around ``os.path.exists``</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;verbose wrapper around ``os.path.exists``</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        true if ``path_`` exists on the filesystem show only the</span>
@@ -719,7 +717,7 @@
         <span class="k">if</span> <span class="n">does_exist</span><span class="p">:</span>
             <span class="n">path_type</span> <span class="o">=</span> <span class="n">get_path_type</span><span class="p">(</span><span class="n">path_</span><span class="p">)</span>
             <span class="c1"># path_type = &#39;file&#39; if isfile(path_) else &#39;directory&#39;</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[</span><span class="si">%s</span><span class="s1">] ...(</span><span class="si">%s</span><span class="s1">) exists&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">caller_name</span><span class="p">,</span> <span class="n">path_type</span><span class="p">,))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[</span><span class="si">%s</span><span class="s1">] ...(</span><span class="si">%s</span><span class="s1">) exists&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">caller_name</span><span class="p">,</span> <span class="n">path_type</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[</span><span class="si">%s</span><span class="s1">] ... does not exist&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">caller_name</span><span class="p">))</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">does_exist</span> <span class="ow">and</span> <span class="n">info</span><span class="p">:</span>
@@ -732,7 +730,7 @@
 
 
 <div class="viewcode-block" id="ensurepath"><a class="viewcode-back" href="../../utool.html#utool.util_path.ensurepath">[docs]</a><span class="k">def</span> <span class="nf">ensurepath</span><span class="p">(</span><span class="n">path_</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; DEPRICATE - alias - use ensuredir instead &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;DEPRICATE - alias - use ensuredir instead&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">verbose</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">verbose</span> <span class="o">=</span> <span class="n">VERYVERBOSE</span>
     <span class="k">return</span> <span class="n">ensuredir</span><span class="p">(</span><span class="n">path_</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div>
@@ -847,8 +845,8 @@
 <span class="sd">        &gt;&gt;&gt; copy_files_to(src_fpath_list, dst_dpath, overwrite=overwrite,</span>
 <span class="sd">        &gt;&gt;&gt;               verbose=verbose)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_list</span>
-    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_parallel</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_list</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_parallel</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[util_path] +--- COPYING FILES ---&#39;</span><span class="p">)</span>
@@ -957,7 +955,7 @@
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[</span><span class="si">%s</span><span class="s1">] src=</span><span class="si">%s</span><span class="s1"> does not exist!&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">src</span><span class="p">))</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[</span><span class="si">%s</span><span class="s1">] dst=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">dst</span><span class="p">))</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_dbg</span>
+        <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_dbg</span>
 
         <span class="n">util_dbg</span><span class="o">.</span><span class="n">printex</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="s1">&#39;Error copying single&#39;</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;src&#39;</span><span class="p">,</span> <span class="s1">&#39;dst&#39;</span><span class="p">])</span>
         <span class="k">raise</span></div>
@@ -987,7 +985,7 @@
 <div class="viewcode-block" id="copy_list"><a class="viewcode-back" href="../../utool.html#utool.util_path.copy_list">[docs]</a><span class="k">def</span> <span class="nf">copy_list</span><span class="p">(</span>
     <span class="n">src_list</span><span class="p">,</span> <span class="n">dst_list</span><span class="p">,</span> <span class="n">lbl</span><span class="o">=</span><span class="s1">&#39;Copying&#39;</span><span class="p">,</span> <span class="n">ioerr_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sherro_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">oserror_ok</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Copies all data and stat info &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Copies all data and stat info&quot;&quot;&quot;</span>
     <span class="c1"># Feb - 6 - 2014 Copy function</span>
     <span class="n">task_iter</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">src_list</span><span class="p">,</span> <span class="n">dst_list</span><span class="p">)</span>
 
@@ -1132,9 +1130,11 @@
 <span class="sd">        &gt;&gt;&gt; result = (&#39;path_list = %s&#39; % (ut.repr3(path_list),))</span>
 <span class="sd">        &gt;&gt;&gt; result = result.replace(r&#39;\\&#39;, &#39;/&#39;)</span>
 <span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        exclude_dirs = [&#39;_internal&#39;, &#39;...utool/utool/experimental&#39;]</span>
 <span class="sd">        path_list = [</span>
 <span class="sd">            &#39;__init__.py&#39;,</span>
 <span class="sd">            &#39;__main__.py&#39;,</span>
+<span class="sd">            &#39;_graveyard/__prefwidg_dep.py&#39;,</span>
 <span class="sd">            &#39;tests/__init__.py&#39;,</span>
 <span class="sd">        ]</span>
 
@@ -1194,10 +1194,10 @@
 <span class="sd">    References:</span>
 <span class="sd">        http://stackoverflow.com/questions/19859840/excluding-dirs-in-os-walk</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_iter</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_iter</span>
 
     <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;verbose&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>  <span class="c1"># log what i&#39;m going to do</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[util_path] glob(dpath=</span><span class="si">%r</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="n">truepath</span><span class="p">(</span><span class="n">dpath</span><span class="p">,))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[util_path] glob(dpath=</span><span class="si">%r</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="n">truepath</span><span class="p">(</span><span class="n">dpath</span><span class="p">))</span>
 
     <span class="n">debug</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">if</span> <span class="n">pattern</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1214,6 +1214,7 @@
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">dpath</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span>
             <span class="p">),</span> <span class="s1">&#39;warning: pattern _=</span><span class="si">%r</span><span class="s1"> in dpath, but a pattern was specified&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">_</span><span class="p">,)</span>
+
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
         <span class="c1"># overload pattern with list</span>
         <span class="n">pattern_list</span> <span class="o">=</span> <span class="n">pattern</span>
@@ -1233,7 +1234,8 @@
         <span class="p">)</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">util_iter</span><span class="o">.</span><span class="n">iflatten</span><span class="p">(</span><span class="n">subiters</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">item</span>
-        <span class="k">raise</span> <span class="ne">StopIteration</span>
+        <span class="k">return</span>
+
     <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;verbose&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[iglob] pattern = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pattern</span><span class="p">,))</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[iglob] dpath = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dpath</span><span class="p">,))</span>
@@ -1318,12 +1320,12 @@
 
 
 <div class="viewcode-block" id="fpath_has_imgext"><a class="viewcode-back" href="../../utool.html#utool.util_path.fpath_has_imgext">[docs]</a><span class="k">def</span> <span class="nf">fpath_has_imgext</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; returns true if a filename matches an image pattern &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;returns true if a filename matches an image pattern&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">fpath_has_ext</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">IMG_EXTENSIONS</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="fpath_has_ext"><a class="viewcode-back" href="../../utool.html#utool.util_path.fpath_has_ext">[docs]</a><span class="k">def</span> <span class="nf">fpath_has_ext</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">exts</span><span class="p">,</span> <span class="n">case_sensitive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; returns true if the filename has any of the given extensions &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;returns true if the filename has any of the given extensions&quot;&quot;&quot;</span>
     <span class="n">fname_</span> <span class="o">=</span> <span class="n">fname</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">case_sensitive</span> <span class="k">else</span> <span class="n">fname</span>
     <span class="k">if</span> <span class="n">case_sensitive</span><span class="p">:</span>
         <span class="n">ext_pats</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;*&#39;</span> <span class="o">+</span> <span class="n">ext</span> <span class="k">for</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">exts</span><span class="p">]</span>
@@ -1485,7 +1487,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        str: crossplat_path</span>
 
-<span class="sd">    Example(DOCTEST):</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; from utool.util_path import *  # NOQA</span>
 <span class="sd">        &gt;&gt;&gt; path = r&#39;C:\somedir&#39;</span>
@@ -1595,7 +1597,7 @@
 
 
 <div class="viewcode-block" id="ls"><a class="viewcode-back" href="../../utool.html#utool.util_path.ls">[docs]</a><span class="k">def</span> <span class="nf">ls</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; like unix ls - lists all files and dirs in path&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;like unix ls - lists all files and dirs in path&quot;&quot;&quot;</span>
     <span class="n">path_iter</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">path_iter</span><span class="p">))</span></div>
 
@@ -1618,7 +1620,7 @@
 
 
 <div class="viewcode-block" id="ls_moduledirs"><a class="viewcode-back" href="../../utool.html#utool.util_path.ls_moduledirs">[docs]</a><span class="k">def</span> <span class="nf">ls_moduledirs</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">private</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; lists all dirs which are python modules in path &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;lists all dirs which are python modules in path&quot;&quot;&quot;</span>
     <span class="n">dir_list</span> <span class="o">=</span> <span class="n">ls_dirs</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">module_dir_iter</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="n">is_module_dir</span><span class="p">,</span> <span class="n">dir_list</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">private</span><span class="p">:</span>
@@ -1738,11 +1740,11 @@
 
 
 <div class="viewcode-block" id="assertpath"><a class="viewcode-back" href="../../utool.html#utool.util_path.assertpath">[docs]</a><span class="k">def</span> <span class="nf">assertpath</span><span class="p">(</span><span class="n">path_</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Asserts that a patha exists &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Asserts that a patha exists&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">NO_ASSERTS</span><span class="p">:</span>
         <span class="k">return</span>
     <span class="k">if</span> <span class="n">path_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s1">&#39;path is None! </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path_</span><span class="p">,</span> <span class="n">msg</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s1">&#39;path=</span><span class="si">%r</span><span class="s1"> is None! </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path_</span><span class="p">,</span> <span class="n">msg</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">path_</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s1">&#39;path=</span><span class="si">%r</span><span class="s1"> is the empty string! </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path_</span><span class="p">,</span> <span class="n">msg</span><span class="p">))</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">checkpath</span><span class="p">(</span><span class="n">path_</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1753,7 +1755,7 @@
 
 
 <div class="viewcode-block" id="pathsplit_full"><a class="viewcode-back" href="../../utool.html#utool.util_path.pathsplit_full">[docs]</a><span class="k">def</span> <span class="nf">pathsplit_full</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; splits all directories in path into a list &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;splits all directories in path into a list&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span></div>
 
 
@@ -1907,7 +1909,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; * include_patterns   : </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">include_patterns</span><span class="p">,))</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; * recursive: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">recursive</span><span class="p">,))</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; * force: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">force</span><span class="p">,))</span>
-        <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>
+        <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_str</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; * fpath_list: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">util_str</span><span class="o">.</span><span class="n">repr3</span><span class="p">(</span><span class="n">fpath_list</span><span class="p">),))</span>
     <span class="n">regexpr</span> <span class="o">=</span> <span class="n">extend_regex</span><span class="p">(</span><span class="n">regexpr</span><span class="p">)</span>
@@ -2084,7 +2086,7 @@
     <span class="k">if</span> <span class="n">cache</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">fpath</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cache</span><span class="p">:</span>
         <span class="c1"># with open(fpath, &#39;r&#39;) as file_:</span>
         <span class="c1">#    lines = list(file_.readlines())</span>
-        <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_io</span>
+        <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_io</span>
 
         <span class="n">lines</span> <span class="o">=</span> <span class="n">util_io</span><span class="o">.</span><span class="n">read_from</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">aslines</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="c1"># import utool as ut</span>
@@ -2243,10 +2245,10 @@
 <span class="sd">        &gt;&gt;&gt; (found_fpath_list, found_lines_list, found_lxs_list) = result</span>
 <span class="sd">        &gt;&gt;&gt; assert &#39;util_path.py&#39; in list(map(basename, found_fpath_list))</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_regex</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_regex</span>
 
     <span class="c1"># from utool import util_str</span>
-    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_list</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_list</span>
 
     <span class="k">if</span> <span class="n">include_patterns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">include_patterns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">]</span>
@@ -2342,8 +2344,8 @@
 
 
 <div class="viewcode-block" id="make_grep_resultstr"><a class="viewcode-back" href="../../utool.html#utool.util_path.make_grep_resultstr">[docs]</a><span class="k">def</span> <span class="nf">make_grep_resultstr</span><span class="p">(</span><span class="n">grep_result</span><span class="p">,</span> <span class="n">extended_regex_list</span><span class="p">,</span> <span class="n">reflags</span><span class="p">,</span> <span class="n">colored</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_regex</span>
-    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_regex</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_str</span>
 
     <span class="n">msg_list</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">print_</span> <span class="o">=</span> <span class="n">msg_list</span><span class="o">.</span><span class="n">append</span>
@@ -2392,7 +2394,7 @@
 <span class="sd">        C:/PROGRA~2</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">ctypes</span>
-    <span class="kn">from</span> <span class="nn">ctypes</span> <span class="k">import</span> <span class="n">wintypes</span>
+    <span class="kn">from</span> <span class="nn">ctypes</span> <span class="kn">import</span> <span class="n">wintypes</span>
 
     <span class="n">_GetShortPathNameW</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">windll</span><span class="o">.</span><span class="n">kernel32</span><span class="o">.</span><span class="n">GetShortPathNameW</span>
     <span class="n">_GetShortPathNameW</span><span class="o">.</span><span class="n">argtypes</span> <span class="o">=</span> <span class="p">[</span><span class="n">wintypes</span><span class="o">.</span><span class="n">LPCWSTR</span><span class="p">,</span> <span class="n">wintypes</span><span class="o">.</span><span class="n">LPWSTR</span><span class="p">,</span> <span class="n">wintypes</span><span class="o">.</span><span class="n">DWORD</span><span class="p">]</span>
@@ -2419,7 +2421,7 @@
 
         <span class="c1"># import win32file</span>
         <span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">PY2</span><span class="p">:</span>
-            <span class="n">path1</span> <span class="o">=</span> <span class="n">unicode</span><span class="p">(</span><span class="n">path1</span><span class="p">)</span>
+            <span class="n">path1</span> <span class="o">=</span> <span class="n">unicode</span><span class="p">(</span><span class="n">path1</span><span class="p">)</span>  <span class="c1"># NOQA</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">path1</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">path1</span><span class="p">)</span>
         <span class="n">buflen</span> <span class="o">=</span> <span class="mi">260</span>  <span class="c1"># max size</span>
@@ -2512,7 +2514,7 @@
 <div class="viewcode-block" id="search_in_dirs"><a class="viewcode-back" href="../../utool.html#utool.util_path.search_in_dirs">[docs]</a><span class="k">def</span> <span class="nf">search_in_dirs</span><span class="p">(</span>
     <span class="n">fname</span><span class="p">,</span> <span class="n">search_dpaths</span><span class="o">=</span><span class="p">[],</span> <span class="n">shortcircuit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_tried</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    search_in_dirs</span>
 
 <span class="sd">    Args:</span>
@@ -2528,7 +2530,7 @@
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; import utool as ut</span>
-<span class="sd">        &gt;&gt;&gt; fname = &#39;Inno Setup 5\ISCC.exe&#39;</span>
+<span class="sd">        &gt;&gt;&gt; fname = &#39;Inno Setup 5\\ISCC.exe&#39;</span>
 <span class="sd">        &gt;&gt;&gt; search_dpaths = ut.get_install_dirs()</span>
 <span class="sd">        &gt;&gt;&gt; shortcircuit = True</span>
 <span class="sd">        &gt;&gt;&gt; fpath = ut.search_in_dirs(fname, search_dpaths, shortcircuit)</span>
@@ -2564,7 +2566,7 @@
 
 
 <div class="viewcode-block" id="find_lib_fpath"><a class="viewcode-back" href="../../utool.html#utool.util_path.find_lib_fpath">[docs]</a><span class="k">def</span> <span class="nf">find_lib_fpath</span><span class="p">(</span><span class="n">libname</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">,</span> <span class="n">recurse_down</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Search for the library &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Search for the library&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">get_lib_fname_list</span><span class="p">(</span><span class="n">libname</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -2630,7 +2632,7 @@
 
 
 <div class="viewcode-block" id="ensure_mingw_drive"><a class="viewcode-back" href="../../utool.html#utool.util_path.ensure_mingw_drive">[docs]</a><span class="k">def</span> <span class="nf">ensure_mingw_drive</span><span class="p">(</span><span class="n">win32_path</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot; replaces windows drives with mingw style drives</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;replaces windows drives with mingw style drives</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        win32_path (str):</span>
@@ -2657,7 +2659,7 @@
 <span class="sd">    References http://www.astropython.org/snippet/2009/10/chdir-context-manager</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stay</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stay</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">verbose</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
 
@@ -2667,14 +2669,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dpath</span> <span class="o">=</span> <span class="n">dpath</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">curdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dpath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[path.push] Change directory to </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dpath</span><span class="p">,))</span>
             <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dpath</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">trace</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">trace</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">stay</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[path.pop] Change directory to </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">curdir</span><span class="p">,))</span>
@@ -2787,7 +2789,7 @@
 
 
 <div class="viewcode-block" id="sanitize_filename"><a class="viewcode-back" href="../../utool.html#utool.util_path.sanitize_filename">[docs]</a><span class="k">def</span> <span class="nf">sanitize_filename</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_str</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;fname = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fname</span><span class="p">,))</span>
     <span class="n">invalid_sep_chars</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">]</span>
@@ -2964,7 +2966,7 @@
     <span class="n">num_broken</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">broken_links</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">num_broken</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[util_path] Removing </span><span class="si">%d</span><span class="s1"> broken links in </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num_broken</span><span class="p">,</span> <span class="n">dpath</span><span class="p">,))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[util_path] Removing </span><span class="si">%d</span><span class="s1"> broken links in </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num_broken</span><span class="p">,</span> <span class="n">dpath</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">broken_links</span><span class="p">:</span>
         <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">num_broken</span></div>
@@ -2975,13 +2977,13 @@
 <span class="sd">    Searches for and finds a path garuenteed to not exist.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        path_ (str):  path string. If may include a &quot;%&quot; formatstr.</span>
+<span class="sd">        path\_ (str):  path string. If may include a &quot;%&quot; formatstr.</span>
 <span class="sd">        dpath (str):  directory path(default = None)</span>
 <span class="sd">        offset (int): (default = 0)</span>
 <span class="sd">        suffix (None): (default = None)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        str: path_ - path string</span>
+<span class="sd">        str: path string</span>
 
 <span class="sd">    CommandLine:</span>
 <span class="sd">        python -m utool.util_path non_existing_path</span>
@@ -3013,7 +3015,7 @@
 <span class="sd">        &gt;&gt;&gt; ut.assert_eq(basename(newpath), &#39;dir_old2&#39;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
-    <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">basename</span><span class="p">,</span> <span class="n">dirname</span>
+    <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">basename</span><span class="p">,</span> <span class="n">dirname</span>
 
     <span class="k">if</span> <span class="n">dpath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">dpath</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="n">path_</span><span class="p">)</span>
@@ -3076,7 +3078,7 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
 </ul>
@@ -3093,17 +3095,15 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -3120,7 +3120,7 @@
       &copy;2020, Wild Me.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

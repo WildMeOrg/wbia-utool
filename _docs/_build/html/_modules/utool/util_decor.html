@@ -1,19 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>utool.util_decor &#8212; wbia-vtool 3.0.1 documentation</title>
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -34,22 +32,22 @@
             
   <h1>Source code for utool.util_decor</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
-<span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="n">builtins</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="kn">import</span> <span class="n">builtins</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">import</span> <span class="nn">textwrap</span>
 <span class="kn">import</span> <span class="nn">six</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_print</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_time</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_iter</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_dbg</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_arg</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_type</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inject</span>
-<span class="kn">from</span> <span class="nn">utool._internal</span> <span class="k">import</span> <span class="n">meta_util_six</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_print</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_time</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_iter</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_dbg</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_arg</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_type</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_inject</span>
+<span class="kn">from</span> <span class="nn">utool._internal</span> <span class="kn">import</span> <span class="n">meta_util_six</span>
 
 <span class="p">(</span><span class="nb">print</span><span class="p">,</span> <span class="n">rrr</span><span class="p">,</span> <span class="n">profile</span><span class="p">)</span> <span class="o">=</span> <span class="n">util_inject</span><span class="o">.</span><span class="n">inject2</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="s1">&#39;[decor]&#39;</span><span class="p">)</span>
 
@@ -114,7 +112,7 @@
 <span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">PY2</span><span class="p">:</span>
     <span class="c1"># Use version that has special python2 only syntax.</span>
     <span class="c1"># can not include it here for that reason</span>
-    <span class="kn">from</span> <span class="nn">utool._internal</span> <span class="k">import</span> <span class="n">py2_syntax_funcs</span>
+    <span class="kn">from</span> <span class="nn">utool._internal</span> <span class="kn">import</span> <span class="n">py2_syntax_funcs</span>
 
     <span class="n">ignores_exc_tb</span> <span class="o">=</span> <span class="n">py2_syntax_funcs</span><span class="o">.</span><span class="n">ignores_exc_tb</span>
 <span class="k">else</span><span class="p">:</span>
@@ -146,6 +144,7 @@
                 <span class="c1"># if the global enforces that we should not ignore anytracebacks</span>
                 <span class="c1"># then just return the original function without any modifcation</span>
                 <span class="k">return</span> <span class="n">func</span>
+
             <span class="c1"># @wraps(func)</span>
             <span class="k">def</span> <span class="nf">wrp_noexectb</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                 <span class="k">try</span><span class="p">:</span>
@@ -271,13 +270,13 @@
                 <span class="c1">#    print(&#39;[IN EXCPRPT] kwargs=%r&#39; % (kwargs,))</span>
                 <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-                <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>
+                <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_str</span>
 
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR occured! Reporting input to function&#39;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">keys</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inspect</span>
-                    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_list</span>
-                    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_dict</span>
+                    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_inspect</span>
+                    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_list</span>
+                    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_dict</span>
 
                     <span class="n">argspec</span> <span class="o">=</span> <span class="n">util_inspect</span><span class="o">.</span><span class="n">get_func_argspec</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
                     <span class="n">in_kwargs_flags</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span>
@@ -563,19 +562,6 @@
 <span class="sd">    DEPRICATE IN FAVOR OF accepts_scalar_input2</span>
 
 <span class="sd">    accepts_scalar_input_vector_output</span>
-
-<span class="sd">    Notes:</span>
-<span class="sd">        Input:                           Excpeted Output 1to1   Expected Output 1toM</span>
-<span class="sd">            scalar         : 1           x                      [X]</span>
-<span class="sd">            n element list : [1, 2, 3]   [x, y, z]              [[X], [Y], [Z]]</span>
-<span class="sd">            1 element list : [1]         [x]                    [[X]]</span>
-<span class="sd">            0 element list : []          []                     []</span>
-<span class="sd">        There seems to be no real issue here, I be the thing that tripped me up</span>
-<span class="sd">        was when using sql and getting multiple columns that returned the</span>
-<span class="sd">        values inside of the N-tuple whereas when you get one column you get</span>
-<span class="sd">        one element inside of a 1-tuple, no that still makes sense.  There was</span>
-<span class="sd">        something where when you couln&#39;t unpack it becuase it was already</span>
-<span class="sd">        empty...</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@ignores_exc_tb</span><span class="p">(</span><span class="n">outer_wrapper</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -608,7 +594,7 @@
 
 
 <div class="viewcode-block" id="accepts_numpy"><a class="viewcode-back" href="../../utool.html#utool.util_decor.accepts_numpy">[docs]</a><span class="k">def</span> <span class="nf">accepts_numpy</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Allows the first input to be a numpy array and get result in numpy form &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Allows the first input to be a numpy array and get result in numpy form&quot;&quot;&quot;</span>
     <span class="c1"># @ignores_exc_tb</span>
     <span class="c1"># @wraps(func)</span>
     <span class="k">def</span> <span class="nf">wrp_accepts_numpy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -650,13 +636,13 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">class</span> <span class="nc">_memorizer</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
-        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
 
-        <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">args</span><span class="p">]</span>
 
-        <span class="k">def</span> <span class="nf">__missing__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__missing__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">key</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">ret</span>
 
@@ -664,14 +650,14 @@
 
 
 <div class="viewcode-block" id="memoize_single"><a class="viewcode-back" href="../../utool.html#utool.util_decor.memoize_single">[docs]</a><span class="k">def</span> <span class="nf">memoize_single</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Memoization decorator for a function taking a single argument</span>
+    <span class="sd">&quot;&quot;&quot;Memoization decorator for a function taking a single argument</span>
 
 <span class="sd">    References:</span>
 <span class="sd">        http://code.activestate.com/recipes/578231-fastest-memoization-decorator</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">class</span> <span class="nc">memodict_single</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
-        <span class="k">def</span> <span class="nf">__missing__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__missing__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">ret</span>
 
@@ -679,7 +665,7 @@
 
 
 <div class="viewcode-block" id="memoize_zero"><a class="viewcode-back" href="../../utool.html#utool.util_decor.memoize_zero">[docs]</a><span class="k">def</span> <span class="nf">memoize_zero</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Memoization decorator for a function taking no arguments &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Memoization decorator for a function taking no arguments&quot;&quot;&quot;</span>
     <span class="n">wrp_memoize_single</span> <span class="o">=</span> <span class="n">memoize_single</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">wrp_memoize_zero</span><span class="p">():</span>
@@ -730,6 +716,7 @@
 <span class="sd">        &gt;&gt;&gt; assert foo_memo(&#39;a&#39;) == &#39;b&#39; and foo_memo(&#39;c&#39;) == &#39;d&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cache</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">_util_decor_memoize_cache</span> <span class="o">=</span> <span class="p">{}</span>
+
     <span class="c1"># @functools.wraps(func)</span>
     <span class="k">def</span> <span class="nf">memoizer</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
@@ -770,7 +757,7 @@
 
 
 <div class="viewcode-block" id="show_return_value"><a class="viewcode-back" href="../../utool.html#utool.util_decor.show_return_value">[docs]</a><span class="k">def</span> <span class="nf">show_return_value</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">utool.util_str</span> <span class="k">import</span> <span class="n">func_str</span>
+    <span class="kn">from</span> <span class="nn">utool.util_str</span> <span class="kn">import</span> <span class="n">func_str</span>
 
     <span class="c1"># @wraps(func)</span>
     <span class="k">def</span> <span class="nf">wrp_show_return_value</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -929,9 +916,9 @@
     <span class="c1"># if True:</span>
     <span class="c1">#    import functools</span>
     <span class="c1">#    return functools.wraps(orig_func)(wrapper)</span>
-    <span class="kn">from</span> <span class="nn">utool._internal</span> <span class="k">import</span> <span class="n">meta_util_six</span>
-    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>
-    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inspect</span>
+    <span class="kn">from</span> <span class="nn">utool._internal</span> <span class="kn">import</span> <span class="n">meta_util_six</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_str</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_inspect</span>
 
     <span class="k">if</span> <span class="n">wrapper</span> <span class="ow">is</span> <span class="n">orig_func</span><span class="p">:</span>
         <span class="c1"># nothing to do</span>
@@ -1053,7 +1040,7 @@
 <span class="sd">        https://stackoverflow.com/questions/1697501/python-staticmethod-with-property</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">classmethod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fget</span><span class="p">)</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">owner</span><span class="p">)()</span></div>
 
 
@@ -1088,7 +1075,7 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
 </ul>
@@ -1105,17 +1092,15 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -1132,7 +1117,7 @@
       &copy;2020, Wild Me.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

@@ -70,7 +70,7 @@ def make_full_document(text, title=None, preamp_decl={}, preamb_extra=None):
         title (str):
 
     Returns:
-        str: text_
+        str
 
     CommandLine:
         python -m utool.util_latex --test-make_full_document
@@ -172,7 +172,7 @@ def compile_latex_text(
         pdflatex -shell-escape --synctex=-1 -src-specials -interaction=nonstopmode\
             ~/code/ibeis/tmptex/latex_formatter_temp.tex
 
-    Example1:
+    Example:
         >>> # DISABLE_DOCTEST
         >>> from utool.util_latex import *  # NOQA
         >>> import utool as ut

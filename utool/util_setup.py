@@ -698,40 +698,6 @@ def setuptools_setup(setup_fpath=None, module=None, **kwargs):
     # https://pythonhosted.org/an_example_pypi_project/setuptools.html
     # https://docs.python.org/2/distutils/setupscript.html https://docs.python.org/2/distutils/setupscript.html
     # Useful documentation: http://bashelton.com/2009/04/setuptools-tutorial/#setup.py-package_dir
-    """
-    Arguments which can be passed to setuptools::
-
-        ============       =====            ===========
-        Install-Data       Value            Description
-        ------------       -----            -----------
-        *packages          strlist          a list of packages modules to be distributed
-        py_modules         strlist          a list of singlefile modules to be distributed
-        scripts            strlist          a list of standalone scripts to build and install
-        *install_requires  list             e.g: ['distribute == 0.7.3', 'numpy', 'matplotlib']
-        data_files         strlist          a list of data files to install
-        zip_safe           bool             install efficiently installed as a zipped module?
-        namespace_packages list             packages without meaningful __init__.py's
-        package_dir        dict             keys are packagenames ('' is the root)
-        package_data       dict             keys are foldernames, values are a list of globstrs
-        *entry_pionts      dict             installs a script {'console_scripts': ['script_name_to_install = entry_module:entry_function']}
-
-        ============       =====            ===========
-        Meta-Data          Value            Description
-        ------------       -----            -----------
-        name               short string     ('name of the package')
-        version            short string     ('version of this release')
-        author             short string     ('package authors name')
-        author_email       email address    ('email address of the package author')
-        maintainer         short string     ('package maintainers name')
-        maintainer_email   email address    ('email address of the package maintainer')
-        url                URL              ('home page for the package')
-        description        short string     ('short, summary description of the package')
-        long_description   long string      ('longer description of the package')
-        download_url       URL              ('location where the package may be downloaded')
-        classifiers        list of strings  ('a list of classifiers')
-        platforms          list of strings  ('a list of platforms')
-        license            short string     ('license for the package')
-    """
     from utool.util_inject import inject_colored_exceptions
 
     inject_colored_exceptions()  # Fluffly, but nice

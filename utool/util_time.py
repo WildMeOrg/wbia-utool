@@ -223,32 +223,26 @@ class Timerit(object):
         python -m utool.util_time Timerit:1
 
     Notes:
-        Minimal syntax with less-precise timing
-        ```python
-        import utool as ut
-        for timer in ut.Timerit(100):
-            # <write code to time here>
-        ```
-
-        Full syntax with most-precise timing
-        ```python
-        import utool as ut
-        for timer in ut.Timerit(100):
-            # <write untimed setup code here>
-            with timer:
-                # <write code to time here>
-        ```
-
-        Can also keep track of the Timerit object for extra statistics
-        ```python
-        import utool as ut
-        t1 = ut.Timerit(100)
-        for timer in t1:
-            # <write untimed setup code here>
-            with timer:
-                # <write code to time here>
-        # <you can now access Timerit attributes like t1.total_time>
-        ```
+        >>> # Minimal syntax with less-precise timing
+        >>> import utool as ut
+        >>> for timer in ut.Timerit(100):
+        >>>     # <write code to time here>
+        >>>
+        >>> # Full syntax with most-precise timing
+        >>> import utool as ut
+        >>> for timer in ut.Timerit(100):
+        >>>     # <write untimed setup code here>
+        >>>     with timer:
+        >>>         # <write code to time here>
+        >>>
+        >>> # Can also keep track of the Timerit object for extra statistics
+        >>> import utool as ut
+        >>> t1 = ut.Timerit(100)
+        >>> for timer in t1:
+        >>>     # <write untimed setup code here>
+        >>>     with timer:
+        >>>         # <write code to time here>
+        >>> # <you can now access Timerit attributes like t1.total_time>
 
     Example:
         >>> # ENABLE_DOCTEST
@@ -473,7 +467,7 @@ def parse_timestamp(timestamp, zone='UTC', timestamp_format=None):
         python -m utool.util_time --test-parse_timestamp
         python -m utool.util_time parse_timestamp
 
-    Example0:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_time import *  # NOQA
         >>> import utool as ut
@@ -597,7 +591,7 @@ def exiftime_to_unixtime(datetime_str, timestamp_format=None, strict=None):
     CommandLine:
         python -m utool.util_time --test-exiftime_to_unixtime:2
 
-    Example0:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_time import *  # NOQA
         >>> datetime_str = '0000:00:00 00:00:00'
@@ -606,7 +600,7 @@ def exiftime_to_unixtime(datetime_str, timestamp_format=None, strict=None):
         >>> print(result)
         -1
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_time import *  # NOQA
         >>> datetime_str = '2015:04:01 00:00:00'
@@ -615,7 +609,7 @@ def exiftime_to_unixtime(datetime_str, timestamp_format=None, strict=None):
         >>> print(result)
         1427846400
 
-    Example2:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_time import *  # NOQA
         >>> datetime_str = '2005-10-27T14:35:20+02:00'
@@ -624,7 +618,7 @@ def exiftime_to_unixtime(datetime_str, timestamp_format=None, strict=None):
         >>> print(result)
         1130423720
 
-    Example3:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_time import *  # NOQA
         >>> datetime_str = '6:35:01\x002006:03:19 1'
@@ -930,7 +924,7 @@ def get_posix_timedelta_str(posixtime, year=False, approx=True):
         >>> print(result)
         ['-00:00:13', '00:00:10', '00:01:44', '00:17:41', '03:00:24', '1 day', '193 weeks', '60 weeks']
 
-    Timeit::
+    Timeit:
         import datetime
         # Seems like like timedelta is just faster. must be because it is builtin
         %timeit get_posix_timedelta_str(posixtime)
@@ -1004,7 +998,7 @@ def get_posix_timedelta_str2(posixtime):
 #        >>> result = (timedelta_str)
 #        >>> print(result)
 
-#    Timeit::
+#    Timeit:
 #        import datetime
 #        posixtime = 10.2 ** 8
 #        %timeit get_simple_posix_timedelta_str(posixtime)
@@ -1066,7 +1060,7 @@ def get_timestats_str(unixtime_list, newlines=1, full=True, isutc=True):
             'std'  : '2:02:01',
         }
 
-    Example2:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_time import *  # NOQA
         >>> import utool as ut

@@ -112,16 +112,16 @@ def copy_text_to_clipboard(text):
         http://stackoverflow.com/questions/579687/how-do-i-copy-a-string-to-the-clipboard-on-windows-using-python
 
     Ignore:
-        import pyperclip
-        # Qt is by far the fastest, followed by xsel, and then xclip
-        #
-        backend_order = ['xclip', 'xsel', 'qt', 'gtk']
-        backend_order = ['qt', 'xsel', 'xclip', 'gtk']
-        for be in backend_order:
-            print('be = %r' % (be,))
-            pyperclip.set_clipboard(be)
-            %timeit pyperclip.copy('a line of reasonable length text')
-            %timeit pyperclip.paste()
+        >>> import pyperclip
+        >>> # Qt is by far the fastest, followed by xsel, and then xclip
+        >>> #
+        >>> backend_order = ['xclip', 'xsel', 'qt', 'gtk']
+        >>> backend_order = ['qt', 'xsel', 'xclip', 'gtk']
+        >>> for be in backend_order:
+        >>>     print('be = %r' % (be,))
+        >>>     pyperclip.set_clipboard(be)
+        >>>     %timeit pyperclip.copy('a line of reasonable length text')
+        >>>     %timeit pyperclip.paste()
     """
     import pyperclip
 
@@ -272,50 +272,50 @@ def timeit_grid(
     stmt_list, setup='', iterations=10000, input_sizes=None, verbose=True, show=False
 ):
     """
-    Timeit::
-        import utool as ut
-        setup = ut.codeblock(
-            '''
-            import utool as ut
-            from six.moves import range, zip
-            import time
-            def time_append(size):
-                start_time    = time.time()
-                last_time     = start_time
-                list2 = []
-                for x in range(size):
-                    now_time    = time.time()
-                    between = now_time - last_time
-                    last_time   = now_time
-                    list2.append(between)
-
-            def time_assign(size):
-                start_time    = time.time()
-                last_time     = start_time
-                list1 = ut.alloc_nones(size)
-                for x in range(size):
-                    now_time    = time.time()
-                    between = now_time - last_time
-                    last_time   = now_time
-                    list1[x] = between
-
-            def time_baseline(size):
-                start_time    = time.time()
-                last_time     = start_time
-                for x in range(size):
-                    now_time    = time.time()
-                    between = now_time - last_time
-                    last_time   = now_time
-
-            def time_null(size):
-                for x in range(size):
-                    pass
-            ''')
-
-        input_sizes = [2 ** count for count in range(7, 12)]
-        stmt_list = ['time_assign', 'time_append', 'time_baseline', 'time_null']
-        input_sizes=[100, 1000, 10000]
-        ut.timeit_grid(stmt_list, setup, input_sizes=input_sizes, show=True)
+    Timeit:
+        >>> import utool as ut
+        >>> setup = ut.codeblock(
+        >>>     '''
+        >>>     import utool as ut
+        >>>     from six.moves import range, zip
+        >>>     import time
+        >>>     def time_append(size):
+        >>>         start_time    = time.time()
+        >>>         last_time     = start_time
+        >>>         list2 = []
+        >>>         for x in range(size):
+        >>>             now_time    = time.time()
+        >>>             between = now_time - last_time
+        >>>             last_time   = now_time
+        >>>             list2.append(between)
+        >>>
+        >>>     def time_assign(size):
+        >>>         start_time    = time.time()
+        >>>         last_time     = start_time
+        >>>         list1 = ut.alloc_nones(size)
+        >>>         for x in range(size):
+        >>>             now_time    = time.time()
+        >>>             between = now_time - last_time
+        >>>             last_time   = now_time
+        >>>             list1[x] = between
+        >>>
+        >>>     def time_baseline(size):
+        >>>         start_time    = time.time()
+        >>>         last_time     = start_time
+        >>>         for x in range(size):
+        >>>             now_time    = time.time()
+        >>>             between = now_time - last_time
+        >>>             last_time   = now_time
+        >>>
+        >>>     def time_null(size):
+        >>>         for x in range(size):
+        >>>             pass
+        >>>     ''')
+        >>>
+        >>> input_sizes = [2 ** count for count in range(7, 12)]
+        >>> stmt_list = ['time_assign', 'time_append', 'time_baseline', 'time_null']
+        >>> input_sizes=[100, 1000, 10000]
+        >>> ut.timeit_grid(stmt_list, setup, input_sizes=input_sizes, show=True)
     """
     import timeit
 
@@ -1389,7 +1389,7 @@ def get_stats(
         python -m utool.util_dev --test-get_stats
         python -m utool.util_dev --test-get_stats:1
 
-    Examples0:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_dev import *  # NOQA
         >>> import numpy as np
@@ -1410,7 +1410,7 @@ def get_stats(
             'shape': (10, 2),
         }
 
-    Examples1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_dev import *  # NOQA
         >>> import numpy as np
@@ -1698,7 +1698,7 @@ def _memory_profile(with_gc=False):
     References:
         http://stackoverflow.com/questions/2629680/deciding-between-subprocess-multiprocessing-and-thread-in-python
 
-    Reset Numpy Memory::
+    Reset Numpy Memory:
         %reset out
         %reset array
     """
@@ -1721,7 +1721,7 @@ def _memory_profile(with_gc=False):
 def make_object_graph(obj, fpath='sample_graph.png'):
     """memoryprofile with objgraph
 
-    Examples:
+    Example:
         #import objgraph
         #objgraph.show_most_common_types()
         #objgraph.show_growth()
@@ -1801,17 +1801,17 @@ def get_object_nbytes(
         >>> print('result = %r' % (result,))
 
     Ignore:
-        import sys
-        sizedict = {key: sys.getsizeof(key()) for key in [dict, list, set, tuple, int, float]}
-        ut.print_dict(sizedict)
-        sizedict = {
-            <type 'tuple'>: 56,
-            <type 'set'>: 232,
-            <type 'list'>: 72,
-            <type 'float'>: 24,
-            <type 'int'>: 24,
-            <type 'dict'>: 280,
-        }
+        >>> import sys
+        >>> sizedict = {key: sys.getsizeof(key()) for key in [dict, list, set, tuple, int, float]}
+        >>> ut.print_dict(sizedict)
+        >>> sizedict = {
+        >>>     <type 'tuple'>: 56,
+        >>>     <type 'set'>: 232,
+        >>>     <type 'list'>: 72,
+        >>>     <type 'float'>: 24,
+        >>>     <type 'int'>: 24,
+        >>>     <type 'dict'>: 280,
+        >>> }
     """
     import utool as ut
     import types
@@ -2031,7 +2031,7 @@ def compile_cython(fpath, clean=True):
     This seems broken
     compiles pyx -> pyd/dylib/so
 
-    Examples:
+    Example:
         REAL SETUP.PY OUTPUT
         cythoning vtool/linalg_cython.pyx to vtool\linalg_cython.c
         C:\MinGW\bin\gcc.exe -mdll -O -Wall ^

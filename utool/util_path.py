@@ -132,7 +132,7 @@ def truepath_relative(path, otherpath=None):
         otherpath (None): (default = None)
 
     Returns:
-        str: path_
+        str
 
     CommandLine:
         python -m utool.util_path --exec-truepath_relative --show
@@ -144,9 +144,9 @@ def truepath_relative(path, otherpath=None):
         >>> path = 'C:/foobar/foobiz'
         >>> otherpath = 'C:/foobar'
         >>> path_ = truepath_relative(path, otherpath)
-        >>> result = ('path_ = %s' % (ut.repr2(path_),))
+        >>> result = ('path = %s' % (ut.repr2(path_),))
         >>> print(result)
-        path_ = 'foobiz'
+        path = 'foobiz'
     """
     if otherpath is None:
         otherpath = os.getcwd()
@@ -1454,7 +1454,7 @@ def ensure_crossplat_path(path, winroot='C:'):
     Returns:
         str: crossplat_path
 
-    Example(DOCTEST):
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_path import *  # NOQA
         >>> path = r'C:\somedir'
@@ -2944,13 +2944,13 @@ def non_existing_path(path_, dpath=None, offset=0, suffix=None, force_fmt=False)
     Searches for and finds a path garuenteed to not exist.
 
     Args:
-        path_ (str):  path string. If may include a "%" formatstr.
+        path\_ (str):  path string. If may include a "%" formatstr.
         dpath (str):  directory path(default = None)
         offset (int): (default = 0)
         suffix (None): (default = None)
 
     Returns:
-        str: path_ - path string
+        str: path string
 
     CommandLine:
         python -m utool.util_path non_existing_path

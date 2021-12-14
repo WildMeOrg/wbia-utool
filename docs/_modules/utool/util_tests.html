@@ -1,19 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>utool.util_tests &#8212; wbia-vtool 3.0.1 documentation</title>
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -37,36 +35,34 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Helpers for tests</span>
 
-<span class="sd">NOTE:</span>
-<span class="sd">    DEPRICATE THIS IN FAVOR OF pytest and xdoctest</span>
-
 <span class="sd">This module contains a more sane reimplementation of doctest functionality.</span>
 <span class="sd">(I.E.  asserts work and you don&#39;t have to worry about stdout mucking things up)</span>
 <span class="sd">The code isn&#39;t super clean though due to time constriaints.  Many functions</span>
 <span class="sd">probably belong elsewhere and the parsers need a big cleanup.</span>
 
+<span class="sd">Notes:</span>
+<span class="sd">    DEPRICATE THIS IN FAVOR OF pytest and xdoctest</span>
+
 <span class="sd">TODO:</span>
-<span class="sd">    * report the line of the doctest in the file when reporting errors as well as</span>
-<span class="sd">     the relative line</span>
-
-<span class="sd">    * restructure so there is a test collection step, a filtering step, and an</span>
-<span class="sd">      execution step</span>
-
-<span class="sd">    * Fix finding tests when running with @profile</span>
+<span class="sd">    report the line of the doctest in the file when reporting errors as well as</span>
+<span class="sd">    the relative line</span>
+<span class="sd">    restructure so there is a test collection step, a filtering step, and an</span>
+<span class="sd">    execution step</span>
+<span class="sd">    Fix finding tests when running with @profile</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
 <span class="kn">import</span> <span class="nn">six</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">import</span> <span class="nn">types</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">basename</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_arg</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_time</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inject</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_dbg</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_dev</span>
-<span class="kn">from</span> <span class="nn">utool._internal.meta_util_six</span> <span class="k">import</span> <span class="n">get_funcname</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">basename</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_arg</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_time</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_inject</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_dbg</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_dev</span>
+<span class="kn">from</span> <span class="nn">utool._internal.meta_util_six</span> <span class="kn">import</span> <span class="n">get_funcname</span>
 
 <span class="nb">print</span><span class="p">,</span> <span class="n">rrr</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">util_inject</span><span class="o">.</span><span class="n">inject2</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -98,7 +94,7 @@
 <span class="sd">    exec mode specifies if the test is being run as a script</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">,</span>
         <span class="n">num</span><span class="p">,</span>
@@ -728,7 +724,7 @@
             <span class="n">want</span> <span class="o">=</span> <span class="n">want</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">six</span><span class="o">.</span><span class="n">text_type</span><span class="p">(</span><span class="n">test_locals</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result&#39;</span><span class="p">,</span> <span class="s1">&#39;NO VARIABLE NAMED result&#39;</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">result</span> <span class="o">!=</span> <span class="n">want</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>
+            <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_str</span>
 
             <span class="n">msglines</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="c1"># Even if they arent exactly the same, the difference might just be</span>
@@ -960,7 +956,7 @@
 <span class="sd">    CommandLine:</span>
 <span class="sd">        python -m utool.util_tests parse_docblocks_from_docstr</span>
 
-<span class="sd">    Doctest:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; from utool.util_tests import *  # NOQA</span>
 <span class="sd">        &gt;&gt;&gt; import utool as ut</span>
 <span class="sd">        &gt;&gt;&gt; #func_or_class = ut.flatten2</span>
@@ -1030,7 +1026,7 @@
         <span class="n">prev_indent</span> <span class="o">=</span> <span class="n">indent_</span>
 
     <span class="c1"># tag_pattern = ut.regex_or([&#39;Args:&#39;, &#39;Return:&#39;, &#39;CommandLine&#39;:])</span>
-    <span class="n">tag_pattern</span> <span class="o">=</span> <span class="s1">&#39;[^\s]+: *$&#39;</span>
+    <span class="n">tag_pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;[^\s]+: *$&#39;</span>
 
     <span class="n">group_id</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">prev_indent</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1128,7 +1124,7 @@
 <span class="sd">    CommandLine:</span>
 <span class="sd">        python -m utool.util_tests --exec-parse_doctest_from_docstr</span>
 
-<span class="sd">    Doctest:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; from utool.util_tests import *  # NOQA</span>
 <span class="sd">        &gt;&gt;&gt; import utool as ut</span>
 <span class="sd">        &gt;&gt;&gt; func_or_class = parse_doctest_from_docstr</span>
@@ -1256,7 +1252,7 @@
 <span class="sd">    CommandLine:</span>
 <span class="sd">        python -m utool.util_tests --test-get_doctest_examples</span>
 
-<span class="sd">    Doctest:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; from utool.util_tests import *  # NOQA</span>
 <span class="sd">        &gt;&gt;&gt; func_or_class = get_doctest_examples</span>
 <span class="sd">        &gt;&gt;&gt; tup  = get_doctest_examples(func_or_class)</span>
@@ -1269,7 +1265,7 @@
 <span class="sd">        &gt;&gt;&gt; print(result)</span>
 <span class="sd">        6</span>
 
-<span class="sd">    Doctest:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; from utool.util_tests import *  # NOQA</span>
 <span class="sd">        &gt;&gt;&gt; import utool as ut</span>
 <span class="sd">        &gt;&gt;&gt; func_or_class = ut.tryimport</span>
@@ -1283,7 +1279,7 @@
 <span class="sd">        &gt;&gt;&gt; print(result)</span>
 <span class="sd">        4</span>
 
-<span class="sd">    Example2:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; from utool.util_tests import *  # NOQA</span>
 <span class="sd">        &gt;&gt;&gt; import wbia</span>
@@ -1361,7 +1357,20 @@
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parses module for testable doctesttups</span>
-<span class="sd">    Depth 2)</span>
+
+<span class="sd">    enabled_testtup_list (list): a list of testtup</span>
+
+<span class="sd">    testtup (tuple): (name, num, src, want, flag) describes a valid doctest in the module</span>
+<span class="sd">        name  (str): test name</span>
+<span class="sd">        num   (str): test number of the module / function / class / method</span>
+<span class="sd">        src   (str): test source code</span>
+<span class="sd">        want  (str): expected test result</span>
+<span class="sd">        flag  (str): a valid commandline flag to enable this test</span>
+
+<span class="sd">    frame_fpath (str): module fpath that will be tested</span>
+<span class="sd">    all_testflags (list): the command line arguments that will enable different tests</span>
+<span class="sd">    module (module): the actual module that will be tested</span>
+<span class="sd">    exclude_inherited (bool): does not included tests defined in other modules</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        testable_list (list): a list of functions (default = None)</span>
@@ -1375,25 +1384,11 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        ModuleDoctestTup : (enabled_testtup_list, frame_fpath, all_testflags, module)</span>
-<span class="sd">            enabled_testtup_list (list): a list of testtup</span>
-<span class="sd">                testtup (tuple): (name, num, src, want, flag) describes a valid doctest in the module</span>
-<span class="sd">                    name  (str): test name</span>
-<span class="sd">                    num   (str): test number of the module / function / class / method</span>
-<span class="sd">                    src   (str): test source code</span>
-<span class="sd">                    want  (str): expected test result</span>
-<span class="sd">                    flag  (str): a valid commandline flag to enable this test</span>
-<span class="sd">            frame_fpath (str):</span>
-<span class="sd">                module fpath that will be tested</span>
-<span class="sd">            module (module):</span>
-<span class="sd">                the actual module that will be tested</span>
-<span class="sd">            all_testflags (list):</span>
-<span class="sd">                the command line arguments that will enable different tests</span>
-<span class="sd">            exclude_inherited (bool): does not included tests defined in other modules</span>
 
 <span class="sd">    CommandLine:</span>
 <span class="sd">        python -m utool.util_tests --exec-get_module_doctest_tup</span>
 
-<span class="sd">    Doctest:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; from utool.util_tests import *  # NOQA</span>
 <span class="sd">        &gt;&gt;&gt; import utool as ut</span>
 <span class="sd">        &gt;&gt;&gt; #testable_list = [ut.util_import.package_contents]</span>
@@ -1780,9 +1775,9 @@
                     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;attempting xdoctest hack&#39;</span><span class="p">)</span>
                 <span class="c1"># hack to get classmethods to read their example using</span>
                 <span class="c1"># the xdoctest port</span>
-                <span class="kn">from</span> <span class="nn">xdoctest</span> <span class="k">import</span> <span class="n">docscrape_google</span>
-                <span class="kn">from</span> <span class="nn">xdoctest</span> <span class="k">import</span> <span class="n">core</span> <span class="k">as</span> <span class="n">xdoc_core</span>
-                <span class="kn">from</span> <span class="nn">xdoctest</span> <span class="k">import</span> <span class="n">static_analysis</span> <span class="k">as</span> <span class="n">static</span>
+                <span class="kn">from</span> <span class="nn">xdoctest</span> <span class="kn">import</span> <span class="n">docscrape_google</span>
+                <span class="kn">from</span> <span class="nn">xdoctest</span> <span class="kn">import</span> <span class="n">core</span> <span class="k">as</span> <span class="n">xdoc_core</span>
+                <span class="kn">from</span> <span class="nn">xdoctest</span> <span class="kn">import</span> <span class="n">static_analysis</span> <span class="k">as</span> <span class="n">static</span>
 
                 <span class="k">if</span> <span class="n">func_</span><span class="o">.</span><span class="vm">__doc__</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">TypeError</span>
@@ -1873,7 +1868,7 @@
 
 
 <div class="viewcode-block" id="doctest_was_requested"><a class="viewcode-back" href="../../utool.html#utool.util_tests.doctest_was_requested">[docs]</a><span class="k">def</span> <span class="nf">doctest_was_requested</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot; lets a  __main__ codeblock know that util_test should do its thing &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;lets a  __main__ codeblock know that util_test should do its thing&quot;&quot;&quot;</span>
     <span class="c1"># FIXME; does not handle positinal doctest requests</span>
     <span class="n">valid_prefix_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;--exec-&#39;</span><span class="p">,</span> <span class="s1">&#39;--test-&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="s1">&#39;--tf&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="ow">or</span> <span class="nb">any</span><span class="p">(</span>
@@ -1916,7 +1911,7 @@
 <span class="sd">        &gt;&gt;&gt; print(result)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
-    <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">exists</span><span class="p">,</span> <span class="n">join</span>
+    <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">exists</span><span class="p">,</span> <span class="n">join</span>
 
     <span class="n">fpath_list</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">grep</span><span class="p">(</span>
         <span class="sa">r</span><span class="s1">&#39;doctest_funcs\(&#39;</span><span class="p">,</span>
@@ -1978,10 +1973,10 @@
 
 <span class="k">try</span><span class="p">:</span>
     <span class="c1"># Use ExitTestException from xdoctest if possible</span>
-    <span class="kn">from</span> <span class="nn">xdoctest</span> <span class="k">import</span> <span class="n">ExitTestException</span>
+    <span class="kn">from</span> <span class="nn">xdoctest</span> <span class="kn">import</span> <span class="n">ExitTestException</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">xdoctest.core</span> <span class="k">import</span> <span class="n">ExitTestException</span>
+        <span class="kn">from</span> <span class="nn">xdoctest.core</span> <span class="kn">import</span> <span class="n">ExitTestException</span>
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
 
         <span class="k">class</span> <span class="nc">ExitTestException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
@@ -2014,9 +2009,12 @@
 
 <div class="viewcode-block" id="show_if_requested"><a class="viewcode-back" href="../../utool.html#utool.util_tests.show_if_requested">[docs]</a><span class="k">def</span> <span class="nf">show_if_requested</span><span class="p">():</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">wbia.plottool</span> <span class="k">as</span> <span class="nn">pt</span>
+        <span class="kn">from</span> <span class="nn">wbia</span> <span class="kn">import</span> <span class="n">plottool</span> <span class="k">as</span> <span class="n">pt</span>
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">wbia.plottool</span> <span class="k">as</span> <span class="nn">pt</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">plottool_ibeis</span> <span class="k">as</span> <span class="nn">pt</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">plottool</span> <span class="k">as</span> <span class="nn">pt</span>
     <span class="n">pt</span><span class="o">.</span><span class="n">show_if_requested</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
 
 
@@ -2338,7 +2336,7 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
 </ul>
@@ -2355,17 +2353,15 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -2382,7 +2378,7 @@
       &copy;2020, Wild Me.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

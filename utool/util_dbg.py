@@ -1193,7 +1193,7 @@ def formatex(
         python -m utool.util_dbg --exec-formatex
 
     Example:
-        >>> # ENABLE_DOCTET
+        >>> # DISABLE_DOCTET
         >>> from utool.util_dbg import *  # NOQA
         >>> import utool as ut
         >>> msg = 'Testing Exception'
@@ -1214,7 +1214,6 @@ def formatex(
         >>>         return result
         >>> result = failfunc().replace('\n\n', '')
         >>> print(result)
-
         <!!! WARNING !!!>
         Traceback (most recent call last):
           File "<string>", line 15, in failfunc
@@ -1224,7 +1223,6 @@ def formatex(
         [test] foo = NameError (this likely due to a misformatted printex and is not related to the exception)
         [test] tb = True
         </!!! WARNING !!!>
-
     """
     # Get error prefix and local info
     if prefix is None:
@@ -1348,16 +1346,16 @@ def print_keys(key_list, locals_=None):
 
 
 def parse_locals_keylist(locals_, key_list, strlist_=None, prefix=''):
-    """For each key in keylist, puts its value in locals into a stringlist
+    r"""For each key in keylist, puts its value in locals into a stringlist
 
     Args:
         locals_ (?):
         key_list (list):
-        strlist_ (list): (default = None)
+        strlist\_ (list): (default = None)
         prefix (unicode): (default = u'')
 
     Returns:
-        list: strlist_
+        list
 
     CommandLine:
         python -m utool.util_dbg --exec-parse_locals_keylist

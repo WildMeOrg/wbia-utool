@@ -108,7 +108,7 @@ def generate2(
         >>> _ = list(generate2(func, args_gen, futures_threaded=True))
         >>> _ = list(generate2(func, args_gen, ordered=False, verbose=False))
 
-    Example0:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> import utool as ut
         >>> #num = 8700  # parallel is slower for smaller numbers
@@ -130,7 +130,7 @@ def generate2(
         >>> assert flag_list0 == flag_list1
         >>> assert flag_list0 == flag_list2
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> # Trying to recreate the freeze seen in IBEIS
         >>> import utool as ut
@@ -149,7 +149,7 @@ def generate2(
         >>> print('flag_list2 = %r' % (flag_list1,))
         >>> print('flag_list3 = %r' % (flag_list1,))
 
-    Example2:
+    Example:
         >>> # DISABLE_DOCTEST
         >>> # UNSTABLE_DOCTEST
         >>> # Trying to recreate the freeze seen in IBEIS
@@ -174,7 +174,7 @@ def generate2(
         >>> #feats3 = [z for z in ut.generate2(gen_feat_worker, arg_list3)]
         >>> #feats4 = [w for w in ut.generate2(gen_feat_worker, arg_list4)]
 
-    Example3:
+    Example:
         >>> # DISABLE_DOCTEST
         >>> # FAILING_DOCTEST
         >>> # Trying to recreate the freeze seen in IBEIS
@@ -199,7 +199,7 @@ def generate2(
         >>> new2 = [y for y in ut.generate2(__testwarp, arg_list2, force_serial=False)]
         >>> #print('new2 = %r' % (new2,))
 
-    #Example4:
+    #Example:
     #    >>> # Freakin weird. When IBEIS Runs generate it doesn't close the processes
     #    >>> # UNSTABLE_DOCTEST
     #    >>> # python -m utool.util_parallel --test-generate:4
@@ -848,7 +848,7 @@ def buffered_generator(source_gen, buffer_size=2, use_multiprocessing=False):
         >>> assert result3 == result2, 'inconsistent results'
         >>> assert result1 == result2, 'inconsistent results'
 
-    Example1:
+    Example:
         >>> # DISABLE_DOCTEST
         >>> # VERYSLLOOWWW_DOCTEST
         >>> from utool.util_parallel import _test_buffered_generator

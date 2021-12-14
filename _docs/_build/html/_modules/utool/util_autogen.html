@@ -1,19 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>utool.util_autogen &#8212; wbia-vtool 3.0.1 documentation</title>
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -34,27 +32,27 @@
             
   <h1>Source code for utool.util_autogen</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">six</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">deque</span>  <span class="c1"># NOQA</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">expanduser</span><span class="p">,</span> <span class="n">normpath</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inject</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>  <span class="c1"># NOQA</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">expanduser</span><span class="p">,</span> <span class="n">normpath</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_inject</span>
 
 <span class="nb">print</span><span class="p">,</span> <span class="n">rrr</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">util_inject</span><span class="o">.</span><span class="n">inject2</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="PythonStatement"><a class="viewcode-back" href="../../utool.html#utool.util_autogen.PythonStatement">[docs]</a><span class="k">class</span> <span class="nc">PythonStatement</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Thin wrapper around a string representing executable python code &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Thin wrapper around a string representing executable python code&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stmt</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stmt</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stmt</span> <span class="o">=</span> <span class="n">stmt</span>
 
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stmt</span>
 
-    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stmt</span></div>
 
 
@@ -142,7 +140,7 @@
 <span class="sd">        &gt;&gt;&gt; init_codeblock = makeinit(mod_dpath, exclude_modnames, use_star)</span>
 <span class="sd">        &gt;&gt;&gt; ut.dump_autogen_code(mod_fpath, init_codeblock)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">utool._internal</span> <span class="k">import</span> <span class="n">util_importer</span>
+    <span class="kn">from</span> <span class="nn">utool._internal</span> <span class="kn">import</span> <span class="n">util_importer</span>
     <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
 
     <span class="n">module_name</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">get_modname_from_modpath</span><span class="p">(</span><span class="n">mod_dpath</span><span class="p">)</span>
@@ -217,7 +215,7 @@
 <span class="sd">    convinience function because $@ is annoying to paste into the terminal</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
-    <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">splitext</span>
+    <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">splitext</span>
 
     <span class="n">allargs_dict</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;.sh&#39;</span><span class="p">:</span> <span class="s1">&#39; $@&#39;</span><span class="p">,</span>
@@ -251,16 +249,16 @@
 <span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; import utool as ut</span>
 <span class="sd">        &gt;&gt;&gt; codeblock = ut.codeblock(</span>
-<span class="sd">            &#39;&#39;&#39;</span>
-<span class="sd">            def func( with , some = &#39;Problems&#39; ):</span>
-
-
-<span class="sd">             syntax =&#39;Ok&#39;</span>
-<span class="sd">             but = &#39;Its very messy&#39;</span>
-<span class="sd">             if None:</span>
-<span class="sd">                    # syntax might not be perfect due to being cut off</span>
-<span class="sd">                    ommiting_this_line_still_works=   True</span>
-<span class="sd">            &#39;&#39;&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; &#39;&#39;&#39;</span>
+<span class="sd">        &gt;&gt;&gt; def func( with , some = &#39;Problems&#39; ):</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt;  syntax =&#39;Ok&#39;</span>
+<span class="sd">        &gt;&gt;&gt;  but = &#39;Its very messy&#39;</span>
+<span class="sd">        &gt;&gt;&gt;  if None:</span>
+<span class="sd">        &gt;&gt;&gt;         # syntax might not be perfect due to being cut off</span>
+<span class="sd">        &gt;&gt;&gt;         ommiting_this_line_still_works=   True</span>
+<span class="sd">        &gt;&gt;&gt; &#39;&#39;&#39;)</span>
 <span class="sd">        &gt;&gt;&gt; fixed_codeblock = ut.autofix_codeblock(codeblock)</span>
 <span class="sd">        &gt;&gt;&gt; print(fixed_codeblock)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -310,7 +308,7 @@
 <span class="sd">        &gt;&gt;&gt; kwarg_keys = [match.groupdict()[&#39;keyname&#39;] for match in re.finditer(pattern, source)]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
-    <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span>
+    <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span>
     <span class="kn">import</span> <span class="nn">imp</span>
 
     <span class="n">func</span> <span class="o">=</span> <span class="kc">None</span>
@@ -321,8 +319,8 @@
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;moddir = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">moddir</span><span class="p">,))</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">xdoctest</span> <span class="k">import</span> <span class="n">static_analysis</span> <span class="k">as</span> <span class="n">static</span>
-        <span class="kn">from</span> <span class="nn">xdoctest</span> <span class="k">import</span> <span class="n">utils</span>
+        <span class="kn">from</span> <span class="nn">xdoctest</span> <span class="kn">import</span> <span class="n">static_analysis</span> <span class="k">as</span> <span class="n">static</span>
+        <span class="kn">from</span> <span class="nn">xdoctest</span> <span class="kn">import</span> <span class="n">utils</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;modpath = </span><span class="si">{!r}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">modpath</span><span class="p">))</span>
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
@@ -401,7 +399,7 @@
         <span class="c1">#                 raise</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">imp</span><span class="o">.</span><span class="n">reload</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># FIXME: PYTHON 3</span>
@@ -667,6 +665,7 @@
 <span class="sd">        from utool.util_autogen import *  # NOQA</span>
 <span class="sd">        import utool as ut</span>
 <span class="sd">        import wbia</span>
+<span class="sd">        ibs = wbia.opendb(defaultdb=&#39;testdb1&#39;)</span>
 <span class="sd">        species = wbia.const.TEST_SPECIES.ZEB_PLAIN</span>
 <span class="sd">        qaids = ibs.get_valid_aids(species=species)</span>
 <span class="sd">        qreq_ = wbia.testdata_qreq_()</span>
@@ -720,10 +719,8 @@
         <span class="s1">&#39;kpts&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;vt&#39;</span><span class="p">],</span>
         <span class="c1">#&#39;qreq_&#39;:     [&#39;ibs&#39;, &#39;species&#39;, &#39;daids&#39;, &#39;qaids&#39;],</span>
         <span class="s1">&#39;qreq_&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;wbia&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;qaids&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ibs&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;daids&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ibs&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;qaids&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;species&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;daids&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;species&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;qaids&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ibs&#39;</span><span class="p">,</span> <span class="s1">&#39;species&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;daids&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ibs&#39;</span><span class="p">,</span> <span class="s1">&#39;species&#39;</span><span class="p">],</span>
         <span class="s1">&#39;img&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;img_fpath&#39;</span><span class="p">,</span> <span class="s1">&#39;vt&#39;</span><span class="p">],</span>
     <span class="p">}</span>
 
@@ -743,7 +740,7 @@
     <span class="n">dependant_argnames</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># deque()</span>
 
     <span class="k">def</span> <span class="nf">append_dependant_argnames</span><span class="p">(</span><span class="n">argnames</span><span class="p">,</span> <span class="n">dependant_argnames</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; use hints to add known dependencies for certain argument inputs &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;use hints to add known dependencies for certain argument inputs&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">argname</span> <span class="ow">in</span> <span class="n">argnames</span><span class="p">:</span>
             <span class="c1"># Check if argname just implies an import</span>
             <span class="k">if</span> <span class="n">argname</span> <span class="ow">in</span> <span class="n">import_depends_map</span><span class="p">:</span>
@@ -1012,7 +1009,7 @@
 <span class="sd">        code_text (str):</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        str: code_text_</span>
+<span class="sd">        str: code_text\_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">flags</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span>
     <span class="n">code_text_</span> <span class="o">=</span> <span class="n">code_text</span>
@@ -1129,7 +1126,7 @@
 
 <div class="viewcode-block" id="find_modname_in_pythonpath"><a class="viewcode-back" href="../../utool.html#utool.util_autogen.find_modname_in_pythonpath">[docs]</a><span class="k">def</span> <span class="nf">find_modname_in_pythonpath</span><span class="p">(</span><span class="n">modname</span><span class="p">):</span>
     <span class="kn">import</span> <span class="nn">sys</span>
-    <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">join</span>
+    <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">join</span>
 
     <span class="n">rel_modpath</span> <span class="o">=</span> <span class="n">modname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
     <span class="n">in_pythonpath</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1187,7 +1184,7 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
 </ul>
@@ -1204,17 +1201,15 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -1231,7 +1226,7 @@
       &copy;2020, Wild Me.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

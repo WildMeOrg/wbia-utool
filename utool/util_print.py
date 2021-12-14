@@ -320,7 +320,7 @@ def colorprint(text, color=None):
         print(ut.repr4(list(pygments.formatters.get_all_formatters())))
         print(list(pygments.styles.get_all_styles()))
 
-    Example0:
+    Example:
         >>> # DISABLE_DOCTEST
         >>> from utool.util_print import *  # NOQA
         >>> import pygments.console
@@ -328,7 +328,7 @@ def colorprint(text, color=None):
         >>> color_list = list(pygments.console.codes.keys())
         >>> [colorprint(text, color) for text, color in zip(msg_list, color_list)]
 
-    Example1:
+    Example:
         >>> # DISABLE_DOCTEST (Windows test)
         >>> from utool.util_print import *  # NOQA
         >>> import pygments.console

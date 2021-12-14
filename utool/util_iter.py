@@ -32,7 +32,7 @@ def next_counter(start=0, step=1):
         step (int): (default = 1)
 
     Returns:
-        func: next_
+        func
 
     CommandLine:
         python -m utool.util_iter --test-next_counter
@@ -144,7 +144,7 @@ def itertwo(iterable, wrap=False):
     CommandLine:
         python -m utool.util_iter --test-itertwo
 
-    Example0:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_iter import *  # NOQA
         >>> iterable = [1, 2, 3, 4]
@@ -154,7 +154,7 @@ def itertwo(iterable, wrap=False):
         >>> print(result)
         edges = [(1, 2), (2, 3), (3, 4)]
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_iter import *  # NOQA
         >>> iterable = [1, 2, 3, 4]
@@ -164,7 +164,7 @@ def itertwo(iterable, wrap=False):
         >>> print(result)
         edges = [(1, 2), (2, 3), (3, 4), (4, 1)]
 
-    Example2:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_iter import *  # NOQA
         >>> import utool as ut
@@ -317,7 +317,7 @@ def iter_multichunks(iterable, chunksizes, bordermode=None):
         '[[[0, 1, 2], [3, 4, 5]], [[6, 7, 8], [9, 10, 11]], [[12, 13, 14], [15, 16, 17]]]',
         '[[[18, 19, 0], [1, 2, 3]], [[4, 5, 6], [7, 8, 9]], [[10, 11, 12], [13, 14, 15]]]',
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_iter import *  # NOQA
         >>> import utool as ut

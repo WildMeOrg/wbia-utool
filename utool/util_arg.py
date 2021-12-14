@@ -1008,11 +1008,11 @@ def argparse_dict(
     Gets values for a dict based on the command line
 
     Args:
-        default_dict_ (?):
+        default_dict\_ (?):
         only_specified (bool): if True only returns keys that are specified on commandline. no defaults.
 
     Returns:
-        dict_: dict_ -  a dictionary
+        dict\_: a dictionary
 
     CommandLine:
         python -m utool.util_arg --test-argparse_dict

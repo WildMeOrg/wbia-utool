@@ -1191,7 +1191,7 @@ def parse_cfgstr_list2(
         >>> cfgtype, alias_keys, valid_keys, metadata = None, None, None, None
         >>> expand_nested, is_nestedcfgtypel, strict = True, False, False
 
-    Example0:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_gridsearch import *  # NOQA
         >>> import utool as ut
@@ -1215,9 +1215,14 @@ def parse_cfgstr_list2(
         >>> print(result)
         ['name:', 'name:f=1', 'name:b=1', 'name:b=2', 'name1:f=1,joined=True', 'name2:b=2,f=1,joined=True']
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> # Allow for definition of a named default on the fly
+        >>> from utool.util_gridsearch import *  # NOQA
+        >>> import utool as ut
+        >>> named_defaults_dict = None
+        >>> cfgtype, alias_keys, valid_keys, metadata = None, None, None, None
+        >>> expand_nested, is_nestedcfgtypel, strict = True, False, False
         >>> cfgstr_list = ['base=:f=2,c=[1,2]', 'base:f=1', 'base:b=[1,2]']
         >>> special_join_dict = None
         >>> cfg_combos_list = parse_cfgstr_list2(
@@ -1231,8 +1236,13 @@ def parse_cfgstr_list2(
         >>> print(result)
         ['base:c=1,f=1', 'base:c=2,f=1', 'base:b=1,c=1,f=2', 'base:b=1,c=2,f=2', 'base:b=2,c=1,f=2', 'base:b=2,c=2,f=2']
 
-    Example2:
+    Example:
         >>> # ENABLE_DOCTEST
+        >>> from utool.util_gridsearch import *  # NOQA
+        >>> import utool as ut
+        >>> named_defaults_dict = None
+        >>> cfgtype, alias_keys, valid_keys, metadata = None, None, None, None
+        >>> expand_nested, is_nestedcfgtypel, strict = True, False, False
         >>> cfgstr_list = ['base:f=2,c=[(1,2),(3,4)]']
         >>> special_join_dict = None
         >>> cfg_combos_list = parse_cfgstr_list2(
@@ -1245,7 +1255,7 @@ def parse_cfgstr_list2(
         >>> result = ut.repr2(ut.get_varied_cfg_lbls(cfg_list))
         >>> print(result)
 
-    Example3:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_gridsearch import *  # NOQA
         >>> import utool as ut

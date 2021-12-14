@@ -277,7 +277,7 @@ def deterministic_shuffle(list_, seed=0, rng=None):
         seed (int):
 
     Returns:
-        list: list_
+        list
 
     CommandLine:
         python -m utool.util_numpy --test-deterministic_shuffle

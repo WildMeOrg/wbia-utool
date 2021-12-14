@@ -216,16 +216,16 @@ def autofix_codeblock(
         >>> # DISABLE_DOCTEST
         >>> import utool as ut
         >>> codeblock = ut.codeblock(
-            '''
-            def func( with , some = 'Problems' ):
-
-
-             syntax ='Ok'
-             but = 'Its very messy'
-             if None:
-                    # syntax might not be perfect due to being cut off
-                    ommiting_this_line_still_works=   True
-            ''')
+        >>> '''
+        >>> def func( with , some = 'Problems' ):
+        >>>
+        >>>
+        >>>  syntax ='Ok'
+        >>>  but = 'Its very messy'
+        >>>  if None:
+        >>>         # syntax might not be perfect due to being cut off
+        >>>         ommiting_this_line_still_works=   True
+        >>> ''')
         >>> fixed_codeblock = ut.autofix_codeblock(codeblock)
         >>> print(fixed_codeblock)
     """
@@ -976,7 +976,7 @@ def remove_codeblock_syntax_sentinals(code_text):
         code_text (str):
 
     Returns:
-        str: code_text_
+        str: code_text\_
     """
     flags = re.MULTILINE | re.DOTALL
     code_text_ = code_text

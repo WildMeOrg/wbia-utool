@@ -29,9 +29,9 @@ def nx_topsort_nodes(graph, nodes):
 
 
 def nx_topsort_rank(graph, nodes=None):
-    """
+    r"""
     graph = inputs.exi_graph.reverse()
-    nodes = flat_node_order_
+    nodes = flat_node_order\_
     """
     import utool as ut
 
@@ -571,7 +571,7 @@ def nx_delete_node_attr(graph, name, nodes=None):
     """
     Removes node attributes
 
-    Doctest:
+    Example:
         >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
         >>> G = nx.karate_club_graph()
@@ -615,7 +615,7 @@ def nx_delete_edge_attr(graph, name, edges=None):
     """
     Removes an attributes from specific edges in the graph
 
-    Doctest:
+    Example:
         >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
         >>> G = nx.karate_club_graph()
@@ -630,7 +630,7 @@ def nx_delete_edge_attr(graph, name, edges=None):
         >>> assert len(nx.get_edge_attributes(G, 'spam')) == 0
         >>> assert len(nx.get_edge_attributes(G, 'foo')) == 77
 
-    Doctest:
+    Example:
         >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
         >>> G = nx.MultiGraph()
@@ -1446,7 +1446,7 @@ def get_levels(dict_, n=0, levels=None):
     DEPCIRATE
 
     Args:
-        dict_ (dict_):  a dictionary
+        dict\_ (dict):  a dictionary
         n (int): (default = 0)
         levels (None): (default = None)
 
@@ -1732,8 +1732,9 @@ def reverse_path_edges(edge_list):
 
 
 def bfs_multi_edges(G, source, reverse=False, keys=True, data=False):
-    """Produce edges in a breadth-first-search starting at source.
-    -----
+    """
+    Produce edges in a breadth-first-search starting at source.
+
     Based on http://www.ics.uci.edu/~eppstein/PADS/BFS.py
     by D. Eppstein, July 2004.
     """

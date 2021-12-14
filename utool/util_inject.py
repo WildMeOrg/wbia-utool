@@ -531,13 +531,13 @@ def noinject(
 
 
 def inject(module_name=None, module_prefix='[???]', DEBUG=False, module=None, N=1):
-    """
+    r"""
     Injects your module with utool magic
 
     Utool magic is not actually magic. It just turns your ``print`` statments into
     logging statments, allows for your module to be used with the utool.Indent
     context manager and the and utool.indent_func decorator. ``printDBG`` will soon
-    be deprecated as will ``print_``. The function rrr is a developer convinience for
+    be deprecated as will ``print\_``. The function rrr is a developer convinience for
     reloading the module dynamically durring runtime. The profile decorator is
     a no-op if not using kernprof.py, otherwise it is kernprof.py's profile
     decorator.
@@ -549,7 +549,7 @@ def inject(module_name=None, module_prefix='[???]', DEBUG=False, module=None, N=
         module (None): the actual module (optional)
 
     Returns:
-        tuple : (print, print_, printDBG, rrr, profile_)
+        tuple : (print, print\_, printDBG, rrr, profile\_)
 
     Example:
         >>> # DISABLE_DOCTEST
@@ -569,7 +569,7 @@ def inject(module_name=None, module_prefix='[???]', DEBUG=False, module=None, N=
 
 
 def inject2(module_name=None, module_prefix=None, DEBUG=False, module=None, N=1):
-    """wrapper that depricates print_ and printDBG"""
+    r"""wrapper that depricates print\_ and printDBG"""
     if module_prefix is None:
         module_prefix = '[%s]' % (module_name,)
     noinject(module_name, module_prefix, DEBUG, module, N=N)

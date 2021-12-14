@@ -114,9 +114,9 @@ def get_free_diskbytes(dir_):
         dir_ (str):
 
     Returns:
-        int: bytes_ folder/drive free space (in bytes)
+        int: bytes\_ folder/drive free space (in bytes)
 
-    References::
+    References:
         http://stackoverflow.com/questions/51658/cross-platform-space-remaining-on-volume-using-python
         http://linux.die.net/man/2/statvfs
 
@@ -877,7 +877,7 @@ def cmd(*args, **kwargs):
         python -m utool.util_cplat --test-cmd:1 --test-sudo
         python -m utool.util_cplat --test-cmd:2 --test-sudo
 
-    Example0:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> import utool as ut
         >>> (out, err, ret) = ut.cmd('echo', 'hello world')
@@ -887,7 +887,7 @@ def cmd(*args, **kwargs):
         ('err', None),
         ('ret', 0),
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> import utool as ut
         >>> target = ut.codeblock(
@@ -912,7 +912,7 @@ def cmd(*args, **kwargs):
         >>>     ut.assert_eq(output, target)
         >>>     print('L ___ TEST CMD %d ___\n' % (count,))
 
-    Example2:
+    Example:
         >>> # DISABLE_DOCTEST
         >>> # UNSTABLE_DOCTEST
         >>> # ping is not as universal of a command as I thought

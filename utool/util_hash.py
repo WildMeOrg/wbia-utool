@@ -247,7 +247,7 @@ def hashstr_arr(arr, lbl='arr', pathsafe=False, **kwargs):
         python -m utool.util_hash --test-hashstr_arr
         python -m utool.util_hash hashstr_arr:2
 
-    Example0:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_hash import *  # NOQA
         >>> import numpy as np
@@ -260,7 +260,7 @@ def hashstr_arr(arr, lbl='arr', pathsafe=False, **kwargs):
         >>> print(result)
         arr_hashstr = arr((2,3)daukyreqnhfejkfs)
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_hash import *  # NOQA
         >>> import numpy as np
@@ -903,27 +903,27 @@ def convert_hexstr_to_bigbase(hexstr, alphabet=ALPHABET, bigbase=BIGBASE):
     Packs a long hexstr into a shorter length string with a larger base
 
     Ignore:
-        # Determine the length savings with lossless conversion
-        import sympy as sy
-        consts = dict(hexbase=16, hexlen=256, bigbase=27)
-        symbols = sy.symbols('hexbase, hexlen, bigbase, newlen')
-        haexbase, hexlen, bigbase, newlen = symbols
-        eqn = sy.Eq(16 ** hexlen,  bigbase ** newlen)
-        newlen_ans = sy.solve(eqn, newlen)[0].subs(consts).evalf()
-        print('newlen_ans = %r' % (newlen_ans,))
-
-        # for a 27 char alphabet we can get 216
-        print('Required length for lossless conversion len2 = %r' % (len2,))
-
-        def info(base, len):
-            bits = base ** len
-            print('base = %r' % (base,))
-            print('len = %r' % (len,))
-            print('bits = %r' % (bits,))
-        info(16, 256)
-        info(27, 16)
-        info(27, 64)
-        info(27, 216)
+        >>> # Determine the length savings with lossless conversion
+        >>> import sympy as sy
+        >>> consts = dict(hexbase=16, hexlen=256, bigbase=27)
+        >>> symbols = sy.symbols('hexbase, hexlen, bigbase, newlen')
+        >>> haexbase, hexlen, bigbase, newlen = symbols
+        >>> eqn = sy.Eq(16 ** hexlen,  bigbase ** newlen)
+        >>> newlen_ans = sy.solve(eqn, newlen)[0].subs(consts).evalf()
+        >>> print('newlen_ans = %r' % (newlen_ans,))
+        >>>
+        >>> # for a 27 char alphabet we can get 216
+        >>> print('Required length for lossless conversion len2 = %r' % (len2,))
+        >>>
+        >>> def info(base, len):
+        >>>     bits = base ** len
+        >>>     print('base = %r' % (base,))
+        >>>     print('len = %r' % (len,))
+        >>>     print('bits = %r' % (bits,))
+        >>> info(16, 256)
+        >>> info(27, 16)
+        >>> info(27, 64)
+        >>> info(27, 216)
     """
     x = int(hexstr, 16)  # first convert to base 16
     if x == 0:
@@ -1015,7 +1015,7 @@ def get_file_hash(fpath, blocksize=65536, hasher=None, stride=1, hexdigest=False
         '5KP\xcf>R\xf6\xffO:L\xac\x9c\xd3V+\x0e\xf6\xe1n'
 
     Ignore:
-        file_ = open(fpath, 'rb')
+        file\_ = open(fpath, 'rb')
     """
     if hasher is None:
         hasher = hashlib.sha1()
@@ -1271,7 +1271,7 @@ def hashable_to_uuid(hashable_):
            to be mutable, in which case not all bytes-like objects can apply.
 
     Returns:
-        UUID: uuid_
+        UUID
 
     CommandLine:
         python -m utool.util_hash --test-hashable_to_uuid

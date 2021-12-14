@@ -1,19 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>utool.util_alg &#8212; wbia-vtool 3.0.1 documentation</title>
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -37,19 +35,19 @@
 <span class="c1"># TODO Licence:</span>
 <span class="c1">#</span>
 <span class="c1"># TODO:  move library intensive functions to vtool</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
 <span class="kn">import</span> <span class="nn">operator</span> <span class="k">as</span> <span class="nn">op</span>
 <span class="kn">import</span> <span class="nn">decimal</span>
 <span class="kn">import</span> <span class="nn">six</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
-<span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="nb">zip</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="n">reduce</span><span class="p">,</span> <span class="nb">map</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="kn">import</span> <span class="nb">zip</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="n">reduce</span><span class="p">,</span> <span class="nb">map</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
 <span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_type</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_list</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_dict</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inject</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_decor</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_type</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_list</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_dict</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_inject</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_decor</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -94,7 +92,7 @@
 <span class="sd">        vtool.group_indicies</span>
 <span class="sd">        vtool.apply_grouping</span>
 
-<span class="sd">    Example0:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; from utool.util_alg import *  # NOQA</span>
 <span class="sd">        &gt;&gt;&gt; groups1 = [[1, 2, 3], [4], [5, 6], [7, 8], [9, 10, 11]]</span>
@@ -104,7 +102,7 @@
 <span class="sd">        &gt;&gt;&gt; print(result)</span>
 <span class="sd">        total_error = 20</span>
 
-<span class="sd">    Example1:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; from utool.util_alg import *  # NOQA</span>
 <span class="sd">        &gt;&gt;&gt; groups1 = [[1, 2, 3], [4], [5, 6]]</span>
@@ -114,7 +112,7 @@
 <span class="sd">        &gt;&gt;&gt; print(result)</span>
 <span class="sd">        total_error = 0</span>
 
-<span class="sd">    Example2:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; from utool.util_alg import *  # NOQA</span>
 <span class="sd">        &gt;&gt;&gt; groups1 = [[1, 2, 3], [4], [5, 6]]</span>
@@ -443,8 +441,8 @@
     <span class="k">if</span> <span class="n">pure</span><span class="p">:</span>
         <span class="n">delta</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">odict</span><span class="p">()</span>
         <span class="n">delta</span><span class="p">[</span><span class="s1">&#39;unchanged&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">unchanged</span>
-        <span class="n">delta</span><span class="p">[</span><span class="s1">&#39;splits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">odict</span><span class="p">([(</span><span class="s1">&#39;old&#39;</span><span class="p">,</span> <span class="n">old_splits</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;new&#39;</span><span class="p">,</span> <span class="n">new_splits</span><span class="p">),])</span>
-        <span class="n">delta</span><span class="p">[</span><span class="s1">&#39;merges&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">odict</span><span class="p">([(</span><span class="s1">&#39;old&#39;</span><span class="p">,</span> <span class="n">old_merges</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;new&#39;</span><span class="p">,</span> <span class="n">new_merges</span><span class="p">),])</span>
+        <span class="n">delta</span><span class="p">[</span><span class="s1">&#39;splits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">odict</span><span class="p">([(</span><span class="s1">&#39;old&#39;</span><span class="p">,</span> <span class="n">old_splits</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;new&#39;</span><span class="p">,</span> <span class="n">new_splits</span><span class="p">)])</span>
+        <span class="n">delta</span><span class="p">[</span><span class="s1">&#39;merges&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">odict</span><span class="p">([(</span><span class="s1">&#39;old&#39;</span><span class="p">,</span> <span class="n">old_merges</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;new&#39;</span><span class="p">,</span> <span class="n">new_merges</span><span class="p">)])</span>
         <span class="n">delta</span><span class="p">[</span><span class="s1">&#39;hybrid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">odict</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="p">(</span><span class="s1">&#39;old&#39;</span><span class="p">,</span> <span class="n">old_hybrid</span><span class="p">),</span>
@@ -652,7 +650,7 @@
 
 
 <div class="viewcode-block" id="product_nonsame"><a class="viewcode-back" href="../../utool.html#utool.util_alg.product_nonsame">[docs]</a><span class="k">def</span> <span class="nf">product_nonsame</span><span class="p">(</span><span class="n">list1</span><span class="p">,</span> <span class="n">list2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; product of list1 and list2 where items are non equal &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;product of list1 and list2 where items are non equal&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">item1</span><span class="p">,</span> <span class="n">item2</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">list1</span><span class="p">,</span> <span class="n">list2</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">item1</span> <span class="o">!=</span> <span class="n">item2</span><span class="p">:</span>
             <span class="k">yield</span> <span class="p">(</span><span class="n">item1</span><span class="p">,</span> <span class="n">item2</span><span class="p">)</span></div>
@@ -671,7 +669,7 @@
 <span class="sd">    CommandLine:</span>
 <span class="sd">        python -m utool.util_alg --test-greedy_max_inden_setcover</span>
 
-<span class="sd">    Example0:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; from utool.util_alg import *  # NOQA</span>
 <span class="sd">        &gt;&gt;&gt; import utool as ut</span>
@@ -685,7 +683,7 @@
 <span class="sd">        &gt;&gt;&gt; print(result)</span>
 <span class="sd">        ([0, 9], [&#39;a&#39;, &#39;c&#39;, &#39;d&#39;])</span>
 
-<span class="sd">    Example1:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; from utool.util_alg import *  # NOQA</span>
 <span class="sd">        &gt;&gt;&gt; import utool as ut</span>
@@ -963,7 +961,7 @@
 
 
 <div class="viewcode-block" id="xywh_to_tlbr"><a class="viewcode-back" href="../../utool.html#utool.util_alg.xywh_to_tlbr">[docs]</a><span class="k">def</span> <span class="nf">xywh_to_tlbr</span><span class="p">(</span><span class="n">bbox</span><span class="p">,</span> <span class="n">img_wh</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; converts xywh format to (tlx, tly, blx, bly) &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;converts xywh format to (tlx, tly, blx, bly)&quot;&quot;&quot;</span>
     <span class="p">(</span><span class="n">img_w</span><span class="p">,</span> <span class="n">img_h</span><span class="p">)</span> <span class="o">=</span> <span class="n">img_wh</span>
     <span class="k">if</span> <span class="n">img_w</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">img_h</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">img_w</span> <span class="o">=</span> <span class="mi">1</span>
@@ -983,7 +981,7 @@
 
 
 <div class="viewcode-block" id="item_hist"><a class="viewcode-back" href="../../utool.html#utool.util_alg.item_hist">[docs]</a><span class="k">def</span> <span class="nf">item_hist</span><span class="p">(</span><span class="n">list_</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; counts the number of times each item appears in the dictionary &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;counts the number of times each item appears in the dictionary&quot;&quot;&quot;</span>
     <span class="n">dict_hist</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="c1"># Insert each item into the correct group</span>
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">list_</span><span class="p">:</span>
@@ -1007,7 +1005,7 @@
 
 
 <div class="viewcode-block" id="get_phi"><a class="viewcode-back" href="../../utool.html#utool.util_alg.get_phi">[docs]</a><span class="k">def</span> <span class="nf">get_phi</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot; Golden Ratio: phi = 1 / sqrt(5) / 2.0 = 1.61803398875 &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Golden Ratio: phi = 1 / sqrt(5) / 2.0 = 1.61803398875&quot;&quot;&quot;</span>
     <span class="c1"># phi = (1.0 + sqrt(5)) / 2.0 = 1.61803398875</span>
     <span class="c1"># return phi</span>
     <span class="k">return</span> <span class="n">PHI</span></div>
@@ -1132,7 +1130,7 @@
 
 
 <div class="viewcode-block" id="get_nth_prime"><a class="viewcode-back" href="../../utool.html#utool.util_alg.get_nth_prime">[docs]</a><span class="k">def</span> <span class="nf">get_nth_prime</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">max_prime</span><span class="o">=</span><span class="mi">4100</span><span class="p">,</span> <span class="n">safe</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; hacky but still brute force algorithm for finding nth prime for small tests &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;hacky but still brute force algorithm for finding nth prime for small tests&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">:</span>
         <span class="n">first_100_primes</span> <span class="o">=</span> <span class="p">(</span>
             <span class="mi">2</span><span class="p">,</span>
@@ -1342,58 +1340,58 @@
 <span class="sd">        python -m utool.util_alg --exec-knapsack:1</span>
 
 <span class="sd">    Ignore:</span>
-<span class="sd">        annots_per_view = 2</span>
-<span class="sd">        maxweight = 2</span>
-<span class="sd">        items = [</span>
-<span class="sd">            (0.7005208343554686, 0.7005208343554686, 0),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 1),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 2),</span>
-<span class="sd">            (0.7005208343554686, 0.7005208343554686, 3),</span>
-<span class="sd">            (0.7005208343554686, 0.7005208343554686, 4),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 5),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 6),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 7),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 8),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 9),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 10),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 11),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 12),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 13),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 14),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 15),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 16),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 17),</span>
-<span class="sd">            (0.7005208343554686, 0.7005208343554686, 18),</span>
-<span class="sd">            (0.7005208343554686, 0.7005208343554686, 19),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 20),</span>
-<span class="sd">            (0.7005208343554686, 0.7005208343554686, 21),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 22),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 23),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 24),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 25),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 26),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 27),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 28),</span>
-<span class="sd">            (0.7005208343554686, 0.7005208343554686, 29),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 30),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 31),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 32),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 33),</span>
-<span class="sd">            (0.7005208343554686, 0.7005208343554686, 34),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 35),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 36),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 37),</span>
-<span class="sd">            (0.7005208343554686, 0.7005208343554686, 38),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 39),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 40),</span>
-<span class="sd">            (0.7005208343554686, 0.7005208343554686, 41),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 42),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 43),</span>
-<span class="sd">            (0.669270834329427, 0.669270834329427, 44),</span>
-<span class="sd">        ]</span>
-<span class="sd">        values = ut.take_column(items, 0)</span>
-<span class="sd">        weights = ut.take_column(items, 1)</span>
-<span class="sd">        indices = ut.take_column(items, 2)</span>
+<span class="sd">        &gt;&gt;&gt; annots_per_view = 2</span>
+<span class="sd">        &gt;&gt;&gt; maxweight = 2</span>
+<span class="sd">        &gt;&gt;&gt; items = [</span>
+<span class="sd">        &gt;&gt;&gt;     (0.7005208343554686, 0.7005208343554686, 0),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 1),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 2),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.7005208343554686, 0.7005208343554686, 3),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.7005208343554686, 0.7005208343554686, 4),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 5),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 6),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 7),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 8),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 9),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 10),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 11),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 12),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 13),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 14),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 15),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 16),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 17),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.7005208343554686, 0.7005208343554686, 18),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.7005208343554686, 0.7005208343554686, 19),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 20),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.7005208343554686, 0.7005208343554686, 21),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 22),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 23),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 24),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 25),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 26),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 27),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 28),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.7005208343554686, 0.7005208343554686, 29),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 30),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 31),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 32),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 33),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.7005208343554686, 0.7005208343554686, 34),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 35),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 36),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 37),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.7005208343554686, 0.7005208343554686, 38),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 39),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 40),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.7005208343554686, 0.7005208343554686, 41),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 42),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 43),</span>
+<span class="sd">        &gt;&gt;&gt;     (0.669270834329427, 0.669270834329427, 44),</span>
+<span class="sd">        &gt;&gt;&gt; ]</span>
+<span class="sd">        &gt;&gt;&gt; values = ut.take_column(items, 0)</span>
+<span class="sd">        &gt;&gt;&gt; weights = ut.take_column(items, 1)</span>
+<span class="sd">        &gt;&gt;&gt; indices = ut.take_column(items, 2)</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
@@ -1434,23 +1432,23 @@
 <span class="sd">        &gt;&gt;&gt; import utool as ut</span>
 <span class="sd">        &gt;&gt;&gt; setup = ut.codeblock(</span>
 <span class="sd">        &gt;&gt;&gt;     &#39;&#39;&#39;</span>
-<span class="sd">                import utool as ut</span>
-<span class="sd">                weights = [215, 275, 335, 355, 42, 58] * 40</span>
-<span class="sd">                items = [(w, w, i) for i, w in enumerate(weights)]</span>
-<span class="sd">                maxweight = 2505</span>
-<span class="sd">                #import numba</span>
-<span class="sd">                #knapsack_numba = numba.autojit(ut.knapsack_iterative)</span>
-<span class="sd">                #knapsack_numba = numba.autojit(ut.knapsack_iterative_numpy)</span>
-<span class="sd">                &#39;&#39;&#39;)</span>
+<span class="sd">        &gt;&gt;&gt;     import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt;     weights = [215, 275, 335, 355, 42, 58] * 40</span>
+<span class="sd">        &gt;&gt;&gt;     items = [(w, w, i) for i, w in enumerate(weights)]</span>
+<span class="sd">        &gt;&gt;&gt;     maxweight = 2505</span>
+<span class="sd">        &gt;&gt;&gt;     #import numba</span>
+<span class="sd">        &gt;&gt;&gt;     #knapsack_numba = numba.autojit(ut.knapsack_iterative)</span>
+<span class="sd">        &gt;&gt;&gt;     #knapsack_numba = numba.autojit(ut.knapsack_iterative_numpy)</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;&#39;&#39;)</span>
 <span class="sd">        &gt;&gt;&gt; # Test load time</span>
 <span class="sd">        &gt;&gt;&gt; stmt_list1 = ut.codeblock(</span>
 <span class="sd">        &gt;&gt;&gt;     &#39;&#39;&#39;</span>
-<span class="sd">                #ut.knapsack_recursive(items, maxweight)</span>
-<span class="sd">                ut.knapsack_iterative(items, maxweight)</span>
-<span class="sd">                ut.knapsack_ilp(items, maxweight)</span>
-<span class="sd">                #knapsack_numba(items, maxweight)</span>
-<span class="sd">                #ut.knapsack_iterative_numpy(items, maxweight)</span>
-<span class="sd">                &#39;&#39;&#39;).split(&#39;\n&#39;)</span>
+<span class="sd">        &gt;&gt;&gt;     #ut.knapsack_recursive(items, maxweight)</span>
+<span class="sd">        &gt;&gt;&gt;     ut.knapsack_iterative(items, maxweight)</span>
+<span class="sd">        &gt;&gt;&gt;     ut.knapsack_ilp(items, maxweight)</span>
+<span class="sd">        &gt;&gt;&gt;     #knapsack_numba(items, maxweight)</span>
+<span class="sd">        &gt;&gt;&gt;     #ut.knapsack_iterative_numpy(items, maxweight)</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;&#39;&#39;).split(&#39;\n&#39;)</span>
 <span class="sd">        &gt;&gt;&gt; ut.util_dev.timeit_compare(stmt_list1, setup, int(5))</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;recursive&#39;</span><span class="p">:</span>
@@ -1523,8 +1521,8 @@
 <div class="viewcode-block" id="knapsack_recursive"><a class="viewcode-back" href="../../utool.html#utool.util_alg.knapsack_recursive">[docs]</a><span class="k">def</span> <span class="nf">knapsack_recursive</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">maxweight</span><span class="p">):</span>
     <span class="nd">@util_decor</span><span class="o">.</span><span class="n">memoize_nonzero</span>
     <span class="k">def</span> <span class="nf">bestvalue</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Return the value of the most valuable subsequence of the first i</span>
-<span class="sd">        elements in items whose weights sum to no more than j. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the value of the most valuable subsequence of the first i</span>
+<span class="sd">        elements in items whose weights sum to no more than j.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">0</span>
         <span class="n">value</span><span class="p">,</span> <span class="n">weight</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
@@ -1660,7 +1658,7 @@
 
 
 <div class="viewcode-block" id="knapsack_iterative_numpy"><a class="viewcode-back" href="../../utool.html#utool.util_alg.knapsack_iterative_numpy">[docs]</a><span class="k">def</span> <span class="nf">knapsack_iterative_numpy</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">maxweight</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Iterative knapsack method</span>
 
 <span class="sd">    maximize \sum_{i \in T} v_i</span>
@@ -1793,7 +1791,7 @@
 
 
 <div class="viewcode-block" id="cumsum"><a class="viewcode-back" href="../../utool.html#utool.util_alg.cumsum">[docs]</a><span class="k">def</span> <span class="nf">cumsum</span><span class="p">(</span><span class="n">item_list</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; python cumsum</span>
+    <span class="sd">&quot;&quot;&quot;python cumsum</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        item_list (list): list of numbers or items supporting addition</span>
@@ -2047,10 +2045,10 @@
 <span class="sd">        &gt;&gt;&gt; print(result)</span>
 <span class="sd">        (42.0, array([4, 3, 0]), array([22, 21,  1]))</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_decor</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_decor</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;maximum_distance_subset len(items)=</span><span class="si">%r</span><span class="s1">, K=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">),</span> <span class="n">K</span><span class="p">,))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;maximum_distance_subset len(items)=</span><span class="si">%r</span><span class="s1">, K=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">),</span> <span class="n">K</span><span class="p">))</span>
 
     <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">items</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
 
@@ -2193,8 +2191,7 @@
 
 
 <div class="viewcode-block" id="almost_eq"><a class="viewcode-back" href="../../utool.html#utool.util_alg.almost_eq">[docs]</a><span class="k">def</span> <span class="nf">almost_eq</span><span class="p">(</span><span class="n">arr1</span><span class="p">,</span> <span class="n">arr2</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">1e-11</span><span class="p">,</span> <span class="n">ret_error</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; checks if floating point number are equal to a threshold</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;checks if floating point number are equal to a threshold&quot;&quot;&quot;</span>
     <span class="n">error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">arr1</span> <span class="o">-</span> <span class="n">arr2</span><span class="p">)</span>
     <span class="n">passed</span> <span class="o">=</span> <span class="n">error</span> <span class="o">&lt;</span> <span class="n">thresh</span>
     <span class="k">if</span> <span class="n">ret_error</span><span class="p">:</span>
@@ -2786,7 +2783,7 @@
     <span class="c1"># Convert to binary</span>
     <span class="n">ones_bin</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">true_cases</span><span class="p">]</span>
     <span class="c1"># ones_str = [str(x) for x in true_cases]</span>
-    <span class="kn">from</span> <span class="nn">quine_mccluskey.qm</span> <span class="k">import</span> <span class="n">QuineMcCluskey</span>
+    <span class="kn">from</span> <span class="nn">quine_mccluskey.qm</span> <span class="kn">import</span> <span class="n">QuineMcCluskey</span>
 
     <span class="n">qm</span> <span class="o">=</span> <span class="n">QuineMcCluskey</span><span class="p">()</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">qm</span><span class="o">.</span><span class="n">simplify</span><span class="p">(</span><span class="n">ones</span><span class="o">=</span><span class="n">ones_bin</span><span class="p">,</span> <span class="n">num_bits</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">varnames</span><span class="p">))</span>
@@ -2889,7 +2886,7 @@
     <span class="n">true_cases</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">t</span><span class="p">))</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tup</span><span class="p">])</span> <span class="k">for</span> <span class="n">tup</span> <span class="ow">in</span> <span class="n">true_tuples</span><span class="p">]</span>
     <span class="c1"># truth_nums = [int(s, 2) for s in true_cases]</span>
 
-    <span class="kn">from</span> <span class="nn">quine_mccluskey.qm</span> <span class="k">import</span> <span class="n">QuineMcCluskey</span>
+    <span class="kn">from</span> <span class="nn">quine_mccluskey.qm</span> <span class="kn">import</span> <span class="n">QuineMcCluskey</span>
 
     <span class="n">qm</span> <span class="o">=</span> <span class="n">QuineMcCluskey</span><span class="p">(</span><span class="n">use_xor</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">qm</span><span class="o">.</span><span class="n">simplify_los</span><span class="p">(</span><span class="n">true_cases</span><span class="p">,</span> <span class="n">num_bits</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">varnames</span><span class="p">))</span>
@@ -2922,7 +2919,7 @@
         <span class="p">(</span>
             <span class="n">term</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="p">[])</span>
             <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;(not &#39;</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">term</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="p">[])]</span>
-            <span class="o">+</span> <span class="p">[</span><span class="n">parenjoin</span><span class="p">(</span><span class="s1">&#39; ^ &#39;</span><span class="p">,</span> <span class="n">term</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;^&#39;</span><span class="p">,</span> <span class="p">[])),</span> <span class="n">parenjoin</span><span class="p">(</span><span class="s1">&#39; ~ &#39;</span><span class="p">,</span> <span class="n">term</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="p">,</span> <span class="p">[])),]</span>
+            <span class="o">+</span> <span class="p">[</span><span class="n">parenjoin</span><span class="p">(</span><span class="s1">&#39; ^ &#39;</span><span class="p">,</span> <span class="n">term</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;^&#39;</span><span class="p">,</span> <span class="p">[])),</span> <span class="n">parenjoin</span><span class="p">(</span><span class="s1">&#39; ~ &#39;</span><span class="p">,</span> <span class="n">term</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="p">,</span> <span class="p">[]))]</span>
         <span class="p">)</span>
         <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">grouped_terms</span>
     <span class="p">]</span>
@@ -3057,7 +3054,7 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
 </ul>
@@ -3074,17 +3071,15 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -3101,7 +3096,7 @@
       &copy;2020, Wild Me.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

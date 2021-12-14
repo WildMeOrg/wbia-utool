@@ -1,19 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>utool.util_cplat &#8212; wbia-vtool 3.0.1 documentation</title>
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -37,7 +35,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">cross platform utilities</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pipes</span>
 <span class="kn">import</span> <span class="nn">six</span>
@@ -45,11 +43,11 @@
 <span class="kn">import</span> <span class="nn">platform</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">shlex</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">normpath</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">expanduser</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inject</span>
-<span class="kn">from</span> <span class="nn">utool._internal</span> <span class="k">import</span> <span class="n">meta_util_cplat</span>
-<span class="kn">from</span> <span class="nn">utool._internal.meta_util_path</span> <span class="k">import</span> <span class="n">unixpath</span><span class="p">,</span> <span class="n">truepath</span>
-<span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="nb">zip</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">normpath</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">expanduser</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_inject</span>
+<span class="kn">from</span> <span class="nn">utool._internal</span> <span class="kn">import</span> <span class="n">meta_util_cplat</span>
+<span class="kn">from</span> <span class="nn">utool._internal.meta_util_path</span> <span class="kn">import</span> <span class="n">unixpath</span><span class="p">,</span> <span class="n">truepath</span>
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="kn">import</span> <span class="nb">zip</span>
 
 <span class="nb">print</span><span class="p">,</span> <span class="n">rrr</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">util_inject</span><span class="o">.</span><span class="n">inject2</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 <span class="n">print_</span> <span class="o">=</span> <span class="n">util_inject</span><span class="o">.</span><span class="n">make_module_write_func</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -129,7 +127,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">os</span>
     <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
-    <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">basename</span><span class="p">,</span> <span class="n">realpath</span>
+    <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">basename</span><span class="p">,</span> <span class="n">realpath</span>
 
     <span class="n">pyname</span> <span class="o">=</span> <span class="n">basename</span><span class="p">(</span><span class="n">realpath</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">))</span>
     <span class="n">ld_library_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;LD_LIBRARY_PATH&#39;</span><span class="p">]</span>
@@ -149,9 +147,9 @@
 <span class="sd">        dir_ (str):</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        int: bytes_ folder/drive free space (in bytes)</span>
+<span class="sd">        int: bytes\_ folder/drive free space (in bytes)</span>
 
-<span class="sd">    References::</span>
+<span class="sd">    References:</span>
 <span class="sd">        http://stackoverflow.com/questions/51658/cross-platform-space-remaining-on-volume-using-python</span>
 <span class="sd">        http://linux.die.net/man/2/statvfs</span>
 
@@ -248,14 +246,14 @@
 
 
 <div class="viewcode-block" id="get_file_info"><a class="viewcode-back" href="../../utool.html#utool.util_cplat.get_file_info">[docs]</a><span class="k">def</span> <span class="nf">get_file_info</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">with_fpath</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">nice</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_time</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_time</span>
     <span class="kn">import</span> <span class="nn">os</span>
     <span class="kn">import</span> <span class="nn">time</span>
-    <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+    <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
     <span class="n">statbuf</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span>
 
-    <span class="kn">from</span> <span class="nn">pwd</span> <span class="k">import</span> <span class="n">getpwuid</span>
+    <span class="kn">from</span> <span class="nn">pwd</span> <span class="kn">import</span> <span class="n">getpwuid</span>
 
     <span class="n">owner</span> <span class="o">=</span> <span class="n">getpwuid</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span><span class="o">.</span><span class="n">st_uid</span><span class="p">)</span><span class="o">.</span><span class="n">pw_name</span>
 
@@ -284,7 +282,7 @@
 
 
 <div class="viewcode-block" id="get_file_nBytes_str"><a class="viewcode-back" href="../../utool.html#utool.util_cplat.get_file_nBytes_str">[docs]</a><span class="k">def</span> <span class="nf">get_file_nBytes_str</span><span class="p">(</span><span class="n">fpath</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_str</span>
 
     <span class="k">return</span> <span class="n">util_str</span><span class="o">.</span><span class="n">byte_str2</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">fpath</span><span class="p">))</span></div>
 
@@ -306,7 +304,7 @@
 
 
 <div class="viewcode-block" id="get_dir_diskspaces"><a class="viewcode-back" href="../../utool.html#utool.util_cplat.get_dir_diskspaces">[docs]</a><span class="k">def</span> <span class="nf">get_dir_diskspaces</span><span class="p">(</span><span class="n">dir_</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_path</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_path</span>
 
     <span class="n">path_list</span> <span class="o">=</span> <span class="n">util_path</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">dir_</span><span class="p">)</span>
     <span class="n">nBytes_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_disk_space</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">path_list</span><span class="p">]</span>
@@ -356,7 +354,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">check</span><span class="p">:</span>
         <span class="n">python_exe</span> <span class="o">=</span> <span class="s1">&#39;python&#39;</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">isdir</span>
+        <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">isdir</span>
 
         <span class="n">python_exe_long</span> <span class="o">=</span> <span class="n">unixpath</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">)</span>
         <span class="n">python_exe</span> <span class="o">=</span> <span class="n">python_exe_long</span>
@@ -372,8 +370,8 @@
 
 
 <div class="viewcode-block" id="ls_libs"><a class="viewcode-back" href="../../utool.html#utool.util_cplat.ls_libs">[docs]</a><span class="k">def</span> <span class="nf">ls_libs</span><span class="p">(</span><span class="n">dpath</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_list</span>
-    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_path</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_list</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_path</span>
 
     <span class="n">lib_patterns</span> <span class="o">=</span> <span class="n">get_dynamic_lib_globstrs</span><span class="p">()</span>
     <span class="n">libpaths_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">util_path</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">dpath</span><span class="p">,</span> <span class="n">pat</span><span class="p">)</span> <span class="k">for</span> <span class="n">pat</span> <span class="ow">in</span> <span class="n">lib_patterns</span><span class="p">]</span>
@@ -492,12 +490,12 @@
 
 
 <div class="viewcode-block" id="get_computer_name"><a class="viewcode-back" href="../../utool.html#utool.util_cplat.get_computer_name">[docs]</a><span class="k">def</span> <span class="nf">get_computer_name</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot; Returns machine name &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns machine name&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">COMPUTER_NAME</span></div>
 
 
 <div class="viewcode-block" id="get_user_name"><a class="viewcode-back" href="../../utool.html#utool.util_cplat.get_user_name">[docs]</a><span class="k">def</span> <span class="nf">get_user_name</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot; Returns user homefolder name &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns user homefolder name&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">basename</span><span class="p">(</span><span class="n">truepath</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="p">))</span></div>
 
 
@@ -509,12 +507,12 @@
 
 
 <div class="viewcode-block" id="getroot"><a class="viewcode-back" href="../../utool.html#utool.util_cplat.getroot">[docs]</a><span class="k">def</span> <span class="nf">getroot</span><span class="p">():</span>
-    <span class="n">root</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;win32&#39;</span><span class="p">:</span> <span class="s1">&#39;C:</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;linux&#39;</span><span class="p">:</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;darwin&#39;</span><span class="p">:</span> <span class="s1">&#39;/&#39;</span><span class="p">,}[</span><span class="n">OS_TYPE</span><span class="p">]</span>  <span class="c1"># HACK</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;win32&#39;</span><span class="p">:</span> <span class="s1">&#39;C:</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;linux&#39;</span><span class="p">:</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;darwin&#39;</span><span class="p">:</span> <span class="s1">&#39;/&#39;</span><span class="p">}[</span><span class="n">OS_TYPE</span><span class="p">]</span>  <span class="c1"># HACK</span>
     <span class="k">return</span> <span class="n">root</span></div>
 
 
 <div class="viewcode-block" id="startfile"><a class="viewcode-back" href="../../utool.html#utool.util_cplat.startfile">[docs]</a><span class="k">def</span> <span class="nf">startfile</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">detatch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">quote</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Uses default program defined by the system to open a file.</span>
+    <span class="sd">&quot;&quot;&quot;Uses default program defined by the system to open a file.</span>
 
 <span class="sd">    References:</span>
 <span class="sd">        http://stackoverflow.com/questions/2692873/quote-posix-shell-special-characters-in-python-output</span>
@@ -551,9 +549,9 @@
 
 
 <div class="viewcode-block" id="editfile"><a class="viewcode-back" href="../../utool.html#utool.util_cplat.editfile">[docs]</a><span class="k">def</span> <span class="nf">editfile</span><span class="p">(</span><span class="n">fpath</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Runs gvim. Can also accept a module / class / function &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Runs gvim. Can also accept a module / class / function&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">six</span> <span class="k">import</span> <span class="n">types</span>
+        <span class="kn">from</span> <span class="nn">six</span> <span class="kn">import</span> <span class="n">types</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Rectify to module fpath = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fpath</span><span class="p">,))</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">):</span>
@@ -638,8 +636,8 @@
 <span class="sd">        &gt;&gt;&gt; ut.touch(fpath)</span>
 <span class="sd">        &gt;&gt;&gt; ut.view_directory(base, fpath, verbose=False)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">utool.util_arg</span> <span class="k">import</span> <span class="n">STRICT</span>
-    <span class="kn">from</span> <span class="nn">utool.util_path</span> <span class="k">import</span> <span class="n">checkpath</span>
+    <span class="kn">from</span> <span class="nn">utool.util_arg</span> <span class="kn">import</span> <span class="n">STRICT</span>
+    <span class="kn">from</span> <span class="nn">utool.util_path</span> <span class="kn">import</span> <span class="n">checkpath</span>
 
     <span class="c1"># from utool.util_str import SINGLE_QUOTE, DOUBLE_QUOTE</span>
 
@@ -827,7 +825,7 @@
             <span class="c1"># if isinstance(args, six.string_types):</span>
             <span class="c1">#    args = shlex.split(args)</span>
             <span class="c1"># args = [&#39;sudo&#39;] + args</span>
-            <span class="c1">## using sudo means we need to use a single string I believe</span>
+            <span class="c1"># # using sudo means we need to use a single string I believe</span>
             <span class="c1"># args = &#39; &#39;.join(args)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># TODO: strip out sudos</span>
@@ -854,8 +852,8 @@
         <span class="n">line</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
         <span class="k">yield</span> <span class="n">line</span>
         <span class="k">if</span> <span class="n">retcode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Process finished</span>
             <span class="k">return</span></div>
-            <span class="c1"># raise StopIteration(&#39;process finished&#39;)</span>
 
 
 <span class="k">def</span> <span class="nf">_run_process</span><span class="p">(</span><span class="n">proc</span><span class="p">):</span>
@@ -869,8 +867,8 @@
             <span class="c1"># Grab any remaining data in stdout</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">proc</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
                 <span class="k">yield</span> <span class="n">line</span>
+            <span class="c1"># Process finished</span>
             <span class="k">return</span>
-            <span class="c1"># raise StopIteration(&#39;process finished&#39;)</span>
 
 
 <div class="viewcode-block" id="quote_single_command"><a class="viewcode-back" href="../../utool.html#utool.util_cplat.quote_single_command">[docs]</a><span class="k">def</span> <span class="nf">quote_single_command</span><span class="p">(</span><span class="n">cmdstr</span><span class="p">):</span>
@@ -880,7 +878,7 @@
 
 
 <div class="viewcode-block" id="cmd"><a class="viewcode-back" href="../../utool.html#utool.util_cplat.cmd">[docs]</a><span class="k">def</span> <span class="nf">cmd</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot; A really roundabout way to issue a system call</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;A really roundabout way to issue a system call</span>
 
 <span class="sd">    # FIXME: This function needs some work</span>
 <span class="sd">    # It should work without a hitch on windows or unix.</span>
@@ -912,7 +910,7 @@
 <span class="sd">        python -m utool.util_cplat --test-cmd:1 --test-sudo</span>
 <span class="sd">        python -m utool.util_cplat --test-cmd:2 --test-sudo</span>
 
-<span class="sd">    Example0:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; import utool as ut</span>
 <span class="sd">        &gt;&gt;&gt; (out, err, ret) = ut.cmd(&#39;echo&#39;, &#39;hello world&#39;)</span>
@@ -922,7 +920,7 @@
 <span class="sd">        (&#39;err&#39;, None),</span>
 <span class="sd">        (&#39;ret&#39;, 0),</span>
 
-<span class="sd">    Example1:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; import utool as ut</span>
 <span class="sd">        &gt;&gt;&gt; target = ut.codeblock(</span>
@@ -947,7 +945,7 @@
 <span class="sd">        &gt;&gt;&gt;     ut.assert_eq(output, target)</span>
 <span class="sd">        &gt;&gt;&gt;     print(&#39;L ___ TEST CMD %d ___\n&#39; % (count,))</span>
 
-<span class="sd">    Example2:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; # UNSTABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; # ping is not as universal of a command as I thought</span>
@@ -1020,12 +1018,12 @@
                                 <span class="n">print_</span><span class="p">(</span><span class="n">line_</span><span class="p">)</span>
                         <span class="n">logged_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>  <span class="c1"># NOQA</span>
+                    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_str</span>  <span class="c1"># NOQA</span>
 
                     <span class="c1"># logged_out = util_str.ensure_unicode_strlist(logged_out)</span>
                     <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">logged_out</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">UnicodeDecodeError</span><span class="p">:</span>
-                    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>  <span class="c1"># NOQA</span>
+                    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_str</span>  <span class="c1"># NOQA</span>
 
                     <span class="n">logged_out</span> <span class="o">=</span> <span class="n">util_str</span><span class="o">.</span><span class="n">ensure_unicode_strlist</span><span class="p">(</span><span class="n">logged_out</span><span class="p">)</span>
                     <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">logged_out</span><span class="p">)</span>
@@ -1038,7 +1036,7 @@
                         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[ut.cmd] stdout: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">out_</span><span class="p">,))</span>
                         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[ut.cmd] stderr: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">err</span><span class="p">,))</span>
                     <span class="k">except</span> <span class="ne">UnicodeDecodeError</span><span class="p">:</span>
-                        <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>  <span class="c1"># NOQA</span>
+                        <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_str</span>  <span class="c1"># NOQA</span>
 
                         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[ut.cmd] stdout: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">util_str</span><span class="o">.</span><span class="n">ensure_unicode</span><span class="p">(</span><span class="n">out_</span><span class="p">),))</span>
                         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[ut.cmd] stderr: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">util_str</span><span class="o">.</span><span class="n">ensure_unicode</span><span class="p">(</span><span class="n">err</span><span class="p">),))</span>
@@ -1122,12 +1120,12 @@
                     <span class="n">flush_fn</span><span class="p">()</span>
                 <span class="n">logged_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>  <span class="c1"># NOQA</span>
+            <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_str</span>  <span class="c1"># NOQA</span>
 
             <span class="c1"># out = &#39;\n&#39;.join(logged_out)</span>
             <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">logged_out</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">UnicodeDecodeError</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>  <span class="c1"># NOQA</span>
+            <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_str</span>  <span class="c1"># NOQA</span>
 
             <span class="n">logged_out</span> <span class="o">=</span> <span class="n">util_str</span><span class="o">.</span><span class="n">ensure_unicode_strlist</span><span class="p">(</span><span class="n">logged_out</span><span class="p">)</span>
             <span class="c1"># out = &#39;\n&#39;.join(logged_out)</span>
@@ -1147,9 +1145,9 @@
 
 
 <div class="viewcode-block" id="get_flops"><a class="viewcode-back" href="../../utool.html#utool.util_cplat.get_flops">[docs]</a><span class="k">def</span> <span class="nf">get_flops</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot; # DOESNT WORK &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">sys</span> <span class="k">import</span> <span class="n">stdout</span>
-    <span class="kn">from</span> <span class="nn">re</span> <span class="k">import</span> <span class="nb">compile</span>
+    <span class="sd">&quot;&quot;&quot;# DOESNT WORK&quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">stdout</span>
+    <span class="kn">from</span> <span class="nn">re</span> <span class="kn">import</span> <span class="nb">compile</span>
 
     <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;linpack.out&#39;</span>
     <span class="n">fpnum</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\d+\.\d+E[+-]\d\d&#39;</span>
@@ -1218,6 +1216,8 @@
 
 <div class="viewcode-block" id="get_python_dynlib"><a class="viewcode-back" href="../../utool.html#utool.util_cplat.get_python_dynlib">[docs]</a><span class="k">def</span> <span class="nf">get_python_dynlib</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ge Python&#39;s dynamic library</span>
+
 <span class="sd">    python -c &quot;import utool; print(utool.get_python_dynlib())&quot;</span>
 
 <span class="sd">    get_python_dynlib</span>
@@ -1337,7 +1337,7 @@
     <span class="n">found</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">search_env_paths</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">key_list</span><span class="p">)</span>
     <span class="n">fpaths</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">found</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
     <span class="n">fpaths</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">lmap</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">ensure_unixslash</span><span class="p">,</span> <span class="n">fpaths</span><span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">basename</span>
+    <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">basename</span>
 
     <span class="n">dllnames</span> <span class="o">=</span> <span class="p">[</span><span class="n">basename</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fpaths</span><span class="p">]</span>
     <span class="n">grouped</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">group_items</span><span class="p">(</span><span class="n">fpaths</span><span class="p">,</span> <span class="n">dllnames</span><span class="p">))</span>
@@ -1354,7 +1354,7 @@
 
 
 <div class="viewcode-block" id="change_term_title"><a class="viewcode-back" href="../../utool.html#utool.util_cplat.change_term_title">[docs]</a><span class="k">def</span> <span class="nf">change_term_title</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    only works on unix systems only tested on Ubuntu GNOME changes text on</span>
 <span class="sd">    terminal title for identifying debugging tasks.</span>
 
@@ -1433,7 +1433,7 @@
 
         <span class="c1"># for ord_char in map(ord, text):</span>
         <span class="c1"># win32api.SendMessage(hwnd, win32con.WM_CHAR, ord_char, 0)</span>
-        <span class="kn">from</span> <span class="nn">utool._internal</span> <span class="k">import</span> <span class="n">win32_send_keys</span>
+        <span class="kn">from</span> <span class="nn">utool._internal</span> <span class="kn">import</span> <span class="n">win32_send_keys</span>
 
         <span class="n">pause</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
         <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;paste&#39;</span>
@@ -1462,7 +1462,7 @@
 
 
 <div class="viewcode-block" id="ipython_paste"><a class="viewcode-back" href="../../utool.html#utool.util_cplat.ipython_paste">[docs]</a><span class="k">def</span> <span class="nf">ipython_paste</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; pastes for me FIXME: make something like this work on unix and windows&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;pastes for me FIXME: make something like this work on unix and windows&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">WIN32</span><span class="p">:</span>
         <span class="k">pass</span>
     <span class="k">else</span><span class="p">:</span>
@@ -1644,7 +1644,7 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
 </ul>
@@ -1661,17 +1661,15 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -1688,7 +1686,7 @@
       &copy;2020, Wild Me.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

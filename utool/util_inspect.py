@@ -198,8 +198,8 @@ def get_module_from_class(class_):
 
 
 def check_static_member_vars(class_, fpath=None, only_init=True):
-    """
-    class_ can either be live object or a classname
+    r"""
+    class\_ can either be live object or a classname
 
     # fpath = ut.truepath('~/code/ibeis/ibeis/viz/viz_graph2.py')
     # classname = 'AnnotGraphWidget'
@@ -999,7 +999,7 @@ def iter_module_doctestable(
        utprof.py -m utool --tf iter_module_doctestable --modname=utool.util_inspect --debugkey=zzz_profiled_is_yes
        utprof.py -m utool --tf iter_module_doctestable --modname=wbia.algo.hots.chip_match --debugkey=to_json
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_inspect import *   # NOQA
         >>> import utool as ut
@@ -2364,14 +2364,14 @@ def exec_func_src3(func, globals_, sentinal=None, verbose=False, start=None, sto
 
 
 def execstr_func_doctest(func, num=0, start_sentinal=None, end_sentinal=None):
-    """
+    r"""
     execs a func doctest and returns requested local vars.
         >>> from utool.util_inspect import *  # NOQA
 
     func = encoder.learn_threshold2
     num = 0
     start_sentinal = 'import wbia.plottool as pt'
-    end_sentinal = 'pnum_ = pt.make_pnum_nextgen'
+    end_sentinal = 'pnum\_ = pt.make_pnum_nextgen'
     """
     import utool as ut
 
@@ -2392,13 +2392,13 @@ def execstr_func_doctest(func, num=0, start_sentinal=None, end_sentinal=None):
 def exec_func_doctest(
     func, start_sentinal=None, end_sentinal=None, num=0, globals_=None, locals_=None
 ):
-    """
+    r"""
     execs a func doctest and returns requested local vars.
 
     func = encoder.learn_threshold2
     num = 0
     start_sentinal = 'import wbia.plottool as pt'
-    end_sentinal = 'pnum_ = pt.make_pnum_nextgen'
+    end_sentinal = 'pnum\_ = pt.make_pnum_nextgen'
     """
     import utool as ut
 
@@ -2612,35 +2612,35 @@ def get_func_argspec(func):
 
 
 def get_kwargs(func):
-    """
+    r"""
     Args:
         func (function):
 
     Returns:
         tuple: keys, is_arbitrary
-            keys (list): kwargs keys
-            is_arbitrary (bool): has generic **kwargs
+        keys (list): kwargs keys
+        is_arbitrary (bool): has generic \*\*kwargs
 
     CommandLine:
         python -m utool.util_inspect --test-get_kwargs
 
     Ignore:
-        def func1(a, b, c):
-            pass
-        def func2(a, b, c, *args):
-            pass
-        def func3(a, b, c, *args, **kwargs):
-            pass
-        def func4(a, b=1, c=2):
-            pass
-        def func5(a, b=1, c=2, *args):
-            pass
-        def func6(a, b=1, c=2, **kwargs):
-            pass
-        def func7(a, b=1, c=2, *args, **kwargs):
-            pass
-        for func in [locals()['func' + str(x)] for x in range(1, 8)]:
-            print(inspect.getfullargspec(func))
+        >>> def func1(a, b, c):
+        >>>     pass
+        >>> def func2(a, b, c, *args):
+        >>>     pass
+        >>> def func3(a, b, c, *args, **kwargs):
+        >>>     pass
+        >>> def func4(a, b=1, c=2):
+        >>>     pass
+        >>> def func5(a, b=1, c=2, *args):
+        >>>     pass
+        >>> def func6(a, b=1, c=2, **kwargs):
+        >>>     pass
+        >>> def func7(a, b=1, c=2, *args, **kwargs):
+        >>>     pass
+        >>> for func in [locals()['func' + str(x)] for x in range(1, 8)]:
+        >>>     print(inspect.getfullargspec(func))
 
     Example:
         >>> # DISABLE_DOCTEST

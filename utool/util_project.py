@@ -104,7 +104,7 @@ class SetupRepo(object):
         python -m utool SetupRepo.main --repo=ubelt --codedir=~/code --modname=ubelt -w
 
         Example:
-        >>> # DISABLE_DOCTEST
+            >>> # DISABLE_DOCTEST
             >>> # SCRIPT
             >>> from utool.util_project import *  # NOQA
             >>> SetupRepo().main()
@@ -526,18 +526,19 @@ class UserProfile(util_dev.NiceRepr):
 
     def glob(self, *args, **kwargs):
         r"""
-        # Ensure that .gitignore has certain lines
-        git_ignore_lines = [
-            'timeings.txt'
-        ]
-        fpath_list = profile.glob('.gitignore', recursive=False)
-        for fpath in fpath_list:
-            lines = ut.readfrom(fpath, verbose=False).split('\n')
-            lines = [line.strip() for line in lines]
-            missing = ut.setdiff(git_ignore_lines, lines)
-            if missing:
-                print('fpath = %r' % (fpath,))
-                ut.writeto(fpath, '\n'.join(lines + missing))
+        Ignore:
+            >>> # Ensure that .gitignore has certain lines
+            >>> git_ignore_lines = [
+            >>>     'timeings.txt'
+            >>> ]
+            >>> fpath_list = profile.glob('.gitignore', recursive=False)
+            >>> for fpath in fpath_list:
+            >>>     lines = ut.readfrom(fpath, verbose=False).split('\n')
+            >>>     lines = [line.strip() for line in lines]
+            >>>     missing = ut.setdiff(git_ignore_lines, lines)
+            >>>     if missing:
+            >>>         print('fpath = %r' % (fpath,))
+            >>>         ut.writeto(fpath, '\n'.join(lines + missing))
         """
         return glob_projects(user_profile=self, *args, **kwargs)
 

@@ -732,29 +732,19 @@ class DynConnGraph(object):
 
     Notes:
         Paper uses level 0 at top, but video lecture uses floor(log(n)) as top.
-
         All edges start at level floor(log(n)).
         The level of each edge will change over time, but cannot decrease below zero.
-
-
-    Notes:
-        Going to store
-
-        Let G[i] = subgraph graph at level i. (
-            contains only edges of level i or greater)
+        Let G[i] = subgraph graph at level i. (contains only edges of level i or greater)
         Let F[i] be Euler tour forest to correspond with G[i].
-
         G[log(n)] = full graph
-
-    Notes:
         Invariant 1 Every connected component of G_i has at most 2^i vertices.
         Invariant 2 F[0] ⊆ F[1] ⊆ F[2] ⊆ ... ⊆ F[log(n)].
-            In other words:
-                F[i] = F[log(n)] ∩ G_i, and
-                F[log(n)] is the minimum spanning forest of G_{log(n)},
-                where the weight of an edge is its level.
 
-                F[0] is a maximum spanning forest if using 0 as top level
+        In other words:
+        F[i] = F[log(n)] ∩ G_i, and
+        F[log(n)] is the minimum spanning forest of G_{log(n)},
+        where the weight of an edge is its level.
+        F[0] is a maximum spanning forest if using 0 as top level
 
     CommandLine:
         python -m utool.experimental.dynamic_connectivity DynConnGraph --show

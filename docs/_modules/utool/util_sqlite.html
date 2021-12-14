@@ -1,19 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>utool.util_sqlite &#8212; wbia-vtool 3.0.1 documentation</title>
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -34,8 +32,8 @@
             
   <h1>Source code for utool.util_sqlite</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inject</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_inject</span>
 <span class="kn">import</span> <span class="nn">six</span>
 <span class="kn">import</span> <span class="nn">collections</span>
 
@@ -43,7 +41,7 @@
 
 
 <div class="viewcode-block" id="get_tablenames"><a class="viewcode-back" href="../../utool.html#utool.util_sqlite.get_tablenames">[docs]</a><span class="k">def</span> <span class="nf">get_tablenames</span><span class="p">(</span><span class="n">cur</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Conveinience: &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Conveinience:&quot;&quot;&quot;</span>
     <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT name FROM sqlite_master WHERE type=&#39;table&#39;&quot;</span><span class="p">)</span>
     <span class="n">tablename_list_</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
     <span class="n">tablename_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">tablename</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">tablename</span> <span class="ow">in</span> <span class="n">tablename_list_</span><span class="p">]</span>
@@ -66,7 +64,7 @@
 
 
 <div class="viewcode-block" id="get_table_csv"><a class="viewcode-back" href="../../utool.html#utool.util_sqlite.get_table_csv">[docs]</a><span class="k">def</span> <span class="nf">get_table_csv</span><span class="p">(</span><span class="n">cur</span><span class="p">,</span> <span class="n">tablename</span><span class="p">,</span> <span class="n">exclude_columns</span><span class="o">=</span><span class="p">[]):</span>
-    <span class="sd">&quot;&quot;&quot; Conveinience: Converts a tablename to csv format</span>
+    <span class="sd">&quot;&quot;&quot;Conveinience: Converts a tablename to csv format</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        tablename (str):</span>
@@ -116,20 +114,20 @@
 
 
 <div class="viewcode-block" id="get_table_columninfo_list"><a class="viewcode-back" href="../../utool.html#utool.util_sqlite.get_table_columninfo_list">[docs]</a><span class="k">def</span> <span class="nf">get_table_columninfo_list</span><span class="p">(</span><span class="n">cur</span><span class="p">,</span> <span class="n">tablename</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a list of tuples with the following format:</span>
+<span class="sd">    [0] column_id  : id of the column</span>
+<span class="sd">    [1] name       : the name of the column</span>
+<span class="sd">    [2] type\_      : the type of the column (TEXT, INT, etc...)</span>
+<span class="sd">    [3] notnull    : 0 or 1 if the column can contains null values</span>
+<span class="sd">    [4] dflt_value : the default value</span>
+<span class="sd">    [5] pk         : 0 or 1 if the column partecipate to the primary key</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        tablename (str): table name</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        column_list : list of tuples with format:</span>
-<span class="sd">            (</span>
-<span class="sd">                [0] column_id  : id of the column</span>
-<span class="sd">                [1] name       : the name of the column</span>
-<span class="sd">                [2] type_      : the type of the column (TEXT, INT, etc...)</span>
-<span class="sd">                [3] notnull    : 0 or 1 if the column can contains null values</span>
-<span class="sd">                [4] dflt_value : the default value</span>
-<span class="sd">                [5] pk         : 0 or 1 if the column partecipate to the primary key</span>
-<span class="sd">            )</span>
+<span class="sd">        column_list: list of tuples</span>
 
 <span class="sd">    References:</span>
 <span class="sd">        http://stackoverflow.com/questions/17717829/how-to-get-column-names-from-a-table-in-sqlite-via-pragma-net-c</span>
@@ -166,7 +164,7 @@
 
 
 <div class="viewcode-block" id="get_table_column"><a class="viewcode-back" href="../../utool.html#utool.util_sqlite.get_table_column">[docs]</a><span class="k">def</span> <span class="nf">get_table_column</span><span class="p">(</span><span class="n">cur</span><span class="p">,</span> <span class="n">tablename</span><span class="p">,</span> <span class="n">colname</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Conveinience: &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Conveinience:&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">get_table_rows</span><span class="p">(</span><span class="n">cur</span><span class="p">,</span> <span class="n">tablename</span><span class="p">,</span> <span class="n">colname</span><span class="p">)</span></div>
 
 
@@ -272,7 +270,7 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
 </ul>
@@ -289,17 +287,15 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -316,7 +312,7 @@
       &copy;2020, Wild Me.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

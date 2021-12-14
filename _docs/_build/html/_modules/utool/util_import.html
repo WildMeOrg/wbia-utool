@@ -1,19 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>utool.util_import &#8212; wbia-vtool 3.0.1 documentation</title>
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -41,8 +39,8 @@
 <span class="sd">    TODO: http://code.activestate.com/recipes/473888-lazy-module-imports/</span>
 <span class="sd">    https://pypi.python.org/pypi/zope.deferredimport/3.5.2</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inject</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_inject</span>
 
 <span class="c1"># from utool import util_arg</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -117,7 +115,7 @@
 <span class="sd">        parent = __name__</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">six</span>
-    <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">dirname</span>
+    <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">dirname</span>
 
     <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">parent_module</span> <span class="o">=</span> <span class="kc">None</span>
@@ -167,7 +165,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    print(ut.import_star_execstr(&#39;opengm.inference&#39;))</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_str</span>
 
     <span class="n">module_vars</span> <span class="o">=</span> <span class="n">import_star</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
     <span class="n">fromlist_str</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">module_vars</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
@@ -288,7 +286,7 @@
 <span class="sd">    SeeAlso:</span>
 <span class="sd">        get_modpath</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">exists</span>
+    <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">exists</span>
 
     <span class="n">initname</span> <span class="o">=</span> <span class="s1">&#39;__init__.py&#39;</span>
     <span class="n">mainname</span> <span class="o">=</span> <span class="s1">&#39;__main__.py&#39;</span>
@@ -411,7 +409,7 @@
 <span class="sd">        &gt;&gt;&gt; pyfiglet = ut.tryimport(modname, pipiname)</span>
 <span class="sd">        &gt;&gt;&gt; assert pyfiglet is None or isinstance(pyfiglet, types.ModuleType), &#39;unknown error&#39;</span>
 
-<span class="sd">    Example2:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # UNSTABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; # disabled because not everyone has access to being a super user</span>
 <span class="sd">        &gt;&gt;&gt; from utool.util_tests import *  # NOQA</span>
@@ -514,7 +512,7 @@
 
 
 <div class="viewcode-block" id="import_module_from_fpath"><a class="viewcode-back" href="../../utool.html#utool.util_import.import_module_from_fpath">[docs]</a><span class="k">def</span> <span class="nf">import_module_from_fpath</span><span class="p">(</span><span class="n">module_fpath</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot; imports module from a file path</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;imports module from a file path</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        module_fpath (str):</span>
@@ -534,100 +532,98 @@
 <span class="sd">        &gt;&gt;&gt; result = (&#39;module = %s&#39; % (str(module),))</span>
 <span class="sd">        &gt;&gt;&gt; print(result)</span>
 
-
 <span class="sd">    Ignore:</span>
-<span class="sd">        import shutil</span>
-<span class="sd">        import ubelt as ub</span>
-<span class="sd">        test_root = ub.ensure_app_cache_dir(&#39;test_fpath_import&#39;)</span>
-<span class="sd">        # Clear the directory</span>
-<span class="sd">        shutil.rmtree(test_root)</span>
-<span class="sd">        test_root = ub.ensure_app_cache_dir(&#39;test_fpath_import&#39;)</span>
-
-<span class="sd">        # -----</span>
-<span class="sd">        # Define two temporary modules with the same name that are not in sys.path</span>
-<span class="sd">        import sys, os, os.path</span>
-<span class="sd">        from os.path import join</span>
-
-<span class="sd">        # Even though they have the same name they have different values</span>
-<span class="sd">        mod1_fpath = ub.ensuredir((test_root, &#39;path1&#39;, &#39;testmod&#39;))</span>
-<span class="sd">        ub.writeto(join(mod1_fpath, &#39;__init__.py&#39;), &#39;version = 1\nfrom . import sibling\na1 = 1&#39;)</span>
-<span class="sd">        ub.writeto(join(mod1_fpath, &#39;sibling.py&#39;), &#39;spam = \&quot;ham\&quot;\nb1 = 2&#39;)</span>
-
-<span class="sd">        # Even though they have the same name they have different values</span>
-<span class="sd">        mod2_fpath = ub.ensuredir((test_root, &#39;path2&#39;, &#39;testmod&#39;))</span>
-<span class="sd">        ub.writeto(join(mod2_fpath, &#39;__init__.py&#39;), &#39;version = 2\nfrom . import sibling\na2 = 3&#39;)</span>
-<span class="sd">        ub.writeto(join(mod2_fpath, &#39;sibling.py&#39;), &#39;spam = \&quot;jam\&quot;\nb2 = 4&#39;)</span>
-
-<span class="sd">        # -----</span>
-<span class="sd">        # Neither module should be importable through the normal mechanism</span>
-<span class="sd">        try:</span>
-<span class="sd">            import testmod</span>
-<span class="sd">            assert False, &#39;should fail&#39;</span>
-<span class="sd">        except ImportError as ex:</span>
-<span class="sd">            pass</span>
-
-<span class="sd">        mod1 = ut.import_module_from_fpath(mod1_fpath)</span>
-<span class="sd">        print(&#39;mod1.version = {!r}&#39;.format(mod1.version))</span>
-<span class="sd">        print(&#39;mod1.version = {!r}&#39;.format(mod1.version))</span>
-<span class="sd">        print(mod1.version == 1, &#39;mod1 version is 1&#39;)</span>
-<span class="sd">        print(&#39;mod1.a1 = {!r}&#39;.format(mod1.a1))</span>
-
-<span class="sd">        mod2 = ut.import_module_from_fpath(mod2_fpath)</span>
-<span class="sd">        print(&#39;mod2.version = {!r}&#39;.format(mod2.version))</span>
-<span class="sd">        print(mod2.version == 2, &#39;mod2 version is 2&#39;)</span>
-<span class="sd">        print(&#39;mod2.a2 = {!r}&#39;.format(mod1.a2))</span>
-
-<span class="sd">        # BUT Notice how mod1 is mod2</span>
-<span class="sd">        print(mod1 is mod2)</span>
-
-<span class="sd">        # mod1 has attributes from mod1 and mod2</span>
-<span class="sd">        print(&#39;mod1.a1 = {!r}&#39;.format(mod1.a1))</span>
-<span class="sd">        print(&#39;mod1.a2 = {!r}&#39;.format(mod1.a2))</span>
-<span class="sd">        print(&#39;mod2.a1 = {!r}&#39;.format(mod2.a1))</span>
-<span class="sd">        print(&#39;mod2.a2 = {!r}&#39;.format(mod2.a2))</span>
-
-<span class="sd">        # Both are version 2</span>
-<span class="sd">        print(&#39;mod1.version = {!r}&#39;.format(mod1.version))</span>
-<span class="sd">        print(&#39;mod2.version = {!r}&#39;.format(mod2.version))</span>
-
-<span class="sd">        # However sibling always remains at version1 (ham)</span>
-<span class="sd">        print(&#39;mod2.sibling.spam = {!r}&#39;.format(mod2.sibling.spam))</span>
-
-<span class="sd">        # now importing testmod works because it reads from sys.modules</span>
-<span class="sd">        import testmod</span>
-
-<span class="sd">        # reloading mod1 overwrites attrs again</span>
-<span class="sd">        mod1 = ut.import_module_from_fpath(mod1_fpath)</span>
-
-<span class="sd">        # Removing both from sys.modules</span>
-<span class="sd">        del sys.modules[&#39;testmod&#39;]</span>
-<span class="sd">        del sys.modules[&#39;testmod.sibling&#39;]</span>
-<span class="sd">        mod2 = ut.import_module_from_fpath(mod2_fpath)</span>
-
-<span class="sd">        print(not hasattr(mod2, &#39;a1&#39;),</span>
-<span class="sd">            &#39;mod2 no longer has a1 and it reloads itself correctly&#39;)</span>
-
-
-<span class="sd">        # -------</span>
-
-<span class="sd">        del sys.modules[&#39;testmod&#39;]</span>
-<span class="sd">        del sys.modules[&#39;testmod.sibling&#39;]</span>
-<span class="sd">        mod1 = ut.import_module_from_fpath(mod1_fpath)</span>
-
-
-<span class="sd">        # third test</span>
-<span class="sd">        mod3_fpath = ub.ensuredir((test_root, &#39;path3&#39;, &#39;testmod&#39;))</span>
-<span class="sd">        ub.writeto(join(mod3_fpath, &#39;__init__.py&#39;), &#39;version = 3&#39;)</span>
-
-<span class="sd">        module_fpath = mod3_fpath</span>
-<span class="sd">        modname = &#39;testmod&#39;</span>
-
-<span class="sd">        # third test</span>
-<span class="sd">        mod4_fpath = ub.ensuredir((test_root, &#39;path3&#39;, &#39;novelmod&#39;))</span>
-<span class="sd">        ub.writeto(join(mod4_fpath, &#39;__init__.py&#39;), &#39;version = 4&#39;)</span>
-
+<span class="sd">        &gt;&gt;&gt; import shutil</span>
+<span class="sd">        &gt;&gt;&gt; import ubelt as ub</span>
+<span class="sd">        &gt;&gt;&gt; test_root = ub.ensure_app_cache_dir(&#39;test_fpath_import&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; # Clear the directory</span>
+<span class="sd">        &gt;&gt;&gt; shutil.rmtree(test_root)</span>
+<span class="sd">        &gt;&gt;&gt; test_root = ub.ensure_app_cache_dir(&#39;test_fpath_import&#39;)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # -----</span>
+<span class="sd">        &gt;&gt;&gt; # Define two temporary modules with the same name that are not in sys.path</span>
+<span class="sd">        &gt;&gt;&gt; import sys, os, os.path</span>
+<span class="sd">        &gt;&gt;&gt; from os.path import join</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Even though they have the same name they have different values</span>
+<span class="sd">        &gt;&gt;&gt; mod1_fpath = ub.ensuredir((test_root, &#39;path1&#39;, &#39;testmod&#39;))</span>
+<span class="sd">        &gt;&gt;&gt; ub.writeto(join(mod1_fpath, &#39;__init__.py&#39;), &#39;version = 1\nfrom . import sibling\na1 = 1&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; ub.writeto(join(mod1_fpath, &#39;sibling.py&#39;), &#39;spam = \&quot;ham\&quot;\nb1 = 2&#39;)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Even though they have the same name they have different values</span>
+<span class="sd">        &gt;&gt;&gt; mod2_fpath = ub.ensuredir((test_root, &#39;path2&#39;, &#39;testmod&#39;))</span>
+<span class="sd">        &gt;&gt;&gt; ub.writeto(join(mod2_fpath, &#39;__init__.py&#39;), &#39;version = 2\nfrom . import sibling\na2 = 3&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; ub.writeto(join(mod2_fpath, &#39;sibling.py&#39;), &#39;spam = \&quot;jam\&quot;\nb2 = 4&#39;)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # -----</span>
+<span class="sd">        &gt;&gt;&gt; # Neither module should be importable through the normal mechanism</span>
+<span class="sd">        &gt;&gt;&gt; try:</span>
+<span class="sd">        &gt;&gt;&gt;     import testmod</span>
+<span class="sd">        &gt;&gt;&gt;     assert False, &#39;should fail&#39;</span>
+<span class="sd">        &gt;&gt;&gt; except ImportError as ex:</span>
+<span class="sd">        &gt;&gt;&gt;     pass</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; mod1 = ut.import_module_from_fpath(mod1_fpath)</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;mod1.version = {!r}&#39;.format(mod1.version))</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;mod1.version = {!r}&#39;.format(mod1.version))</span>
+<span class="sd">        &gt;&gt;&gt; print(mod1.version == 1, &#39;mod1 version is 1&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;mod1.a1 = {!r}&#39;.format(mod1.a1))</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; mod2 = ut.import_module_from_fpath(mod2_fpath)</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;mod2.version = {!r}&#39;.format(mod2.version))</span>
+<span class="sd">        &gt;&gt;&gt; print(mod2.version == 2, &#39;mod2 version is 2&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;mod2.a2 = {!r}&#39;.format(mod1.a2))</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # BUT Notice how mod1 is mod2</span>
+<span class="sd">        &gt;&gt;&gt; print(mod1 is mod2)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # mod1 has attributes from mod1 and mod2</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;mod1.a1 = {!r}&#39;.format(mod1.a1))</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;mod1.a2 = {!r}&#39;.format(mod1.a2))</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;mod2.a1 = {!r}&#39;.format(mod2.a1))</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;mod2.a2 = {!r}&#39;.format(mod2.a2))</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Both are version 2</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;mod1.version = {!r}&#39;.format(mod1.version))</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;mod2.version = {!r}&#39;.format(mod2.version))</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # However sibling always remains at version1 (ham)</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;mod2.sibling.spam = {!r}&#39;.format(mod2.sibling.spam))</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # now importing testmod works because it reads from sys.modules</span>
+<span class="sd">        &gt;&gt;&gt; import testmod</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # reloading mod1 overwrites attrs again</span>
+<span class="sd">        &gt;&gt;&gt; mod1 = ut.import_module_from_fpath(mod1_fpath)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Removing both from sys.modules</span>
+<span class="sd">        &gt;&gt;&gt; del sys.modules[&#39;testmod&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; del sys.modules[&#39;testmod.sibling&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; mod2 = ut.import_module_from_fpath(mod2_fpath)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; print(not hasattr(mod2, &#39;a1&#39;),</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;mod2 no longer has a1 and it reloads itself correctly&#39;)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # -------</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; del sys.modules[&#39;testmod&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; del sys.modules[&#39;testmod.sibling&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; mod1 = ut.import_module_from_fpath(mod1_fpath)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # third test</span>
+<span class="sd">        &gt;&gt;&gt; mod3_fpath = ub.ensuredir((test_root, &#39;path3&#39;, &#39;testmod&#39;))</span>
+<span class="sd">        &gt;&gt;&gt; ub.writeto(join(mod3_fpath, &#39;__init__.py&#39;), &#39;version = 3&#39;)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; module_fpath = mod3_fpath</span>
+<span class="sd">        &gt;&gt;&gt; modname = &#39;testmod&#39;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # third test</span>
+<span class="sd">        &gt;&gt;&gt; mod4_fpath = ub.ensuredir((test_root, &#39;path3&#39;, &#39;novelmod&#39;))</span>
+<span class="sd">        &gt;&gt;&gt; ub.writeto(join(mod4_fpath, &#39;__init__.py&#39;), &#39;version = 4&#39;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">basename</span><span class="p">,</span> <span class="n">splitext</span><span class="p">,</span> <span class="n">isdir</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">exists</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">split</span>
+    <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">basename</span><span class="p">,</span> <span class="n">splitext</span><span class="p">,</span> <span class="n">isdir</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">exists</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">split</span>
     <span class="kn">import</span> <span class="nn">platform</span>
 
     <span class="k">if</span> <span class="n">isdir</span><span class="p">(</span><span class="n">module_fpath</span><span class="p">):</span>
@@ -690,7 +686,7 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
 </ul>
@@ -707,17 +703,15 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -734,7 +728,7 @@
       &copy;2020, Wild Me.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

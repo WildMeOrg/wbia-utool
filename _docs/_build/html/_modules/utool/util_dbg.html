@@ -1,19 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>utool.util_dbg &#8212; wbia-vtool 3.0.1 documentation</title>
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -37,8 +35,8 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">TODO: rectify name difference between parent and caller</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
-<span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">zip</span><span class="p">,</span> <span class="nb">map</span><span class="p">,</span> <span class="nb">filter</span>  <span class="c1"># NOQA</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="kn">import</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">zip</span><span class="p">,</span> <span class="nb">map</span><span class="p">,</span> <span class="nb">filter</span>  <span class="c1"># NOQA</span>
 <span class="kn">import</span> <span class="nn">fnmatch</span>
 <span class="kn">import</span> <span class="nn">operator</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
@@ -57,14 +55,14 @@
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">splitext</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">dirname</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inject</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_arg</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_list</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_print</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_type</span>
-<span class="kn">from</span> <span class="nn">utool._internal</span> <span class="k">import</span> <span class="n">meta_util_six</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">splitext</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">dirname</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_inject</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_arg</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_list</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_print</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_str</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_type</span>
+<span class="kn">from</span> <span class="nn">utool._internal</span> <span class="kn">import</span> <span class="n">meta_util_six</span>
 
 <span class="nb">print</span><span class="p">,</span> <span class="n">rrr</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">util_inject</span><span class="o">.</span><span class="n">inject2</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -90,9 +88,9 @@
     <span class="n">tbtext</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">stack_lines</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">with_colors</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">pygments</span> <span class="k">import</span> <span class="n">highlight</span>
-            <span class="kn">from</span> <span class="nn">pygments.lexers</span> <span class="k">import</span> <span class="n">get_lexer_by_name</span>
-            <span class="kn">from</span> <span class="nn">pygments.formatters</span> <span class="k">import</span> <span class="n">TerminalFormatter</span>
+            <span class="kn">from</span> <span class="nn">pygments</span> <span class="kn">import</span> <span class="n">highlight</span>
+            <span class="kn">from</span> <span class="nn">pygments.lexers</span> <span class="kn">import</span> <span class="n">get_lexer_by_name</span>
+            <span class="kn">from</span> <span class="nn">pygments.formatters</span> <span class="kn">import</span> <span class="n">TerminalFormatter</span>
 
             <span class="n">lexer</span> <span class="o">=</span> <span class="n">get_lexer_by_name</span><span class="p">(</span><span class="s1">&#39;pytb&#39;</span><span class="p">,</span> <span class="n">stripall</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">formatter</span> <span class="o">=</span> <span class="n">TerminalFormatter</span><span class="p">(</span><span class="n">bg</span><span class="o">=</span><span class="s1">&#39;dark&#39;</span><span class="p">)</span>
@@ -145,7 +143,7 @@
 
 
 <div class="viewcode-block" id="is_valid_varname"><a class="viewcode-back" href="../../utool.html#utool.util_dbg.is_valid_varname">[docs]</a><span class="k">def</span> <span class="nf">is_valid_varname</span><span class="p">(</span><span class="n">varname</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Checks syntax and validity of a variable name &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Checks syntax and validity of a variable name&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">False</span>
     <span class="n">match_obj</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">varname_regex</span><span class="p">,</span> <span class="n">varname</span><span class="p">)</span>
@@ -221,7 +219,7 @@
         <span class="n">expr_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">dict_</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">),</span> <span class="s1">&#39;keys must be strings&#39;</span>
-            <span class="n">expr_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">ut</span><span class="o">.</span><span class="n">repr2</span><span class="p">(</span><span class="n">val</span><span class="p">),))</span>
+            <span class="n">expr_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">ut</span><span class="o">.</span><span class="n">repr2</span><span class="p">(</span><span class="n">val</span><span class="p">)))</span>
         <span class="n">execstr</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">expr_list</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">execstr</span>
     <span class="k">else</span><span class="p">:</span>
@@ -444,7 +442,7 @@
 <span class="sd">        &gt;&gt;&gt; print(result)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
-    <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+    <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
     <span class="kn">import</span> <span class="nn">IPython</span>
 
     <span class="k">if</span> <span class="n">parent_globals</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -522,7 +520,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
-    <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+    <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
     <span class="kn">import</span> <span class="nn">IPython</span>
 
     <span class="k">if</span> <span class="n">parent_globals</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -627,8 +625,8 @@
     <span class="n">stack_depth</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;stack_depth&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
     <span class="n">compile_flags</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;compile_flags&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="kn">import</span> <span class="nn">IPython</span>
-    <span class="kn">from</span> <span class="nn">IPython.core.interactiveshell</span> <span class="k">import</span> <span class="n">InteractiveShell</span>
-    <span class="kn">from</span> <span class="nn">IPython.terminal.embed</span> <span class="k">import</span> <span class="n">InteractiveShellEmbed</span>
+    <span class="kn">from</span> <span class="nn">IPython.core.interactiveshell</span> <span class="kn">import</span> <span class="n">InteractiveShell</span>
+    <span class="kn">from</span> <span class="nn">IPython.terminal.embed</span> <span class="kn">import</span> <span class="n">InteractiveShellEmbed</span>
 
     <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">config</span> <span class="o">=</span> <span class="n">IPython</span><span class="o">.</span><span class="n">terminal</span><span class="o">.</span><span class="n">ipapp</span><span class="o">.</span><span class="n">load_default_config</span><span class="p">()</span>
@@ -842,7 +840,7 @@
 
 
 <div class="viewcode-block" id="quasiquote"><a class="viewcode-back" href="../../utool.html#utool.util_dbg.quasiquote">[docs]</a><span class="k">def</span> <span class="nf">quasiquote</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; mimics lisp quasi quote functionality &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;mimics lisp quasi quote functionality&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">string</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">get_parent_frame</span><span class="p">()</span><span class="o">.</span><span class="n">f_locals</span><span class="p">)</span></div>
 
 
@@ -1228,7 +1226,7 @@
 <span class="sd">        python -m utool.util_dbg --exec-formatex</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTET</span>
+<span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTET</span>
 <span class="sd">        &gt;&gt;&gt; from utool.util_dbg import *  # NOQA</span>
 <span class="sd">        &gt;&gt;&gt; import utool as ut</span>
 <span class="sd">        &gt;&gt;&gt; msg = &#39;Testing Exception&#39;</span>
@@ -1249,7 +1247,6 @@
 <span class="sd">        &gt;&gt;&gt;         return result</span>
 <span class="sd">        &gt;&gt;&gt; result = failfunc().replace(&#39;\n\n&#39;, &#39;&#39;)</span>
 <span class="sd">        &gt;&gt;&gt; print(result)</span>
-
 <span class="sd">        &lt;!!! WARNING !!!&gt;</span>
 <span class="sd">        Traceback (most recent call last):</span>
 <span class="sd">          File &quot;&lt;string&gt;&quot;, line 15, in failfunc</span>
@@ -1259,7 +1256,6 @@
 <span class="sd">        [test] foo = NameError (this likely due to a misformatted printex and is not related to the exception)</span>
 <span class="sd">        [test] tb = True</span>
 <span class="sd">        &lt;/!!! WARNING !!!&gt;</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Get error prefix and local info</span>
     <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1276,7 +1272,7 @@
     <span class="k">if</span> <span class="n">tb</span> <span class="ow">or</span> <span class="n">FORCE_TB</span><span class="p">:</span>
         <span class="n">tbtext</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">colored</span> <span class="ow">or</span> <span class="n">COLORED_EXCEPTIONS</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>
+            <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_str</span>
 
             <span class="n">tbtext</span> <span class="o">=</span> <span class="n">util_str</span><span class="o">.</span><span class="n">highlight_text</span><span class="p">(</span><span class="n">tbtext</span><span class="p">,</span> <span class="n">lexer_name</span><span class="o">=</span><span class="s1">&#39;pytb&#39;</span><span class="p">,</span> <span class="n">stripall</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">errstr_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tbtext</span><span class="p">)</span>
@@ -1296,7 +1292,7 @@
 <div class="viewcode-block" id="get_varname_from_locals"><a class="viewcode-back" href="../../utool.html#utool.util_dbg.get_varname_from_locals">[docs]</a><span class="k">def</span> <span class="nf">get_varname_from_locals</span><span class="p">(</span>
     <span class="n">val</span><span class="p">,</span> <span class="n">locals_</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;varname-not-found&#39;</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cmpfunc_</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">is_</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Finds the string name which has where locals_[name] is val</span>
+    <span class="sd">&quot;&quot;&quot;Finds the string name which has where locals_[name] is val</span>
 
 <span class="sd">    Check the varname is in the parent namespace</span>
 <span class="sd">    This will only work with objects not primatives</span>
@@ -1383,16 +1379,16 @@
 
 
 <div class="viewcode-block" id="parse_locals_keylist"><a class="viewcode-back" href="../../utool.html#utool.util_dbg.parse_locals_keylist">[docs]</a><span class="k">def</span> <span class="nf">parse_locals_keylist</span><span class="p">(</span><span class="n">locals_</span><span class="p">,</span> <span class="n">key_list</span><span class="p">,</span> <span class="n">strlist_</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; For each key in keylist, puts its value in locals into a stringlist</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;For each key in keylist, puts its value in locals into a stringlist</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        locals_ (?):</span>
 <span class="sd">        key_list (list):</span>
-<span class="sd">        strlist_ (list): (default = None)</span>
+<span class="sd">        strlist\_ (list): (default = None)</span>
 <span class="sd">        prefix (unicode): (default = u&#39;&#39;)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        list: strlist_</span>
+<span class="sd">        list</span>
 
 <span class="sd">    CommandLine:</span>
 <span class="sd">        python -m utool.util_dbg --exec-parse_locals_keylist</span>
@@ -1416,7 +1412,7 @@
 <span class="sd">            &#39; other = NameError (this likely due to a misformatted printex and is not related to the exception)&#39;,</span>
 <span class="sd">        ]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_str</span>
 
     <span class="k">if</span> <span class="n">strlist_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">strlist_</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1522,16 +1518,16 @@
 <span class="sd">    Context manager which embeds in ipython if an exception is thrown</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">trace</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">trace</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">trace</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;!!! EMBED ON EXCEPTION !!!&#39;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[util_dbg] </span><span class="si">%r</span><span class="s1"> in context manager!: </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">type_</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
@@ -1591,7 +1587,7 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
 </ul>
@@ -1608,17 +1604,15 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -1635,7 +1629,7 @@
       &copy;2020, Wild Me.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

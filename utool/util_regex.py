@@ -217,7 +217,7 @@ def regex_replace(regex, repl, text):
     Returns:
         str: modified text
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_regex import *  # NOQA
         >>> regex = r'\(.*\):'
@@ -229,11 +229,11 @@ def regex_replace(regex, repl, text):
         >>> print(result)
         def foo(*args)
 
-    Example2:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_regex import *  # NOQA
         >>> import utool as ut
-        >>> regex = ut.named_field_regex([('keyword', 'def'), ' ', ('funcname', '.*'), '\(.*\):'])
+        >>> regex = ut.named_field_regex([('keyword', 'def'), ' ', ('funcname', '.*'), r'\(.*\):'])
         >>> repl = ut.named_field_repl([('funcname',), ('keyword',)])
         >>> text = '''def foo(param1,
         ...                   param2,

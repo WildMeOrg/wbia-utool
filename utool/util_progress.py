@@ -138,7 +138,7 @@ def get_num_chunks(length, chunksize):
     CommandLine:
         python -m utool.util_progress --exec-get_num_chunks:0
 
-    Example0:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_progress import *  # NOQA
         >>> length = 2000
@@ -166,7 +166,7 @@ def ProgChunks(list_, chunksize, nInput=None, **kwargs):
         length, freq
 
     Returns:
-        ProgressIter: progiter_
+        ProgressIter
 
     CommandLine:
         python -m utool.util_progress ProgChunks --show
@@ -232,50 +232,50 @@ class ProgressIter(object):
         total (None): alias for length
         num (None):   alias for length
 
-    Timeit::
-        import utool as ut
-        setup = ut.codeblock(
-        '''
-        import utool as ut
-        from six.moves import range, zip
-        import time
-        def time_append(size):
-            start_time    = time.time()
-            last_time     = start_time
-            list2 = []
-            for x in range(size):
-                now_time    = time.time()
-                between = now_time - last_time
-                last_time   = now_time
-                list2.append(between)
-
-        def time_assign(size):
-            start_time    = time.time()
-            last_time     = start_time
-            list1 = ut.alloc_nones(size)
-            for x in range(size):
-                now_time    = time.time()
-                between = now_time - last_time
-                last_time   = now_time
-                list1[x] = between
-
-        def time_baseline(size):
-            start_time    = time.time()
-            last_time     = start_time
-            for x in range(size):
-                now_time    = time.time()
-                between = now_time - last_time
-                last_time   = now_time
-
-        def time_null(size):
-            for x in range(size):
-                pass
-        ''')
-
-        input_sizes = [2 ** count for count in range(7, 12)]
-        stmt_list = ['time_assign', 'time_append', 'time_baseline', 'time_null']
-        input_sizes=[100, 1000, 10000]
-        ut.timeit_grid(stmt_list, setup, input_sizes=input_sizes, show=True)
+    Timeit:
+        >>> import utool as ut
+        >>> setup = ut.codeblock(
+        >>> '''
+        >>> import utool as ut
+        >>> from six.moves import range, zip
+        >>> import time
+        >>> def time_append(size):
+        >>>     start_time    = time.time()
+        >>>     last_time     = start_time
+        >>>     list2 = []
+        >>>     for x in range(size):
+        >>>         now_time    = time.time()
+        >>>         between = now_time - last_time
+        >>>         last_time   = now_time
+        >>>         list2.append(between)
+        >>>
+        >>> def time_assign(size):
+        >>>     start_time    = time.time()
+        >>>     last_time     = start_time
+        >>>     list1 = ut.alloc_nones(size)
+        >>>     for x in range(size):
+        >>>         now_time    = time.time()
+        >>>         between = now_time - last_time
+        >>>         last_time   = now_time
+        >>>         list1[x] = between
+        >>>
+        >>> def time_baseline(size):
+        >>>     start_time    = time.time()
+        >>>     last_time     = start_time
+        >>>     for x in range(size):
+        >>>         now_time    = time.time()
+        >>>         between = now_time - last_time
+        >>>         last_time   = now_time
+        >>>
+        >>> def time_null(size):
+        >>>     for x in range(size):
+        >>>         pass
+        >>> ''')
+        >>>
+        >>> input_sizes = [2 ** count for count in range(7, 12)]
+        >>> stmt_list = ['time_assign', 'time_append', 'time_baseline', 'time_null']
+        >>> input_sizes=[100, 1000, 10000]
+        >>> ut.timeit_grid(stmt_list, setup, input_sizes=input_sizes, show=True)
 
     CommandLine:
         python -m utool.util_progress --test-ProgressIter
@@ -283,7 +283,6 @@ class ProgressIter(object):
         python -m utool.util_progress --test-ProgressIter:1
         python -m utool.util_progress --test-ProgressIter:2
         python -m utool.util_progress --test-ProgressIter:3
-
 
     Example:
         >>> # ENABLE_DOCTEST
@@ -299,7 +298,7 @@ class ProgressIter(object):
         >>>                                    backspace=True, adjust=True)]
         >>> assert results1 == results2
 
-    Example1:
+    Example:
         >>> # DISABLE_DOCTEST
         >>> # SLOW_DOCTEST
         >>> import utool as ut
@@ -310,7 +309,7 @@ class ProgressIter(object):
         >>>                            time_thresh=.1, adjust=True)
         >>> [ut.get_nth_prime_bruteforce(29) for x in progiter]
 
-    Example2:
+    Example:
         >>> # DISABLE_DOCTEST
         >>> # SLOW_DOCTEST
         >>> import utool as ut
@@ -321,7 +320,7 @@ class ProgressIter(object):
         >>>                            time_thresh=3, adjust=True, bs=True)
         >>> [ut.get_nth_prime_bruteforce(29) for x in progiter]
 
-    Example3:
+    Example:
         >>> # DISABLE_DOCTEST
         >>> # SLOW_DOCTEST
         >>> import utool as ut
@@ -331,7 +330,6 @@ class ProgressIter(object):
         >>> crazy_time_iter = (time.sleep(x) for x in crazy_time_list)
         >>> progiter = ut.ProgressIter(crazy_time_iter, lbl='crazy times', length=len(crazy_time_list), freq=10)
         >>> list(progiter)
-
     """
 
     def __init__(self, iterable=None, *args, **kwargs):

@@ -376,7 +376,7 @@ def tryimport(modname, pipiname=None, ensure=False):
         >>> pyfiglet = ut.tryimport(modname, pipiname)
         >>> assert pyfiglet is None or isinstance(pyfiglet, types.ModuleType), 'unknown error'
 
-    Example2:
+    Example:
         >>> # UNSTABLE_DOCTEST
         >>> # disabled because not everyone has access to being a super user
         >>> from utool.util_tests import *  # NOQA
@@ -499,98 +499,96 @@ def import_module_from_fpath(module_fpath):
         >>> result = ('module = %s' % (str(module),))
         >>> print(result)
 
-
     Ignore:
-        import shutil
-        import ubelt as ub
-        test_root = ub.ensure_app_cache_dir('test_fpath_import')
-        # Clear the directory
-        shutil.rmtree(test_root)
-        test_root = ub.ensure_app_cache_dir('test_fpath_import')
-
-        # -----
-        # Define two temporary modules with the same name that are not in sys.path
-        import sys, os, os.path
-        from os.path import join
-
-        # Even though they have the same name they have different values
-        mod1_fpath = ub.ensuredir((test_root, 'path1', 'testmod'))
-        ub.writeto(join(mod1_fpath, '__init__.py'), 'version = 1\nfrom . import sibling\na1 = 1')
-        ub.writeto(join(mod1_fpath, 'sibling.py'), 'spam = \"ham\"\nb1 = 2')
-
-        # Even though they have the same name they have different values
-        mod2_fpath = ub.ensuredir((test_root, 'path2', 'testmod'))
-        ub.writeto(join(mod2_fpath, '__init__.py'), 'version = 2\nfrom . import sibling\na2 = 3')
-        ub.writeto(join(mod2_fpath, 'sibling.py'), 'spam = \"jam\"\nb2 = 4')
-
-        # -----
-        # Neither module should be importable through the normal mechanism
-        try:
-            import testmod
-            assert False, 'should fail'
-        except ImportError as ex:
-            pass
-
-        mod1 = ut.import_module_from_fpath(mod1_fpath)
-        print('mod1.version = {!r}'.format(mod1.version))
-        print('mod1.version = {!r}'.format(mod1.version))
-        print(mod1.version == 1, 'mod1 version is 1')
-        print('mod1.a1 = {!r}'.format(mod1.a1))
-
-        mod2 = ut.import_module_from_fpath(mod2_fpath)
-        print('mod2.version = {!r}'.format(mod2.version))
-        print(mod2.version == 2, 'mod2 version is 2')
-        print('mod2.a2 = {!r}'.format(mod1.a2))
-
-        # BUT Notice how mod1 is mod2
-        print(mod1 is mod2)
-
-        # mod1 has attributes from mod1 and mod2
-        print('mod1.a1 = {!r}'.format(mod1.a1))
-        print('mod1.a2 = {!r}'.format(mod1.a2))
-        print('mod2.a1 = {!r}'.format(mod2.a1))
-        print('mod2.a2 = {!r}'.format(mod2.a2))
-
-        # Both are version 2
-        print('mod1.version = {!r}'.format(mod1.version))
-        print('mod2.version = {!r}'.format(mod2.version))
-
-        # However sibling always remains at version1 (ham)
-        print('mod2.sibling.spam = {!r}'.format(mod2.sibling.spam))
-
-        # now importing testmod works because it reads from sys.modules
-        import testmod
-
-        # reloading mod1 overwrites attrs again
-        mod1 = ut.import_module_from_fpath(mod1_fpath)
-
-        # Removing both from sys.modules
-        del sys.modules['testmod']
-        del sys.modules['testmod.sibling']
-        mod2 = ut.import_module_from_fpath(mod2_fpath)
-
-        print(not hasattr(mod2, 'a1'),
-            'mod2 no longer has a1 and it reloads itself correctly')
-
-
-        # -------
-
-        del sys.modules['testmod']
-        del sys.modules['testmod.sibling']
-        mod1 = ut.import_module_from_fpath(mod1_fpath)
-
-
-        # third test
-        mod3_fpath = ub.ensuredir((test_root, 'path3', 'testmod'))
-        ub.writeto(join(mod3_fpath, '__init__.py'), 'version = 3')
-
-        module_fpath = mod3_fpath
-        modname = 'testmod'
-
-        # third test
-        mod4_fpath = ub.ensuredir((test_root, 'path3', 'novelmod'))
-        ub.writeto(join(mod4_fpath, '__init__.py'), 'version = 4')
-
+        >>> import shutil
+        >>> import ubelt as ub
+        >>> test_root = ub.ensure_app_cache_dir('test_fpath_import')
+        >>> # Clear the directory
+        >>> shutil.rmtree(test_root)
+        >>> test_root = ub.ensure_app_cache_dir('test_fpath_import')
+        >>>
+        >>> # -----
+        >>> # Define two temporary modules with the same name that are not in sys.path
+        >>> import sys, os, os.path
+        >>> from os.path import join
+        >>>
+        >>> # Even though they have the same name they have different values
+        >>> mod1_fpath = ub.ensuredir((test_root, 'path1', 'testmod'))
+        >>> ub.writeto(join(mod1_fpath, '__init__.py'), 'version = 1\nfrom . import sibling\na1 = 1')
+        >>> ub.writeto(join(mod1_fpath, 'sibling.py'), 'spam = \"ham\"\nb1 = 2')
+        >>>
+        >>> # Even though they have the same name they have different values
+        >>> mod2_fpath = ub.ensuredir((test_root, 'path2', 'testmod'))
+        >>> ub.writeto(join(mod2_fpath, '__init__.py'), 'version = 2\nfrom . import sibling\na2 = 3')
+        >>> ub.writeto(join(mod2_fpath, 'sibling.py'), 'spam = \"jam\"\nb2 = 4')
+        >>>
+        >>> # -----
+        >>> # Neither module should be importable through the normal mechanism
+        >>> try:
+        >>>     import testmod
+        >>>     assert False, 'should fail'
+        >>> except ImportError as ex:
+        >>>     pass
+        >>>
+        >>> mod1 = ut.import_module_from_fpath(mod1_fpath)
+        >>> print('mod1.version = {!r}'.format(mod1.version))
+        >>> print('mod1.version = {!r}'.format(mod1.version))
+        >>> print(mod1.version == 1, 'mod1 version is 1')
+        >>> print('mod1.a1 = {!r}'.format(mod1.a1))
+        >>>
+        >>> mod2 = ut.import_module_from_fpath(mod2_fpath)
+        >>> print('mod2.version = {!r}'.format(mod2.version))
+        >>> print(mod2.version == 2, 'mod2 version is 2')
+        >>> print('mod2.a2 = {!r}'.format(mod1.a2))
+        >>>
+        >>> # BUT Notice how mod1 is mod2
+        >>> print(mod1 is mod2)
+        >>>
+        >>> # mod1 has attributes from mod1 and mod2
+        >>> print('mod1.a1 = {!r}'.format(mod1.a1))
+        >>> print('mod1.a2 = {!r}'.format(mod1.a2))
+        >>> print('mod2.a1 = {!r}'.format(mod2.a1))
+        >>> print('mod2.a2 = {!r}'.format(mod2.a2))
+        >>>
+        >>> # Both are version 2
+        >>> print('mod1.version = {!r}'.format(mod1.version))
+        >>> print('mod2.version = {!r}'.format(mod2.version))
+        >>>
+        >>> # However sibling always remains at version1 (ham)
+        >>> print('mod2.sibling.spam = {!r}'.format(mod2.sibling.spam))
+        >>>
+        >>> # now importing testmod works because it reads from sys.modules
+        >>> import testmod
+        >>>
+        >>> # reloading mod1 overwrites attrs again
+        >>> mod1 = ut.import_module_from_fpath(mod1_fpath)
+        >>>
+        >>> # Removing both from sys.modules
+        >>> del sys.modules['testmod']
+        >>> del sys.modules['testmod.sibling']
+        >>> mod2 = ut.import_module_from_fpath(mod2_fpath)
+        >>>
+        >>> print(not hasattr(mod2, 'a1'),
+        >>>     'mod2 no longer has a1 and it reloads itself correctly')
+        >>>
+        >>>
+        >>> # -------
+        >>>
+        >>> del sys.modules['testmod']
+        >>> del sys.modules['testmod.sibling']
+        >>> mod1 = ut.import_module_from_fpath(mod1_fpath)
+        >>>
+        >>>
+        >>> # third test
+        >>> mod3_fpath = ub.ensuredir((test_root, 'path3', 'testmod'))
+        >>> ub.writeto(join(mod3_fpath, '__init__.py'), 'version = 3')
+        >>>
+        >>> module_fpath = mod3_fpath
+        >>> modname = 'testmod'
+        >>>
+        >>> # third test
+        >>> mod4_fpath = ub.ensuredir((test_root, 'path3', 'novelmod'))
+        >>> ub.writeto(join(mod4_fpath, '__init__.py'), 'version = 4')
     """
     from os.path import basename, splitext, isdir, join, exists, dirname, split
     import platform

@@ -188,7 +188,7 @@ def take_column(list_, colx):
     CommandLine:
         python -m utool.util_list --test-take_column
 
-    Example0:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_list import *  # NOQA
         >>> list_ = [['a', 'b'], ['c', 'd']]
@@ -199,7 +199,7 @@ def take_column(list_, colx):
         >>> print(result)
         ['a', 'c']
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_list import *  # NOQA
         >>> list_ = [['a', 'b'], ['c', 'd']]
@@ -210,7 +210,7 @@ def take_column(list_, colx):
         >>> print(result)
         [['b', 'a'], ['d', 'c']]
 
-    Example2:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_list import *  # NOQA
         >>> list_ = [{'spam': 'EGGS', 'ham': 'SPAM'}, {'spam': 'JAM', 'ham': 'PRAM'}]
@@ -272,7 +272,7 @@ def listclip(list_, num, fromback=False):
     CommandLine:
         python -m utool.util_list --test-listclip
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> import utool as ut
         >>> # build test data
@@ -291,7 +291,7 @@ def listclip(list_, num, fromback=False):
             [1, 2, 3, 4, 5],
         ]
 
-    Example2:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> import utool as ut
         >>> # build test data
@@ -348,7 +348,7 @@ def listfind(list_, tofind):
     Returns:
         int: index of ``tofind`` in ``list_``
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_list import *  # NOQA
         >>> list_ = ['a', 'b', 'c']
@@ -1041,68 +1041,68 @@ def isect(list1, list2):
         ['featweight_rowid']
 
     Timeit:
-        def timeit_func(func, *args):
-            niter = 10
-            times = []
-            for count in range(niter):
-                with ut.Timer(verbose=False) as t:
-                    _ = func(*args)
-                times.append(t.ellapsed)
-            return sum(times) / niter
-
-        grid = {
-            'size1': [1000, 5000, 10000, 50000],
-            'size2': [1000, 5000, 10000, 50000],
-            #'overlap': [0, 1],
-        }
-        data = []
-        for kw in ut.all_dict_combinations(grid):
-            pool = np.arange(kw['size1'] * 2)
-            size2 = size1 = kw['size1']
-            size2 = kw['size2']
-            list1 = (np.random.rand(size1) * size1).astype(np.int32).tolist()
-            list1 = ut.random_sample(pool, size1).tolist()
-            list2 = ut.random_sample(pool, size2).tolist()
-            list1 = set(list1)
-            list2 = set(list2)
-            kw['ut'] = timeit_func(ut.isect, list1, list2)
-            #kw['np1'] = timeit_func(np.intersect1d, list1, list2)
-            #kw['py1'] = timeit_func(lambda a, b: set.intersection(set(a), set(b)), list1, list2)
-            kw['py2'] = timeit_func(lambda a, b: sorted(set.intersection(set(a), set(b))), list1, list2)
-            data.append(kw)
-
-        import pandas as pd
-        pd.options.display.max_rows = 1000
-        pd.options.display.width = 1000
-        df = pd.DataFrame.from_dict(data)
-        data_keys = list(grid.keys())
-        other_keys = ut.setdiff(df.columns, data_keys)
-        df = df.reindex(data_keys + other_keys, axis=1)
-        df['abs_change'] = df['ut'] - df['py2']
-        df['pct_change'] = df['abs_change'] / df['ut'] * 100
-        #print(df.sort('abs_change', ascending=False))
-
-        print(str(df).split('\n')[0])
-        for row in df.values:
-            argmin = row[len(data_keys):len(data_keys) + len(other_keys)].argmin() + len(data_keys)
-            print('    ' + ', '.join([
-            '%6d' % (r) if x < len(data_keys) else (
-                ut.color_text('%8.6f' % (r,), 'blue')
-                    if x == argmin else '%8.6f' % (r,))
-            for x, r in enumerate(row)
-            ]))
-
-        %timeit ut.isect(list1, list2)
-        %timeit np.intersect1d(list1, list2, assume_unique=True)
-        %timeit set.intersection(set(list1), set(list2))
-
-        #def highlight_max(s):
-        #    '''
-        #    highlight the maximum in a Series yellow.
-        #    '''
-        #    is_max = s == s.max()
-        #    return ['background-color: yellow' if v else '' for v in is_max]
-        #df.style.apply(highlight_max)
+        >>> def timeit_func(func, *args):
+        >>>     niter = 10
+        >>>     times = []
+        >>>     for count in range(niter):
+        >>>         with ut.Timer(verbose=False) as t:
+        >>>             _ = func(*args)
+        >>>         times.append(t.ellapsed)
+        >>>     return sum(times) / niter
+        >>>
+        >>> grid = {
+        >>>     'size1': [1000, 5000, 10000, 50000],
+        >>>     'size2': [1000, 5000, 10000, 50000],
+        >>>     #'overlap': [0, 1],
+        >>> }
+        >>> data = []
+        >>> for kw in ut.all_dict_combinations(grid):
+        >>>     pool = np.arange(kw['size1'] * 2)
+        >>>     size2 = size1 = kw['size1']
+        >>>     size2 = kw['size2']
+        >>>     list1 = (np.random.rand(size1) * size1).astype(np.int32).tolist()
+        >>>     list1 = ut.random_sample(pool, size1).tolist()
+        >>>     list2 = ut.random_sample(pool, size2).tolist()
+        >>>     list1 = set(list1)
+        >>>     list2 = set(list2)
+        >>>     kw['ut'] = timeit_func(ut.isect, list1, list2)
+        >>>     #kw['np1'] = timeit_func(np.intersect1d, list1, list2)
+        >>>     #kw['py1'] = timeit_func(lambda a, b: set.intersection(set(a), set(b)), list1, list2)
+        >>>     kw['py2'] = timeit_func(lambda a, b: sorted(set.intersection(set(a), set(b))), list1, list2)
+        >>>     data.append(kw)
+        >>>
+        >>> import pandas as pd
+        >>> pd.options.display.max_rows = 1000
+        >>> pd.options.display.width = 1000
+        >>> df = pd.DataFrame.from_dict(data)
+        >>> data_keys = list(grid.keys())
+        >>> other_keys = ut.setdiff(df.columns, data_keys)
+        >>> df = df.reindex(data_keys + other_keys, axis=1)
+        >>> df['abs_change'] = df['ut'] - df['py2']
+        >>> df['pct_change'] = df['abs_change'] / df['ut'] * 100
+        >>> #print(df.sort('abs_change', ascending=False))
+        >>>
+        >>> print(str(df).split('\n')[0])
+        >>> for row in df.values:
+        >>>     argmin = row[len(data_keys):len(data_keys) + len(other_keys)].argmin() + len(data_keys)
+        >>>     print('    ' + ', '.join([
+        >>>     '%6d' % (r) if x < len(data_keys) else (
+        >>>         ut.color_text('%8.6f' % (r,), 'blue')
+        >>>             if x == argmin else '%8.6f' % (r,))
+        >>>     for x, r in enumerate(row)
+        >>>     ]))
+        >>>
+        >>> %timeit ut.isect(list1, list2)
+        >>> %timeit np.intersect1d(list1, list2, assume_unique=True)
+        >>> %timeit set.intersection(set(list1), set(list2))
+        >>>
+        >>> #def highlight_max(s):
+        >>> #    '''
+        >>> #    highlight the maximum in a Series yellow.
+        >>> #    '''
+        >>> #    is_max = s == s.max()
+        >>> #    return ['background-color: yellow' if v else '' for v in is_max]
+        >>> #df.style.apply(highlight_max)
     """
     set2 = set(list2)
     return [item for item in list1 if item in set2]
@@ -1113,16 +1113,16 @@ def union_ordered(*lists):
 
 
 def union(*lists, **kwargs):
-    """
+    r"""
     Ignore:
-        %timeit len(reduce(set.union, map(set, x)))
-        %timeit len(ut.union(*x))
-        %timeit len(ut.unique(ut.flatten(ut.lmap(np.unique, x))))
-        %timeit len(ut.unique(ut.flatten(x)))
-        %timeit len(ut.union(*x))
-        %timeit len(ut.list_union(*x))
-        %timeit len(set.union(*[set(list_) for list_ in lists]))
-        %timeit len(set.union(*(set(list_) for list_ in lists)))
+        >>> %timeit len(reduce(set.union, map(set, x)))
+        >>> %timeit len(ut.union(*x))
+        >>> %timeit len(ut.unique(ut.flatten(ut.lmap(np.unique, x))))
+        >>> %timeit len(ut.unique(ut.flatten(x)))
+        >>> %timeit len(ut.union(*x))
+        >>> %timeit len(ut.list\_union(*x))
+        >>> %timeit len(set.union(*[set(list\_) for list\_ in lists]))
+        >>> %timeit len(set.union(*(set(list\_) for list\_ in lists)))
     """
     if kwargs.get('ordered', True):
         return union_ordered(*lists)
@@ -1175,11 +1175,11 @@ def list_set_equal(list1, list2):
 
 
 def is_subset_of_any(set_, other_sets):
-    """
-    returns True if set_ is a subset of any set in other_sets
+    r"""
+    returns True if set\_ is a subset of any set in other_sets
 
     Args:
-        set_ (set):
+        set\_ (set):
         other_sets (list of sets):
 
     Returns:
@@ -1274,70 +1274,69 @@ def priority_argsort(list_, priority):
 
 
 def flag_unique_items(list_):
-    """
+    r"""
     Returns a list of flags corresponding to the first time an item is seen
 
     Args:
-        list_ (list): list of items
+        list\_ (list): list of items
 
     Returns:
         flag_list
 
     Timing:
-        import random
-        import utool as ut
-
-        def random_items(n, m):
-            rng = random.Random(0)
-            return [rng.randint(0, n) for _ in range(m)]
-
-        m = 1000
-
-        def method1(list_):
-            seen = set()
-            def unseen(item):
-                if item in seen:
-                    return False
-                seen.add(item)
-                return True
-            flag_list = [unseen(item) for item in list_]
-            return flag_list
-
-        def method2(list_):
-            return ut.index_to_boolmask([list_.index(x) for x in set(list_)], len(list_))
-
-        def method3(list_):
-            return ut.index_to_boolmask(dict(zip(reversed(list_), reversed(range(len(list_))))).values(), len(list_))
-
-
-        import ubelt as ub
-        ub.Timerit.DEFAULT_VERBOSE = False
-
-        ut.qtensure()
-        exps = [0, .25, .5, .75, 1, 2]
-        pnum_ = pt.make_pnum_nextgen(nSubplots=len(exps))
-        current = ut.flag_unique_items
-
-        for count, exp in ut.ProgIter(list(enumerate(exps, start=1))):
-            ydatas = ut.ddict(list)
-            xdata = []
-            for m in ut.ProgIter(list(range(0, 10000, 100)), freq=1):
-                xdata.append(m)
-                num = 10
-                n = int(m ** exp)
-                list_ = random_items(n=n, m=m)
-                ydatas['method1'].append(ub.Timerit(num).call(method1, list_))
-                ydatas['method2'].append(ub.Timerit(num).call(method2, list_))
-                ydatas['method3'].append(ub.Timerit(num).call(method3, list_))
-                ydatas['current'].append(ub.Timerit(num).call(current, list_))
-
-                # assert method1(list_) == method3(list_)
-                # assert method1(list_) == current(list_)
-
-            pt.multi_plot(
-                xdata, list(ydatas.values()), label_list=list(ydatas.keys()),
-                ylabel='time', title=str(exp), fnum=1, pnum=pnum_())
-
+        >>> import random
+        >>> import utool as ut
+        >>>
+        >>> def random_items(n, m):
+        >>>     rng = random.Random(0)
+        >>>     return [rng.randint(0, n) for _ in range(m)]
+        >>>
+        >>> m = 1000
+        >>>
+        >>> def method1(list\_):
+        >>>     seen = set()
+        >>>     def unseen(item):
+        >>>         if item in seen:
+        >>>             return False
+        >>>         seen.add(item)
+        >>>         return True
+        >>>     flag_list = [unseen(item) for item in list\_]
+        >>>     return flag_list
+        >>>
+        >>> def method2(list\_):
+        >>>     return ut.index_to_boolmask([list\_.index(x) for x in set(list\_)], len(list\_))
+        >>>
+        >>> def method3(list\_):
+        >>>     return ut.index_to_boolmask(dict(zip(reversed(list\_), reversed(range(len(list\_))))).values(), len(list\_))
+        >>>
+        >>>
+        >>> import ubelt as ub
+        >>> ub.Timerit.DEFAULT_VERBOSE = False
+        >>>
+        >>> ut.qtensure()
+        >>> exps = [0, .25, .5, .75, 1, 2]
+        >>> pnum = pt.make_pnum_nextgen(nSubplots=len(exps))
+        >>> current = ut.flag_unique_items
+        >>>
+        >>> for count, exp in ut.ProgIter(list(enumerate(exps, start=1))):
+        >>>     ydatas = ut.ddict(list)
+        >>>     xdata = []
+        >>>     for m in ut.ProgIter(list(range(0, 10000, 100)), freq=1):
+        >>>         xdata.append(m)
+        >>>         num = 10
+        >>>         n = int(m ** exp)
+        >>>         list\_ = random_items(n=n, m=m)
+        >>>         ydatas['method1'].append(ub.Timerit(num).call(method1, list\_))
+        >>>         ydatas['method2'].append(ub.Timerit(num).call(method2, list\_))
+        >>>         ydatas['method3'].append(ub.Timerit(num).call(method3, list\_))
+        >>>         ydatas['current'].append(ub.Timerit(num).call(current, list\_))
+        >>>
+        >>>         # assert method1(list\_) == method3(list\_)
+        >>>         # assert method1(list\_) == current(list\_)
+        >>>
+        >>>     pt.multi_plot(
+        >>>         xdata, list(ydatas.values()), label_list=list(ydatas.keys()),
+        >>>         ylabel='time', title=str(exp), fnum=1, pnum=pnum())
     """
     len_ = len(list_)
     item_to_index = dict(zip(reversed(list_), reversed(range(len_))))
@@ -1399,8 +1398,8 @@ def unique_ordered(list_):
 
 
 def unique_unordered(list_):
-    """
-    wrapper around list(set(list_))
+    r"""
+    wrapper around list(set(list\_))
     """
     return list(set(list_))
 
@@ -1412,7 +1411,7 @@ def unique_indices(list_):
 def unique(list_, ordered=True):
     """
     Returns unique items in ``list_``.
-    Generally, unordered (*should be) faster.
+    Generally, unordered (*should be*) faster.
     """
     if ordered:
         return unique_ordered(list_)
@@ -1511,7 +1510,7 @@ def sortedby(item_list, key_list, reverse=False):
     SeeAlso:
         sortedby2
 
-    Examples:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> import utool
         >>> list_    = [1, 2, 3, 4, 5]
@@ -1547,7 +1546,7 @@ def sortedby2(item_list, *args, **kwargs):
     CommandLine:
         python -m utool.util_list --exec-sortedby2 --show
 
-    Examples:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_list import *  # NOQA
         >>> import utool as ut
@@ -1560,7 +1559,7 @@ def sortedby2(item_list, *args, **kwargs):
         >>> print(result)
         [2, 1, 3, 4, 5]
 
-    Examples:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> # Python 3 Compatibility Test
         >>> import utool as ut
@@ -1692,27 +1691,27 @@ def argsort2(indexable, key=None, reverse=False):
 
 
 def argmax(input_, multi=False):
-    """
+    r"""
     Returns index / key of the item with the largest value.
 
     Args:
-        input_ (dict or list):
+        input\_ (dict or list):
 
     References:
         http://stackoverflow.com/questions/16945518/python-argmin-argmax
 
     Ignore:
-        list_ = np.random.rand(10000).tolist()
-        %timeit list_.index(max(list_))
-        %timeit max(enumerate(list_), key=operator.itemgetter(1))[0]
-        %timeit max(enumerate(list_), key=lambda x: x[1])[0]
-        %timeit max(range(len(list_)), key=list_.__getitem__)
+        list\_ = np.random.rand(10000).tolist()
+        %timeit list\_.index(max(list\_))
+        %timeit max(enumerate(list\_), key=operator.itemgetter(1))[0]
+        %timeit max(enumerate(list\_), key=lambda x: x[1])[0]
+        %timeit max(range(len(list\_)), key=list\_.__getitem__)
 
-        input_ = dict_
-        list_ = np.random.rand(100000).tolist()
-        dict_ = {str(ut.random_uuid()): x for x in list_}
-        %timeit list(input_.keys())[ut.argmax(list(input_.values()))]
-        %timeit max(input_.items(), key=operator.itemgetter(1))[0]
+        input\_ = dict\_
+        list\_ = np.random.rand(100000).tolist()
+        dict\_ = {str(ut.random_uuid()): x for x in list\_}
+        %timeit list(input\_.keys())[ut.argmax(list(input\_.values()))]
+        %timeit max(input\_.items(), key=operator.itemgetter(1))[0]
 
     Example:
         >>> # DISABLE_DOCTEST
@@ -1967,15 +1966,15 @@ def take_percentile_parts(arr, front=None, mid=None, back=None):
 def list_inverse_take(list_, index_list):
     r"""
     Args:
-        list_ (list): list in sorted domain
+        list\_ (list): list in sorted domain
         index_list (list): index list of the unsorted domain
 
     Note:
         Seems to be logically equivalent to
-        ut.take(list_, ut.argsort(index_list)), but faster
+        ut.take(list\_, ut.argsort(index_list)), but faster
 
     Returns:
-        list: output_list_ - the input list in the unsorted domain
+        list: output_list\_ - the input list in the unsorted domain
 
     CommandLine:
         python -m utool.util_list --test-list_inverse_take
@@ -1999,9 +1998,9 @@ def list_inverse_take(list_, index_list):
         >>> result = str(output_list_)
         >>> print(result)
 
-    Timeit::
-        %timeit list_inverse_take(list_, index_list)
-        %timeit ut.take(list_, ut.argsort(index_list))
+    Timeit:
+        %timeit list_inverse_take(list|_, index_list)
+        %timeit ut.take(list|_, ut.argsort(index_list))
     """
     output_list_ = [None] * len(index_list)
     for item, index in zip(list_, index_list):
@@ -2151,7 +2150,7 @@ def sample_zip(items_list, num_samples, allow_overflow=False, per_bin=1):
     Returns:
         tuple : (samples_list, overflow_samples)
 
-    Examples:
+    Example:
         >>> # DISABLE_DOCTEST
         >>> from utool import util_list
         >>> items_list = [[1, 2, 3, 4, 0], [5, 6, 7], [], [8, 9], [10]]
@@ -2352,7 +2351,7 @@ def group_consecutives_numpy(data, stepsize=1):
         >>> print(result)
         [array([0, 1, 2, 3, 4]), array([320]), array([636, 637, 638, 639])]
 
-    Timeit::
+    Timeit:
         %timeit group_consecutives_numpy(data, stepsize) #  14.8 µs per loop
         %timeit group_consecutives(data, stepsize) # 4.47 µs per loop
 
@@ -2561,49 +2560,49 @@ def depth_profile(
     Setup:
         >>> from utool.util_list import *  # NOQA
 
-    Example0:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> list_ = [[[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]], [[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]]]
         >>> result = depth_profile(list_)
         >>> print(result)
         (2, 3, 4)
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> list_ = [[[[[1]]], [3, 4, 33]], [[1], [2, 3], [4, [5, 5]]], [1, 3]]
         >>> result = depth_profile(list_)
         >>> print(result)
         [[(1, 1, 1), 3], [1, 2, [1, 2]], 2]
 
-    Example2:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> list_ = [[[[[1]]], [3, 4, 33]], [[1], [2, 3], [4, [5, 5]]], [1, 3]]
         >>> result = depth_profile(list_, max_depth=1)
         >>> print(result)
         [[(1, '1'), 3], [1, 2, [1, '2']], 2]
 
-    Example3:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> list_ = [[[1, 2], [1, 2, 3]], None]
         >>> result = depth_profile(list_, compress_homogenous=True)
         >>> print(result)
         [[2, 3], 1]
 
-    Example4:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> list_ = [[3, 2], [3, 2], [3, 2], [3, 2], [3, 2], [3, 2], [9, 5, 3], [2, 2]]
         >>> result = depth_profile(list_, compress_homogenous=True, compress_consecutive=True)
         >>> print(result)
         [2] * 6 + [3, 2]
 
-    Example5:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> list_ = [[[3, 9], 2], [[3, 9], 2], [[3, 9], 2], [[3, 9], 2]]  #, [3, 2], [3, 2]]
         >>> result = depth_profile(list_, compress_homogenous=True, compress_consecutive=True)
         >>> print(result)
         (4, [2, 1])
 
-    Example6:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> list_ = [[[[1, 2]], [1, 2]], [[[1, 2]], [1, 2]], [[[0, 2]], [1]]]
         >>> result1 = depth_profile(list_, compress_homogenous=True, compress_consecutive=False)
@@ -2613,19 +2612,19 @@ def depth_profile(
         [[(1, 2), 2], [(1, 2), 2], [(1, 2), 1]]
         [[(1, 2), 2]] * 2 + [[(1, 2), 1]]
 
-    Example7:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> list_ = [[{'a': [1, 2], 'b': [3, 4, 5]}, [1, 2, 3]], None]
         >>> result = depth_profile(list_, compress_homogenous=True)
         >>> print(result)
 
-    Example8:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> list_ = [[[1]], [[[1, 1], [1, 1]]], [[[[1, 3], 1], [[1, 3, 3], 1, 1]]]]
         >>> result = depth_profile(list_, compress_homogenous=True)
         >>> print(result)
 
-    Example9:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> list_ = []
         >>> result = depth_profile(list_)
@@ -2635,7 +2634,7 @@ def depth_profile(
         SHOULD BE
         #[1, 1], [1, 2, 2], (1, ([1, 2]), (
 
-    Example10:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> fm1 = [[0, 0], [0, 0]]
         >>> fm2 = [[0, 0], [0, 0], [0, 0]]
@@ -2998,11 +2997,11 @@ def filter_startswith(list_, str_):
 
 
 def list_roll(list_, n):
-    """
+    r"""
     Like numpy.roll for python lists
 
     Args:
-        list_ (list):
+        list\_ (list):
         n (int):
 
     Returns:
@@ -3021,7 +3020,7 @@ def list_roll(list_, n):
         [4, 5, 1, 2, 3]
 
     Ignore:
-        np.roll(list_, n)
+        np.roll(list\_, n)
     """
     return list_[-n:] + list_[:-n]
 
@@ -3106,7 +3105,7 @@ def list_alignment(list1, list2, missing=False):
         >>> list1_aligned = take(list1, sortx)
         >>> assert list1_aligned == list2
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_list import *  # NOQA
         >>> import utool as ut
@@ -3162,7 +3161,7 @@ def list_transpose(list_, shape=None):
         >>> print(result)
         [(1, 3), (2, 4)]
 
-    Example1:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_list import *  # NOQA
         >>> list_ = []
@@ -3170,7 +3169,7 @@ def list_transpose(list_, shape=None):
         >>> print(result)
         [[], [], [], [], []]
 
-    Example2:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_list import *  # NOQA
         >>> list_ = [[], [], [], [], []]
@@ -3178,7 +3177,7 @@ def list_transpose(list_, shape=None):
         >>> print(result)
         []
 
-    Example3:
+    Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_list import *  # NOQA
         >>> import utool as ut
@@ -3337,14 +3336,14 @@ def list_getattr(list_, attrname):
 
 def list_reshape(list_, new_shape, trail=False):
     r"""
-    reshapes leaving trailing dimnsions in front if prod(new_shape) != len(list_)
+    reshapes leaving trailing dimnsions in front if prod(new_shape) != len(list\_)
 
     Args:
-        list_ (list):
+        list\_ (list):
         new_shape (tuple):
 
     Returns:
-        list: list_
+        list
 
     CommandLine:
         python -m utool.util_list --exec-list_reshape --show
@@ -3423,10 +3422,10 @@ bzip = broadcast_zip
 
 
 def list_strip(list_, to_strip, left=True, right=True):
-    """
-    list_ = [1, 2, 1, 3, 1, 1]
+    r"""
+    list\_ = [1, 2, 1, 3, 1, 1]
     to_strip = 1
-    stripped_list = ut.list_strip(list_, to_strip)
+    stripped_list = ut.list_strip(list\_, to_strip)
     """
     import utool as ut
 
@@ -3465,7 +3464,7 @@ def aslist(sequence):
         sequence (sequence): a list-like object
 
     Returns:
-        list: list_ - `sequence` as a Python list
+        list: `sequence` as a Python list
 
     Example:
         >>> # DISABLE_DOCTEST

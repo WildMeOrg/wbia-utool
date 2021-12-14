@@ -1,19 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>utool.util_gridsearch &#8212; wbia-vtool 3.0.1 documentation</title>
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -35,18 +33,18 @@
   <h1>Source code for utool.util_gridsearch</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot; module for gridsearch helper &quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span><span class="p">,</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_class</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inject</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_dict</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_dev</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_const</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_decor</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_type</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span><span class="p">,</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_class</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_inject</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_dict</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_dev</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_const</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_decor</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_type</span>
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">operator</span>
-<span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="n">reduce</span><span class="p">,</span> <span class="nb">map</span><span class="p">,</span> <span class="nb">zip</span>
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="kn">import</span> <span class="n">reduce</span><span class="p">,</span> <span class="nb">map</span><span class="p">,</span> <span class="nb">zip</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">six</span>
 
@@ -78,7 +76,7 @@
         <span class="s1">&#39;!=&#39;</span><span class="p">:</span> <span class="n">operator</span><span class="o">.</span><span class="n">ne</span><span class="p">,</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lhs_dict</span><span class="p">,</span> <span class="n">prop2_nid2_aids</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lhs_dict</span><span class="p">,</span> <span class="n">prop2_nid2_aids</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lhs_dict</span> <span class="o">=</span> <span class="n">lhs_dict</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prop2_nid2_aids</span> <span class="o">=</span> <span class="n">prop2_nid2_aids</span>
         <span class="k">pass</span>
@@ -436,11 +434,11 @@
 <span class="sd">    list(x.itertype(&#39;nonNested&#39;))</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">type_</span> <span class="o">=</span> <span class="n">type_</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;N&#39;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="c1"># if isinstance(self.value, list):</span>
         <span class="c1">#     # return str(self.type_) + &#39;:&#39; + repr(self.value)</span>
@@ -513,22 +511,18 @@
 
     <span class="k">def</span> <span class="nf">as_tagged</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">doctag</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the parse results as XML. Tags are created for tokens and lists that have defined results names.&quot;&quot;&quot;</span>
-        <span class="n">namedItems</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">k</span><span class="p">)</span>
-            <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">vlist</span><span class="p">)</span> <span class="ow">in</span> <span class="n">parent</span><span class="o">.</span><span class="n">_ParseResults__tokdict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vlist</span>
-        <span class="p">)</span>
+        <span class="n">namedItems</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
         <span class="c1"># collapse out indents if formatting is not desired</span>
         <span class="n">parentTag</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">doctag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">parentTag</span> <span class="o">=</span> <span class="n">doctag</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">_ParseResults__name</span><span class="p">:</span>
-                <span class="n">parentTag</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">_ParseResults__name</span>
+            <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">get_name</span><span class="p">():</span>
+                <span class="n">parentTag</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">parentTag</span><span class="p">:</span>
             <span class="n">parentTag</span> <span class="o">=</span> <span class="s1">&#39;ITEM&#39;</span>
         <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">res</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">_ParseResults__toklist</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">res</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parent</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">pp</span><span class="o">.</span><span class="n">ParseResults</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">namedItems</span><span class="p">:</span>
                     <span class="n">child</span> <span class="o">=</span> <span class="n">as_tagged</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">namedItems</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
@@ -542,7 +536,7 @@
                     <span class="n">resTag</span> <span class="o">=</span> <span class="n">namedItems</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">resTag</span><span class="p">:</span>
                     <span class="n">resTag</span> <span class="o">=</span> <span class="s1">&#39;ITEM&#39;</span>
-                <span class="n">child</span> <span class="o">=</span> <span class="p">(</span><span class="n">resTag</span><span class="p">,</span> <span class="n">pp</span><span class="o">.</span><span class="n">_ustr</span><span class="p">(</span><span class="n">res</span><span class="p">))</span>
+                <span class="n">child</span> <span class="o">=</span> <span class="p">(</span><span class="n">resTag</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
                 <span class="n">out</span> <span class="o">+=</span> <span class="p">[</span><span class="n">child</span><span class="p">]</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">parentTag</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
 
@@ -679,22 +673,18 @@
 
     <span class="k">def</span> <span class="nf">as_tagged</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">doctag</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the parse results as XML. Tags are created for tokens and lists that have defined results names.&quot;&quot;&quot;</span>
-        <span class="n">namedItems</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">k</span><span class="p">)</span>
-            <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">vlist</span><span class="p">)</span> <span class="ow">in</span> <span class="n">parent</span><span class="o">.</span><span class="n">_ParseResults__tokdict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vlist</span>
-        <span class="p">)</span>
+        <span class="n">namedItems</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
         <span class="c1"># collapse out indents if formatting is not desired</span>
         <span class="n">parentTag</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">doctag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">parentTag</span> <span class="o">=</span> <span class="n">doctag</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">_ParseResults__name</span><span class="p">:</span>
-                <span class="n">parentTag</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">_ParseResults__name</span>
+            <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">get_name</span><span class="p">():</span>
+                <span class="n">parentTag</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">parentTag</span><span class="p">:</span>
             <span class="n">parentTag</span> <span class="o">=</span> <span class="s1">&#39;ITEM&#39;</span>
         <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">res</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">_ParseResults__toklist</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">res</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parent</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">pp</span><span class="o">.</span><span class="n">ParseResults</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">namedItems</span><span class="p">:</span>
                     <span class="n">child</span> <span class="o">=</span> <span class="n">as_tagged</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">namedItems</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
@@ -708,7 +698,7 @@
                     <span class="n">resTag</span> <span class="o">=</span> <span class="n">namedItems</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">resTag</span><span class="p">:</span>
                     <span class="n">resTag</span> <span class="o">=</span> <span class="s1">&#39;ITEM&#39;</span>
-                <span class="n">child</span> <span class="o">=</span> <span class="p">(</span><span class="n">resTag</span><span class="p">,</span> <span class="n">pp</span><span class="o">.</span><span class="n">_ustr</span><span class="p">(</span><span class="n">res</span><span class="p">))</span>
+                <span class="n">child</span> <span class="o">=</span> <span class="p">(</span><span class="n">resTag</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
                 <span class="n">out</span> <span class="o">+=</span> <span class="p">[</span><span class="n">child</span><span class="p">]</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">parentTag</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
 
@@ -817,25 +807,21 @@
 
     <span class="k">def</span> <span class="nf">as_tagged</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">doctag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">namedItemsOnly</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the parse results as XML. Tags are created for tokens and lists that have defined results names.&quot;&quot;&quot;</span>
-        <span class="n">namedItems</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">k</span><span class="p">)</span>
-            <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">vlist</span><span class="p">)</span> <span class="ow">in</span> <span class="n">parent</span><span class="o">.</span><span class="n">_ParseResults__tokdict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vlist</span>
-        <span class="p">)</span>
+        <span class="n">namedItems</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
         <span class="c1"># collapse out indents if formatting is not desired</span>
         <span class="n">parentTag</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">doctag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">parentTag</span> <span class="o">=</span> <span class="n">doctag</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">_ParseResults__name</span><span class="p">:</span>
-                <span class="n">parentTag</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">_ParseResults__name</span>
+            <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">get_name</span><span class="p">():</span>
+                <span class="n">parentTag</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">parentTag</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">namedItemsOnly</span><span class="p">:</span>
                 <span class="k">return</span> <span class="s1">&#39;&#39;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">parentTag</span> <span class="o">=</span> <span class="s1">&#39;ITEM&#39;</span>
         <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">res</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">_ParseResults__toklist</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">res</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parent</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">pp</span><span class="o">.</span><span class="n">ParseResults</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">namedItems</span><span class="p">:</span>
                     <span class="n">child</span> <span class="o">=</span> <span class="n">as_tagged</span><span class="p">(</span>
@@ -854,7 +840,7 @@
                         <span class="k">continue</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">resTag</span> <span class="o">=</span> <span class="s1">&#39;ITEM&#39;</span>
-                <span class="n">child</span> <span class="o">=</span> <span class="p">(</span><span class="n">resTag</span><span class="p">,</span> <span class="n">pp</span><span class="o">.</span><span class="n">_ustr</span><span class="p">(</span><span class="n">res</span><span class="p">))</span>
+                <span class="n">child</span> <span class="o">=</span> <span class="p">(</span><span class="n">resTag</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
                 <span class="n">out</span> <span class="o">+=</span> <span class="p">[</span><span class="n">child</span><span class="p">]</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">parentTag</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
 
@@ -920,14 +906,14 @@
         <span class="k">if</span> <span class="n">debug_</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;string = </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">string</span><span class="p">,))</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;tokens List: &#39;</span> <span class="o">+</span> <span class="n">ut</span><span class="o">.</span><span class="n">repr3</span><span class="p">(</span><span class="n">tokens</span><span class="o">.</span><span class="n">asList</span><span class="p">()))</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;tokens XML: &#39;</span> <span class="o">+</span> <span class="n">tokens</span><span class="o">.</span><span class="n">asXML</span><span class="p">())</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;tokens XML: &#39;</span> <span class="o">+</span> <span class="n">tokens</span><span class="o">.</span><span class="n">asXML</span><span class="p">)</span>
         <span class="n">parsed_blocks</span> <span class="o">=</span> <span class="n">as_tagged</span><span class="p">(</span><span class="n">tokens</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">debug_</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;PARSED_BLOCKS = &#39;</span> <span class="o">+</span> <span class="n">ut</span><span class="o">.</span><span class="n">repr3</span><span class="p">(</span><span class="n">parsed_blocks</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">parsed_blocks</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_type</span>  <span class="c1"># NOQA</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_type</span>  <span class="c1"># NOQA</span>
 
     <span class="c1"># from collections import OrderedDict</span>
     <span class="c1"># cfgdict = OrderedDict()</span>
@@ -1238,7 +1224,7 @@
 <span class="sd">        &gt;&gt;&gt; cfgtype, alias_keys, valid_keys, metadata = None, None, None, None</span>
 <span class="sd">        &gt;&gt;&gt; expand_nested, is_nestedcfgtypel, strict = True, False, False</span>
 
-<span class="sd">    Example0:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; from utool.util_gridsearch import *  # NOQA</span>
 <span class="sd">        &gt;&gt;&gt; import utool as ut</span>
@@ -1262,9 +1248,14 @@
 <span class="sd">        &gt;&gt;&gt; print(result)</span>
 <span class="sd">        [&#39;name:&#39;, &#39;name:f=1&#39;, &#39;name:b=1&#39;, &#39;name:b=2&#39;, &#39;name1:f=1,joined=True&#39;, &#39;name2:b=2,f=1,joined=True&#39;]</span>
 
-<span class="sd">    Example1:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; # Allow for definition of a named default on the fly</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_gridsearch import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; named_defaults_dict = None</span>
+<span class="sd">        &gt;&gt;&gt; cfgtype, alias_keys, valid_keys, metadata = None, None, None, None</span>
+<span class="sd">        &gt;&gt;&gt; expand_nested, is_nestedcfgtypel, strict = True, False, False</span>
 <span class="sd">        &gt;&gt;&gt; cfgstr_list = [&#39;base=:f=2,c=[1,2]&#39;, &#39;base:f=1&#39;, &#39;base:b=[1,2]&#39;]</span>
 <span class="sd">        &gt;&gt;&gt; special_join_dict = None</span>
 <span class="sd">        &gt;&gt;&gt; cfg_combos_list = parse_cfgstr_list2(</span>
@@ -1278,8 +1269,13 @@
 <span class="sd">        &gt;&gt;&gt; print(result)</span>
 <span class="sd">        [&#39;base:c=1,f=1&#39;, &#39;base:c=2,f=1&#39;, &#39;base:b=1,c=1,f=2&#39;, &#39;base:b=1,c=2,f=2&#39;, &#39;base:b=2,c=1,f=2&#39;, &#39;base:b=2,c=2,f=2&#39;]</span>
 
-<span class="sd">    Example2:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
+<span class="sd">        &gt;&gt;&gt; from utool.util_gridsearch import *  # NOQA</span>
+<span class="sd">        &gt;&gt;&gt; import utool as ut</span>
+<span class="sd">        &gt;&gt;&gt; named_defaults_dict = None</span>
+<span class="sd">        &gt;&gt;&gt; cfgtype, alias_keys, valid_keys, metadata = None, None, None, None</span>
+<span class="sd">        &gt;&gt;&gt; expand_nested, is_nestedcfgtypel, strict = True, False, False</span>
 <span class="sd">        &gt;&gt;&gt; cfgstr_list = [&#39;base:f=2,c=[(1,2),(3,4)]&#39;]</span>
 <span class="sd">        &gt;&gt;&gt; special_join_dict = None</span>
 <span class="sd">        &gt;&gt;&gt; cfg_combos_list = parse_cfgstr_list2(</span>
@@ -1292,7 +1288,7 @@
 <span class="sd">        &gt;&gt;&gt; result = ut.repr2(ut.get_varied_cfg_lbls(cfg_list))</span>
 <span class="sd">        &gt;&gt;&gt; print(result)</span>
 
-<span class="sd">    Example3:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; from utool.util_gridsearch import *  # NOQA</span>
 <span class="sd">        &gt;&gt;&gt; import utool as ut</span>
@@ -1445,7 +1441,7 @@
 <span class="sd">        foo=5</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="n">pi</span><span class="p">,</span>
         <span class="n">varname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1521,7 +1517,7 @@
             <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pi</span><span class="o">.</span><span class="n">valid_values</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="s1">&#39;pi=</span><span class="si">%r</span><span class="s1">, value=</span><span class="si">%r</span><span class="s1"> not in valid_values=</span><span class="si">%r</span><span class="s1">&#39;</span>
-                    <span class="o">%</span> <span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">pi</span><span class="o">.</span><span class="n">valid_values</span><span class="p">,)</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">pi</span><span class="o">.</span><span class="n">valid_values</span><span class="p">)</span>
                 <span class="p">)</span>
         <span class="k">if</span> <span class="n">pi</span><span class="o">.</span><span class="n">is_type_enforced</span><span class="p">():</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">util_type</span><span class="o">.</span><span class="n">is_comparable_type</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pi</span><span class="o">.</span><span class="n">type_</span><span class="p">):</span>
@@ -1541,7 +1537,7 @@
             <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pi</span><span class="o">.</span><span class="n">valid_values</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="s1">&#39;pi=</span><span class="si">%r</span><span class="s1">, value=</span><span class="si">%r</span><span class="s1"> not in valid_values=</span><span class="si">%r</span><span class="s1">&#39;</span>
-                    <span class="o">%</span> <span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">pi</span><span class="o">.</span><span class="n">valid_values</span><span class="p">,)</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">pi</span><span class="o">.</span><span class="n">valid_values</span><span class="p">)</span>
                 <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">util_type</span><span class="o">.</span><span class="n">is_comparable_type</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pi</span><span class="o">.</span><span class="n">type_</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
@@ -1597,7 +1593,7 @@
                 <span class="s1">&#39;set([&#39;</span> <span class="o">+</span> <span class="n">ut</span><span class="o">.</span><span class="n">repr4</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">varval</span><span class="p">),</span> <span class="n">nl</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">itemsep</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">nobr</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;])&#39;</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">varval</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>
+            <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_str</span>
 
             <span class="c1"># The ut.repr4 representation will consistently stringify dicts</span>
             <span class="n">varstr</span> <span class="o">=</span> <span class="n">util_str</span><span class="o">.</span><span class="n">repr4</span><span class="p">(</span><span class="n">varval</span><span class="p">,</span> <span class="n">explicit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">strvals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">itemsep</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -1644,7 +1640,7 @@
 <span class="sd">        nocheese</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="n">pi</span><span class="p">,</span>
         <span class="n">varname</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -1684,16 +1680,16 @@
             <span class="n">itemstr</span> <span class="o">=</span> <span class="s1">&#39;no&#39;</span> <span class="o">+</span> <span class="n">itemstr</span>
         <span class="k">elif</span> <span class="n">varval</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
-                <span class="s1">&#39;Not a boolean pi.varname=</span><span class="si">%r</span><span class="s1">, varval=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pi</span><span class="o">.</span><span class="n">varname</span><span class="p">,</span> <span class="n">varval</span><span class="p">,)</span>
+                <span class="s1">&#39;Not a boolean pi.varname=</span><span class="si">%r</span><span class="s1">, varval=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pi</span><span class="o">.</span><span class="n">varname</span><span class="p">,</span> <span class="n">varval</span><span class="p">)</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">itemstr</span></div>
 
 
 <div class="viewcode-block" id="ParamInfoList"><a class="viewcode-back" href="../../utool.html#utool.util_gridsearch.ParamInfoList">[docs]</a><span class="nd">@six</span><span class="o">.</span><span class="n">add_metaclass</span><span class="p">(</span><span class="n">util_class</span><span class="o">.</span><span class="n">ReloadingMetaclass</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">ParamInfoList</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; small class for ut.Pref-less configurations &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;small class for ut.Pref-less configurations&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">param_info_list</span><span class="o">=</span><span class="p">[],</span> <span class="n">constraint_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hideif</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">param_info_list</span><span class="o">=</span><span class="p">[],</span> <span class="n">constraint_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hideif</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">param_info_list</span> <span class="o">=</span> <span class="n">param_info_list</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">constraint_func</span> <span class="o">=</span> <span class="n">constraint_func</span>
@@ -1719,12 +1715,12 @@
         <span class="k">return</span> <span class="p">[</span><span class="n">pi</span><span class="o">.</span><span class="n">varname</span> <span class="k">for</span> <span class="n">pi</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_info_list</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="ParamInfoList.get_varydict"><a class="viewcode-back" href="../../utool.html#utool.util_gridsearch.ParamInfoList.get_varydict">[docs]</a>    <span class="k">def</span> <span class="nf">get_varydict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; for gridsearch &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;for gridsearch&quot;&quot;&quot;</span>
         <span class="n">varied_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">pi</span><span class="o">.</span><span class="n">varname</span><span class="p">:</span> <span class="n">pi</span><span class="o">.</span><span class="n">varyvals</span> <span class="k">for</span> <span class="n">pi</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_info_list</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">varied_dict</span></div>
 
 <div class="viewcode-block" id="ParamInfoList.get_slicedict"><a class="viewcode-back" href="../../utool.html#utool.util_gridsearch.ParamInfoList.get_slicedict">[docs]</a>    <span class="k">def</span> <span class="nf">get_slicedict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; for gridsearch &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;for gridsearch&quot;&quot;&quot;</span>
         <span class="n">slice_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">pi</span><span class="o">.</span><span class="n">varname</span><span class="p">:</span> <span class="n">pi</span><span class="o">.</span><span class="n">varyslice</span>
             <span class="k">for</span> <span class="n">pi</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_info_list</span>
@@ -1735,14 +1731,14 @@
         <span class="k">return</span> <span class="n">slice_dict</span></div>
 
 <div class="viewcode-block" id="ParamInfoList.get_grid_basis"><a class="viewcode-back" href="../../utool.html#utool.util_gridsearch.ParamInfoList.get_grid_basis">[docs]</a>    <span class="k">def</span> <span class="nf">get_grid_basis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; DEPRICATE &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;DEPRICATE&quot;&quot;&quot;</span>
         <span class="n">grid_basis</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">DimensionBasis</span><span class="p">(</span><span class="n">pi</span><span class="o">.</span><span class="n">varname</span><span class="p">,</span> <span class="n">pi</span><span class="o">.</span><span class="n">varyvals</span><span class="p">)</span> <span class="k">for</span> <span class="n">pi</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_info_list</span>
         <span class="p">]</span>
         <span class="k">return</span> <span class="n">grid_basis</span></div>
 
 <div class="viewcode-block" id="ParamInfoList.get_gridsearch_input"><a class="viewcode-back" href="../../utool.html#utool.util_gridsearch.ParamInfoList.get_gridsearch_input">[docs]</a>    <span class="k">def</span> <span class="nf">get_gridsearch_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">defaultslice</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
-        <span class="sd">&quot;&quot;&quot; for gridsearch &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;for gridsearch&quot;&quot;&quot;</span>
         <span class="n">varied_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_varydict</span><span class="p">()</span>
         <span class="n">slice_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_slicedict</span><span class="p">()</span>
         <span class="n">constraint_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">constraint_func</span>
@@ -1794,7 +1790,7 @@
 <span class="sd">        ...     gridsearch.append_result(tp_score, tn_score)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">gridsearch</span><span class="p">,</span> <span class="n">grid_basis</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="n">gridsearch</span><span class="p">,</span> <span class="n">grid_basis</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">gridsearch</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
         <span class="n">gridsearch</span><span class="o">.</span><span class="n">grid_basis</span> <span class="o">=</span> <span class="n">grid_basis</span>
         <span class="n">gridsearch</span><span class="o">.</span><span class="n">tp_score_list</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1806,21 +1802,21 @@
         <span class="n">gridsearch</span><span class="o">.</span><span class="n">score_lbls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;score_diff&#39;</span><span class="p">,</span> <span class="s1">&#39;tp_score&#39;</span><span class="p">,</span> <span class="s1">&#39;tn_score&#39;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="GridSearch.append_result"><a class="viewcode-back" href="../../utool.html#utool.util_gridsearch.GridSearch.append_result">[docs]</a>    <span class="k">def</span> <span class="nf">append_result</span><span class="p">(</span><span class="n">gridsearch</span><span class="p">,</span> <span class="n">tp_score</span><span class="p">,</span> <span class="n">tn_score</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; for use in iteration &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;for use in iteration&quot;&quot;&quot;</span>
         <span class="n">diff</span> <span class="o">=</span> <span class="n">tp_score</span> <span class="o">-</span> <span class="n">tn_score</span>
         <span class="n">gridsearch</span><span class="o">.</span><span class="n">score_diff_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
         <span class="n">gridsearch</span><span class="o">.</span><span class="n">tp_score_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tp_score</span><span class="p">)</span>
         <span class="n">gridsearch</span><span class="o">.</span><span class="n">tn_score_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tn_score</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="n">gridsearch</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="n">gridsearch</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">cfgdict</span> <span class="ow">in</span> <span class="n">gridsearch</span><span class="o">.</span><span class="n">cfgdict_list</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">cfgdict</span>
 
-    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="n">gridsearch</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="n">gridsearch</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">gridsearch</span><span class="o">.</span><span class="n">num_configs</span>
 
 <div class="viewcode-block" id="GridSearch.get_score_list_and_lbls"><a class="viewcode-back" href="../../utool.html#utool.util_gridsearch.GridSearch.get_score_list_and_lbls">[docs]</a>    <span class="k">def</span> <span class="nf">get_score_list_and_lbls</span><span class="p">(</span><span class="n">gridsearch</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; returns result data &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;returns result data&quot;&quot;&quot;</span>
         <span class="n">score_list</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">gridsearch</span><span class="o">.</span><span class="n">score_diff_list</span><span class="p">,</span>
             <span class="n">gridsearch</span><span class="o">.</span><span class="n">tp_score_list</span><span class="p">,</span>
@@ -1830,7 +1826,7 @@
         <span class="k">return</span> <span class="n">score_list</span><span class="p">,</span> <span class="n">score_lbls</span></div>
 
 <div class="viewcode-block" id="GridSearch.get_param_list_and_lbls"><a class="viewcode-back" href="../../utool.html#utool.util_gridsearch.GridSearch.get_param_list_and_lbls">[docs]</a>    <span class="k">def</span> <span class="nf">get_param_list_and_lbls</span><span class="p">(</span><span class="n">gridsearch</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; returns input data &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;returns input data&quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
 
         <span class="n">param_name_list</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">get_list_column</span><span class="p">(</span><span class="n">gridsearch</span><span class="o">.</span><span class="n">grid_basis</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -1852,7 +1848,7 @@
         <span class="k">return</span> <span class="n">param_label_list</span></div>
 
 <div class="viewcode-block" id="GridSearch.get_sorted_columns_and_labels"><a class="viewcode-back" href="../../utool.html#utool.util_gridsearch.GridSearch.get_sorted_columns_and_labels">[docs]</a>    <span class="k">def</span> <span class="nf">get_sorted_columns_and_labels</span><span class="p">(</span><span class="n">gridsearch</span><span class="p">,</span> <span class="n">score_lbl</span><span class="o">=</span><span class="s1">&#39;score_diff&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; returns sorted input and result data &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;returns sorted input and result data&quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
 
         <span class="c1"># Input Parameters</span>
@@ -2191,7 +2187,7 @@
 
 
 <div class="viewcode-block" id="constrain_cfgdict_list"><a class="viewcode-back" href="../../utool.html#utool.util_gridsearch.constrain_cfgdict_list">[docs]</a><span class="k">def</span> <span class="nf">constrain_cfgdict_list</span><span class="p">(</span><span class="n">cfgdict_list_</span><span class="p">,</span> <span class="n">constraint_func</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; constrains configurations and removes duplicates &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;constrains configurations and removes duplicates&quot;&quot;&quot;</span>
     <span class="n">cfgdict_list</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">cfg_</span> <span class="ow">in</span> <span class="n">cfgdict_list_</span><span class="p">:</span>
         <span class="n">cfg</span> <span class="o">=</span> <span class="n">cfg_</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -2202,7 +2198,7 @@
 
 
 <div class="viewcode-block" id="make_cfglbls"><a class="viewcode-back" href="../../utool.html#utool.util_gridsearch.make_cfglbls">[docs]</a><span class="k">def</span> <span class="nf">make_cfglbls</span><span class="p">(</span><span class="n">cfgdict_list</span><span class="p">,</span> <span class="n">varied_dict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;  Show only the text in labels that mater from the cfgdict &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Show only the text in labels that mater from the cfgdict&quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">textwrap</span>
 
     <span class="n">wrapper</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">TextWrapper</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
@@ -2247,13 +2243,13 @@
     <span class="n">scorelbl</span><span class="o">=</span><span class="s1">&#39;score&#39;</span><span class="p">,</span>
     <span class="n">onclick_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; helper function for visualizing results of gridsearch &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;helper function for visualizing results of gridsearch&quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="n">callable</span><span class="p">(</span><span class="n">show_result_func</span><span class="p">),</span> <span class="s1">&#39;NEED FUNCTION GOT: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">show_result_func</span><span class="p">,)</span>
 
     <span class="kn">import</span> <span class="nn">utool</span> <span class="k">as</span> <span class="nn">ut</span>
     <span class="kn">import</span> <span class="nn">wbia.plottool</span> <span class="k">as</span> <span class="nn">pt</span>
-    <span class="kn">from</span> <span class="nn">wbia.plottool</span> <span class="k">import</span> <span class="n">plot_helpers</span> <span class="k">as</span> <span class="n">ph</span>
-    <span class="kn">from</span> <span class="nn">wbia.plottool</span> <span class="k">import</span> <span class="n">interact_helpers</span> <span class="k">as</span> <span class="n">ih</span>
+    <span class="kn">from</span> <span class="nn">wbia.plottool</span> <span class="kn">import</span> <span class="n">plot_helpers</span> <span class="k">as</span> <span class="n">ph</span>
+    <span class="kn">from</span> <span class="nn">wbia.plottool</span> <span class="kn">import</span> <span class="n">interact_helpers</span> <span class="k">as</span> <span class="n">ih</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Plotting gridsearch results figtitle=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">figtitle</span><span class="p">,))</span>
@@ -2483,7 +2479,7 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
 </ul>
@@ -2500,17 +2496,15 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -2527,7 +2521,7 @@
       &copy;2020, Wild Me.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

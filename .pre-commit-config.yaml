@@ -13,8 +13,13 @@ repos:
   #       language_version: python3.6
   - repo: local
     hooks:
+      - id: update-documentation
+        name: Update Documentation
+        entry: ./build_documentation.sh
+        language: system
+        types: [python]
       - id: brunette
-        name: brunette
+        name: Brunette
         description: Run Brunette on Python code (fork of Black).
         entry: brunette --config=setup.cfg
         language: system
@@ -23,6 +28,7 @@ repos:
     rev: 3.8.3
     hooks:
       - id: flake8
+        name: Flake8
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.1.0
     hooks:

@@ -1,19 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>utool.util_setup &#8212; wbia-vtool 3.0.1 documentation</title>
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -35,19 +33,19 @@
   <h1>Source code for utool.util_setup</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="c1"># Utools for setup.py files</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">textwrap</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">splitext</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">splitext</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_cplat</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_path</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_io</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_str</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_cplat</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_path</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_io</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_str</span>
 
 <span class="c1"># from utool import util_dev</span>
-<span class="kn">from</span> <span class="nn">utool.util_dbg</span> <span class="k">import</span> <span class="n">printex</span>
-<span class="kn">from</span> <span class="nn">utool._internal</span> <span class="k">import</span> <span class="n">meta_util_arg</span>
+<span class="kn">from</span> <span class="nn">utool.util_dbg</span> <span class="kn">import</span> <span class="n">printex</span>
+<span class="kn">from</span> <span class="nn">utool._internal</span> <span class="kn">import</span> <span class="n">meta_util_arg</span>
 
 <span class="n">VERBOSE</span> <span class="o">=</span> <span class="n">meta_util_arg</span><span class="o">.</span><span class="n">VERBOSE</span>
 
@@ -57,7 +55,7 @@
 <span class="sd">    Helps with writing setup.py</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cmdclass</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">def</span> <span class="nf">_register_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
@@ -147,7 +145,7 @@
 
 
 <div class="viewcode-block" id="setup_chmod"><a class="viewcode-back" href="../../utool.html#utool.util_setup.setup_chmod">[docs]</a><span class="k">def</span> <span class="nf">setup_chmod</span><span class="p">(</span><span class="n">setup_fpath</span><span class="p">,</span> <span class="n">setup_dir</span><span class="p">,</span> <span class="n">chmod_patterns</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Gives files matching pattern the same chmod flags as setup.py &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Gives files matching pattern the same chmod flags as setup.py&quot;&quot;&quot;</span>
     <span class="c1"># st_mode = os.stat(setup_fpath).st_mode</span>
     <span class="n">st_mode</span> <span class="o">=</span> <span class="mi">33277</span>
     <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">chmod_patterns</span><span class="p">:</span>
@@ -157,7 +155,7 @@
 
 
 <div class="viewcode-block" id="assert_in_setup_repo"><a class="viewcode-back" href="../../utool.html#utool.util_setup.assert_in_setup_repo">[docs]</a><span class="k">def</span> <span class="nf">assert_in_setup_repo</span><span class="p">(</span><span class="n">setup_fpath</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; pass in __file__ from setup.py &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;pass in __file__ from setup.py&quot;&quot;&quot;</span>
     <span class="n">setup_dir</span><span class="p">,</span> <span class="n">setup_fname</span> <span class="o">=</span> <span class="n">split</span><span class="p">(</span><span class="n">setup_fpath</span><span class="p">)</span>
     <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
     <span class="c1"># repo_dname = split(setup_dir)[1]</span>
@@ -220,9 +218,9 @@
 
 
 <div class="viewcode-block" id="find_ext_modules"><a class="viewcode-back" href="../../utool.html#utool.util_setup.find_ext_modules">[docs]</a><span class="k">def</span> <span class="nf">find_ext_modules</span><span class="p">(</span><span class="n">disable_warnings</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">setuptools</span> <span class="k">import</span> <span class="n">Extension</span>
+    <span class="kn">from</span> <span class="nn">setuptools</span> <span class="kn">import</span> <span class="n">Extension</span>
     <span class="kn">import</span> <span class="nn">utool</span>
-    <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">relpath</span>
+    <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">relpath</span>
 
     <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 
@@ -274,7 +272,7 @@
             <span class="s1">&#39;[util_setup] find_packages(recursive=</span><span class="si">%r</span><span class="s1">, maxdepth=</span><span class="si">%r</span><span class="s1">)&#39;</span>
             <span class="o">%</span> <span class="p">(</span><span class="n">recursive</span><span class="p">,</span> <span class="n">maxdepth</span><span class="p">)</span>
         <span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">relpath</span>
+    <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">relpath</span>
 
     <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
     <span class="n">init_files</span> <span class="o">=</span> <span class="n">utool</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">cwd</span><span class="p">,</span> <span class="s1">&#39;__init__.py&#39;</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="n">recursive</span><span class="p">,</span> <span class="n">maxdepth</span><span class="o">=</span><span class="n">maxdepth</span><span class="p">)</span>
@@ -291,9 +289,9 @@
 
 
 <div class="viewcode-block" id="get_cmdclass"><a class="viewcode-back" href="../../utool.html#utool.util_setup.get_cmdclass">[docs]</a><span class="k">def</span> <span class="nf">get_cmdclass</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot; DEPRICATE &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;DEPRICATE&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">Cython.Distutils</span> <span class="k">import</span> <span class="n">build_ext</span>
+        <span class="kn">from</span> <span class="nn">Cython.Distutils</span> <span class="kn">import</span> <span class="n">build_ext</span>
 
         <span class="n">cmdclass</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;build_ext&#39;</span><span class="p">:</span> <span class="n">build_ext</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">cmdclass</span>
@@ -306,7 +304,7 @@
 
 
 <div class="viewcode-block" id="parse_author"><a class="viewcode-back" href="../../utool.html#utool.util_setup.parse_author">[docs]</a><span class="k">def</span> <span class="nf">parse_author</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot; TODO: this function should parse setup.py or a module for</span>
+    <span class="sd">&quot;&quot;&quot;TODO: this function should parse setup.py or a module for</span>
 <span class="sd">    the author variable</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="s1">&#39;Jon Crall&#39;</span>  <span class="c1"># FIXME</span></div>
@@ -372,9 +370,10 @@
         <span class="n">packages</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">find_packages</span><span class="p">(</span><span class="n">maxdepth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">packages</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;directory must contain at least one package&#39;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">packages</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">packages</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s1">&#39;FIXME I dont know what to do with more than one root package: </span><span class="si">%r</span><span class="s1">&#39;</span>
-                <span class="o">%</span> <span class="p">(</span><span class="n">packages</span><span class="p">,)</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">packages</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="p">),</span> <span class="s1">&#39;FIXME I dont know what to do with more than one root package: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="n">packages</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="n">pkgdir</span> <span class="o">=</span> <span class="n">packages</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">version</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">parse_package_for_version</span><span class="p">(</span><span class="n">pkgdir</span><span class="p">)</span>
@@ -646,7 +645,7 @@
 <span class="sd">    returns the value.  This function parses the source text. It does not load</span>
 <span class="sd">    the module.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_regex</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_regex</span>
 
     <span class="n">init_fpath</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;__init__.py&#39;</span><span class="p">)</span>
     <span class="n">version_errmsg</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span>
@@ -660,7 +659,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">init_fpath</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="n">version_errmsg</span><span class="p">)</span>
     <span class="n">val_regex</span> <span class="o">=</span> <span class="n">util_regex</span><span class="o">.</span><span class="n">named_field</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="s1">&#39;[0-9a-zA-Z.]+&#39;</span><span class="p">)</span>
-    <span class="n">regexstr</span> <span class="o">=</span> <span class="s1">&#39;__version__ *= *[</span><span class="se">\&#39;</span><span class="s1">&quot;]&#39;</span> <span class="o">+</span> <span class="n">val_regex</span>
+    <span class="n">regexstr</span> <span class="o">=</span> <span class="s2">&quot;__version__ *= *[&#39;</span><span class="se">\&quot;</span><span class="s2">]&quot;</span> <span class="o">+</span> <span class="n">val_regex</span>
 
     <span class="k">def</span> <span class="nf">parse_version</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
         <span class="c1"># Helper</span>
@@ -681,7 +680,7 @@
 
 
 <span class="k">def</span> <span class="nf">__infer_setup_kwargs</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Implicitly build kwargs based on standard info &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Implicitly build kwargs based on standard info&quot;&quot;&quot;</span>
     <span class="c1"># Get project name from the module</span>
     <span class="c1"># if &#39;name&#39; not in kwargs:</span>
     <span class="c1">#    kwargs[&#39;name&#39;] = module.__name__</span>
@@ -732,41 +731,7 @@
     <span class="c1"># https://pythonhosted.org/an_example_pypi_project/setuptools.html</span>
     <span class="c1"># https://docs.python.org/2/distutils/setupscript.html https://docs.python.org/2/distutils/setupscript.html</span>
     <span class="c1"># Useful documentation: http://bashelton.com/2009/04/setuptools-tutorial/#setup.py-package_dir</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Arguments which can be passed to setuptools::</span>
-
-<span class="sd">        ============       =====            ===========</span>
-<span class="sd">        Install-Data       Value            Description</span>
-<span class="sd">        ------------       -----            -----------</span>
-<span class="sd">        *packages          strlist          a list of packages modules to be distributed</span>
-<span class="sd">        py_modules         strlist          a list of singlefile modules to be distributed</span>
-<span class="sd">        scripts            strlist          a list of standalone scripts to build and install</span>
-<span class="sd">        *install_requires  list             e.g: [&#39;distribute == 0.7.3&#39;, &#39;numpy&#39;, &#39;matplotlib&#39;]</span>
-<span class="sd">        data_files         strlist          a list of data files to install</span>
-<span class="sd">        zip_safe           bool             install efficiently installed as a zipped module?</span>
-<span class="sd">        namespace_packages list             packages without meaningful __init__.py&#39;s</span>
-<span class="sd">        package_dir        dict             keys are packagenames (&#39;&#39; is the root)</span>
-<span class="sd">        package_data       dict             keys are foldernames, values are a list of globstrs</span>
-<span class="sd">        *entry_pionts      dict             installs a script {&#39;console_scripts&#39;: [&#39;script_name_to_install = entry_module:entry_function&#39;]}</span>
-
-<span class="sd">        ============       =====            ===========</span>
-<span class="sd">        Meta-Data          Value            Description</span>
-<span class="sd">        ------------       -----            -----------</span>
-<span class="sd">        name               short string     (&#39;name of the package&#39;)</span>
-<span class="sd">        version            short string     (&#39;version of this release&#39;)</span>
-<span class="sd">        author             short string     (&#39;package authors name&#39;)</span>
-<span class="sd">        author_email       email address    (&#39;email address of the package author&#39;)</span>
-<span class="sd">        maintainer         short string     (&#39;package maintainers name&#39;)</span>
-<span class="sd">        maintainer_email   email address    (&#39;email address of the package maintainer&#39;)</span>
-<span class="sd">        url                URL              (&#39;home page for the package&#39;)</span>
-<span class="sd">        description        short string     (&#39;short, summary description of the package&#39;)</span>
-<span class="sd">        long_description   long string      (&#39;longer description of the package&#39;)</span>
-<span class="sd">        download_url       URL              (&#39;location where the package may be downloaded&#39;)</span>
-<span class="sd">        classifiers        list of strings  (&#39;a list of classifiers&#39;)</span>
-<span class="sd">        platforms          list of strings  (&#39;a list of platforms&#39;)</span>
-<span class="sd">        license            short string     (&#39;license for the package&#39;)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">utool.util_inject</span> <span class="k">import</span> <span class="n">inject_colored_exceptions</span>
+    <span class="kn">from</span> <span class="nn">utool.util_inject</span> <span class="kn">import</span> <span class="n">inject_colored_exceptions</span>
 
     <span class="n">inject_colored_exceptions</span><span class="p">()</span>  <span class="c1"># Fluffly, but nice</span>
     <span class="k">if</span> <span class="n">VERBOSE</span><span class="p">:</span>
@@ -809,7 +774,7 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
 </ul>
@@ -826,17 +791,15 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -853,7 +816,7 @@
       &copy;2020, Wild Me.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

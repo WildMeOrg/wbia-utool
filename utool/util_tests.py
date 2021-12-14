@@ -2,22 +2,20 @@
 """
 Helpers for tests
 
-NOTE:
-    DEPRICATE THIS IN FAVOR OF pytest and xdoctest
-
 This module contains a more sane reimplementation of doctest functionality.
 (I.E.  asserts work and you don't have to worry about stdout mucking things up)
 The code isn't super clean though due to time constriaints.  Many functions
 probably belong elsewhere and the parsers need a big cleanup.
 
+Notes:
+    DEPRICATE THIS IN FAVOR OF pytest and xdoctest
+
 TODO:
-    * report the line of the doctest in the file when reporting errors as well as
-     the relative line
-
-    * restructure so there is a test collection step, a filtering step, and an
-      execution step
-
-    * Fix finding tests when running with @profile
+    report the line of the doctest in the file when reporting errors as well as
+    the relative line
+    restructure so there is a test collection step, a filtering step, and an
+    execution step
+    Fix finding tests when running with @profile
 """
 from __future__ import absolute_import, division, print_function, unicode_literals
 import six
@@ -925,7 +923,7 @@ def parse_docblocks_from_docstr(docstr, offsets=False):
     CommandLine:
         python -m utool.util_tests parse_docblocks_from_docstr
 
-    Doctest:
+    Example:
         >>> from utool.util_tests import *  # NOQA
         >>> import utool as ut
         >>> #func_or_class = ut.flatten2
@@ -1093,7 +1091,7 @@ def parse_doctest_from_docstr(docstr):
     CommandLine:
         python -m utool.util_tests --exec-parse_doctest_from_docstr
 
-    Doctest:
+    Example:
         >>> from utool.util_tests import *  # NOQA
         >>> import utool as ut
         >>> func_or_class = parse_doctest_from_docstr
@@ -1221,7 +1219,7 @@ def get_doctest_examples(func_or_class, modpath=None):
     CommandLine:
         python -m utool.util_tests --test-get_doctest_examples
 
-    Doctest:
+    Example:
         >>> from utool.util_tests import *  # NOQA
         >>> func_or_class = get_doctest_examples
         >>> tup  = get_doctest_examples(func_or_class)
@@ -1234,7 +1232,7 @@ def get_doctest_examples(func_or_class, modpath=None):
         >>> print(result)
         6
 
-    Doctest:
+    Example:
         >>> from utool.util_tests import *  # NOQA
         >>> import utool as ut
         >>> func_or_class = ut.tryimport
@@ -1248,7 +1246,7 @@ def get_doctest_examples(func_or_class, modpath=None):
         >>> print(result)
         4
 
-    Example2:
+    Example:
         >>> # DISABLE_DOCTEST
         >>> from utool.util_tests import *  # NOQA
         >>> import wbia
@@ -1326,7 +1324,20 @@ def get_module_doctest_tup(
 ):
     """
     Parses module for testable doctesttups
-    Depth 2)
+
+    enabled_testtup_list (list): a list of testtup
+
+    testtup (tuple): (name, num, src, want, flag) describes a valid doctest in the module
+        name  (str): test name
+        num   (str): test number of the module / function / class / method
+        src   (str): test source code
+        want  (str): expected test result
+        flag  (str): a valid commandline flag to enable this test
+
+    frame_fpath (str): module fpath that will be tested
+    all_testflags (list): the command line arguments that will enable different tests
+    module (module): the actual module that will be tested
+    exclude_inherited (bool): does not included tests defined in other modules
 
     Args:
         testable_list (list): a list of functions (default = None)
@@ -1340,25 +1351,11 @@ def get_module_doctest_tup(
 
     Returns:
         ModuleDoctestTup : (enabled_testtup_list, frame_fpath, all_testflags, module)
-            enabled_testtup_list (list): a list of testtup
-                testtup (tuple): (name, num, src, want, flag) describes a valid doctest in the module
-                    name  (str): test name
-                    num   (str): test number of the module / function / class / method
-                    src   (str): test source code
-                    want  (str): expected test result
-                    flag  (str): a valid commandline flag to enable this test
-            frame_fpath (str):
-                module fpath that will be tested
-            module (module):
-                the actual module that will be tested
-            all_testflags (list):
-                the command line arguments that will enable different tests
-            exclude_inherited (bool): does not included tests defined in other modules
 
     CommandLine:
         python -m utool.util_tests --exec-get_module_doctest_tup
 
-    Doctest:
+    Example:
         >>> from utool.util_tests import *  # NOQA
         >>> import utool as ut
         >>> #testable_list = [ut.util_import.package_contents]

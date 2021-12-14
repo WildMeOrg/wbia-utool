@@ -16,11 +16,20 @@ __all__ = ['KeySequenceError', 'SendKeys']
 
 DEBUG = 0
 
-MapVirtualKey = ctypes.windll.user32.MapVirtualKeyW
-SendInput = ctypes.windll.user32.SendInput
-VkKeyScan = ctypes.windll.user32.VkKeyScanW
-VkKeyScan.restype = ctypes.c_short
-VkKeyScan.argtypes = [ctypes.c_wchar]
+try:
+    MapVirtualKey = ctypes.windll.user32.MapVirtualKeyW
+    SendInput = ctypes.windll.user32.SendInput
+    VkKeyScan = ctypes.windll.user32.VkKeyScanW
+    VkKeyScan.restype = ctypes.c_short
+    VkKeyScan.argtypes = [ctypes.c_wchar]
+except AttributeError:
+
+    def passthrough(*args, **kwargs):
+        return args
+
+    MapVirtualKey = passthrough
+    SendInput = passthrough
+    VkKeyScan = passthrough
 
 DWORD = ctypes.c_ulong
 LONG = ctypes.c_long
@@ -42,7 +51,7 @@ class MOUSEINPUT(ctypes.Structure):
     ]
 
 
-assert ctypes.sizeof(MOUSEINPUT) == 24, ctypes.sizeof(MOUSEINPUT)
+assert ctypes.sizeof(MOUSEINPUT) in [24, 48], ctypes.sizeof(MOUSEINPUT)
 assert ctypes.alignment(MOUSEINPUT) == 2, ctypes.alignment(MOUSEINPUT)
 
 
@@ -60,7 +69,7 @@ class KEYBDINPUT(ctypes.Structure):
     ]
 
 
-assert ctypes.sizeof(KEYBDINPUT) == 16, ctypes.sizeof(KEYBDINPUT)
+assert ctypes.sizeof(KEYBDINPUT) in [16, 28], ctypes.sizeof(KEYBDINPUT)
 assert ctypes.alignment(KEYBDINPUT) == 2, ctypes.alignment(KEYBDINPUT)
 
 
@@ -75,7 +84,7 @@ class HARDWAREINPUT(ctypes.Structure):
     ]
 
 
-assert ctypes.sizeof(HARDWAREINPUT) == 8, ctypes.sizeof(HARDWAREINPUT)
+assert ctypes.sizeof(HARDWAREINPUT) in [8, 12], ctypes.sizeof(HARDWAREINPUT)
 assert ctypes.alignment(HARDWAREINPUT) == 2, ctypes.alignment(HARDWAREINPUT)
 
 
@@ -90,7 +99,7 @@ class UNION_INPUT_STRUCTS(ctypes.Union):
     ]
 
 
-assert ctypes.sizeof(UNION_INPUT_STRUCTS) == 24, ctypes.sizeof(UNION_INPUT_STRUCTS)
+assert ctypes.sizeof(UNION_INPUT_STRUCTS) in [24, 48], ctypes.sizeof(UNION_INPUT_STRUCTS)
 assert ctypes.alignment(UNION_INPUT_STRUCTS) == 2, ctypes.alignment(UNION_INPUT_STRUCTS)
 
 
@@ -106,7 +115,7 @@ class INPUT(ctypes.Structure):
     ]
 
 
-assert ctypes.sizeof(INPUT) == 28, ctypes.sizeof(INPUT)
+assert ctypes.sizeof(INPUT) in [28, 56], ctypes.sizeof(INPUT)
 assert ctypes.alignment(INPUT) == 2, ctypes.alignment(INPUT)
 
 

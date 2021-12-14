@@ -511,14 +511,14 @@ def experiment_download_multiple_urls(url_list):
         GracefulInterruptHandler
 
     Ignore:
-        import signal
-        import sys
-        def signal_handler(signal, frame):
-                print('You pressed Ctrl+C!')
-                sys.exit(0)
-        signal.signal(signal.SIGINT, signal_handler)
-        print('Press Ctrl+C')
-        signal.pause()
+        >>> import signal
+        >>> import sys
+        >>> def signal_handler(signal, frame):
+        >>>     print('You pressed Ctrl+C!')
+        >>>     sys.exit(0)
+        >>> signal.signal(signal.SIGINT, signal_handler)
+        >>> print('Press Ctrl+C')
+        >>> signal.pause()
 
     Example:
         >>> # DISABLE_DOCTEST
@@ -718,7 +718,7 @@ def grab_selenium_chromedriver(redownload=False):
         >>> search_field.send_keys('puppies')
         >>> search_field.send_keys(selenium.webdriver.common.keys.Keys.ENTER)
 
-    Example1:
+    Example:
         >>> # DISABLE_DOCTEST
         >>> import selenium.webdriver
         >>> driver = selenium.webdriver.Firefox()
@@ -1072,7 +1072,7 @@ def grab_zipped_url(
         >>>                          spoof)
         >>> print(result)
 
-    Examples:
+    Example:
         >>> # DISABLE_DOCTEST
         >>> from utool.util_grabdata import *  # NOQA
         >>> zipped_url = 'https://wildbookiarepository.azureedge.net/data/testdata.zip'
@@ -1319,19 +1319,6 @@ def rsync(src_uri, dst_uri, exclude_dirs=[], port=22, dryrun=False):
         >>> dryrun = False
         >>> result = rsync(src_uri, dst_uri, exclude_dirs, port, dryrun)
         >>> print(result)
-
-    Notes (rsync commandline options):
-        rsync [OPTION]... SRC [SRC]... DEST
-        -v : verbose
-        -r : copies data recursively (but dont preserve timestamps and
-                permission while transferring data
-        -a : archive mode, allows recursive copying and preserves symlinks,
-                permissions, user and group ownerships, and timestamps
-        -z : compress file data
-        -i, --itemize-changes       output a change-summary for all updates
-        -s, --protect-args :        no space-splitting; only wildcard special-chars
-        -h : human-readable, output numbers in a human-readable format
-        -P                          same as --partial --progress
     """
     from utool import util_cplat
 

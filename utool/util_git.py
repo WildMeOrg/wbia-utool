@@ -944,58 +944,55 @@ def git_sequence_editor_squash(fpath):
         >>> git_sequence_editor_squash(fpath)
 
     Ignore:
-        text = ut.codeblock(
-            '''
-            pick 852aa05 better doctest for tips
-            pick 3c779b8 wip
-            pick 02bc21d wip
-            pick 1853828 Fixed root tablename
-            pick 9d50233 doctest updates
-            pick 66230a5 wip
-            pick c612e98 wip
-            pick b298598 Fixed tablename error
-            pick 1120a87 wip
-            pick f6c4838 wip
-            pick 7f92575 wip
-            ''')
+        >>> text = ut.codeblock('''
+        >>>     pick 852aa05 better doctest for tips
+        >>>     pick 3c779b8 wip
+        >>>     pick 02bc21d wip
+        >>>     pick 1853828 Fixed root tablename
+        >>>     pick 9d50233 doctest updates
+        >>>     pick 66230a5 wip
+        >>>     pick c612e98 wip
+        >>>     pick b298598 Fixed tablename error
+        >>>     pick 1120a87 wip
+        >>>     pick f6c4838 wip
+        >>>     pick 7f92575 wip
+        >>> ''')
 
-    Ignore:
-        def squash_consecutive_commits_with_same_message():
-            # http://stackoverflow.com/questions/8226278/git-alias-to-squash-all-commits-with-a-particular-commit-message
-            # Can do interactively with this. Can it be done automatically and pay attention to
-            # Timestamps etc?
-            git rebase --interactive HEAD~40 --autosquash
-            git rebase --interactive $(git merge-base HEAD master) --autosquash
+    Notes:
+        # http://stackoverflow.com/questions/8226278/git-alias-to-squash-all-commits-with-a-particular-commit-message
+        # Can do interactively with this. Can it be done automatically and pay attention to
+        # Timestamps etc?
+        git rebase --interactive HEAD~40 --autosquash
+        git rebase --interactive $(git merge-base HEAD master) --autosquash
 
-            # Lookbehind correct version
-            %s/\([a-z]* [a-z0-9]* wip\n\)\@<=pick \([a-z0-9]*\) wip/squash \2 wip/gc
+        # Lookbehind correct version
+        %s/\([a-z]* [a-z0-9]* wip\n\)\@<=pick \([a-z0-9]*\) wip/squash \2 wip/gc
 
-           # THE FULL NON-INTERACTIVE AUTOSQUASH SCRIPT
-           # TODO: Dont squash if there is a one hour timedelta between commits
+        # THE FULL NON-INTERACTIVE AUTOSQUASH SCRIPT
+        # TODO: Dont squash if there is a one hour timedelta between commits
 
-           GIT_EDITOR="cat $1" GIT_SEQUENCE_EDITOR="python -m utool.util_git --exec-git_sequence_editor_squash \
-                   --fpath $1" git rebase -i $(git rev-list HEAD | tail -n 1) --autosquash --no-verify
-           GIT_EDITOR="cat $1" GIT_SEQUENCE_EDITOR="python -m utool.util_git --exec-git_sequence_editor_squash \
-                   --fpath $1" git rebase -i HEAD~10 --autosquash --no-verify
+        GIT_EDITOR="cat $1" GIT_SEQUENCE_EDITOR="python -m utool.util_git --exec-git_sequence_editor_squash \
+            --fpath $1" git rebase -i $(git rev-list HEAD | tail -n 1) --autosquash --no-verify
+        GIT_EDITOR="cat $1" GIT_SEQUENCE_EDITOR="python -m utool.util_git --exec-git_sequence_editor_squash \
+            --fpath $1" git rebase -i HEAD~10 --autosquash --no-verify
+        GIT_EDITOR="cat $1" GIT_SEQUENCE_EDITOR="python -m utool.util_git --exec-git_sequence_editor_squash \
+            --fpath $1" git rebase -i $(git merge-base HEAD master) --autosquash --no-verify
 
-           GIT_EDITOR="cat $1" GIT_SEQUENCE_EDITOR="python -m utool.util_git --exec-git_sequence_editor_squash \
-                   --fpath $1" git rebase -i $(git merge-base HEAD master) --autosquash --no-verify
-
-           # 14d778fa30a93f85c61f34d09eddb6d2cafd11e2
-           # c509a95d4468ebb61097bd9f4d302367424772a3
-           # b0ffc26011e33378ee30730c5e0ef1994bfe1a90
-           # GIT_SEQUENCE_EDITOR=<script> git rebase -i <params>
-           # GIT_SEQUENCE_EDITOR="echo 'FOOBAR $1' " git rebase -i HEAD~40 --autosquash
-           # git checkout master
-           # git branch -D tmp
-           # git checkout -b tmp
-           # option to get the tail commit
-           $(git rev-list HEAD | tail -n 1)
-           # GIT_SEQUENCE_EDITOR="python -m utool.util_git --exec-git_sequence_editor_squash \
-                   --fpath $1" git rebase -i HEAD~40 --autosquash
-           # GIT_SEQUENCE_EDITOR="python -m utool.util_git --exec-git_sequence_editor_squash \
-                   --fpath $1" git rebase -i HEAD~40 --autosquash --no-verify
-           <params>
+        # 14d778fa30a93f85c61f34d09eddb6d2cafd11e2
+        # c509a95d4468ebb61097bd9f4d302367424772a3
+        # b0ffc26011e33378ee30730c5e0ef1994bfe1a90
+        # GIT_SEQUENCE_EDITOR=<script> git rebase -i <params>
+        # GIT_SEQUENCE_EDITOR="echo 'FOOBAR $1' " git rebase -i HEAD~40 --autosquash
+        # git checkout master
+        # git branch -D tmp
+        # git checkout -b tmp
+        # option to get the tail commit
+        $(git rev-list HEAD | tail -n 1)
+        # GIT_SEQUENCE_EDITOR="python -m utool.util_git --exec-git_sequence_editor_squash \
+        #     --fpath $1" git rebase -i HEAD~40 --autosquash
+        # GIT_SEQUENCE_EDITOR="python -m utool.util_git --exec-git_sequence_editor_squash \
+        #     --fpath $1" git rebase -i HEAD~40 --autosquash --no-verify
+        <params>
     """
     # print(sys.argv)
     import utool as ut

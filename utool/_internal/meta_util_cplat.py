@@ -31,9 +31,12 @@ def get_resource_dir():
 
 
 def get_app_resource_dir(*args, **kwargs):
-    """Returns a writable directory for an application
-    Input: appname - the name of the application
-           *args, - any other subdirectories may be specified
+    """
+    Returns a writable directory for an application
+
+    Args:
+        appname: the name of the application
+        args: any other subdirectories may be specified
     """
     if len(args) == 0:
         raise AssertionError(

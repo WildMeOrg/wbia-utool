@@ -1,19 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>utool.util_parallel &#8212; wbia-vtool 3.0.1 documentation</title>
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -37,9 +35,9 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Module to executes the same function with different arguments in parallel.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 <span class="kn">import</span> <span class="nn">multiprocessing</span>
-<span class="kn">from</span> <span class="nn">concurrent</span> <span class="k">import</span> <span class="n">futures</span>
+<span class="kn">from</span> <span class="nn">concurrent</span> <span class="kn">import</span> <span class="n">futures</span>
 
 <span class="c1"># import atexit</span>
 <span class="c1"># import sys</span>
@@ -47,12 +45,12 @@
 <span class="kn">import</span> <span class="nn">ctypes</span>
 <span class="kn">import</span> <span class="nn">six</span>
 <span class="kn">import</span> <span class="nn">threading</span>
-<span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="nb">map</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">zip</span>  <span class="c1"># NOQA</span>
-<span class="kn">from</span> <span class="nn">utool._internal.meta_util_six</span> <span class="k">import</span> <span class="n">get_funcname</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_progress</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_arg</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inject</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_cplat</span>
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="kn">import</span> <span class="nb">map</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">zip</span>  <span class="c1"># NOQA</span>
+<span class="kn">from</span> <span class="nn">utool._internal.meta_util_six</span> <span class="kn">import</span> <span class="n">get_funcname</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_progress</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_arg</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_inject</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_cplat</span>
 
 <span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">PY2</span><span class="p">:</span>
     <span class="c1"># import thread as _thread</span>
@@ -98,10 +96,10 @@
     <span class="n">chunksize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">nprocs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">progkw</span><span class="o">=</span><span class="p">{},</span>
-    <span class="n">futures_threaded</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">timeout</span><span class="o">=</span><span class="mi">3600</span><span class="p">,</span>
     <span class="n">nTasks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">futures_threaded</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="mi">3600</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Interfaces to either multiprocessing or futures.</span>
@@ -140,9 +138,10 @@
 <span class="sd">        &gt;&gt;&gt; _ = list(generate2(func, args_gen, ordered=False))</span>
 <span class="sd">        &gt;&gt;&gt; _ = list(generate2(func, args_gen, force_serial=True))</span>
 <span class="sd">        &gt;&gt;&gt; _ = list(generate2(func, args_gen, use_pool=True))</span>
+<span class="sd">        &gt;&gt;&gt; _ = list(generate2(func, args_gen, futures_threaded=True))</span>
 <span class="sd">        &gt;&gt;&gt; _ = list(generate2(func, args_gen, ordered=False, verbose=False))</span>
 
-<span class="sd">    Example0:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; import utool as ut</span>
 <span class="sd">        &gt;&gt;&gt; #num = 8700  # parallel is slower for smaller numbers</span>
@@ -152,14 +151,19 @@
 <span class="sd">        &gt;&gt;&gt; args_list = list(range(0, num))</span>
 <span class="sd">        &gt;&gt;&gt; flag_generator0 = ut.generate2(ut.is_prime, zip(range(0, num)), force_serial=True)</span>
 <span class="sd">        &gt;&gt;&gt; flag_list0 = list(flag_generator0)</span>
-<span class="sd">        &gt;&gt;&gt; print(&#39;TESTING PARALLEL&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;TESTING PARALLEL (PROCESS)&#39;)</span>
 <span class="sd">        &gt;&gt;&gt; flag_generator1 = ut.generate2(ut.is_prime, zip(range(0, num)))</span>
 <span class="sd">        &gt;&gt;&gt; flag_list1 = list(flag_generator1)</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;TESTING PARALLEL (THREAD)&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; flag_generator2 = ut.generate2(ut.is_prime, zip(range(0, num)), futures_threaded=True)</span>
+<span class="sd">        &gt;&gt;&gt; flag_list2 = list(flag_generator2)</span>
 <span class="sd">        &gt;&gt;&gt; print(&#39;ASSERTING&#39;)</span>
 <span class="sd">        &gt;&gt;&gt; assert len(flag_list1) == num</span>
+<span class="sd">        &gt;&gt;&gt; assert len(flag_list2) == num</span>
 <span class="sd">        &gt;&gt;&gt; assert flag_list0 == flag_list1</span>
+<span class="sd">        &gt;&gt;&gt; assert flag_list0 == flag_list2</span>
 
-<span class="sd">    Example1:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # ENABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; # Trying to recreate the freeze seen in IBEIS</span>
 <span class="sd">        &gt;&gt;&gt; import utool as ut</span>
@@ -178,7 +182,7 @@
 <span class="sd">        &gt;&gt;&gt; print(&#39;flag_list2 = %r&#39; % (flag_list1,))</span>
 <span class="sd">        &gt;&gt;&gt; print(&#39;flag_list3 = %r&#39; % (flag_list1,))</span>
 
-<span class="sd">    Example2:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; # UNSTABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; # Trying to recreate the freeze seen in IBEIS</span>
@@ -203,7 +207,7 @@
 <span class="sd">        &gt;&gt;&gt; #feats3 = [z for z in ut.generate2(gen_feat_worker, arg_list3)]</span>
 <span class="sd">        &gt;&gt;&gt; #feats4 = [w for w in ut.generate2(gen_feat_worker, arg_list4)]</span>
 
-<span class="sd">    Example3:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; # FAILING_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; # Trying to recreate the freeze seen in IBEIS</span>
@@ -228,7 +232,7 @@
 <span class="sd">        &gt;&gt;&gt; new2 = [y for y in ut.generate2(__testwarp, arg_list2, force_serial=False)]</span>
 <span class="sd">        &gt;&gt;&gt; #print(&#39;new2 = %r&#39; % (new2,))</span>
 
-<span class="sd">    #Example4:</span>
+<span class="sd">    #Example:</span>
 <span class="sd">    #    &gt;&gt;&gt; # Freakin weird. When IBEIS Runs generate it doesn&#39;t close the processes</span>
 <span class="sd">    #    &gt;&gt;&gt; # UNSTABLE_DOCTEST</span>
 <span class="sd">    #    &gt;&gt;&gt; # python -m utool.util_parallel --test-generate:4</span>
@@ -261,7 +265,7 @@
     <span class="k">if</span> <span class="n">ntasks</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[ut.generate2] submitted 0 tasks&#39;</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="ne">StopIteration</span>
+        <span class="k">return</span>
     <span class="k">if</span> <span class="n">nprocs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">nprocs</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">ntasks</span><span class="p">,</span> <span class="n">get_default_numprocs</span><span class="p">())</span>
     <span class="k">if</span> <span class="n">nprocs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -313,12 +317,13 @@
                 <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
                 <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Use futures</span>
             <span class="k">if</span> <span class="n">futures_threaded</span><span class="p">:</span>
-                <span class="n">executor</span> <span class="o">=</span> <span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">nprocs</span><span class="p">)</span>
+                <span class="n">executor_cls</span> <span class="o">=</span> <span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">executor</span> <span class="o">=</span> <span class="n">futures</span><span class="o">.</span><span class="n">ProcessPoolExecutor</span><span class="p">(</span><span class="n">nprocs</span><span class="p">)</span>
+                <span class="n">executor_cls</span> <span class="o">=</span> <span class="n">futures</span><span class="o">.</span><span class="n">ProcessPoolExecutor</span>
 
+            <span class="c1"># Use futures</span>
+            <span class="n">executor</span> <span class="o">=</span> <span class="n">executor_cls</span><span class="p">(</span><span class="n">nprocs</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">fs_list</span> <span class="o">=</span> <span class="p">[</span>
                     <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">args_gen</span><span class="p">,</span> <span class="n">kw_gen</span><span class="p">)</span>
@@ -342,7 +347,7 @@
 <span class="k">def</span> <span class="nf">_generate_serial2</span><span class="p">(</span>
     <span class="n">func</span><span class="p">,</span> <span class="n">args_gen</span><span class="p">,</span> <span class="n">kw_gen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ntasks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">progkw</span><span class="o">=</span><span class="p">{},</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nTasks</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; internal serial generator  &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;internal serial generator&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">verbose</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">verbose</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="k">if</span> <span class="n">ntasks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -379,8 +384,10 @@
 
 
 <div class="viewcode-block" id="in_main_process"><a class="viewcode-back" href="../../utool.html#utool.util_parallel.in_main_process">[docs]</a><span class="k">def</span> <span class="nf">in_main_process</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot; Returns if you are executing in a multiprocessing subprocess</span>
-<span class="sd">    Usefull to disable init print messages on windows &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns if you are executing in a multiprocessing subprocess</span>
+<span class="sd">    Usefull to disable init print messages on windows</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">current_process</span><span class="p">()</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;MainProcess&#39;</span></div>
 
 
@@ -480,7 +487,7 @@
 
     <span class="c1"># import utool as ut</span>
     <span class="c1"># ---- Func and Sleep Definitions</span>
-    <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+    <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 
     <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">rng</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">32</span><span class="p">)]</span>  <span class="c1"># 38873</span>
@@ -797,6 +804,7 @@
     <span class="c1"># import cv2</span>
     <span class="c1"># func = cv2.imread</span>
     <span class="c1"># bffunc = vt.imread</span>
+
     <span class="k">def</span> <span class="nf">sleepfunc_bufwin</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">niters</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
         <span class="c1"># import cv2</span>
         <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">niters</span><span class="p">):</span>
@@ -873,7 +881,7 @@
 <span class="sd">        &gt;&gt;&gt; assert result3 == result2, &#39;inconsistent results&#39;</span>
 <span class="sd">        &gt;&gt;&gt; assert result1 == result2, &#39;inconsistent results&#39;</span>
 
-<span class="sd">    Example1:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; # DISABLE_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; # VERYSLLOOWWW_DOCTEST</span>
 <span class="sd">        &gt;&gt;&gt; from utool.util_parallel import _test_buffered_generator</span>
@@ -920,8 +928,8 @@
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="c1"># output = buffer_.get(timeout=1.0)</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">buffer_</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="n">sentinal</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">StopIteration</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">sentinal</span><span class="p">):</span>
+            <span class="k">return</span>
         <span class="k">yield</span> <span class="n">output</span></div>
 
     <span class="c1"># _iter = iter(buffer_.get, sentinal)</span>
@@ -932,7 +940,7 @@
 
 
 <span class="k">def</span> <span class="nf">_buffered_generation_thread</span><span class="p">(</span><span class="n">source_gen</span><span class="p">,</span> <span class="n">buffer_</span><span class="p">,</span> <span class="n">sentinal</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; helper for buffered_generator &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;helper for buffered_generator&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">source_gen</span><span class="p">:</span>
         <span class="n">buffer_</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="c1"># sentinel: signal the end of the iterator</span>
@@ -940,7 +948,7 @@
 
 
 <span class="k">def</span> <span class="nf">_buffered_generation_process</span><span class="p">(</span><span class="n">source_gen</span><span class="p">,</span> <span class="n">buffer_</span><span class="p">,</span> <span class="n">sentinal</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; helper for buffered_generator &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;helper for buffered_generator&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">source_gen</span><span class="p">:</span>
         <span class="n">buffer_</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="c1"># sentinel: signal the end of the iterator</span>
@@ -1159,7 +1167,7 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
 </ul>
@@ -1176,17 +1184,15 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -1203,7 +1209,7 @@
       &copy;2020, Wild Me.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

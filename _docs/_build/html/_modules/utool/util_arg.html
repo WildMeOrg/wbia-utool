@@ -1,19 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>utool.util_arg &#8212; wbia-vtool 3.0.1 documentation</title>
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -37,16 +35,16 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Handles command line parsing</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">six</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="n">builtins</span>
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="kn">import</span> <span class="n">builtins</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_inject</span>
-<span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_type</span>
-<span class="kn">from</span> <span class="nn">utool._internal</span> <span class="k">import</span> <span class="n">meta_util_six</span><span class="p">,</span> <span class="n">meta_util_arg</span><span class="p">,</span> <span class="n">meta_util_iter</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_inject</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_type</span>
+<span class="kn">from</span> <span class="nn">utool._internal</span> <span class="kn">import</span> <span class="n">meta_util_six</span><span class="p">,</span> <span class="n">meta_util_arg</span><span class="p">,</span> <span class="n">meta_util_iter</span>
 
 <span class="nb">print</span><span class="p">,</span> <span class="n">rrr</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">util_inject</span><span class="o">.</span><span class="n">inject2</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -74,7 +72,7 @@
 
 
 <div class="viewcode-block" id="aug_sysargv"><a class="viewcode-back" href="../../utool.html#utool.util_arg.aug_sysargv">[docs]</a><span class="k">def</span> <span class="nf">aug_sysargv</span><span class="p">(</span><span class="n">cmdstr</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; DEBUG FUNC modify argv to look like you ran a command &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;DEBUG FUNC modify argv to look like you ran a command&quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">shlex</span>
 
     <span class="n">argv</span> <span class="o">=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">cmdstr</span><span class="p">)</span>
@@ -83,7 +81,7 @@
 
 
 <div class="viewcode-block" id="get_module_verbosity_flags"><a class="viewcode-back" href="../../utool.html#utool.util_arg.get_module_verbosity_flags">[docs]</a><span class="k">def</span> <span class="nf">get_module_verbosity_flags</span><span class="p">(</span><span class="o">*</span><span class="n">labels</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; checks for standard flags for enableing module specific verbosity &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;checks for standard flags for enableing module specific verbosity&quot;&quot;&quot;</span>
     <span class="n">verbose_prefix_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;--verbose-&#39;</span><span class="p">,</span> <span class="s1">&#39;--verb&#39;</span><span class="p">,</span> <span class="s1">&#39;--verb-&#39;</span><span class="p">]</span>
     <span class="n">veryverbose_prefix_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;--veryverbose-&#39;</span><span class="p">,</span> <span class="s1">&#39;--veryverb&#39;</span><span class="p">,</span> <span class="s1">&#39;--veryverb-&#39;</span><span class="p">]</span>
     <span class="n">verbose_flags</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
@@ -106,7 +104,7 @@
 
 
 <div class="viewcode-block" id="reset_argrecord"><a class="viewcode-back" href="../../utool.html#utool.util_arg.reset_argrecord">[docs]</a><span class="k">def</span> <span class="nf">reset_argrecord</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot; forgets about the args already parsed &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;forgets about the args already parsed&quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">__REGISTERED_ARGS__</span>
     <span class="n">__REGISTERED_ARGS__</span> <span class="o">=</span> <span class="p">[]</span></div>
 
@@ -529,7 +527,7 @@
                                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[get_argval] ... argstr=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">argstr</span><span class="p">,))</span>
                                 <span class="nb">print</span><span class="p">(</span>
                                     <span class="s1">&#39;[get_argval] ... Found type_=</span><span class="si">%r</span><span class="s1"> argx=</span><span class="si">%r</span><span class="s1">&#39;</span>
-                                    <span class="o">%</span> <span class="p">(</span><span class="n">type_</span><span class="p">,</span> <span class="n">argx</span><span class="p">,)</span>
+                                    <span class="o">%</span> <span class="p">(</span><span class="n">type_</span><span class="p">,</span> <span class="n">argx</span><span class="p">)</span>
                                 <span class="p">)</span>
                             <span class="n">arg_after</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="n">argx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
                             <span class="k">if</span> <span class="n">type_</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -549,13 +547,13 @@
                         <span class="n">val_after_</span> <span class="o">=</span> <span class="n">val_after</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)</span>
                         <span class="k">if</span> <span class="kc">True</span><span class="p">:</span>
                             <span class="c1"># Hacker way to be less hacky about parsing lists</span>
-                            <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_gridsearch</span>
+                            <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_gridsearch</span>
 
                             <span class="n">blocks</span> <span class="o">=</span> <span class="n">util_gridsearch</span><span class="o">.</span><span class="n">parse_nestings</span><span class="p">(</span><span class="n">val_after_</span><span class="p">)</span>
                             <span class="n">sentinal</span> <span class="o">=</span> <span class="s1">&#39;##COM&amp;&amp;&#39;</span>
                             <span class="n">changed</span> <span class="o">=</span> <span class="p">[</span>
                                 <span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">block</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">sentinal</span><span class="p">))</span>
-                                <span class="k">if</span> <span class="n">block</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;nonNested&#39;</span>
+                                <span class="k">if</span> <span class="n">block</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;nonNested&#39;</span><span class="p">,</span> <span class="s1">&#39;ITEM&#39;</span><span class="p">]</span>
                                 <span class="k">else</span> <span class="n">block</span>
                                 <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">blocks</span>
                             <span class="p">]</span>
@@ -783,9 +781,9 @@
 
 
 <div class="viewcode-block" id="ArgumentParser2"><a class="viewcode-back" href="../../utool.html#utool.util_arg.ArgumentParser2">[docs]</a><span class="k">class</span> <span class="nc">ArgumentParser2</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Wrapper around argparse.ArgumentParser with convinence functions &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Wrapper around argparse.ArgumentParser with convinence functions&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">parser</span>
 
 <div class="viewcode-block" id="ArgumentParser2.add_arg"><a class="viewcode-back" href="../../utool.html#utool.util_arg.ArgumentParser2.add_arg">[docs]</a>    <span class="k">def</span> <span class="nf">add_arg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">switch</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -956,7 +954,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_decor</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_decor</span>
 
     <span class="nd">@util_decor</span><span class="o">.</span><span class="n">ignores_exc_tb</span><span class="p">(</span><span class="n">outer_wrapper</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">wrap_argv_flag_dec</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
@@ -979,7 +977,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Logic for controlling if a function gets called based on command line</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_decor</span>
+    <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_decor</span>
 
     <span class="n">flagname</span> <span class="o">=</span> <span class="n">meta_util_six</span><span class="o">.</span><span class="n">get_funcname</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">flagname</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;no&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -992,7 +990,7 @@
 
     <span class="nd">@util_decor</span><span class="o">.</span><span class="n">ignores_exc_tb</span><span class="p">(</span><span class="n">outer_wrapper</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">GaurdWrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">utool</span> <span class="k">import</span> <span class="n">util_print</span>
+        <span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_print</span>
 
         <span class="c1"># FIXME: the --print-all is a hack</span>
         <span class="n">default_</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
@@ -1043,11 +1041,11 @@
 <span class="sd">    Gets values for a dict based on the command line</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        default_dict_ (?):</span>
+<span class="sd">        default_dict\_ (?):</span>
 <span class="sd">        only_specified (bool): if True only returns keys that are specified on commandline. no defaults.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        dict_: dict_ -  a dictionary</span>
+<span class="sd">        dict\_: a dictionary</span>
 
 <span class="sd">    CommandLine:</span>
 <span class="sd">        python -m utool.util_arg --test-argparse_dict</span>
@@ -1349,7 +1347,7 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../utool.html">utool package</a></li>
 </ul>
@@ -1366,17 +1364,15 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -1393,7 +1389,7 @@
       &copy;2020, Wild Me.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
