@@ -45,14 +45,6 @@ utool.\_\_main\_\_ module
     :undoc-members:
     :show-inheritance:
 
-utool.\_version module
-----------------------
-
-.. automodule:: utool._version
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 utool.oldalg module
 -------------------
 
