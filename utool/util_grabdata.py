@@ -618,7 +618,7 @@ TESTIMG_URL_DICT = {
     'ada2.jpg': 'http://i.imgur.com/zHOpTCb.jpg',
     'ada.jpg': 'http://i.imgur.com/iXNf4Me.jpg',
     'lena.png': 'http://i.imgur.com/JGrqMnV.png',  # depricate lena
-    'astro.png': 'https://i.imgur.com/KXhKM72.png',  # Use instead of lena
+    'astro.png': 'http://i.imgur.com/KXhKM72.png',  # Use instead of lena
     'carl.jpg': 'http://i.imgur.com/flTHWFD.jpg',
     'easy1.png': 'http://i.imgur.com/Qqd0VNq.png',
     'easy2.png': 'http://i.imgur.com/BDP8MIu.png',
