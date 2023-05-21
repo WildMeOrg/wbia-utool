@@ -2,7 +2,7 @@ delorean
 gitpython
 lockfile
 networkx==2.5.1
-numpy==1.20
+numpy==1.22.0
 opencv-contrib-python-headless
 ordered-set
 pandas
