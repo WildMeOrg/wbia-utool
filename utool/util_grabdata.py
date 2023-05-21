@@ -613,20 +613,20 @@ def split_archive_ext(path):
 
 
 TESTIMG_URL_DICT = {
-    'grace.jpg': 'http://i.imgur.com/rgQyu7r.jpg',
-    'jeff.png': 'http://i.imgur.com/l00rECD.png',
-    'ada2.jpg': 'http://i.imgur.com/zHOpTCb.jpg',
-    'ada.jpg': 'http://i.imgur.com/iXNf4Me.jpg',
-    'lena.png': 'http://i.imgur.com/JGrqMnV.png',  # depricate lena
-    'astro.png': 'https://i.imgur.com/KXhKM72.png',  # Use instead of lena
-    'carl.jpg': 'http://i.imgur.com/flTHWFD.jpg',
-    'easy1.png': 'http://i.imgur.com/Qqd0VNq.png',
-    'easy2.png': 'http://i.imgur.com/BDP8MIu.png',
-    'easy3.png': 'http://i.imgur.com/zBcm5mS.png',
-    'hard3.png': 'http://i.imgur.com/ST91yBf.png',
-    'zebra.png': 'http://i.imgur.com/58hbGcd.png',
-    'star.png': 'http://i.imgur.com/d2FHuIU.png',
-    'patsy.jpg': 'http://i.imgur.com/C1lNRfT.jpg',
+    'grace.jpg': 'https://cthulhu.dyn.wildme.io/public/testimgs/rgQyu7r.jpg',
+    'jeff.png': 'https://cthulhu.dyn.wildme.io/public/testimgs/l00rECD.png',
+    'ada2.jpg': 'https://cthulhu.dyn.wildme.io/public/testimgs/zHOpTCb.jpg',
+    'ada.jpg': 'https://cthulhu.dyn.wildme.io/public/testimgs/iXNf4Me.jpg',
+    'lena.png': 'https://cthulhu.dyn.wildme.io/public/testimgs/JGrqMnV.png',  # depricate lena
+    'astro.png': 'https://cthulhu.dyn.wildme.io/public/testimgs/KXhKM72.png',  # Use instead of lena
+    'carl.jpg': 'https://cthulhu.dyn.wildme.io/public/testimgs/flTHWFD.jpg',
+    'easy1.png': 'https://cthulhu.dyn.wildme.io/public/testimgs/Qqd0VNq.png',
+    'easy2.png': 'https://cthulhu.dyn.wildme.io/public/testimgs/BDP8MIu.png',
+    'easy3.png': 'https://cthulhu.dyn.wildme.io/public/testimgs/zBcm5mS.png',
+    'hard3.png': 'https://cthulhu.dyn.wildme.io/public/testimgs/ST91yBf.png',
+    'zebra.png': 'https://cthulhu.dyn.wildme.io/public/testimgs/58hbGcd.png',
+    'star.png': 'https://cthulhu.dyn.wildme.io/public/testimgs/d2FHuIU.png',
+    'patsy.jpg': 'https://cthulhu.dyn.wildme.io/public/testimgs/C1lNRfT.jpg',
 }
 
 

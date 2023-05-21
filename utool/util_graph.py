@@ -91,6 +91,7 @@ def nx_transitive_reduction(G, mode=1):
         >>> # DISABLE_DOCTEST
         >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
+        >>> import networkx as nx
         >>> G = nx.DiGraph([('a', 'b'), ('a', 'c'), ('a', 'e'),
         >>>                 ('a', 'd'), ('b', 'd'), ('c', 'e'),
         >>>                 ('d', 'e'), ('c', 'e'), ('c', 'd')])
@@ -265,6 +266,7 @@ def nx_dag_node_rank(graph, nodes=None):
         >>> # ENABLE_DOCTEST
         >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
+        >>> import networkx as nx
         >>> adj_dict = {0: [5], 1: [5], 2: [1], 3: [4], 4: [0], 5: [], 6: [4], 7: [9], 8: [6], 9: [1]}
         >>> nodes = [2, 1, 5]
         >>> f_graph = ut.nx_from_adj_dict(adj_dict, nx.DiGraph)
@@ -381,6 +383,7 @@ def nx_edges_between(
         >>> # ENABLE_DOCTEST
         >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
+        >>> import networkx as nx
         >>> edges = [
         >>>     (1, 2), (2, 3), (3, 4), (4, 1), (4, 3),  # cc 1234
         >>>     (1, 5), (7, 2), (5, 1),  # cc 567 / 5678
@@ -574,6 +577,7 @@ def nx_delete_node_attr(graph, name, nodes=None):
     Example:
         >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
+        >>> import networkx as nx
         >>> G = nx.karate_club_graph()
         >>> nx.set_node_attributes(G, name='foo', values='bar')
         >>> datas = nx.get_node_attributes(G, 'club')
@@ -618,6 +622,7 @@ def nx_delete_edge_attr(graph, name, edges=None):
     Example:
         >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
+        >>> import networkx as nx
         >>> G = nx.karate_club_graph()
         >>> nx.set_edge_attributes(G, name='spam', values='eggs')
         >>> nx.set_edge_attributes(G, name='foo', values='bar')
@@ -633,6 +638,7 @@ def nx_delete_edge_attr(graph, name, edges=None):
     Example:
         >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
+        >>> import networkx as nx
         >>> G = nx.MultiGraph()
         >>> G.add_edges_from([(1, 2), (2, 3), (3, 4), (4, 5), (4, 5), (1, 2)])
         >>> nx.set_edge_attributes(G, name='spam', values='eggs')
@@ -795,6 +801,7 @@ def nx_gen_node_attrs(
         >>> # ENABLE_DOCTEST
         >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
+        >>> import networkx as nx
         >>> G = nx.Graph([(1, 2), (2, 3)])
         >>> nx.set_node_attributes(G, name='part', values={1: 'bar', 3: 'baz'})
         >>> nodes = [1, 2, 3, 4]
@@ -816,6 +823,7 @@ def nx_gen_node_attrs(
         >>> # ALL CASES
         >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
+        >>> import networkx as nx
         >>> G = nx.Graph([(1, 2), (2, 3)])
         >>> nx.set_node_attributes(G, name='full', values={1: 'A', 2: 'B', 3: 'C'})
         >>> nx.set_node_attributes(G, name='part', values={1: 'bar', 3: 'baz'})
@@ -968,6 +976,7 @@ def nx_gen_edge_attrs(
         >>> # ENABLE_DOCTEST
         >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
+        >>> import networkx as nx
         >>> G = nx.Graph([(1, 2), (2, 3), (3, 4)])
         >>> nx.set_edge_attributes(G, name='part', values={(1, 2): 'bar', (2, 3): 'baz'})
         >>> edges = [(1, 2), (2, 3), (3, 4), (4, 5)]
@@ -1186,6 +1195,7 @@ def testdata_graph():
         >>> # DISABLE_DOCTEST
         >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
+        >>> import networkx as nx
         >>> (graph, G) = testdata_graph()
         >>> import wbia.plottool as pt
         >>> ut.ensureqt()
@@ -1290,6 +1300,7 @@ def paths_to_root(tablename, root, child_to_parents):
         >>> # ENABLE_DOCTEST
         >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
+        >>> import networkx as nx
         >>> child_to_parents = {
         >>>     'chip': ['dummy_annot'],
         >>>     'chipmask': ['dummy_annot'],
@@ -1594,6 +1605,7 @@ def simplify_graph(graph):
         >>> # ENABLE_DOCTEST
         >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
+        >>> import networkx as nx
         >>> graph = nx.DiGraph([('a', 'b'), ('a', 'c'), ('a', 'e'),
         >>>                     ('a', 'd'), ('b', 'd'), ('c', 'e'),
         >>>                     ('d', 'e'), ('c', 'e'), ('c', 'd')])
@@ -2135,6 +2147,7 @@ def approx_min_num_components(nodes, negative_edges):
         >>> # ENABLE_DOCTEST
         >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
+        >>> import networkx as nx
         >>> nodes = [1, 2, 3, 4, 5, 6, 7, 8, 9]
         >>> edges = [(1, 2), (2, 3), (3, 1),
         >>>          (4, 5), (5, 6), (6, 4),
@@ -2283,6 +2296,7 @@ def mincost_diameter_augment(graph, max_cost, candidates=None, weight=None, cost
         >>> # ENABLE_DOCTEST
         >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
+        >>> import networkx as nx
         >>> graph = nx.Graph()
         >>> if nx.__version__.startswith('1'):
         >>>     nx.add_path = nx.Graph.add_path
