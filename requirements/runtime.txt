@@ -1,7 +1,7 @@
 delorean
 gitpython
 lockfile
-networkx
+networkx>=1.11,<2
 numpy==1.20
 opencv-contrib-python-headless
 ordered-set
