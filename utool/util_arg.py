@@ -1237,7 +1237,7 @@ get_dict_vals_from_commandline = argparse_dict
 
 # Do I like these more?
 # varargs = get_varargs
-argval = get_argval
+argval_ = get_argval
 argflag = get_argflag
 
 

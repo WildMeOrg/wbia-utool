@@ -2825,7 +2825,7 @@ def type_profile2(sequence, TypedSequence=None):
         isinstance(sequence, np.ndarray) and sequence.dtype != object
     ):
         # Scalar / ndarray type
-        if type(sequence) == 'numpy.ndarray':
+        if isinstance(sequence, np.ndarray):
             subtype_list = '[%s]' % (sequence.dtype,)
         else:
             subtype_list = None

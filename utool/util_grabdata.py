@@ -613,20 +613,20 @@ def split_archive_ext(path):
 
 
 TESTIMG_URL_DICT = {
-    'grace.jpg': 'https://cthulhu.dyn.wildme.io/public/testimgs/rgQyu7r.jpg',
-    'jeff.png': 'https://cthulhu.dyn.wildme.io/public/testimgs/l00rECD.png',
-    'ada2.jpg': 'https://cthulhu.dyn.wildme.io/public/testimgs/zHOpTCb.jpg',
-    'ada.jpg': 'https://cthulhu.dyn.wildme.io/public/testimgs/iXNf4Me.jpg',
-    'lena.png': 'https://cthulhu.dyn.wildme.io/public/testimgs/JGrqMnV.png',  # depricate lena
-    'astro.png': 'https://cthulhu.dyn.wildme.io/public/testimgs/KXhKM72.png',  # Use instead of lena
-    'carl.jpg': 'https://cthulhu.dyn.wildme.io/public/testimgs/flTHWFD.jpg',
-    'easy1.png': 'https://cthulhu.dyn.wildme.io/public/testimgs/Qqd0VNq.png',
-    'easy2.png': 'https://cthulhu.dyn.wildme.io/public/testimgs/BDP8MIu.png',
-    'easy3.png': 'https://cthulhu.dyn.wildme.io/public/testimgs/zBcm5mS.png',
-    'hard3.png': 'https://cthulhu.dyn.wildme.io/public/testimgs/ST91yBf.png',
-    'zebra.png': 'https://cthulhu.dyn.wildme.io/public/testimgs/58hbGcd.png',
-    'star.png': 'https://cthulhu.dyn.wildme.io/public/testimgs/d2FHuIU.png',
-    'patsy.jpg': 'https://cthulhu.dyn.wildme.io/public/testimgs/C1lNRfT.jpg',
+    'grace.jpg': 'https://wildbookiarepository.azureedge.net/testimgs/rgQyu7r.jpg',
+    'jeff.png': 'https://wildbookiarepository.azureedge.net/testimgs/l00rECD.png',
+    'ada2.jpg': 'https://wildbookiarepository.azureedge.net/testimgs/zHOpTCb.jpg',
+    'ada.jpg': 'https://wildbookiarepository.azureedge.net/testimgs/iXNf4Me.jpg',
+    'lena.png': 'https://wildbookiarepository.azureedge.net/testimgs/JGrqMnV.png',  # depricate lena
+    'astro.png': 'https://wildbookiarepository.azureedge.net/testimgs/KXhKM72.png',  # Use instead of lena
+    'carl.jpg': 'https://wildbookiarepository.azureedge.net/testimgs/flTHWFD.jpg',
+    'easy1.png': 'https://wildbookiarepository.azureedge.net/testimgs/Qqd0VNq.png',
+    'easy2.png': 'https://wildbookiarepository.azureedge.net/testimgs/BDP8MIu.png',
+    'easy3.png': 'https://wildbookiarepository.azureedge.net/testimgs/zBcm5mS.png',
+    'hard3.png': 'https://wildbookiarepository.azureedge.net/testimgs/ST91yBf.png',
+    'zebra.png': 'https://wildbookiarepository.azureedge.net/testimgs/58hbGcd.png',
+    'star.png': 'https://wildbookiarepository.azureedge.net/testimgs/d2FHuIU.png',
+    'patsy.jpg': 'https://wildbookiarepository.azureedge.net/testimgs/C1lNRfT.jpg',
 }
 
 

@@ -865,7 +865,7 @@ def is_dicteq(dict1_, dict2_, almosteq_ok=True, verbose_err=True):
     try:
         for (key1, val1), (key2, val2) in zip(dict1_.items(), dict2_.items()):
             assert key1 == key2, 'key mismatch'
-            assert type(val1) == type(val2), 'vals are not same type'
+            assert isinstance(val1, type(val2)), 'vals are not same type'
             if HAVE_NUMPY and np.iterable(val1):
                 if almosteq_ok and ut.is_float(val1):
                     assert np.all(
