@@ -164,7 +164,7 @@ def printableVal(val, type_bit=True, justlength=False):
         else:
             _valstr = '[ ' + (', \n  '.join([str(v) for v in val])) + ' ]'
     # ??? isinstance(val, AbstractPrintable):
-    elif hasattr(val, 'get_printable') and type(val) != type:
+    elif hasattr(val, 'get_printable') and type(val) is not type:
         _valstr = val.get_printable(type_bit=type_bit)
     elif isinstance(val, dict):
         _valstr = '{\n'
