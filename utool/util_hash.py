@@ -209,7 +209,7 @@ def make_hash(o):
     References:
         http://stackoverflow.com/questions/5884066/hashing-a-python-dictionary
     """
-    if type(o) == DictProxyType:
+    if isinstance(o, DictProxyType):
         o2 = {}
         for k, v in o.items():
             if not k.startswith('__'):
